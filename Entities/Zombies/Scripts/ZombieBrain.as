@@ -19,6 +19,8 @@ void onInit( CBrain@ this )
 	
 	//this.getCurrentScript().removeIfTag	= "dead";
 	this.getCurrentScript().runFlags |= Script::tick_not_attached;
+
+	blob.set_u32("lowlevel_research_time", getGameTime());
 }
 
 void onTick( CBrain@ this )
@@ -36,8 +38,19 @@ void onTick( CBrain@ this )
 	    // do we have a target?
         if (target !is null)
         {
-    	    // check if the target needs to be dropped
-		    if (ShouldLoseTarget(blob, target))
+			// Target hidden, lets path find to it
+			if (!isTargetVisible(blob, target))
+			{
+				if (getGameTime() > blob.get_u32("lowlevel_research_time"))
+				{
+
+					// Mostly low level, with some high level when useful
+					this.SetPathTo(target.getPosition(), false);
+					blob.set_bool("lowlevel_search", true);
+					blob.set_u32("lowlevel_research_time", getGameTime() + 60);
+				}
+			} 
+			else if (ShouldLoseTarget(blob, target))
 		    {
 		    	RemoveTarget(this);
 		    	return;
@@ -45,6 +58,8 @@ void onTick( CBrain@ this )
 
             // aim always at enemy
             blob.setAimPos( target.getPosition() );
+
+			print(target.getName());
 
             // chase target
             if (getDistanceBetween(target.getPosition(), blob.getPosition()) > blob.getRadius() + blob.get_f32( "attack distance" ) / 2)
@@ -73,8 +88,7 @@ void onTick( CBrain@ this )
 
 void FindTarget( CBrain@ this, CBlob@ blob, f32 radius )
 {
-    if (!blob.hasTag("is_stuck"))
-	{
+    if (!blob.hasTag("is_stuck")) {
 		CBlob@ target = GetBestTarget(this, blob, radius);
 		if (target !is null) this.SetTarget(target);
 	} else {
@@ -106,12 +120,12 @@ void GoSomewhere( CBrain@ this, CBlob@ blob )
     // get our destination
 	Vec2f destination = blob.get_Vec2f(destination_property);
 
-	if (!blob.exists(destination_property) || getDistanceBetween(destination, blob.getPosition()) < 128 || XORRandom(30) == 0)
+	if (!blob.exists(destination_property) || getDistanceBetween(destination, blob.getPosition()) < 128 || XORRandom(30) == 0 || destination == Vec2f(0, 0))
 	{
 		NewDestination(blob);
 		return;
 	}
-     
+
     // aim at the destination
     blob.setAimPos( destination );
 
@@ -128,21 +142,39 @@ void GoSomewhere( CBrain@ this, CBlob@ blob )
 
 void PathTo( CBlob@ blob, Vec2f destination )
 {
-	Vec2f mypos = blob.getPosition();
+	CBrain@ brain = blob.getBrain();
+	
+	if (blob.get_bool("lowlevel_search"))
+	{
+		// ENGINE BUG >:(((
+		bool was_zero = false;
+		destination = brain.getPathPosition();
 
-	if (destination.x < mypos.x)
-	{
-		blob.setKeyPressed(key_left, true);
-	}
-	else
-	{
-		blob.setKeyPressed(key_right, true);
-	}
+		if (destination == Vec2f_zero)
+		{
+			destination == brain.getNextPathPosition();
+			was_zero = true;
+		}
 
-	if (destination.y + getMap().tilesize < mypos.y)
-	{
-		blob.setKeyPressed(key_up, true);
+		int len = (blob.getPosition() - destination).Length();
+
+		if (len > 0 && len < 20.0f)
+		{
+			if (brain.getNextPathPosition() == destination && !was_zero)
+			{
+				brain.EndPath();
+				blob.set_bool("lowlevel_search", false);
+			}
+		}
 	}
+	
+
+	Vec2f dir = destination - blob.getPosition();
+
+	blob.setKeyPressed(key_left, dir.x < -0.0f);
+	blob.setKeyPressed(key_right, dir.x > 0.0f);
+	blob.setKeyPressed(key_up, dir.y < -4.0f);
+	blob.setKeyPressed(key_down, dir.y > 0.0f);
 }
 
 void ScaleObstacles( CBlob@ blob, Vec2f destination )
