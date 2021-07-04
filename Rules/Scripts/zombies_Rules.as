@@ -593,7 +593,7 @@ shared class ZombiesCore : RulesCore
 				
 				
 				//Regular zombie spawns, we make sure to not spawn more zombies if we're past the limit. On later days it may still spawn some past the limit once due to spawn rate
-				/*if ((dayNumber>=33 && num_zombies<max_zombies) || ((map.getDayTime()>0.8 || map.getDayTime()<0.1) && num_zombies<max_zombies))
+				if ((dayNumber>=33 && num_zombies<max_zombies) || ((map.getDayTime()>0.8 || map.getDayTime()<0.1) && num_zombies<max_zombies))
                 {
 					
                     int r = XORRandom(zombdiff);
@@ -716,7 +716,7 @@ shared class ZombiesCore : RulesCore
 					
 				}
 				
-				else*/
+				else
 				{
 					if (transition == 0)
 					{	
