@@ -3,8 +3,8 @@
 #include "StandardRespawnCommand.as"
 #include "TeamColour.as"
 
-const string cube_texture_name = "stoneblock.png";
-const string rings_texture_name = "lightring.png";
+const string cube_texture_name = "stoneblock";
+const string rings_texture_name = "lightring";
 
 float[] cube_model;
 u16[] cube_v_i;
@@ -76,6 +76,15 @@ void onInit(CBlob@ this)
 
 	this.SetLight(true);
 	this.SetLightRadius(64.0f);
+
+	if (isClient())
+	{
+		if (!Texture::exists(cube_texture_name))
+		{
+			Texture::createFromFile(cube_texture_name, cube_texture_name);
+			Texture::createFromFile(rings_texture_name, rings_texture_name); // safe to assume this isnt created as well;
+		}
+	}
 
 	int cb_id = Render::addScript(Render::layer_objects, "RuinsTorchLogic.as", "RenderFunction", 0.0f);
 
