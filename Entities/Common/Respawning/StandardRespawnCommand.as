@@ -29,6 +29,17 @@ bool canChangeClass(CBlob@ this, CBlob@ blob)
 
 }
 
+void buildSpawnMenu(CBlob@ this, CBlob@ caller)
+{
+	AddIconToken("$builder_class_icon$", "GUI/MenuItems.png", Vec2f(32, 32), 8);
+	AddIconToken("$knight_class_icon$", "GUI/MenuItems.png", Vec2f(32, 32), 12);
+	AddIconToken("$archer_class_icon$", "GUI/MenuItems.png", Vec2f(32, 32), 16);
+	AddIconToken("$priest_class_icon$", "GUI/MenuItems.png", Vec2f(32, 32), 15);
+	AddIconToken("$necromancer_class_icon$", "GUI/MenuItems.png", Vec2f(32, 32), 18);
+	AddIconToken("$change_class$", "/GUI/InteractionIcons.png", Vec2f(32, 32), 12, 2);
+	BuildRespawnMenuFor(this, caller);
+}
+
 // default classes
 void InitClasses(CBlob@ this)
 {
