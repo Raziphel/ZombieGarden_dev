@@ -21,6 +21,7 @@ void onInit( CBrain@ this )
 	this.getCurrentScript().runFlags |= Script::tick_not_attached;
 
 	blob.set_u32("lowlevel_research_time", getGameTime());
+	blob.set_u32("next_rng_search", getGameTime());
 }
 
 void onTick( CBrain@ this )
@@ -38,101 +39,168 @@ void onTick( CBrain@ this )
 		// do we have a target?
 		if (target !is null)
 		{
-			// Target hidden, lets path find to it
-			if (!isTargetVisible(blob, target))
+			blob.set_u16("rng_count", 0);
+
+			bool icu = isTargetVisible(blob, target);
+			// Target not visible, let's try use some path finding to get to it
+			if (!icu)
 			{
 				if (getGameTime() > blob.get_u32("lowlevel_research_time"))
 				{
-
 					// Mostly low level, with some high level when useful
 					this.SetPathTo(target.getPosition(), false);
+
+					// Tell the bot to use low level path suggestions
 					blob.set_bool("lowlevel_search", true);
 					blob.set_u32("lowlevel_research_time", getGameTime() + 60);
 				}
-			} 
-			else if (ShouldLoseTarget(blob, target))
+
+				if (isTargetTooFar(blob, target))
+				{
+					print("target is too far, removing");
+					this.SetTarget(null);
+					return;
+				}
+			}
+			else
+			{	
+				// Zombie will go to the targets last known pos after its lost the target
+				blob.set_Vec2f("last_search_pos", target.getPosition());
+			}
+
+			if (isTargetDead(target))
 			{
-				RemoveTarget(this);
+				print("target has died!");
+				this.SetTarget(null);
 				return;
 			}
 
 			// aim always at enemy
 			blob.setAimPos( target.getPosition() );
 
-			// chase target
-			if (getDistanceBetween(target.getPosition(), blob.getPosition()) > blob.getRadius() + blob.get_f32( "attack distance" ) / 2)
-			{
-				PathTo( blob, target.getPosition() );
-				
-				// scale walls and jump over small blocks
-				ScaleObstacles( blob, target.getPosition() );
-			
-				// destroy any attackable obstructions such as doors
-				DestroyAttackableObstructions( this, blob );
-			}
+			PathTo( blob, target.getPosition() );
+
+			// destroy any attackable obstructions such as doors
+			//DestroyAttackableObstructions( this, blob );
 		}
 		else
 		{
+			print("hi ..?");
+
+			if (blob.hasTag("is_stuck"))
+				blob.Untag("is_stuck");
+
 			GoSomewhere(this, blob); // just walk around looking for a target
 		}
 	}
 	else
 	{
-		PressOldKeys( blob );
+		Vec2f destination = blob.get_Vec2f(destination_property);
+		if (destination != Vec2f_zero)
+			PathTo( blob, destination );
+		else
+			PressOldKeys(blob);
 	}
 
 	blob.set_u8(delay_property, delay);
 }
 
-void FindTarget( CBrain@ this, CBlob@ blob, f32 radius )
+bool FindTarget( CBrain@ this, CBlob@ blob, f32 radius )
 {
-	if (!blob.hasTag("is_stuck")) {
-		CBlob@ target = GetBestTarget(this, blob, radius);
-		if (target !is null) this.SetTarget(target);
-	} else {
-		CBlob@ target = GetClosestVisibleTarget(this, blob, radius);
-		if (target !is null) this.SetTarget(target);
-	}
+	/*if (blob.hasTag("search_through_walls") || blob.hasTag("is_stuck"))
+		this.SetTarget(GetBestTarget(this, blob, radius));
+	else
+		this.SetTarget(GetClosestVisibleTarget(this, blob, radius));*/
+
+	this.SetTarget(GetBestTarget(this, blob, radius));
+
+	return this.getTarget() !is null;
 }
 
-bool ShouldLoseTarget( CBlob@ blob, CBlob@ target )
+bool isTargetTooFar( CBlob@ blob, CBlob@ target )
 {
-	bool result = false;
-	if (target.hasTag("dead"))
-		result = true;
-	else if(getDistanceBetween(target.getPosition(), blob.getPosition()) > blob.get_f32(target_searchrad_property))
-		result = true;
-	else
-		result = !isTargetVisible(blob, target) && XORRandom(30) == 0;
+	return getDistanceBetween(target.getPosition(), blob.getPosition()) > blob.get_f32(target_searchrad_property);
+}
 
-	if (result && blob.hasTag("is_stuck"))
-		blob.Untag("is_stuck");
-	return result;
+bool isTargetDead( CBlob@ target )
+{
+	return target.hasTag("dead");
 }
 
 void GoSomewhere( CBrain@ this, CBlob@ blob )
 {
-	// look for a target along the way :)
-	FindTarget(this, blob, blob.get_f32(target_searchrad_property));
+	Vec2f lastKnownPos = blob.get_Vec2f("last_search_pos");
+	//bool hasTarget = GoSomewhere(this, blob);
+
+	if (this.getTarget() !is null && lastKnownPos != Vec2f_zero)
+	{
+		print("doing dumb-ish");
+		int len = (blob.getPosition() - lastKnownPos).Length();
+
+		if (len > 0 && len < 20.0f)
+		{
+			blob.set_Vec2f("last_search_pos", Vec2f_zero);
+		}
+		
+		blob.set_Vec2f(destination_property, lastKnownPos);
+
+		// Mostly low level, with some high level when useful
+		this.SetPathTo(lastKnownPos, false);
+
+		// Tell the bot to use low level path suggestions
+		blob.set_bool("lowlevel_search", true);
+		blob.set_u32("lowlevel_research_time", getGameTime() + 1);
+	}
+	else if (FindTarget(this, blob, blob.get_f32(target_searchrad_property)))
+	{
+		print("doing smart");
+
+		this.SetPathTo(this.getTarget().getPosition(), false);
+
+		blob.set_bool("lowlevel_search", true);
+		blob.set_u32("lowlevel_research_time", getGameTime() + 1);
+
+		PathTo(blob, Vec2f(1,1));
+		return;
+	} 
+	else
+	{
+		print("doing dumb");
+		int len = (blob.getPosition() - blob.get_Vec2f(destination_property)).Length();
+
+		// Start a new rng path
+		if (len > 0 && len < 20.0f)
+		{
+			blob.set_u32("next_rng_search", 0);
+		}
+
+		// Stuck with no target more then 100 times..?
+		if (blob.get_u16("rng_count") > 50)
+		{
+			blob.server_Hit(blob, blob.getPosition(), Vec2f_zero, 1.0f, 0);
+			blob.set_u16("rng_count", 0);
+		}
+
+		if (blob.get_u32("next_rng_search") < getGameTime())
+		{
+			blob.set_u32("next_rng_search", getGameTime() + 60);
+			blob.add_u16("rng_count", 1);
+
+			Vec2f hitPos = blob.getPosition() + getRandomVelocity(0, 100, 360);
+
+			getMap().rayCastSolidNoBlobs(blob.getPosition(), hitPos, hitPos);
+			blob.set_Vec2f(destination_property, hitPos);
+		}
+	}
 
 	// get our destination
 	Vec2f destination = blob.get_Vec2f(destination_property);
 
-	if (!blob.exists(destination_property) || getDistanceBetween(destination, blob.getPosition()) < 128 || XORRandom(30) == 0 || destination == Vec2f_zero)
-	{
-		NewDestination(blob);
-		return;
-	}
-
-	// aim at the destination
-	blob.setAimPos( destination );
-
-	// go to our destination
 	PathTo( blob, destination );
-
+				
 	// scale walls and jump over small blocks
-	ScaleObstacles( blob, destination );
-
+	//ScaleObstacles( blob, destination );
+			
 	// destroy any attackable obstructions such as doors
 	DestroyAttackableObstructions( this, blob );
 }
@@ -141,38 +209,61 @@ void GoSomewhere( CBrain@ this, CBlob@ blob )
 void PathTo( CBlob@ blob, Vec2f destination )
 {
 	CBrain@ brain = blob.getBrain();
+	CBlob@ target = brain.getTarget();
 
 	if (blob.get_bool("lowlevel_search"))
 	{
-		// ENGINE BUG >:(((
 		bool was_zero = false;
 		destination = brain.getPathPosition();
 
+		// ENGINE BUG >:(((
 		if (destination == Vec2f_zero)
 		{
 			destination == brain.getNextPathPosition();
 			was_zero = true;
 		}
 
-		int len = (blob.getPosition() - destination).Length();
+		// Happens if we are extremely close
+		if (destination != blob.get_Vec2f(destination_property) && destination == blob.getPosition() && target !is null)
+		{
+			print("close");
+			destination = target.getPosition();
+		}
 
-		if (len > 0 && len < 20.0f)
+		int len = (blob.getPosition() - destination).Length();
+		//print(len + '');
+
+		blob.set_u8(delay_property, 1);
+
+		if (len > 0 && len < 10.0f ) // && (target is null || isTargetVisible(blob, target)))
 		{
 			if (brain.getNextPathPosition() == destination && !was_zero)
 			{
-				brain.EndPath();
+				print("end");
+				//brain.EndPath();
 				blob.set_bool("lowlevel_search", false);
+				onTick(brain);
+				return;
 			}
 		}
+
+
+		if (was_zero)
+			return;
 	}
-	
+
+	blob.setAimPos(destination);
 
 	Vec2f dir = destination - blob.getPosition();
 
+	print(destination + '');
+
 	blob.setKeyPressed(key_left, dir.x < -0.0f);
 	blob.setKeyPressed(key_right, dir.x > 0.0f);
-	blob.setKeyPressed(key_up, dir.y < -4.0f);
+	blob.setKeyPressed(key_up, dir.y < -0.0f);
 	blob.setKeyPressed(key_down, dir.y > 0.0f);
+
+	//print(destination + '');
 }
 
 void ScaleObstacles( CBlob@ blob, Vec2f destination )
@@ -226,6 +317,7 @@ void DestroyAttackableObstructions( CBrain@ this, CBlob@ blob )
 
 		if (isTarget(blob, obstruction))
 		{
+			print("changing target!");
 			this.SetTarget(obstruction);
 		}
 	}
