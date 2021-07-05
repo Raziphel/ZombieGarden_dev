@@ -29,11 +29,12 @@ CBlob@ GetClosestVisibleTarget( CBrain@ this, CBlob@ blob, f32 radius )
 					@best_candidate = candidate;
 					closest_dist = dist;
 					visible = is_visible;
-					break;
+					//break;
 				}
 			}
 		}
 	}
+
 	return best_candidate;
 }
 
@@ -48,34 +49,42 @@ CBlob@ GetBestTarget( CBrain@ this, CBlob@ blob, f32 radius )
 	CBlob@ best_candidate;
 	f32 highest_priority = 0.0f;
 	f32 closest_dist = 999999.9f;
-	bool visible = false;
+
 	for(int step = 0; step < nearBlobs.length; ++step)
 	{
 		CBlob@ candidate = nearBlobs[step];
-		if    (candidate is null) break;
+		if (candidate is null || candidate is blob) continue;
+
+		if (candidate.getBrain() !is null)
+		{
+			CBlob@ otherTarget = candidate.getBrain().getTarget();
+			if (otherTarget !is null && otherTarget.getPlayer() !is null)
+			{
+				this.SetTarget(otherTarget);
+				return otherTarget;
+			}
+		}
 
 	    f32 priority = getTargetPriority(blob, candidate);
 		if (priority >= highest_priority && !candidate.hasTag("dead"))
 		{
 			if (isTarget(blob, candidate))
 			{
-				bool seeThroughWalls = seeTargetThroughWalls(blob, candidate);
-				bool is_visible = isTargetVisible(blob, candidate);
-
 				f32 dist = getDistanceBetween(candidate.getPosition(), blob.getPosition());
-				if (dist < closest_dist && visible ? is_visible : (seeThroughWalls ? true : is_visible))
+				if (dist < closest_dist)
 				{
-					if(!is_visible && XORRandom(30) > 3)
-					    continue;
-
 					@best_candidate = candidate;
 					highest_priority = priority;
 					closest_dist = dist;
-					visible = is_visible;
-					break;
+
+					// High enough lets chase!
+					if (highest_priority > 0.55)
+						break;
+					//break;
 				}
 			}
 		}
 	}
+
 	return best_candidate;
 }

@@ -27,7 +27,7 @@ void onInit( CBrain@ this )
 	this.getCurrentScript().runFlags |= Script::tick_not_attached;
 
 	blob.set_Vec2f("destination_property", blob.getPosition());
-	blob.set_u32(VAR_SEARCH_TIME,           getGameTime());
+	blob.set_u32(VAR_SEARCH_TIME,          getGameTime());
 	blob.set_Vec2f(VAR_LAST_POS,           Vec2f_zero);
 	blob.set_u16(VAR_RNG_COUNT,            0);
 
@@ -89,7 +89,13 @@ void ChaseTarget(CBrain@ brain, CBlob@ blob, CBlob@ target)
 		}
 		else if (blob.get_u32(VAR_SEARCH_TIME) < getGameTime())
 		{	
-			PathFindToTarget(brain, blob, target);
+			if (XORRandom(101) < 31 && FindTarget(brain, blob, blob.get_f32(target_searchrad_property)))
+			{
+				PathFindToTarget(brain, blob, brain.getTarget());
+				FollowEnginePath(brain);
+			}
+			else
+				PathFindToTarget(brain, blob, target);
 		}
 
 		FollowEnginePath(brain);
@@ -127,6 +133,12 @@ void FollowEnginePath(CBrain@ brain)
 	CBlob@ blob = brain.getBlob();
 	CBlob@ target = brain.getTarget();
 
+	if (target !is null && isTargetVisible(blob, target))
+	{
+		WalkTowards(blob, target.getPosition());
+		return;
+	}
+
 	// Get the path we should be walking to
 	Vec2f direction = brain.getPathPosition();
 
@@ -148,25 +160,7 @@ void FollowEnginePath(CBrain@ brain)
 	
 	if (direction == brain.getNextPathPosition())
 	{
-		if (target is null)
-		{
-			brain.EndPath();
-			WalkAnywhereAndEverywhere(brain, blob);
-		}
-		else
-		{
-			if (isTargetVisible(blob, target))
-			{
-				WalkTowards(blob, target.getPosition());
-			}
-			else
-			{
-				WalkAnywhereAndEverywhere(brain, blob);
-				blob.set_u32(VAR_SEARCH_TIME, 0);
-			}
-		}
-
-		return;
+		direction = brain.getClosestNodeAtPosition(direction);
 	}
 
 	WalkTowards(blob, direction);
@@ -176,7 +170,6 @@ void WalkTowards(CBlob@ blob, Vec2f pos)
 {	
 	if (pos == Vec2f_zero)
 	{
-		print("suop");
 		PressOldKeys(blob);
 		return;
 	}
