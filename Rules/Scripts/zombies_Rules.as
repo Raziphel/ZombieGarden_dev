@@ -26,8 +26,8 @@ void Config(ZombiesCore@ this)
 	getRules().set_bool("no timer", true);
 	
 	bool grave_spawn = cfg.read_bool("grave_spawn",true);
-	s32 max_zombies = cfg.read_s32("max_zombies",100);
-	s32 max_pzombies = cfg.read_s32("max_pzombies",50);
+	s32 max_zombies = cfg.read_s32("max_zombies",90);
+	s32 max_pzombies = cfg.read_s32("max_pzombies",30);
 	s32 max_migrantbots = cfg.read_s32("max_migrantbots",2);
 	s32 max_wraiths = cfg.read_s32("max_wraiths",9);
 	s32 max_gregs = cfg.read_s32("max_gregs",6);
@@ -261,11 +261,22 @@ shared class ZombiesSpawns : RespawnSystem
 					}										
 				}
 			}
+
         }
-		
+
+		CBlob@[] zombie_ruins;
+		getBlobsByName("zombie_ruins", @zombie_ruins);
+		int n = XORRandom(zombie_ruins.length);
+		if(zombie_ruins[n] !is null) //check if we still have zombie_ruins and spawn us there		
+			{
+				ParticleZombieLightning(zombie_ruins[n].getPosition());
+				return Vec2f(zombie_ruins[n].getPosition()); 
+			}
+
 		CMap@ map = getMap();
 		f32 x = XORRandom(2) == 0 ? 32.0f : map.tilemapwidth * map.tilesize - 32.0f;
 		return Vec2f(x, map.getLandYAtX(s32(x/map.tilesize))*map.tilesize - 16.0f);	//in case undeadstatues/dorms are missing spawn us at the edge of the map
+
     }
 
     void RemovePlayerFromSpawn(CPlayer@ player)
@@ -433,12 +444,12 @@ shared class ZombiesCore : RulesCore
 
 		//on-screen message.
 		int dayNumber = ((getGameTime()-gamestart)/getTicksASecond()/day_cycle)+1;
-		rules.SetGlobalMessage("❧ Day: " + dayNumber + "\n❧ Alters: " + num_zombiePortals  + "\n❧ Zombies: " + (num_zombies+num_pzombies) + "/150");
+		rules.SetGlobalMessage("❧ Day: " + dayNumber + "\n❧ Alters: " + num_zombiePortals  + "\n❧ Zombies: " + (num_zombies+num_pzombies) + "/120");
 
 		//Difficulty settings
 		int timeElapsed = getGameTime()-gamestart;
-		float difficulty = dayNumber*0.25; //default 0.25% of the day.
-		float zombdiff = dayNumber; //default equal to the day.
+		float difficulty = dayNumber*0.5; //default 50% of the days.
+		float zombdiff = dayNumber*2; //default equal to the days x 2.
 
 
 		//we count teams
@@ -455,7 +466,7 @@ shared class ZombiesCore : RulesCore
 			}
 		} 
 		
-		//get the maximum number of undeads per game, by default 1/3 rounded down
+		//get the maximum number of undeads per game, by default 1/4 rounded down
 		int max_undead = (num_survivors_p/3);
 		rules.set_s32("max_undead", max_undead);
 
@@ -463,15 +474,14 @@ shared class ZombiesCore : RulesCore
 		if (zombdiff>100) //default zombdiff>50
 		{ 
 			zombdiff=100;
-			difficulty=25;
 		} 
 		
-		//Nah, let it slowly get insane.
-		/*we cap the difficulty each day
-		if (difficulty>zombdiff && dayNumber>1) 
+
+		//we cap the difficulty each day until a months up.
+		if (difficulty>zombdiff && dayNumber<31) 
 		{ 
 			difficulty=zombdiff; 
-		}*/	
+		}
 		
 		if (rules.isWarmup() && timeElapsed>getTicksASecond()*30) 
 		{ 
@@ -479,8 +489,8 @@ shared class ZombiesCore : RulesCore
 		}
 		
 		//the lower the spawnRate, the more zombies we get
-		rules.set_f32("difficulty",difficulty/6.0); //default 3.0
-		int spawnRate = 100-(dayNumber); //default 2.0
+		rules.set_f32("difficulty",difficulty); 
+		int spawnRate = 200-(dayNumber); //default 200
 		if (spawnRate<20) spawnRate=25;
 
 		//Automatic undead switching and update active mobs count
@@ -594,57 +604,57 @@ shared class ZombiesCore : RulesCore
 				
 				
 				//Regular zombie spawns, we make sure to not spawn more zombies if we're past the limit. On later days it may still spawn some past the limit once due to spawn rate
-				if ((dayNumber>=33 && num_zombies<max_zombies) || ((map.getDayTime()>0.8 || map.getDayTime()<0.1) && num_zombies<max_zombies))
+				if ((dayNumber>=31 && num_zombies<max_zombies) || ((map.getDayTime()>0.8 || map.getDayTime()<0.1) && num_zombies<max_zombies))
                 {
 					
-                    int r = XORRandom(zombdiff);
+                    int r = XORRandom(zombdiff+5);
 
-					if (r>=75 && num_gregs<max_gregs) //hardcap for blood gregs 
-                    server_CreateBlob( "bloodgreg", -1, sp);
+					if (r>=94 && num_gregs+num_wraiths<max_gregs+max_wraiths) //hardcap writhers 
+                    server_CreateBlob( "writher", -1, sp);
 
-                    else if (r>=65) 
+                    else if (r>=90) 
                     server_CreateBlob( "horror", -1, sp);
 
-                    else if (r>=60) 
+                    else if (r>=82) 
                     server_CreateBlob( "pbanshee", -1, sp);
 
-					else if (r>=35 && num_wraiths<max_wraiths) //hardcap for wraiths
+					else if (r>=75 && num_wraiths<max_wraiths) //hardcap for wraiths
                     server_CreateBlob( "wraith", -1, sp);
 					
-                    else if (r>=35 && num_gregs<max_gregs) //hardcap for gregs 
+                    else if (r>=69 && num_gregs<max_gregs) //hardcap for gregs 
                     server_CreateBlob( "greg", -1, sp);
 					
-					else if (r>=30 && num_immol<8) //hardcap for immolators
+					else if (r>=53 && num_immol<8) //hardcap for immolators
                     server_CreateBlob( "immolator", -1, sp);
 					
-					else if (r==25)
+					else if (r>=45)
                     server_CreateBlob( "gasbag", -1, sp); 
 
-					else if (r>=15)
+					else if (r>=30)
                     server_CreateBlob( "zombieknight", -1, sp);
 					
-					else if (r>=12)
+					else if (r>=26)
                     server_CreateBlob( "evilzombie", -1, sp);
 					
-					else if (r>=9)
+					else if (r>=22)
                     server_CreateBlob( "bloodzombie", -1, sp);
 					
-					else if (r>=7)
+					else if (r>=16)
                     server_CreateBlob( "plantzombie", -1, sp);
 					
-                    else if (r>=5)
+                    else if (r>=9)
                     server_CreateBlob( "zombie", -1, sp);
 					
-					else if (r<=3)
+					else if (r<=9)
 					server_CreateBlob( "skeleton", -1, sp);
 					
-					else if (r<=3)
+					else if (r==3)
 					server_CreateBlob( "zbison", -1, sp);
 					
-					else if (r<=3)
+					else if (r==2)
 					server_CreateBlob( "catto", -1, sp);
 					
-					else if (r<=1)
+					else if (r==1)
 					server_CreateBlob( "zchicken", -1, sp);
 					
 					
@@ -693,7 +703,7 @@ shared class ZombiesCore : RulesCore
 							getNet().server_SendMsg("3x Horrors\nDon't be scared."); 
 							server_CreateBlob("minibossmessage");
 						}
-						else if (boss <= 40)
+						else if (boss <= 50)
 						{
 							server_CreateBlob( "pbanshee", -1, sp);
 							server_CreateBlob( "pbanshee", -1, sp);
@@ -702,7 +712,7 @@ shared class ZombiesCore : RulesCore
 							getNet().server_SendMsg("3x Banshee\nIt's almost not even fair."); 
 							server_CreateBlob("minimessage");
 						}
-						else if (boss <= 50)
+						else if (boss <= 100)
 						{
 							server_CreateBlob( "writher", -1, sp);
 							server_CreateBlob( "writher", -1, sp);
