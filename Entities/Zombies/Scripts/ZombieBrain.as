@@ -75,11 +75,20 @@ void ChaseTarget(CBrain@ brain, CBlob@ blob, CBlob@ target)
 		if (isTargetTooFar(blob, target) || isTargetDead(target))
 		{
 			brain.SetTarget(null);
-			WalkTowards(blob, target.getPosition());
+
+			if (FindTarget(brain, blob, blob.get_f32(target_searchrad_property)))
+			{
+				PathFindToTarget(brain, blob, brain.getTarget());
+				FollowEnginePath(brain);
+			}
+			else
+			{
+				WalkAnywhereAndEverywhere(brain, blob);
+			}
 			return;
 		}
 		else if (blob.get_u32(VAR_SEARCH_TIME) < getGameTime())
-		{
+		{	
 			PathFindToTarget(brain, blob, target);
 		}
 
@@ -94,7 +103,6 @@ void ChaseTarget(CBrain@ brain, CBlob@ blob, CBlob@ target)
 
 		blob.set_Vec2f(VAR_LAST_POS, target.getPosition());
 	}
-
 }
 
 void PathFindToTarget(CBrain@ brain, CBlob@ blob, CBlob@ target)
@@ -142,7 +150,6 @@ void FollowEnginePath(CBrain@ brain)
 	{
 		if (target is null)
 		{
-			print("ending");
 			brain.EndPath();
 			WalkAnywhereAndEverywhere(brain, blob);
 		}
@@ -158,7 +165,7 @@ void FollowEnginePath(CBrain@ brain)
 				blob.set_u32(VAR_SEARCH_TIME, 0);
 			}
 		}
-		
+
 		return;
 	}
 
