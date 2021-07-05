@@ -39,7 +39,7 @@ void Config(ZombiesCore@ this)
 	getRules().set_s32("max_gregs", max_gregs);
 	
 	getRules().set_bool("grave_spawn", true);
-	getRules().set_bool("zombify", cfg.read_bool("zombify", true));
+	getRules().set_bool("zombify", cfg.read_bool("zombify", false));
 	getRules().set_s32("days_to_survive", cfg.read_s32("days_to_survive", 100));
 	getRules().set_s32("curse_day", cfg.read_s32("curse_day", 30));
 	
