@@ -448,8 +448,8 @@ shared class ZombiesCore : RulesCore
 
 		//Difficulty settings
 		int timeElapsed = getGameTime()-gamestart;
-		float difficulty = dayNumber*0.5; //default 50% of the days.
-		float zombdiff = dayNumber*2; //default equal to the days x 2.
+		float difficulty = dayNumber*0.5; //default 50% of the days
+		float zombdiff = dayNumber*1.5; //default equal to the days x 1.5
 
 
 		//we count teams
@@ -490,7 +490,7 @@ shared class ZombiesCore : RulesCore
 		
 		//the lower the spawnRate, the more zombies we get
 		rules.set_f32("difficulty",difficulty); 
-		int spawnRate = 200-(dayNumber); //default 200
+		int spawnRate = 200-(dayNumber*3); //default 200
 		if (spawnRate<20) spawnRate=25;
 
 		//Automatic undead switching and update active mobs count
