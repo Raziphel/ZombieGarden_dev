@@ -153,6 +153,17 @@ f32 onHit(CBlob@ this, Vec2f worldPoint, Vec2f velocity, f32 damage, CBlob@ hitt
 {
 	this.Tag("dmgmsg");
 	msgtimer = 150;
+
+	if (isClient() && damage != 0)
+	{
+		CParticle@ p = ParticleSpark(this.getPosition(), getRandomVelocity(0, 10, 360), SColor(255, 252, 152, 3));
+		if (p !is null)
+		{
+			p.gravity = Vec2f(0, 1);
+		}
+	}
+
+
 	return damage; //done, we've used all the damage
 }
 
