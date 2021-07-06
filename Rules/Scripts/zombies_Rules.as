@@ -509,6 +509,15 @@ shared class ZombiesCore : RulesCore
 			CMap@ map = getMap();
 			if (map !is null)
 			{
+				if (!rules.hasTag("night") && (map.getDayTime() > 0.8 || map.getDayTime() < 0.2))
+				{
+					rules.Tag("night");
+				} 
+				else
+				{
+					rules.Untag("night");
+				}
+
 				//stuff to automatically zombify players past certain day
 				
 				//check the day at which we get cursed
@@ -519,7 +528,7 @@ shared class ZombiesCore : RulesCore
 			
 				//check the day, that the number of undeads is lower than the maximum undeads allowed, and that it's night
 				//could also use dayNumber>=Maths::Floor(days_to_survive * 0.7) if so desired
-				if (dayNumber>=curse_day && num_undead<max_undead && (map.getDayTime()>0.8 || map.getDayTime()<0.2)) //we change at the end of the night
+				if (dayNumber>=curse_day && num_undead<max_undead && rules.hasTag("night")) //we change at the end of the night
 				{
 					u8 pCount = getPlayersCount(); //we get the max number of players
 							
