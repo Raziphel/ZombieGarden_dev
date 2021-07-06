@@ -5,7 +5,7 @@
 const u16 ATTACK_FREQUENCY = 45;
 const f32 ATTACK_DAMAGE = 2.0f;
 const f32 ATTACK_DISTANCE = 0.5f;
-const f32 DIG_RADIUS = 4.0f;
+const f32 DIG_RADIUS = 3.0f;
 const f32 DIG_DAMAGE = 2.0f;
 
 const int COINS_ON_DEATH = 200;
@@ -82,7 +82,7 @@ void onHitBlob(CBlob@ this, Vec2f worldPoint, Vec2f velocity, f32 damage, CBlob@
 			forcePowY = 1;
 
 		Vec2f forcePow = Vec2f (forcePowX, forcePowY);
-		Vec2f force = forcePow * 260.0 * damage * 5.0f * 0.5;
+		Vec2f force = forcePow * 260.0 * damage * 3.0f * 0.5;
 
 		if (force.x < 0)
 		{

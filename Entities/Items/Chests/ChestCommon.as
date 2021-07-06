@@ -17,11 +17,10 @@ void InitLoot( CBlob@ this )
       if you want to make item drop always set "item quantity" as "0"
     */
 
-	addLoot(this, "coins", 0, XORRandom(399) + 1); //chest will drop coins with quantity 1 - 30
-	addLoot(this, "lifeforce", 0, 1);
+	addLoot(this, "coins", 0, XORRandom(100) + 1); //chest will drop coins with quantity 1 - 30
 	
 	// scroll
-	int rs1 = XORRandom(5);
+	int rs1 = XORRandom(6);
 	
 	if (rs1==0)
 		addLoot(this, "carnage", 0, 1);
@@ -39,6 +38,8 @@ void InitLoot( CBlob@ this )
 		addLoot(this, "sreinforce", 0, 1);
 	else if (rs1==5)
 		addLoot(this, "midas", 0, 1);
+	else if (rs1==6)
+		addLoot(this, "lifeforce", 0, 1);
 
 
 	// soul
@@ -53,7 +54,7 @@ void InitLoot( CBlob@ this )
 	else if (rc1==3)
 		addLoot(this, "wizardstaff", 0, 1);
 	else if (rc1==4)
-		addLoot(this, "Crossbow", 0, 1);
+		addLoot(this, "crossbow", 0, 1);
 	else if (rc1==5)
 		addLoot(this, "assassinknife", 0, 1);
 
@@ -69,7 +70,7 @@ void InitLoot( CBlob@ this )
 	else if (rc2==3)
 		addLoot(this, "wizardstaff", 0, 1);
 	else if (rc2==4)
-		addLoot(this, "Crossbow", 0, 1);
+		addLoot(this, "crossbow", 0, 1);
 	else if (rc2==5)
 		addLoot(this, "assassinknife", 0, 1);
 		

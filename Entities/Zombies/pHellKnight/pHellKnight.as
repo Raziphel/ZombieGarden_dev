@@ -4,7 +4,7 @@
 
 const u16 ATTACK_FREQUENCY = 60;
 const f32 ATTACK_DAMAGE = 1.75f;
-const f32 ATTACK_DISTANCE = 1.0f;
+const f32 ATTACK_DISTANCE = 0.8f;
 
 const int COINS_ON_DEATH = 50;
 

@@ -235,7 +235,7 @@ void onTick( CBlob@ this )
 			Vec2f attackVel = direction * attack_distance;
 			const f32 distance = 30.0f; //20
         
-			const f32 attack_dam = 2.0f;
+			const f32 attack_dam = 1.0f;
 			bool hitsomething = false;
 			bool hitblob = false;
         				
