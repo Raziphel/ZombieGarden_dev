@@ -3,8 +3,8 @@
 #include "StandardRespawnCommand.as"
 #include "TeamColour.as"
 
-const string cube_texture_name = "stoneblock.png";
-const string rings_texture_name = "lightring.png";
+const string cube_texture_name = "stoneblock";
+const string rings_texture_name = "lightring";
 
 float[] cube_model;
 u16[] cube_v_i;
@@ -77,6 +77,15 @@ void onInit(CBlob@ this)
 	this.SetLight(true);
 	this.SetLightRadius(64.0f);
 
+	if (isClient())
+	{
+		if (!Texture::exists(cube_texture_name))
+		{
+			Texture::createFromFile(cube_texture_name, cube_texture_name);
+			Texture::createFromFile(rings_texture_name, rings_texture_name); // safe to assume this isnt created as well;
+		}
+	}
+
 	int cb_id = Render::addScript(Render::layer_objects, "RuinsTorchLogic.as", "RenderFunction", 0.0f);
 
 	this.set_u16("renderID", cb_id);
@@ -144,6 +153,17 @@ f32 onHit(CBlob@ this, Vec2f worldPoint, Vec2f velocity, f32 damage, CBlob@ hitt
 {
 	this.Tag("dmgmsg");
 	msgtimer = 150;
+
+	if (isClient() && damage != 0)
+	{
+		CParticle@ p = ParticleSpark(this.getPosition(), getRandomVelocity(0, 10, 360), SColor(255, 252, 152, 3));
+		if (p !is null)
+		{
+			p.gravity = Vec2f(0, 1);
+		}
+	}
+
+
 	return damage; //done, we've used all the damage
 }
 
@@ -196,7 +216,7 @@ void GetButtonsFor(CBlob@ this, CBlob@ caller)
 	{
 		CBitStream params;
 		params.write_u16(caller.getNetworkID());
-		caller.CreateGenericButton("$change_class$", Vec2f(0, 0), this, SpawnCmd::buildMenu, getTranslatedString("Swap Class"), params);
+		caller.CreateGenericButton("$change_class$", Vec2f(0, 0), this, buildSpawnMenu, getTranslatedString("Swap Class"));
 	}
 }
 

@@ -299,7 +299,7 @@ void GetButtonsFor( CBlob@ this, CBlob@ caller )
 	{
 		CBitStream params;
 		params.write_u16( caller.getNetworkID() );
-		CButton@ button = caller.CreateGenericButton( "$change_class$", Vec2f(26,8), this, SpawnCmd::buildMenu, "Change class", params);
+		CButton@ button = caller.CreateGenericButton( "$change_class$", Vec2f(26,8), this, buildSpawnMenu, "Change class");
 	}
 }
 

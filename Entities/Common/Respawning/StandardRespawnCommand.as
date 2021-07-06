@@ -29,6 +29,11 @@ bool canChangeClass(CBlob@ this, CBlob@ blob)
 
 }
 
+void buildSpawnMenu(CBlob@ this, CBlob@ caller)
+{
+	BuildRespawnMenuFor(this, caller);
+}
+
 // default classes
 void InitClasses(CBlob@ this)
 {
