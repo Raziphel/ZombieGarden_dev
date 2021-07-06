@@ -17,7 +17,7 @@ void onInit(CBlob@ this)
 	this.set_f32("dig damage", DIG_DAMAGE);		
 	this.set_string("attack sound", "ZombieBite");
 	this.set_u16("coins on death", COINS_ON_DEATH);
-	this.set_f32(target_searchrad_property, 512.0f);
+	this.set_f32(target_searchrad_property, 200.0f);
 
     this.getSprite().PlaySound("/ZombieSpawn");
 	this.getShape().SetRotationsAllowed(false);
