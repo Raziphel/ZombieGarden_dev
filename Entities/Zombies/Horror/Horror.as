@@ -1,4 +1,4 @@
-﻿// Aphelion (edited by Frikman) \\
+// Aphelion (edited by Frikman) \\
 
 #include "CreatureCommon.as";
 #include "Hitters.as";
@@ -58,6 +58,8 @@ void onTick(CBlob@ this)
 		this.Sync(chomp_tag, true);
 	}
 }
+
+
 
 f32 onHit( CBlob@ this, Vec2f worldPoint, Vec2f velocity, f32 damage, CBlob@ hitterBlob, u8 customData )
 {

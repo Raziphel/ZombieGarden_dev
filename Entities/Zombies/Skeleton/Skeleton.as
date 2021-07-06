@@ -10,14 +10,14 @@ const f32 DIG_DAMAGE = 2.0f;
 const int COINS_ON_DEATH = 5;
 
 void onInit(CBlob@ this)
-{
+{	
 	this.set_u8("attack frequency", ATTACK_FREQUENCY);
 	this.set_f32("attack damage", ATTACK_DAMAGE);
 	this.set_f32("dig radius", DIG_RADIUS);
 	this.set_f32("dig damage", DIG_DAMAGE);	
 	this.set_string("attack sound", "SkeletonAttack");
 	this.set_u16("coins on death", COINS_ON_DEATH);
-	this.set_f32(target_searchrad_property, 512.0f);
+	this.set_f32(target_searchrad_property, 140.0f);
 
     this.getSprite().PlayRandomSound("/SkeletonSpawn");
 	this.getShape().SetRotationsAllowed(false);
@@ -29,6 +29,7 @@ void onInit(CBlob@ this)
 	
 	this.getCurrentScript().runFlags |= Script::tick_not_attached;
 	this.getCurrentScript().removeIfTag = "dead";
+	this.Tag("search_through_walls");
 }
 
 void onTick(CBlob@ this)

@@ -490,7 +490,7 @@ shared class ZombiesCore : RulesCore
 		
 		//the lower the spawnRate, the more zombies we get
 		rules.set_f32("difficulty",difficulty); 
-		int spawnRate = 200-(dayNumber*3); //default 200
+		int spawnRate = 200-(dayNumber*5); //default 200
 		if (spawnRate<20) spawnRate=25;
 
 		//Automatic undead switching and update active mobs count
