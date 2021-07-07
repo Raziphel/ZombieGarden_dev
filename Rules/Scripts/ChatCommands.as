@@ -147,11 +147,11 @@ bool onServerProcessChat( CRules@ this, const string& in text_in, string& out te
     }
     else if (text_in == "!zombie" && canSpawn)
     {
-        server_CreateBlob( "zombie", -1, blob.getPosition() );
+        server_CreateBlob( "Zombie", -1, blob.getPosition() );
     }
     else if (text_in == "!skeleton" && canSpawn)
     {
-        server_CreateBlob( "skeleton", -1, blob.getPosition() );
+        server_CreateBlob( "Skeleton", -1, blob.getPosition() );
     }
     else if (text_in == "!bison" && canSpawn)
     {
