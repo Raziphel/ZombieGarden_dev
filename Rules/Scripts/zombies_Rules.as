@@ -519,15 +519,6 @@ shared class ZombiesCore : RulesCore
 			CMap@ map = getMap();
 			if (map !is null)
 			{
-				if (!rules.hasTag("night") && (map.getDayTime() > 0.8 || map.getDayTime() < 0.2))
-				{
-					rules.Tag("night");
-				} 
-				else
-				{
-					rules.Untag("night");
-				}
-
 				//stuff to automatically zombify players past certain day
 				
 				//check the day at which we get cursed
@@ -538,7 +529,7 @@ shared class ZombiesCore : RulesCore
 			
 				//check the day, that the number of undeads is lower than the maximum undeads allowed, and that it's night
 				//could also use dayNumber>=Maths::Floor(days_to_survive * 0.7) if so desired
-				if (dayNumber>=curse_day && num_undead<max_undead && rules.hasTag("night")) //we change at the end of the night
+				if (dayNumber>=curse_day && num_undead<max_undead && (map.getDayTime()>0.8 || map.getDayTime()<0.2)) //we change at the end of the night
 				{
 					u8 pCount = getPlayersCount(); //we get the max number of players
 							
@@ -557,6 +548,7 @@ shared class ZombiesCore : RulesCore
 	    //Spawning system
 		if (getGameTime() % (spawnRate) == 0) //zombies spawn more often as days pass by, up to 1 sec
         {
+			
 			CMap@ map = getMap();
 			if (map !is null)
 			{
@@ -612,7 +604,7 @@ shared class ZombiesCore : RulesCore
 				
 				
 				//Regular zombie spawns, we make sure to not spawn more zombies if we're past the limit. On later days it may still spawn some past the limit once due to spawn rate
-				if ((dayNumber>=33 && num_zombies<max_zombies) || ((rules.hasTag("night")) && num_zombies<max_zombies))
+				if ((dayNumber>=31 && num_zombies<max_zombies) || ((map.getDayTime()>0.8 || map.getDayTime()<0.1) && num_zombies<max_zombies))
                 {
 					
                     int r = XORRandom(zombdiff+5);
@@ -688,10 +680,7 @@ shared class ZombiesCore : RulesCore
 							server_CreateBlob( "writher", -1, sp);
 							server_CreateBlob( "writher", -1, sp);
 							server_CreateBlob( "writher", -1, sp);
-							server_CreateBlob( "writher", -1, sp);
-							server_CreateBlob( "writher", -1, sp);
-							server_CreateBlob( "writher", -1, sp);
-							getNet().server_SendMsg("8x Writher\nThe sound of explosions will be heard."); 
+							getNet().server_SendMsg("5x Writher\nThe sound of explosions will be heard."); 
 							server_CreateBlob("bossmessage");
 						}
 					}	
