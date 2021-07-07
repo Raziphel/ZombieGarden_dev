@@ -48,7 +48,7 @@ void onTick(CBrain@ this)
 	if (getRules().hasTag("night") && blob.get_u16(VAR_RNG_COUNT) > 50)
 	{
 		blob.server_Hit(blob, blob.getPosition(), Vec2f_zero, 1.0f, 0);
-		blob.set_u16(VAR_RNG_COUNT, 0);
+		blob.set_u32(VAR_RNG_COUNT, 0);
 	}
 
 	if (target !is null)

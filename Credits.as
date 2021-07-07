@@ -1,3 +1,11 @@
+
+#This verions of zombies is by: Raziphel & Vamist
+
+
+#The rest of the thanks are to all of its previous owners. 
+
+
+
 #Eanmig omg thank you for teaching me how to do a lot lof this!  Way back in the day.
 #Your slotmachines still here. c:
 
@@ -23,8 +31,4 @@
 #I hope that no one hates me for editing the mod to get back in to coding... 
 #Its been awhile and I just wanna edit stuff and see what I can do for my own enjoyment.
 
-###############################################
-# LET IT FOREVER BE KNOWN THAT
-# THE MAIN MAN MONKEY FEATS HELPED RAZI A WHOLE FUCKING LOT IN MAKING EVERYTHING!
-# MONKEY FEATS IS A GOD AND MUCH BETTER THAN RAZI IN EVERY WAY! cx
-##################################################
+# Huge thanks to  MONKEY FEATS for a lot of assets.

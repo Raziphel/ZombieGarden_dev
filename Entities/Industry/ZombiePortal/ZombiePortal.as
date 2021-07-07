@@ -39,7 +39,7 @@ void onInit( CBlob@ this )
 
 void onTick( CBlob@ this)
 {
-	int spawnRate = 190 + (190 * this.getHealth() / 44.0);
+	int spawnRate = 25 + (190 * this.getHealth() / 44.0);
 	
 	if (getGameTime() % spawnRate == 0 && this.get_bool("portalbreach"))
 	{
