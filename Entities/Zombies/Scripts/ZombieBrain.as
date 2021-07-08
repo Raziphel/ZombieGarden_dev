@@ -41,7 +41,7 @@ void onTick(CBrain@ this)
 
 	if (this.getState() == 4 && !blob.hasTag(VAR_OPT_OUT_STUCK))
 	{
-		blob.add_u16(VAR_RNG_SEARCH, 1);
+		blob.add_u32(VAR_RNG_SEARCH, 1);
 	}
 
 	// Damage if we're stuck or afk searching
