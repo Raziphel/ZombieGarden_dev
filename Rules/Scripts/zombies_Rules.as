@@ -490,7 +490,7 @@ shared class ZombiesCore : RulesCore
 		
 		//the lower the spawnRate, the more zombies we get
 		rules.set_f32("difficulty",difficulty); 
-		int spawnRate = 150-(dayNumber*3); //default 200
+		int spawnRate = 100-(dayNumber*3); //default 100
 		if (spawnRate<20) spawnRate=25;
 
 		//Automatic undead switching and update active mobs count
@@ -604,7 +604,7 @@ shared class ZombiesCore : RulesCore
 				
 				
 				//Regular zombie spawns, we make sure to not spawn more zombies if we're past the limit. On later days it may still spawn some past the limit once due to spawn rate
-				if ((dayNumber>=31 && num_zombies<max_zombies) || ((map.getDayTime()>0.8 || map.getDayTime()<0.1) && num_zombies<max_zombies))
+				if ((dayNumber>=31 && num_zombies<max_zombies) || ((map.getDayTime()>0.7 || map.getDayTime()<0.1) && num_zombies<max_zombies))
                 {
 					
                     int r = XORRandom(zombdiff+5);
