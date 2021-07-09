@@ -39,7 +39,7 @@ void onInit( CBlob@ this )
 
 void onTick( CBlob@ this)
 {
-	int spawnRate = 25 + (190 * this.getHealth() / 44.0);
+	int spawnRate = 60 + (190 * this.getHealth() / 44.0);
 	
 	if (getGameTime() % spawnRate == 0 && this.get_bool("portalbreach"))
 	{
@@ -71,8 +71,8 @@ void onTick( CBlob@ this)
 		
 			Vec2f sp = this.getPosition();
 			
-			int r = XORRandom(5);
-			int rr = XORRandom(5);
+			int r = XORRandom(6);
+			int rr = XORRandom(6);
 			
 			if (r==4 && rr==0) //double check
 			server_CreateBlob( "pbanshee", -1, sp);
@@ -85,6 +85,9 @@ void onTick( CBlob@ this)
 			
 			else if (r==1)
 			server_CreateBlob( "pankou", -1, sp);
+
+			else if (r==6)
+			server_CreateBlob( "zombie", -1, sp);
 			
 			else			
 			server_CreateBlob( "pcrawler", -1, sp);

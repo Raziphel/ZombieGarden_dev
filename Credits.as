@@ -9,8 +9,8 @@
 #Eanmig omg thank you for teaching me how to do a lot lof this!  Way back in the day.
 #Your slotmachines still here. c:
 
-#Also thanks to Vatist
-#Aphelion's Smart Zombies (AI, sprites)
+#thanks to Vamist (Zombie AI)
+#Aphelion's Smart Zombies (sprites)
 #Aphelion's Roleplay (sprites)
 #Skinney's BunnyFection (sprites, mutant class base)
 #Xeonfaux's Dark Zombies (old fire trap, fire and booster mechanism)
