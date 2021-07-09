@@ -46,7 +46,7 @@ void InitLoot( CBlob@ this )
 	int rc1 = XORRandom(6);
 	
 	if (rc1==0)
-		addLoot(this, "firerune", 0, 1);
+		addLoot(this, "lifeforce", 0, 1);
 	else if (rc1==1)
 		addLoot(this, "chickenhead", 0, 1);
 	else if (rc1==2)
@@ -54,7 +54,7 @@ void InitLoot( CBlob@ this )
 	else if (rc1==3)
 		addLoot(this, "wizardstaff", 0, 1);
 	else if (rc1==4)
-		addLoot(this, "crossbow", 0, 1);
+		addLoot(this, "crossbow_item", 0, 1);
 	else if (rc1==5)
 		addLoot(this, "assassinknife", 0, 1);
 
@@ -62,7 +62,7 @@ void InitLoot( CBlob@ this )
 	int rc2 = XORRandom(6);
 	
 	if (rc2==0)
-		addLoot(this, "firerune", 0, 1);
+		addLoot(this, "lifeforce", 0, 1);
 	else if (rc2==1)
 		addLoot(this, "chickenhead", 0, 1);
 	else if (rc2==2)
@@ -70,7 +70,7 @@ void InitLoot( CBlob@ this )
 	else if (rc2==3)
 		addLoot(this, "wizardstaff", 0, 1);
 	else if (rc2==4)
-		addLoot(this, "crossbow", 0, 1);
+		addLoot(this, "crossbow_item", 0, 1);
 	else if (rc2==5)
 		addLoot(this, "assassinknife", 0, 1);
 		
@@ -78,7 +78,7 @@ void InitLoot( CBlob@ this )
 	int rc3 = XORRandom(6);
 	
 	if (rc3==0)
-		addLoot(this, "firerune", 0, 1);
+		addLoot(this, "lifeforce", 0, 1);
 	else if (rc3==1)
 		addLoot(this, "chickenhead", 0, 1);
 	else if (rc3==2)
@@ -86,7 +86,7 @@ void InitLoot( CBlob@ this )
 	else if (rc3==3)
 		addLoot(this, "wizardstaff", 0, 1);
 	else if (rc3==4)
-		addLoot(this, "Crossbow", 0, 1);
+		addLoot(this, "crossbow_item", 0, 1);
 	else if (rc3==5)
 		addLoot(this, "assassinknife", 0, 1);
 
