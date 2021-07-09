@@ -2,8 +2,8 @@
 
 #include "KnockedCommon.as";
 
-u32 SCREECH_INTERVAL = 10 * 30;
-f32 SCREECH_DISTANCE = 256.0f;
+u32 SCREECH_INTERVAL = 30 * 30;
+f32 SCREECH_DISTANCE = 60.0f;
 
 void Screech( CBlob@ this )
 {

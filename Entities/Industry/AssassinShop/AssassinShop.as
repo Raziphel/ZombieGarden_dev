@@ -1,4 +1,4 @@
-﻿// ArcherShop.as
+// ArcherShop.as
 
 #include "Requirements.as";
 #include "ShopCommon.as";
@@ -40,7 +40,7 @@ void onInit(CBlob@ this)
 
 	// CLASS
 	this.set_Vec2f("class offset", Vec2f(-6, 0));
-	this.set_string("required class", "pyromancer");
+	this.set_string("required class", "assassin");
 
 	{
 		ShopItem@ s = addShopItem(this, "Arrows", "$mat_arrows$", "mat_arrows", descriptions[2], true);
