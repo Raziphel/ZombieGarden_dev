@@ -612,11 +612,11 @@ shared class ZombiesCore : RulesCore
 					if (r>=94 && num_gregs+num_wraiths<max_gregs+max_wraiths) //hardcap writhers 
                     server_CreateBlob( "writher", -1, sp);
 
-                    else if (r>=90) 
-                    server_CreateBlob( "horror", -1, sp);
-
                     else if (r>=82) 
                     server_CreateBlob( "pbanshee", -1, sp);
+
+					else if (r>=79)
+					server_CreateBlob( "zbison", -1, sp);
 
                     else if (r>=76) 
                     server_CreateBlob( "horror", -1, sp);
@@ -651,8 +651,6 @@ shared class ZombiesCore : RulesCore
 					else if (r>=5)
 					server_CreateBlob( "skeleton", -1, sp);
 					
-					else if (r>=3)
-					server_CreateBlob( "zbison", -1, sp);
 					
 					else if (r>=2)
 					server_CreateBlob( "catto", -1, sp);
@@ -663,36 +661,13 @@ shared class ZombiesCore : RulesCore
 					
 
 					// Boss spawn waves
-					if (transition == 1 && (dayNumber % 10) == 0) //Every 10 days!
+					if (transition == 1 && (dayNumber % 5) == 0) //Every 5 days!
 					{
 						transition=0;
 						rules.set_s32("transition",0);
 						Vec2f sp = zombiePlaces[XORRandom(zombiePlaces.length)];
 						int boss = XORRandom(zombdiff);
-						if (boss <= 30) 
-						{
-							server_CreateBlob( "abomination", -1, sp);
-							server_CreateBlob( "abomination", -1, sp);
-							
-							getNet().server_SendMsg("2x Abominations\n60 Hearts, 4 Dmg."); 
-							server_CreateBlob("bossmessage");
-						}
-						else if (boss <= 50)
-						{
-							server_CreateBlob( "writher", -1, sp);
-							server_CreateBlob( "writher", -1, sp);
-							getNet().server_SendMsg("2x Writhers\n20 Explosion Blast\nSpawns 3 Wraiths on death."); 
-							server_CreateBlob("bossmessage");
-						}
-					}	
-					
-					else if (transition == 1 && (dayNumber % 5) == 0) //Every 5 days!
-					{
-						transition=0;
-						rules.set_s32("transition",0);
-						Vec2f sp = zombiePlaces[XORRandom(zombiePlaces.length)];
-						int boss = XORRandom(zombdiff);
-						if (boss <= 15)
+						if (boss <= 10)
 						{
 							server_CreateBlob( "horror", -1, sp);
 							server_CreateBlob( "horror", -1, sp);
@@ -701,7 +676,7 @@ shared class ZombiesCore : RulesCore
 							getNet().server_SendMsg("3x Horrors\n16 Hearts, Spawns 3 Special Zombies."); 
 							server_CreateBlob("minibossmessage");
 						}
-						else if (boss <= 30)
+						else if (boss <= 20)
 						{
 							server_CreateBlob( "pbanshee", -1, sp);
 							server_CreateBlob( "pbanshee", -1, sp);
@@ -709,14 +684,14 @@ shared class ZombiesCore : RulesCore
 							getNet().server_SendMsg("2x Banshee\n10 Explosion Blast\n30 Block Stunning scream."); 
 							server_CreateBlob("minimessage");
 						}
-						else if (boss <= 40)
+						else if (boss <= 30)
 						{
 							server_CreateBlob( "writher", -1, sp);
 							
 							getNet().server_SendMsg("1x Writhers\n20 Explosion Blast\nSpawns 3 Wraiths on death."); 
 							server_CreateBlob("minimessage");
 						}
-						else if (boss <= 50)
+						else if (boss <= 40)
 						{
 							server_CreateBlob( "zbison", -1, sp);
 							server_CreateBlob( "zbison2", -1, sp);
@@ -729,7 +704,7 @@ shared class ZombiesCore : RulesCore
 							getNet().server_SendMsg("A Horde of Bison\n5 Health, 1 Dmg."); 
 							server_CreateBlob("minimessage");
 						}
-						else if (boss <= 70)
+						else if (boss <= 50)
 						{
 							server_CreateBlob( "immolator", -1, sp);
 							server_CreateBlob( "immolator", -1, sp);
@@ -740,6 +715,21 @@ shared class ZombiesCore : RulesCore
 							
 							getNet().server_SendMsg("6x immolator\n7 Explosion Blast."); 
 							server_CreateBlob("minimessage");
+						}
+						else if (boss <= 60) 
+						{
+							server_CreateBlob( "abomination", -1, sp);
+							server_CreateBlob( "abomination", -1, sp);
+							
+							getNet().server_SendMsg("2x Abominations\n60 Hearts, 4 Dmg."); 
+							server_CreateBlob("bossmessage");
+						}
+						else if (boss <= 120)
+						{
+							server_CreateBlob( "writher", -1, sp);
+							server_CreateBlob( "writher", -1, sp);
+							getNet().server_SendMsg("2x Writhers\n20 Explosion Blast\nSpawns 3 Wraiths on death."); 
+							server_CreateBlob("bossmessage");
 						}
 					}	
 					
