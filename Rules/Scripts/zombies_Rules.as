@@ -529,7 +529,7 @@ shared class ZombiesCore : RulesCore
 			
 				//check the day, that the number of undeads is lower than the maximum undeads allowed, and that it's night
 				//could also use dayNumber>=Maths::Floor(days_to_survive * 0.7) if so desired
-				if (dayNumber>=curse_day && num_undead<max_undead && (map.getDayTime()>0.8 || map.getDayTime()<0.2)) //we change at the end of the night
+				if (dayNumber>=curse_day && num_undead<max_undead && (map.getDayTime()>0.7 || map.getDayTime()<0.2)) //we change at the end of the night
 				{
 					u8 pCount = getPlayersCount(); //we get the max number of players
 							
@@ -604,7 +604,7 @@ shared class ZombiesCore : RulesCore
 				
 				
 				//Regular zombie spawns, we make sure to not spawn more zombies if we're past the limit. On later days it may still spawn some past the limit once due to spawn rate
-				if ((dayNumber>=31 && num_zombies<max_zombies) || ((map.getDayTime()>0.7 || map.getDayTime()<0.1) && num_zombies<max_zombies))
+				if ((dayNumber>=31 && num_zombies<max_zombies) || ((map.getDayTime()>0.7 || map.getDayTime()<0.2) && num_zombies<max_zombies))
                 {
 					
                     int r = XORRandom(zombdiff+5);
@@ -645,16 +645,16 @@ shared class ZombiesCore : RulesCore
                     else if (r>=9)
                     server_CreateBlob( "zombie", -1, sp);
 					
-					else if (r<=9)
+					else if (r>=5)
 					server_CreateBlob( "skeleton", -1, sp);
 					
-					else if (r==3)
+					else if (r>=3)
 					server_CreateBlob( "zbison", -1, sp);
 					
-					else if (r==2)
+					else if (r>=2)
 					server_CreateBlob( "catto", -1, sp);
 					
-					else if (r==1)
+					else if (r>=0)
 					server_CreateBlob( "zchicken", -1, sp);
 					
 					
@@ -669,18 +669,16 @@ shared class ZombiesCore : RulesCore
 						if (boss <= 30) 
 						{
 							server_CreateBlob( "abomination", -1, sp);
+							server_CreateBlob( "abomination", -1, sp);
 							
-							getNet().server_SendMsg("1x Abominations\nAka the bringer of pain."); 
+							getNet().server_SendMsg("2x Abominations\n60 Hearts, 4 Dmg."); 
 							server_CreateBlob("bossmessage");
 						}
 						else if (boss <= 50)
 						{
 							server_CreateBlob( "writher", -1, sp);
 							server_CreateBlob( "writher", -1, sp);
-							server_CreateBlob( "writher", -1, sp);
-							server_CreateBlob( "writher", -1, sp);
-							server_CreateBlob( "writher", -1, sp);
-							getNet().server_SendMsg("5x Writher\nThe sound of explosions will be heard."); 
+							getNet().server_SendMsg("2x Writhers\n20 Explosion Blast\nSpawns 3 Wraiths on death."); 
 							server_CreateBlob("bossmessage");
 						}
 					}	
@@ -691,39 +689,58 @@ shared class ZombiesCore : RulesCore
 						rules.set_s32("transition",0);
 						Vec2f sp = zombiePlaces[XORRandom(zombiePlaces.length)];
 						int boss = XORRandom(zombdiff);
-						if (boss <= 20)
+						if (boss <= 15)
 						{
 							server_CreateBlob( "horror", -1, sp);
 							server_CreateBlob( "horror", -1, sp);
 							server_CreateBlob( "horror", -1, sp);
 
-							getNet().server_SendMsg("3x Horrors\nDon't be scared."); 
+							getNet().server_SendMsg("3x Horrors\n16 Hearts, Spawns 3 Special Zombies."); 
 							server_CreateBlob("minibossmessage");
+						}
+						else if (boss <= 30)
+						{
+							server_CreateBlob( "pbanshee", -1, sp);
+							server_CreateBlob( "pbanshee", -1, sp);
+							
+							getNet().server_SendMsg("2x Banshee\n10 Explosion Blast\n30 Block Stunning scream."); 
+							server_CreateBlob("minimessage");
+						}
+						else if (boss <= 40)
+						{
+							server_CreateBlob( "writher", -1, sp);
+							
+							getNet().server_SendMsg("1x Writhers\n20 Explosion Blast\nSpawns 3 Wraiths on death."); 
+							server_CreateBlob("minimessage");
 						}
 						else if (boss <= 50)
 						{
-							server_CreateBlob( "pbanshee", -1, sp);
-							server_CreateBlob( "pbanshee", -1, sp);
-							server_CreateBlob( "pbanshee", -1, sp);
-							
-							getNet().server_SendMsg("3x Banshee\nIt's almost not even fair."); 
+							server_CreateBlob( "zbison", -1, sp);
+							server_CreateBlob( "zbison2", -1, sp);
+							server_CreateBlob( "zbison", -1, sp);
+							server_CreateBlob( "zbison2", -1, sp);
+							server_CreateBlob( "zbison", -1, sp);
+							server_CreateBlob( "zbison2", -1, sp);
+							server_CreateBlob( "zbison", -1, sp);
+							server_CreateBlob( "zbison2", -1, sp);
+							getNet().server_SendMsg("A Horde of Bison\n5 Health, 1 Dmg."); 
 							server_CreateBlob("minimessage");
 						}
-						else if (boss <= 100)
+						else if (boss <= 70)
 						{
-							server_CreateBlob( "writher", -1, sp);
-							server_CreateBlob( "writher", -1, sp);
-							server_CreateBlob( "writher", -1, sp);
+							server_CreateBlob( "immolator", -1, sp);
+							server_CreateBlob( "immolator", -1, sp);
+							server_CreateBlob( "immolator", -1, sp);
+							server_CreateBlob( "immolator", -1, sp);
+							server_CreateBlob( "immolator", -1, sp);
+							server_CreateBlob( "immolator", -1, sp);
 							
-							getNet().server_SendMsg("3x Writhers\n Kaboom."); 
+							getNet().server_SendMsg("6x immolator\n7 Explosion Blast."); 
 							server_CreateBlob("minimessage");
 						}
 					}	
-
-
 					
 				}
-				
 				else
 				{
 					if (transition == 0)
@@ -767,7 +784,6 @@ shared class ZombiesCore : RulesCore
 			if (killer !is null && killer.getTeamNum() != victim.getTeamNum())
 			{
 				addKill(killer.getTeamNum());
-				Zombify( victim );
 			}
 		}
 	}

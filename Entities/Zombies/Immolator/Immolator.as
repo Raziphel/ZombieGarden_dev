@@ -58,7 +58,7 @@ void onInit(CBlob@ this)
 
 	// explosiveness
 	this.set_f32("explosive_radius", 32.0f);
-	this.set_f32("explosive_damage", 6.0f);
+	this.set_f32("explosive_damage", 7.0f);
 	this.set_string("custom_explosion_sound", "Entities/Items/Explosives/KegExplosion.ogg");
 	this.set_f32("map_damage_radius", 20.0f);
 	this.set_f32("map_damage_ratio", 0.2f);

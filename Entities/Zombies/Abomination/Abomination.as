@@ -4,7 +4,7 @@
 
 const u16 ATTACK_FREQUENCY = 45;
 const f32 ATTACK_DAMAGE = 2.0f;
-const f32 ATTACK_DISTANCE = 0.5f;
+const f32 ATTACK_DISTANCE = 0.6f;
 const f32 DIG_RADIUS = 3.0f;
 const f32 DIG_DAMAGE = 2.0f;
 

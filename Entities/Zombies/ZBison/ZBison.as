@@ -5,7 +5,7 @@
 const u16 ATTACK_FREQUENCY = 60;
 const f32 ATTACK_DAMAGE = 1.0f;
 
-const int COINS_ON_DEATH = 20;
+const int COINS_ON_DEATH = 25;
 
 void onInit(CBlob@ this)
 {

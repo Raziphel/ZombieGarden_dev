@@ -20,7 +20,7 @@ void InitLoot( CBlob@ this )
 	addLoot(this, "coins", 0, XORRandom(100) + 1); //chest will drop coins with quantity 1 - 30
 	
 	// scroll
-	int rs1 = XORRandom(6);
+	int rs1 = XORRandom(7);
 	
 	if (rs1==0)
 		addLoot(this, "carnage", 0, 1);

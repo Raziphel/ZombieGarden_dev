@@ -15,6 +15,10 @@ void onInit(CBlob@ this)
 		infos.push_back(i);
 	}
 	{
+		TargetInfo i("ruinstorch", 0.9f, true);
+		infos.push_back(i);
+	}	
+	{
 		TargetInfo i("pet", 0.9f, true);
 		infos.push_back(i);
 	}	

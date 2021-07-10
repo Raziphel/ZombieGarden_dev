@@ -4,7 +4,7 @@
 
 const u16 ATTACK_FREQUENCY = 60;
 const f32 ATTACK_DAMAGE = 1.25f;
-const f32 ATTACK_DISTANCE = 0.8f;
+const f32 ATTACK_DISTANCE = 1.0f;
 const f32 DIG_RADIUS = 2.0f;
 const f32 DIG_DAMAGE = 3.5f;
 
@@ -35,7 +35,7 @@ void onInit(CBlob@ this)
 
 void onTick( CBlob@ this )
 {
-	if (getNet().isClient() && XORRandom(1024) == 0)
+	if (getNet().isClient() && XORRandom(2048) == 0)
 	{
 		this.getSprite().PlaySound("/ZombieKnightGrowl");
 	}

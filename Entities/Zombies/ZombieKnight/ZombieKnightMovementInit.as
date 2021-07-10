@@ -7,12 +7,12 @@ void onInit( CMovement@ this )
     CreatureMoveVars moveVars;
 
     //walking vars
-    moveVars.walkSpeed = 0.6f;
+    moveVars.walkSpeed = 0.7f;
     moveVars.walkFactor = 1.0f;
     moveVars.walkLadderSpeed.Set( 0.15f, 0.6f );
 
     //climbing vars
-    moveVars.climbingEnabled = false;
+    moveVars.climbingEnabled = true;
 
     //jumping vars
     moveVars.jumpMaxVel = 2.9f;
