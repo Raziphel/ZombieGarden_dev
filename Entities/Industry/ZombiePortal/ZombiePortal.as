@@ -71,8 +71,8 @@ void onTick( CBlob@ this)
 		
 			Vec2f sp = this.getPosition();
 			
-			int r = XORRandom(6);
-			int rr = XORRandom(6);
+			int r = XORRandom(7);
+			int rr = XORRandom(7);
 			
 			if (r==4 && rr==0) //double check
 			server_CreateBlob( "pbanshee", -1, sp);
@@ -88,6 +88,9 @@ void onTick( CBlob@ this)
 
 			else if (r==6)
 			server_CreateBlob( "zombie", -1, sp);
+
+			else if (r>=3)
+			server_CreateBlob( "pbrute", -1, sp);
 			
 			else			
 			server_CreateBlob( "pcrawler", -1, sp);

@@ -473,7 +473,7 @@ shared class ZombiesCore : RulesCore
 		//we tweak difficulty after we reach the top of zombdiff
 		if (zombdiff>100) //default zombdiff>50
 		{ 
-			zombdiff=100;
+			zombdiff=120;
 		} 
 		
 
@@ -618,10 +618,13 @@ shared class ZombiesCore : RulesCore
                     else if (r>=82) 
                     server_CreateBlob( "pbanshee", -1, sp);
 
-					else if (r>=75 && num_wraiths<max_wraiths) //hardcap for wraiths
+                    else if (r>=76) 
+                    server_CreateBlob( "horror", -1, sp);
+
+					else if (r>=66 && num_wraiths<max_wraiths) //hardcap for wraiths
                     server_CreateBlob( "wraith", -1, sp);
 					
-                    else if (r>=69 && num_gregs<max_gregs) //hardcap for gregs 
+                    else if (r>=60 && num_gregs<max_gregs) //hardcap for gregs 
                     server_CreateBlob( "greg", -1, sp);
 					
 					else if (r>=53 && num_immol<8) //hardcap for immolators
