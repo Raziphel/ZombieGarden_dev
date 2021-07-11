@@ -434,20 +434,20 @@ shared class ZombiesCore : RulesCore
 		rules.set_s32("num_survivors", survivors_blobs.length);
 		int num_survivors = rules.get_s32("num_survivors");
 		
-		/*
+		
 		CBlob@[] undead_blobs;
 		getBlobsByTag("undeadplayer", @undead_blobs );
 		rules.set_s32("num_undead", undead_blobs.length);
 		int num_undead = rules.get_s32("num_undead");
-		*/
+		
 		
 		int num_survivors_p = 0;
-		int num_undead = 0;
+		int num_undead_p = 0;
 
 		//on-screen message.
 		int days_offset = rules.get_s32("days_offset");
 		int dayNumber = days_offset + ((getGameTime()-gamestart)/getTicksASecond()/day_cycle)+1;
-		rules.SetGlobalMessage("❧ Day: " + dayNumber + "\n❧ Alters: " + num_zombiePortals  + "\n❧ Zombies: " + (num_zombies+num_pzombies) + "/125");
+		rules.SetGlobalMessage("❧ Day: " + dayNumber + "\n❧ Alters: " + num_zombiePortals  + "\n❧ Zombies: " + (num_zombies+num_pzombies) + "/125" + "\n❧ Survivors: " + num_survivors + "\n❧ Undead: " + num_undead);
 
 		//Difficulty settings
 		int timeElapsed = getGameTime()-gamestart;
@@ -525,6 +525,7 @@ shared class ZombiesCore : RulesCore
 				if (!rules.hasTag("night") && (map.getDayTime() > 0.8 || map.getDayTime() < 0.2))
 				{
 					rules.Tag("night");
+					transition = 1;
 				} 
 				else
 				{
@@ -674,8 +675,7 @@ shared class ZombiesCore : RulesCore
 					// Boss spawn waves
 					if (transition == 1 && (dayNumber % 5) == 0) //Every 5 days!
 					{
-						transition=0;
-						rules.set_s32("transition",0);
+						transition = 0;
 						Vec2f sp = zombiePlaces[XORRandom(zombiePlaces.length)];
 						int boss = XORRandom(zombdiff);
 						if (boss <= 10)
@@ -742,14 +742,6 @@ shared class ZombiesCore : RulesCore
 							getNet().server_SendMsg("2x Writhers\n20 Explosion Blast\nSpawns 3 Wraiths on death."); 
 							server_CreateBlob("bossmessage");
 						}
-					}	
-					
-				}
-				else
-				{
-					if ((transition == 0) && num_zombies<max_zombies)
-					{	
-						rules.set_s32("transition",1);
 					}
 				}
 			}
