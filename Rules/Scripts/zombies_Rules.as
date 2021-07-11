@@ -452,7 +452,7 @@ shared class ZombiesCore : RulesCore
 		//Difficulty settings
 		int timeElapsed = getGameTime()-gamestart;
 		float difficulty = dayNumber*0.5; //default 50% of the days
-		float zombdiff = dayNumber*1.5; //default equal to the days x 1.5
+		float zombdiff = dayNumber*1.25; //default equal to the days *1.25 
 
 
 		//we count teams
