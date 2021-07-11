@@ -230,6 +230,7 @@ void onSetTile(CMap@ map, u32 index, TileType tile_new, TileType tile_old)
 			case CMap::tile_steelbrick_d8:
 			case CMap::tile_steelbrick_d9:
 			case CMap::tile_steelbrick_d10:
+			case CMap::tile_steelbrick_d11:
 			{
 				OnGoldTileHit(map, index);
 				map.RemoveTileFlag( index, Tile::LIGHT_PASSES |Tile::LIGHT_SOURCE );
