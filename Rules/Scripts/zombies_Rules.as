@@ -522,6 +522,14 @@ shared class ZombiesCore : RulesCore
 			CMap@ map = getMap();
 			if (map !is null)
 			{
+				if (!rules.hasTag("night") && (map.getDayTime() > 0.8 || map.getDayTime() < 0.2))
+				{
+					rules.Tag("night");
+				} 
+				else
+				{
+					rules.Untag("night");
+				}
 				//stuff to automatically zombify players past certain day
 				
 				//check the day at which we get cursed
