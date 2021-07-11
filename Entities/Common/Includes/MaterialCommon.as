@@ -6,6 +6,8 @@
 // the server-side. An example can
 // be found in Log.as
 
+#include "CustomBlocks.as";
+
 namespace Material
 {
 	const float MERGE_RADIUS = 20.f;
@@ -246,14 +248,6 @@ namespace Material
 		{
 			createFor(this, 'mat_stone', 4.f * damage);
 		}
-		else if (type >= 464 && type <= 476)
-		{	
-		createFor(this, 'mat_steel', 2.f * damage);
-		}    
-	    else if (type >= 480 && type <= 486)
-		{	
-		createFor(this, 'mat_steel', 3.f * damage);
-		}    
 		else if (map.isTileCastle(type))
 		{
 			createFor(this, 'mat_stone', damage);
@@ -262,9 +256,53 @@ namespace Material
 		{
 			createFor(this, 'mat_wood', damage);
 		}
-		else if (map.isTileGold(type) or type >= 448 && type <= 456)
+		else if (map.isTileGold(type))
 		{
 			createFor(this, 'mat_gold', 3.f * damage);
+		}
+		else
+		{
+			switch (type)
+			{
+				case CMap::tile_goldenbrick:
+				case CMap::tile_goldenbrick_d0:
+				case CMap::tile_goldenbrick_d1:
+				case CMap::tile_goldenbrick_d2:
+				case CMap::tile_goldenbrick_d3:
+				case CMap::tile_goldenbrick_d4:
+				case CMap::tile_goldenbrick_d5:
+				case CMap::tile_goldenbrick_d6:
+				case CMap::tile_goldenbrick_d7:
+					createFor(this, 'mat_gold', 1 * damage);
+				break;
+				
+				case CMap::tile_steelbrick:
+				case CMap::tile_steelbrick_d0:
+				case CMap::tile_steelbrick_d1:
+				case CMap::tile_steelbrick_d2:
+				case CMap::tile_steelbrick_d3:
+				case CMap::tile_steelbrick_d4:
+				case CMap::tile_steelbrick_d5:
+				case CMap::tile_steelbrick_d6:
+				case CMap::tile_steelbrick_d7:
+				case CMap::tile_steelbrick_d8:
+				case CMap::tile_steelbrick_d9:
+				case CMap::tile_steelbrick_d10:
+				case CMap::tile_steelbrick_d11:
+					createFor(this, 'mat_steel', 1 * damage);
+				break;
+				
+				
+				case CMap::tile_steelore:
+				case CMap::tile_steelore_d0:
+				case CMap::tile_steelore_d1:
+				case CMap::tile_steelore_d2:
+				case CMap::tile_steelore_d3:
+				case CMap::tile_steelore_d4:
+				case CMap::tile_steelore_d5:
+					createFor(this, 'mat_steel', 3 * damage);
+				break;
+			}
 		}
 	}
 }
