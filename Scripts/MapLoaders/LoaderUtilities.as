@@ -89,32 +89,47 @@ TileType server_onTileHit(CMap@ map, f32 damage, u32 index, TileType oldTileType
 			case CMap::tile_steelore_d5: { OnSteelTileDestroyed(map, index); return CMap::tile_empty;}		
 
 			//BLOOD DIRT
-			case CMap::tile_littlebloodground:    { return CMap::tile_littlebloodground_d1;}		
+			case CMap::tile_littlebloodground:
 			case CMap::tile_littlebloodground_d0:
 			case CMap::tile_littlebloodground_d1:
 			case CMap::tile_littlebloodground_d2: { return oldTileType + 1; }		
 			case CMap::tile_littlebloodground_d3: { return CMap::tile_empty; }	
 
-			case CMap::tile_mediumbloodground: 	  { return CMap::tile_mediumbloodground_d1;}		
+			case CMap::tile_mediumbloodground:
 			case CMap::tile_mediumbloodground_d0:
 			case CMap::tile_mediumbloodground_d1:
 			case CMap::tile_mediumbloodground_d2: { return oldTileType + 1; }		
 			case CMap::tile_mediumbloodground_d3: { return CMap::tile_empty; }
 
-			case CMap::tile_heapsbloodground: 	 { return CMap::tile_heapsbloodground_d1;}		
+			case CMap::tile_heapsbloodground:
 			case CMap::tile_heapsbloodground_d0:
 			case CMap::tile_heapsbloodground_d1:
 			case CMap::tile_heapsbloodground_d2: { return oldTileType + 1; }		
 			case CMap::tile_heapsbloodground_d3: { return CMap::tile_empty; }
 			
-			case CMap::tile_littlebloodgrass: { return CMap::tile_littlebloodgrass_d0;}
-			case CMap::tile_littlebloodgrass_d0: { return CMap::tile_littlebloodground_d1;}
+			case CMap::tile_littlebloodgrass:
+			case CMap::tile_littlebloodgrass_d0:
+			case CMap::tile_littlebloodgrass_d1: { return oldTileType + 1; }
+			case CMap::tile_littlebloodgrass_d2: { return CMap:: tile_empty; }
 
-			case CMap::tile_mediumbloodgrass: { return CMap::tile_mediumbloodgrass_d0;}
-			case CMap::tile_mediumbloodgrass_d0: { return CMap::tile_mediumbloodground_d1;}	
+			case CMap::tile_mediumbloodgrass:
+			case CMap::tile_mediumbloodgrass_d0:
+			case CMap::tile_mediumbloodgrass_d1: { return oldTileType + 1; }
+			case CMap::tile_mediumbloodgrass_d2: { return CMap:: tile_empty; }
 
-			case CMap::tile_heapsbloodgrass: { return CMap::tile_heapsbloodgrass_d0;}
-			case CMap::tile_heapsbloodgrass_d0: { return CMap::tile_heapsbloodground_d1;}
+			case CMap::tile_heapsbloodgrass:
+			case CMap::tile_heapsbloodgrass_d0:
+			case CMap::tile_heapsbloodgrass_d1: { return oldTileType + 1; }
+			case CMap::tile_heapsbloodgrass_d2: { return CMap:: tile_empty; }
+			
+			case CMap::tile_littlebloodgrassground: { return oldTileType + 1; }
+			case CMap::tile_littlebloodgrassground_d0: { return CMap::tile_ground_d1; }
+			
+			case CMap::tile_mediumbloodgrassground: { return oldTileType + 1; }
+			case CMap::tile_mediumbloodgrassground_d0: { return CMap::tile_ground_d1; }
+			
+			case CMap::tile_heapsbloodgrassground: { return CMap::tile_heapsbloodgrassground_d0; }
+			case CMap::tile_heapsbloodgrassground_d0: { return CMap::tile_ground_d1; }
 		}
 	}
 	return map.getTile(index).type;
@@ -230,7 +245,6 @@ void onSetTile(CMap@ map, u32 index, TileType tile_new, TileType tile_old)
 			case CMap::tile_steelbrick_d8:
 			case CMap::tile_steelbrick_d9:
 			case CMap::tile_steelbrick_d10:
-			case CMap::tile_steelbrick_d11:
 			{
 				OnGoldTileHit(map, index);
 				map.RemoveTileFlag( index, Tile::LIGHT_PASSES |Tile::LIGHT_SOURCE );
