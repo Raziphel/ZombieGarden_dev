@@ -53,28 +53,38 @@ void Open(CBlob@ this)
     Loot[]@ loot;
     this.get( "loot", @loot );
 
-    for (int i = 0 ; i < loot.length; i++)
+    bool hit = false;
+    if (hit == false)
     {
-        Loot @l = loot[i];
-        
-        const ::int rarernd = XORRandom(l.rarity) + 1;
-        if (getNet().isServer() && (rarernd == l.rarity || l.rarity == 0))
+        for (int i = 0 ; i < loot.length; i++)
         {
-            if (l.name == "coins")
+            Loot @l = loot[i];
+            
+            const ::int rarernd = XORRandom(l.rarity) + 1;
+            if (getNet().isServer() && (rarernd == l.rarity || l.rarity == 0))
             {
-                server_DropCoins(this.getPosition(), l.quantity);
-            }
-            else
-            {
-                CBlob@ item = server_CreateBlob( l.name, this.getTeamNum(), this.getPosition());
-                if (item !is null)
+                if (l.name == "coins")
                 {
-                    item.server_SetQuantity(l.quantity);
-                    item.setVelocity(Vec2f(XORRandom(8) + itemVelocity, XORRandom(8) + itemVelocity));
+                    server_DropCoins(this.getPosition(), l.quantity);
+                }
+                else
+                {
+                    CBlob@ item = server_CreateBlob( l.name, this.getTeamNum(), this.getPosition());
+                    if (item !is null)
+                    {
+                        item.server_SetQuantity(l.quantity);
+                        item.setVelocity(Vec2f(XORRandom(8) + itemVelocity, XORRandom(8) + itemVelocity));
+                        hit = true;
+                    }
                 }
             }
         }
     }
-    CSprite@ sprite = this.getSprite();
-    sprite.SetAnimation("open");
+    if (hit)
+    {
+        this.server_Die();
+        CSprite@ sprite = this.getSprite();
+        sprite.SetAnimation("open");
+    }
+
 }

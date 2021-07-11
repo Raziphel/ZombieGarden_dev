@@ -101,13 +101,6 @@ void onInit( CBlob@ this )
 		AddRequirement( s.requirements, "blob", "mat_gold", "Gold", 100 );
 		AddRequirement( s.requirements, "blob", "wizardstaff", "wizardstaff", 2 );
 	}
-	{
-		ShopItem@ s = addShopItem( this, "Chicken Builder Shop", "$minibuildershop$", "minibuildershop", "Taking being a tunnel rat to a new level." );
-		AddRequirement( s.requirements, "blob", "mat_wood", "Wood", 100 );
-		AddRequirement( s.requirements, "blob", "mat_stone", "Stone", 100 );
-		AddRequirement( s.requirements, "blob", "mat_gold", "Gold", 100 );
-		AddRequirement( s.requirements, "blob", "chickenhead", "chickenhead", 2 );
-	}
 
 
 }

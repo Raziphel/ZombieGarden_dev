@@ -41,7 +41,9 @@ void Config(ZombiesCore@ this)
 	getRules().set_bool("grave_spawn", true);
 	getRules().set_bool("zombify", cfg.read_bool("zombify", false));
 	getRules().set_s32("days_to_survive", cfg.read_s32("days_to_survive", 100));
-	getRules().set_s32("curse_day", cfg.read_s32("curse_day", 30));
+	getRules().set_s32("curse_day", cfg.read_s32("curse_day", 50));
+
+	getRules().set_s32("days_offset", 0);
 	
     //spawn after death time 
     this.spawnTime = (getTicksASecond() * cfg.read_s32("spawn_time", 30));
@@ -443,8 +445,9 @@ shared class ZombiesCore : RulesCore
 		int num_undead = 0;
 
 		//on-screen message.
-		int dayNumber = ((getGameTime()-gamestart)/getTicksASecond()/day_cycle)+1;
-		rules.SetGlobalMessage("❧ Day: " + dayNumber + "\n❧ Alters: " + num_zombiePortals  + "\n❧ Zombies: " + (num_zombies+num_pzombies) + "/120");
+		int days_offset = rules.get_s32("days_offset");
+		int dayNumber = days_offset + ((getGameTime()-gamestart)/getTicksASecond()/day_cycle)+1;
+		rules.SetGlobalMessage("❧ Day: " + dayNumber + "\n❧ Alters: " + num_zombiePortals  + "\n❧ Zombies: " + (num_zombies+num_pzombies) + "/125");
 
 		//Difficulty settings
 		int timeElapsed = getGameTime()-gamestart;
@@ -604,7 +607,7 @@ shared class ZombiesCore : RulesCore
 				
 				
 				//Regular zombie spawns, we make sure to not spawn more zombies if we're past the limit. On later days it may still spawn some past the limit once due to spawn rate
-				if ((dayNumber>=31 && num_zombies<max_zombies) || ((map.getDayTime()>0.7 || map.getDayTime()<0.2) && num_zombies<max_zombies))
+				if ((dayNumber>=33 && num_zombies<max_zombies) || ((rules.hasTag("night")) && num_zombies<max_zombies))
                 {
 					
                     int r = XORRandom(zombdiff+5);
@@ -701,7 +704,7 @@ shared class ZombiesCore : RulesCore
 							server_CreateBlob( "zbison2", -1, sp);
 							server_CreateBlob( "zbison", -1, sp);
 							server_CreateBlob( "zbison2", -1, sp);
-							getNet().server_SendMsg("A Horde of Bison\n5 Health, 1 Dmg."); 
+							getNet().server_SendMsg("A Horde of Bison\n10 Hearts, 1 Dmg."); 
 							server_CreateBlob("minimessage");
 						}
 						else if (boss <= 50)
@@ -736,7 +739,7 @@ shared class ZombiesCore : RulesCore
 				}
 				else
 				{
-					if (transition == 0)
+					if ((transition == 0) && num_zombies<max_zombies)
 					{	
 						rules.set_s32("transition",1);
 					}

@@ -20,8 +20,8 @@ void onInit( CBlob@ this )
 	this.Tag("projectile");
 
     this.Tag("exploding");
-    this.set_f32("explosive_radius", 8.0f);
-    this.set_f32("explosive_damage", 1.5f);
+    this.set_f32("explosive_radius", 15.0f);
+    this.set_f32("explosive_damage", 3.5f);
 	
 	//extra stuff to prevent sk
 	this.set_bool("explosive_teamkill", false);

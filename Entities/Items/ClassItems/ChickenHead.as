@@ -12,7 +12,7 @@ void onInit( CBlob@ this )
 	this.SetLightColor(SColor(255, 25, 94, 157));
 }
 
-/*
+
 void GetButtonsFor( CBlob@ this, CBlob@ caller )
 {
 	CBitStream params;
@@ -130,4 +130,3 @@ void onCommand( CBlob@ this, u8 cmd, CBitStream @params )
 		
 	}
 }
-*/
