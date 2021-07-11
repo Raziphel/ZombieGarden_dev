@@ -18,7 +18,6 @@ void InitLoot( CBlob@ this )
     */
 
     //addLoot(this, item name, item rarity, item quantity)
-	addLoot(this, "whitepage", 0, 1);
     addLoot(this, "coins", 0, XORRandom(39) + 1); //chest will drop coins with quantity 1 - 30
 	
 	int rs = XORRandom(13);
@@ -31,10 +30,10 @@ void InitLoot( CBlob@ this )
 		addLoot(this, "sfshark", 1, 1);
 	else if (rs==3)
 		addLoot(this, "selemental", 1, 1);
-	//else if (rs==4)
-	//	addLoot(this, "smeteor", 1, 1);
+	else if (rs==4)
+		addLoot(this, "2weeks", 1, 1);
 	else if (rs==5)
-		addLoot(this, "sreturn", 1, 1);
+		addLoot(this, "vodka", 1, 1);
 	else if (rs==6)
 		addLoot(this, "sreinforce", 1, 1);
 	else if (rs==7)
@@ -78,7 +77,7 @@ void InitLoot( CBlob@ this )
 	else if (rz==4)
 		addLoot(this, "zombieknight", 3, 1);
 	else if (rz==5)
-		addLoot(this, "phellknight", 3, 1);
+		addLoot(this, "lifeforce", 3, 1);
 }
 
 

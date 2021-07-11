@@ -8,9 +8,9 @@
 #include "CTFShopCommon.as";
 
 s32 cost_bomb = 25;
-s32 cost_waterbomb = 30;
-s32 cost_keg = 120;
-s32 cost_mine = 60;
+s32 cost_waterbomb = 50;
+s32 cost_keg = 200;
+s32 cost_mine = 75;
 
 void onInit(CBlob@ this)
 {

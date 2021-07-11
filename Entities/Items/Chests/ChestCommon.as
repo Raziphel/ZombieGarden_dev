@@ -28,24 +28,20 @@ void InitLoot( CBlob@ this )
 		addLoot(this, "drought", 0, 1);
 	else if (rs1==2)
 		addLoot(this, "sfshark", 0, 1);
-	else if (rc1==7)
-		addLoot(this, "2weeks", 0, 1);
 	else if (rs1==3)
-		addLoot(this, "selemental", 0, 1);
-	//else if (rs1==4)
-	//	addLoot(this, "smeteor", 0, 1);
-	//else if (rs1==4)
-	//	addLoot(this, "sreturn", 0, 1);
+		addLoot(this, "2weeks", 0, 1);
 	else if (rs1==4)
-		addLoot(this, "sreinforce", 0, 1);
+		addLoot(this, "selemental", 0, 1);
 	else if (rs1==5)
-		addLoot(this, "midas", 0, 1);
+		addLoot(this, "sreinforce", 0, 1);
 	else if (rs1==6)
+		addLoot(this, "midas", 0, 1);
+	else if (rs1==7)
 		addLoot(this, "lifeforce", 0, 1);
 
 
 	// soul
-	int rc1 = XORRandom(6);
+	int rc1 = XORRandom(7);
 	
 	if (rc1==0)
 		addLoot(this, "lifeforce", 0, 1);
@@ -59,9 +55,11 @@ void InitLoot( CBlob@ this )
 		addLoot(this, "crossbow_item", 0, 1);
 	else if (rc1==5)
 		addLoot(this, "assassinknife", 0, 1);
+	else if (rc1==6)
+		addLoot(this, "firesoul", 0, 1);
 
 	//second soul
-	int rc2 = XORRandom(6);
+	int rc2 = XORRandom(7);
 	
 	if (rc2==0)
 		addLoot(this, "lifeforce", 0, 1);
@@ -75,9 +73,11 @@ void InitLoot( CBlob@ this )
 		addLoot(this, "crossbow_item", 0, 1);
 	else if (rc2==5)
 		addLoot(this, "assassinknife", 0, 1);
+	else if (rc2==6)
+		addLoot(this, "firesoul", 0, 1);
 		
 	//third soul
-	int rc3 = XORRandom(6);
+	int rc3 = XORRandom(7);
 	
 	if (rc3==0)
 		addLoot(this, "lifeforce", 0, 1);
@@ -91,10 +91,12 @@ void InitLoot( CBlob@ this )
 		addLoot(this, "crossbow_item", 0, 1);
 	else if (rc3==5)
 		addLoot(this, "assassinknife", 0, 1);
+	else if (rc3==6)
+		addLoot(this, "firesoul", 0, 1);
 
 	
 	// item
-	int ri1 = XORRandom(15);
+	int ri1 = XORRandom(9);
 	
 	if (ri1==0)
 		addLoot(this, "blesseddrill", 0, 1);

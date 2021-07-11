@@ -54,6 +54,34 @@ void onInit( CBlob@ this )
 		AddRequirement( s.requirements, "blob", "mat_wood", "Wood", COST_WOOD_FACTORY );
 	}	
 	{
+		ShopItem@ s = addShopItem( this, "Dragoon Shop", "$dragoonshop$", "dragoonshop", "Become a Dragoon!" );
+		AddRequirement( s.requirements, "blob", "mat_wood", "Wood", 100 );
+		AddRequirement( s.requirements, "blob", "mat_stone", "Stone", 100 );
+		AddRequirement( s.requirements, "blob", "mat_steel", "Steel", 100 );
+		AddRequirement( s.requirements, "blob", "dragoonwings", "Dragoon Wings", 2 );
+	}
+	{
+		ShopItem@ s = addShopItem( this, "Pyro Shop", "$pyroshop$", "pyroshop", "Become a Pyromancer!" );
+		AddRequirement( s.requirements, "blob", "mat_wood", "Wood", 100 );
+		AddRequirement( s.requirements, "blob", "mat_stone", "Stone", 100 );
+		AddRequirement( s.requirements, "blob", "mat_gold", "Gold", 100 );
+		AddRequirement( s.requirements, "blob", "firesoul", "Fire Soul", 2 );
+	}
+	{
+		ShopItem@ s = addShopItem( this, "Crossbow Shop", "$crossbowshop$", "crossbowshop", "Become a Crossbow!" );
+		AddRequirement( s.requirements, "blob", "mat_wood", "Wood", 100 );
+		AddRequirement( s.requirements, "blob", "mat_stone", "Stone", 100 );
+		AddRequirement( s.requirements, "blob", "mat_steel", "Steel", 100 );
+		AddRequirement( s.requirements, "blob", "crossbow_item", "Crossbow", 2 );
+	}
+	{
+		ShopItem@ s = addShopItem( this, "Wizard Shop", "$wizardshop$", "wizardshop", "Become a Wizard! (Harry)" );
+		AddRequirement( s.requirements, "blob", "mat_wood", "Wood", 100 );
+		AddRequirement( s.requirements, "blob", "mat_stone", "Stone", 100 );
+		AddRequirement( s.requirements, "blob", "mat_gold", "Gold", 100 );
+		AddRequirement( s.requirements, "blob", "wizardstaff", "wizardstaff", 2 );
+	}
+	{
 		ShopItem@ s = addShopItem( this, "Transport Tunnel", "$tunnel$", "tunnel", "Use them for fast travel." );
 		AddRequirement( s.requirements, "blob", "mat_stone", "Stone", 100 );
 		AddRequirement( s.requirements, "blob", "mat_wood", "Wood", 50 );
@@ -73,34 +101,7 @@ void onInit( CBlob@ this )
 		AddRequirement( s.requirements, "blob", "mat_wood", "Wood", 100 );
 		AddRequirement( s.requirements, "blob", "mat_stone", "Stone", 50 );
 	}
-	{
-		ShopItem@ s = addShopItem( this, "Dragoon Shop", "$dragoonshop$", "dragoonshop", "Become a Dragoon!" );
-		AddRequirement( s.requirements, "blob", "mat_wood", "Wood", 100 );
-		AddRequirement( s.requirements, "blob", "mat_stone", "Stone", 100 );
-		AddRequirement( s.requirements, "blob", "mat_steel", "Steel", 100 );
-		AddRequirement( s.requirements, "blob", "dragoonwings", "Dragoon Wings", 2 );
-	}
-	{
-		ShopItem@ s = addShopItem( this, "Pyro Shop", "$pyroshop$", "pyroshop", "Become a Pyromancer!" );
-		AddRequirement( s.requirements, "blob", "mat_wood", "Wood", 100 );
-		AddRequirement( s.requirements, "blob", "mat_stone", "Stone", 100 );
-		AddRequirement( s.requirements, "blob", "mat_gold", "Gold", 100 );
-		AddRequirement( s.requirements, "blob", "firesoul", "Fire Soul", 2 );
-	}
-	{
-		ShopItem@ s = addShopItem( this, "Crossbow Shop", "$crossbowshop$", "crossbowshop", "Become a Crossbow!" );
-		AddRequirement( s.requirements, "blob", "mat_wood", "Wood", 100 );
-		AddRequirement( s.requirements, "blob", "mat_stone", "Stone", 100 );
-		AddRequirement( s.requirements, "blob", "mat_steel", "Steel", 100 );
-		AddRequirement( s.requirements, "blob", "Crossbow", "Crossbow", 2 );
-	}
-	{
-		ShopItem@ s = addShopItem( this, "Wizard Shop", "$wizardshop$", "wizardshop", "Become a Wizard! (Harry)" );
-		AddRequirement( s.requirements, "blob", "mat_wood", "Wood", 100 );
-		AddRequirement( s.requirements, "blob", "mat_stone", "Stone", 100 );
-		AddRequirement( s.requirements, "blob", "mat_gold", "Gold", 100 );
-		AddRequirement( s.requirements, "blob", "wizardstaff", "wizardstaff", 2 );
-	}
+
 
 
 }

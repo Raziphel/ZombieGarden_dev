@@ -17,7 +17,7 @@ void onInit( CBlob@ this )
 
 	// SHOP
 	this.set_Vec2f("shop offset", Vec2f(0, 0));
-	this.set_Vec2f("shop menu size", Vec2f(5,2));
+	this.set_Vec2f("shop menu size", Vec2f(5,4));
 	this.set_string("shop description", "Exchange materials and buy stuff");
 	this.set_u8("shop icon", 25);
 	
@@ -27,7 +27,7 @@ void onInit( CBlob@ this )
 		ShopItem@ s = addShopItem( this, "Blue Lantern", "$bluelantern$", "bluelantern", "A lantern with a bigger light radius but with a dim ilumination.", true );
 		AddRequirement( s.requirements, "coin", "", "Coins", 10 );
 	}
-		{	 
+	{	 
 		ShopItem@ s = addShopItem( this, "Wood", "$mat_wood$", "mat_wood", "Exchange 25 Gold for 250 Wood", true );
 		AddRequirement( s.requirements, "blob", "mat_gold", "Gold", 25 );
 	}
@@ -55,6 +55,18 @@ void onInit( CBlob@ this )
 	{
 		ShopItem@ s = addShopItem( this, "Heroic Soul", "$whitebook$", "randomBook", "Merge 3 Soul Shards into a random Heroic Soul.", true);
 		AddRequirement( s.requirements, "blob", "whitepage", "Soul Shards", 3 );
+	}
+	{
+		ShopItem@ s = addShopItem(this, "Beer", "$beer$", "beer", "Gotta unwind from killing zombies!", true);
+		AddRequirement(s.requirements, "coin", "", "Coins", 75);
+	}
+	{
+		ShopItem@ s = addShopItem(this, "Molotov", "$molotov$", "molotov", "Burn piles of the dead.  (Cheaper for pyros)", true);
+		AddRequirement(s.requirements, "coin", "", "Coins", 300);
+	}
+	{
+		ShopItem@ s = addShopItem(this, "Bobomax", "$bobomax$", "bobomax", "An unknown drug?.", true);
+		AddRequirement(s.requirements, "coin", "", "Coins", 1000);
 	}
 	/*
 	{
@@ -99,19 +111,21 @@ void onCommand( CBlob@ this, u8 cmd, CBitStream @params )
 			{
 				if (isServer)
 				{
-					int r = XORRandom(6);
+					int r = XORRandom(7);
 					if (r == 0)
-						server_CreateBlob("sburd", this.getTeamNum(), this.getPosition());
+						server_CreateBlob("blesseddrill", this.getTeamNum(), this.getPosition());
 					else if (r == 1)
-						server_CreateBlob("sdragoon", this.getTeamNum(), this.getPosition());
+						server_CreateBlob("dragoonwings", this.getTeamNum(), this.getPosition());
 					else if (r == 2)
-						server_CreateBlob("scrossbow", this.getTeamNum(), this.getPosition());
+						server_CreateBlob("crossbow_item", this.getTeamNum(), this.getPosition());
 					else if (r == 3)
-						server_CreateBlob("swizard", this.getTeamNum(), this.getPosition());
+						server_CreateBlob("firesoul", this.getTeamNum(), this.getPosition());
 					else if (r == 4)
-						server_CreateBlob("spyro", this.getTeamNum(), this.getPosition());	
+						server_CreateBlob("assassinknife", this.getTeamNum(), this.getPosition());	
 					else if (r == 5)
-						server_CreateBlob("sassassin", this.getTeamNum(), this.getPosition());						
+						server_CreateBlob("2weeks", this.getTeamNum(), this.getPosition());
+					else if (r == 6)
+						server_CreateBlob("carnage", this.getTeamNum(), this.getPosition());										
 				}			
 			}		
 		}

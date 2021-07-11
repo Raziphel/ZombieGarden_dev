@@ -6,6 +6,8 @@
 #include "MigrantCommon.as";
 #include "ClassSelectMenu.as";
 #include "StandardRespawnCommand.as";
+#include "Requirements.as"
+#include "CheckSpam.as";
 
 void onInit( CBlob@ this )
 {	 
@@ -23,7 +25,28 @@ void onInit( CBlob@ this )
 	this.set_u8("migrants max", 1 );		   		 // how many physical migrants it needs	
 
 	this.getSprite().SetZ(-50); //background
-	this.getShape().getConsts().mapCollisions = false;	
+	this.getShape().getConsts().mapCollisions = false;
+
+	// SHOP
+	this.set_Vec2f("shop offset", Vec2f(0, 0));
+	this.set_Vec2f("shop menu size", Vec2f(4,1));
+	this.set_string("shop description", "Exchange materials and buy stuff");
+	this.set_u8("shop icon", 25);
+
+
+	{
+		ShopItem@ s = addShopItem(this, "Beer", "$beer$", "beer", "Gotta unwind from killing zombies!", true);
+		AddRequirement(s.requirements, "coin", "", "Coins", 100);
+	}
+	{
+		ShopItem@ s = addShopItem( this, "Burger", "$food$", "food", "A nice burger!.", true );
+		AddRequirement( s.requirements, "coin", "", "Coins", 50 );
+	}
+	{
+		ShopItem@ s = addShopItem( this, "Egg", "$egg$", "egg", "Hope it hatches!.", true );
+		AddRequirement( s.requirements, "coin", "", "Coins", 25 );
+	}
+
 }	  
 /*
 void GetButtonsFor( CBlob@ this, CBlob@ caller )
