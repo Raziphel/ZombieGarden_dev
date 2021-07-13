@@ -19,7 +19,7 @@ void Screech( CBlob@ this )
 		if    (recipent !is null &&! recipent.hasTag("dead") && recipent.hasTag("survivorplayer"))
 		{
             // that was loud!
-			setKnocked( recipent, 30 + XORRandom(60) );
+			setKnocked( recipent, 15 + XORRandom(30) );
 		}
 	}
 }

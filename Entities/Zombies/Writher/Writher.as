@@ -60,7 +60,7 @@ void onInit(CBlob@ this)
 
 	// explosiveness
 	this.set_f32("explosive_radius", 120.0f);
-	this.set_f32("explosive_damage", 20.0f);
+	this.set_f32("explosive_damage", 21.0f);
 	this.set_string("custom_explosion_sound", "Entities/Items/Explosives/KegExplosion.ogg");
 	this.set_f32("map_damage_radius", 50.0f);
 	this.set_f32("map_damage_ratio", 0.4f);
@@ -110,7 +110,6 @@ void onTick(CBlob@ this)
 
 void onDie(CBlob@ this)
 {
-	server_CreateBlob("wraith", -1, this.getPosition());
 	server_CreateBlob("wraith", -1, this.getPosition());
 	server_CreateBlob("wraith", -1, this.getPosition());
 }

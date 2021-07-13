@@ -41,7 +41,7 @@ void Config(ZombiesCore@ this)
 	getRules().set_bool("grave_spawn", true);
 	getRules().set_bool("zombify", cfg.read_bool("zombify", false));
 	getRules().set_s32("days_to_survive", cfg.read_s32("days_to_survive", 100));
-	getRules().set_s32("curse_day", cfg.read_s32("curse_day", 50));
+	getRules().set_s32("curse_day", cfg.read_s32("curse_day", 100));
 
 	getRules().set_s32("days_offset", 0);
 	
@@ -439,20 +439,14 @@ shared class ZombiesCore : RulesCore
 		getBlobsByTag("undeadplayer", @undead_blobs );
 		rules.set_s32("num_undead", undead_blobs.length);
 		int num_undead = rules.get_s32("num_undead");
-		
-		
+
+		CBlob@[] ruinstorch_blobs;
+		getBlobsByTag("ruinstorch", @ruinstorch_blobs );
+		rules.set_s32("num_ruinstorch", ruinstorch_blobs.length);
+		int num_hands = rules.get_s32("num_ruinstorch");
+
 		int num_survivors_p = 0;
 		int num_undead_p = 0;
-
-		//on-screen message.
-		int days_offset = rules.get_s32("days_offset");
-		int dayNumber = days_offset + ((getGameTime()-gamestart)/getTicksASecond()/day_cycle)+1;
-		rules.SetGlobalMessage("❧ Day: " + dayNumber + "\n❧ Alters: " + num_zombiePortals  + "\n❧ Zombies: " + (num_zombies+num_pzombies) + "/125" + "\n❧ Survivors: " + num_survivors + "\n❧ Undead: " + num_undead);
-
-		//Difficulty settings
-		int timeElapsed = getGameTime()-gamestart;
-		float difficulty = dayNumber*0.5; //default 50% of the days
-		float zombdiff = dayNumber*1.25; //default equal to the days *1.25 
 
 
 		//we count teams
@@ -469,6 +463,21 @@ shared class ZombiesCore : RulesCore
 			}
 		} 
 		
+		//on-screen message.
+		int days_offset = rules.get_s32("days_offset");
+		int dayNumber = days_offset + ((getGameTime()-gamestart)/getTicksASecond()/day_cycle)+1;
+
+		//Difficulty settings
+		int timeElapsed = getGameTime()-gamestart;
+		float difficulty = dayNumber*0.1+(days_offset/7); //default 50% of the days
+		float zombdiff = dayNumber*1.25+(days_offset/7); //default equal to the days *1.25
+
+		int ignore_light = (75-(days_offset/3.5));
+		
+		rules.SetGlobalMessage("❧ Day: " + dayNumber + "\n❧ HardMode Day: " + ignore_light + "\n❧ Zombies: " + (num_zombies+num_pzombies) + "/125" + "\n❧ Hands Alive: " + num_hands + "\n❧ Zombie Alters: " + num_zombiePortals + "\n\n❧ Alive: " + num_survivors_p + "\n❧ Undead: " + num_undead + "\n❧ Difficuly: " + difficulty);
+
+
+		
 		//get the maximum number of undeads per game, by default 1/4 rounded down
 		int max_undead = (num_survivors_p/3);
 		rules.set_s32("max_undead", max_undead);
@@ -476,15 +485,9 @@ shared class ZombiesCore : RulesCore
 		//we tweak difficulty after we reach the top of zombdiff
 		if (zombdiff>100) //default zombdiff>50
 		{ 
-			zombdiff=120;
+			zombdiff=100;
 		} 
 		
-
-		//we cap the difficulty each day until a months up.
-		if (difficulty>zombdiff && dayNumber<31) 
-		{ 
-			difficulty=zombdiff; 
-		}
 		
 		if (rules.isWarmup() && timeElapsed>getTicksASecond()*30) 
 		{ 
@@ -493,8 +496,8 @@ shared class ZombiesCore : RulesCore
 		
 		//the lower the spawnRate, the more zombies we get
 		rules.set_f32("difficulty",difficulty); 
-		int spawnRate = 100-(dayNumber*3); //default 100
-		if (spawnRate<20) spawnRate=25;
+		int spawnRate = 100-zombdiff; //default 100
+		if (spawnRate<20) spawnRate=20;
 
 		//Automatic undead switching and update active mobs count
 		if (getGameTime() % 150 == 0) //5 secs
@@ -524,16 +527,16 @@ shared class ZombiesCore : RulesCore
 			{
 				if (map.getDayTime() > 0.8 || map.getDayTime() < 0.2)
 				{
-					if (rules.hasTag("night"))
+					if (!rules.hasTag("night"))
 				   	{
-				    	rules.tag("night");
+				    	rules.Tag("night");
 				    	transition = 1;   
 				    }
 				}
 				else
 				{
-				 rules.unTag("night");
-			}
+					rules.Untag("night");
+				}
 
 				//stuff to automatically zombify players past certain day
 				
@@ -620,7 +623,7 @@ shared class ZombiesCore : RulesCore
 				
 				
 				//Regular zombie spawns, we make sure to not spawn more zombies if we're past the limit. On later days it may still spawn some past the limit once due to spawn rate
-				if ((dayNumber>=33 && num_zombies<max_zombies) || ((rules.hasTag("night")) && num_zombies<max_zombies))
+				if ((dayNumber>ignore_light && num_zombies<max_zombies) || ((rules.hasTag("night")) && num_zombies<max_zombies))
                 {
 					
                     int r = XORRandom(zombdiff+5);
@@ -703,7 +706,7 @@ shared class ZombiesCore : RulesCore
 						{
 							server_CreateBlob( "writher", -1, sp);
 							
-							getNet().server_SendMsg("1x Writhers\n20 Explosion Blast\nSpawns 3 Wraiths on death."); 
+							getNet().server_SendMsg("1x Writhers\n20 Explosion Blast\nSpawns 2 Wraiths on death."); 
 							server_CreateBlob("minimessage");
 						}
 						else if (boss <= 40)
@@ -743,7 +746,7 @@ shared class ZombiesCore : RulesCore
 						{
 							server_CreateBlob( "writher", -1, sp);
 							server_CreateBlob( "writher", -1, sp);
-							getNet().server_SendMsg("2x Writhers\n20 Explosion Blast\nSpawns 3 Wraiths on death."); 
+							getNet().server_SendMsg("2x Writhers\n20 Explosion Blast\nSpawns 2 Wraiths on death."); 
 							server_CreateBlob("bossmessage");
 						}
 					}
@@ -808,6 +811,7 @@ shared class ZombiesCore : RulesCore
 		
 		int day_cycle = getRules().daycycle_speed*60;			
 		int dayNumber = ((getGameTime()-gamestart)/getTicksASecond()/day_cycle)+1;
+		int days_offset = rules.get_s32("days_offset");
 		
 		/*if(getRules().get_bool("everyones_dead")) //Old win-lose condition check
 		{
@@ -824,14 +828,14 @@ shared class ZombiesCore : RulesCore
 		{
 			rules.SetTeamWon(1);
 			rules.SetCurrentState(GAME_OVER);
-            rules.SetGlobalMessage( "Gameover!\nThe Pillars Have Been destroyed\nOn day "+ dayNumber +".");
+            rules.SetGlobalMessage( "Gameover!\nThe Pillars Have Been destroyed\nOn day "+ (dayNumber+days_offset) +".");
 		}
 		
 		else if((num_survivors-bases.length) <= 0) //Seems to be more eficient
 		{
 			rules.SetTeamWon(1);
 			rules.SetCurrentState(GAME_OVER);
-			rules.SetGlobalMessage("All humans were dead on day "+ dayNumber+".");
+			rules.SetGlobalMessage("All humans were dead on day "+  (dayNumber+days_offset) +".");
 		}
 		
 		/*else if(days_to_survive > 0 && dayNumber >= days_to_survive + 1)

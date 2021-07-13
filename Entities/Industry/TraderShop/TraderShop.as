@@ -111,21 +111,7 @@ void onCommand( CBlob@ this, u8 cmd, CBitStream @params )
 			{
 				if (isServer)
 				{
-					int r = XORRandom(7);
-					if (r == 0)
-						server_CreateBlob("blesseddrill", this.getTeamNum(), this.getPosition());
-					else if (r == 1)
-						server_CreateBlob("dragoonwings", this.getTeamNum(), this.getPosition());
-					else if (r == 2)
-						server_CreateBlob("crossbow_item", this.getTeamNum(), this.getPosition());
-					else if (r == 3)
-						server_CreateBlob("firesoul", this.getTeamNum(), this.getPosition());
-					else if (r == 4)
-						server_CreateBlob("assassinknife", this.getTeamNum(), this.getPosition());	
-					else if (r == 5)
-						server_CreateBlob("2weeks", this.getTeamNum(), this.getPosition());
-					else if (r == 6)
-						server_CreateBlob("carnage", this.getTeamNum(), this.getPosition());										
+					server_CreateBlob("chest", this.getTeamNum(), this.getPosition());
 				}			
 			}		
 		}

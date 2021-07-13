@@ -63,6 +63,7 @@ void onInit(CBlob@ this)
 	this.Tag("respawn");
 	this.Tag("building");
 	this.Tag("blocks sword");
+	this.Tag("ruinstorch");
 
 	this.getCurrentScript().removeIfTag = "dead";
 
