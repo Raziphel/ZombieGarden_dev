@@ -7,24 +7,24 @@
 #include "StandardRespawnCommand.as";
 
 void onInit( CBlob@ this )
-{	 
+{
 	InitRespawnCommand(this);
 	InitClasses(this);
 	this.Tag("change class drop inventory");
-	
+
 	this.SetLight(true);
 	this.SetLightRadius(128.0f );
-	
+
 	this.set_TileType("background tile", CMap::tile_wood_back);
 	this.Tag("builder always hit");
-	
+
 	this.getSprite().SetZ(-50); //background
-	this.getShape().getConsts().mapCollisions = false;	
-}	  
+	this.getShape().getConsts().mapCollisions = false;
+}
 
 void GetButtonsFor( CBlob@ this, CBlob@ caller )
 {
-	u8 kek = caller.getTeamNum();	
+	u8 kek = caller.getTeamNum();
 	if (kek == 0)
 	{
 		if (caller.getTeamNum() == this.getTeamNum())
@@ -39,7 +39,7 @@ void GetButtonsFor( CBlob@ this, CBlob@ caller )
 void onInit(CSprite@ this)
 {
 	CSpriteLayer@ revivalorb = this.addSpriteLayer( "revivalorb","AltarOrb.png", 16,16 );
-	
+
 	if(revivalorb !is null)
 	{
 		Animation@ anim = revivalorb.addAnimation("default", 0, false);
@@ -66,20 +66,20 @@ void onTick(CSprite@ this)
 
 void onCommand( CBlob@ this, u8 cmd, CBitStream @params )
 {
-	if (cmd == SpawnCmd::buildMenu || cmd == SpawnCmd::changeClass)
+	if (cmd == this.getCommandID("change class"))
 	{
 		onRespawnCommand(this, cmd, params);
-	}	
+	}
 }
 
 void onDie(CBlob@ this)
 {
 	if (!getNet().isServer())
 		return;
-	
+
 	//int r = XORRandom(2);
 	//if (r == 0)
-	
+
 	server_CreateBlob("lifeforce", -1, this.getPosition());
 }
 

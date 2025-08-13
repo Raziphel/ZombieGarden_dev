@@ -3,7 +3,7 @@
 #include "BuildBlock.as";
 #include "PlacementCommon.as";
 #include "CheckSpam.as";
-#include "GameplayEvents.as";
+#include "GameplayEventsCommon.as";
 
 const f32 allow_overlap = 2.0f;
 
@@ -146,7 +146,10 @@ CBlob@ server_BuildBlob(CBlob@ this, BuildBlock[]@ blocks, uint index)
 			this.getSprite().PlaySound("/Construct");
 			// take inv here instead of in onDetach
 			server_TakeRequirements(inv, b.reqs);
-			SendGameplayEvent(createBuiltBlobEvent(this.getPlayer(), b.name));
+			if (isServer())
+			{
+				GE_BuildBlob(this.getNetworkID(), b.name); // give player coins
+			}
 		}
 
 		if(getNet().isServer())

@@ -38,13 +38,13 @@ void GetButtonsFor(CBlob@ this, CBlob@ caller)
 		if(canChangeClass(this, caller) && caller.getName() != cfg)
 		{
 			CBitStream params;
-			write_classchange(params, caller.getNetworkID(), cfg);
+			this.SendCommand(this.getCommandID("change class"), params);
 
 			CButton@ button = caller.CreateGenericButton(
 			"$change_class$",                           // icon token
 			this.get_Vec2f("class offset"),             // button offset
 			this,                                       // button attachment
-			SpawnCmd::changeClass,                      // command id
+			this.getCommandID("change class"),                      // command id
 			"Swap Class",                               // description
 			params);                                    // bit stream
 

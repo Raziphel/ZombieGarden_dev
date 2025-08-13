@@ -65,7 +65,7 @@ void GetButtonsFor( CBlob@ this, CBlob@ caller )
 */
 void onCommand( CBlob@ this, u8 cmd, CBitStream @params )
 {
-	if (cmd == SpawnCmd::buildMenu || cmd == SpawnCmd::changeClass)
+	if (cmd == this.getCommandID("change class"))
 	{
 		onRespawnCommand(this, cmd, params);
 	}	
