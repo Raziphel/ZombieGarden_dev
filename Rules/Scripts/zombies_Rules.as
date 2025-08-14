@@ -12,7 +12,6 @@
 
 void Config(ZombiesCore@ this)
 {
-
     string configstr = "../Mods/" + sv_gamemode + "/Rules/zombies_vars.cfg";
 	if (getRules().exists("Zombiesconfig")) 
 	{

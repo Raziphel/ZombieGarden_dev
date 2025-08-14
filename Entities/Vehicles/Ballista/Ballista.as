@@ -1,4 +1,4 @@
-#include "VehicleCommon.as"
+#include "VehicleCommon2.as"
 #include "ClassSelectMenu.as";
 #include "StandardRespawnCommand.as";
 #include "Requirements_Tech.as";
@@ -259,7 +259,7 @@ void GetButtonsFor(CBlob@ this, CBlob@ caller)
 
 void onCommand(CBlob@ this, u8 cmd, CBitStream @params)
 {
-	if (cmd == SpawnCmd::buildMenu || cmd == SpawnCmd::changeClass)
+	if (cmd == this.getCommandID("class menu") || cmd == this.getCommandID("change class"))
 	{
 		onRespawnCommand(this, cmd, params);
 	}
