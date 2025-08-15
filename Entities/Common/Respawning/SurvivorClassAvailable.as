@@ -7,21 +7,23 @@ const string req_class = "required class";
 void onInit(CBlob@ this)
 {
 	this.Tag("change class drop inventory");
-	if(!this.exists("class offset"))
+	if (!this.exists("class offset"))
 		this.set_Vec2f("class offset", Vec2f_zero);
 
-	if(!this.exists("class button radius"))
+	if (!this.exists("class button radius"))
 	{
 		CShape@ shape = this.getShape();
-		if(shape !is null)
+		f32 ts = getMap().tilesize;
+		if (shape !is null)
 		{
-			this.set_u8("class button radius", Maths::Max(this.getRadius(), (shape.getWidth() + shape.getHeight()) / 2));
+			this.set_u8("class button radius", Maths::Max(this.getRadius(), Maths::Max(shape.getWidth(), shape.getHeight()) + ts));
 		}
 		else
 		{
-			this.set_u8("class button radius", 16);
+			this.set_u8("class button radius", ts * 2);
 		}
 	}
+	this.addCommandID("change class");
 }
 
 void GetButtonsFor(CBlob@ this, CBlob@ caller)
@@ -38,14 +40,14 @@ void GetButtonsFor(CBlob@ this, CBlob@ caller)
 		if(canChangeClass(this, caller) && caller.getName() != cfg)
 		{
 			CBitStream params;
-			this.SendCommand(this.getCommandID("change class"), params);
+			params.write_u8(0);
 
 			CButton@ button = caller.CreateGenericButton(
 			"$change_class$",                           // icon token
 			this.get_Vec2f("class offset"),             // button offset
 			this,                                       // button attachment
-			this.getCommandID("change class"),                      // command id
-			"Swap Class",                               // description
+			this.getCommandID("change class"),           // command id
+			getTranslatedString("Swap Class"),           // description
 			params);                                    // bit stream
 
 			button.enableRadius = this.get_u8("class button radius");

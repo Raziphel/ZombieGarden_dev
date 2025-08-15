@@ -1,23 +1,32 @@
-﻿// Generic building
+﻿// Genreic building
 
 #include "Requirements.as"
-#include "ShopCommon.as";
-#include "Descriptions.as";
-#include "WARCosts.as";
-#include "CheckSpam.as";
+#include "ShopCommon.as"
+#include "Descriptions.as"
+#include "Costs.as"
+#include "CheckSpam.as"
+#include "GenericButtonCommon.as"
+#include "TeamIconToken.as"
 
 //are builders the only ones that can finish construction?
 const bool builder_only = false;
 
-void onInit( CBlob@ this )
-{	 
+void onInit(CBlob@ this)
+{
+	//AddIconToken("$stonequarry$", "../Mods/Entities/Industry/CTFShops/Quarry/Quarry.png", Vec2f(40, 24), 4);
 	this.set_TileType("background tile", CMap::tile_wood_back);
 	//this.getSprite().getConsts().accurateLighting = true;
+
+	ShopMadeItem@ onMadeItem = @onShopMadeItem;
+	this.set("onShopMadeItem handle", @onMadeItem);
 
 	this.getSprite().SetZ(-50); //background
 	this.getShape().getConsts().mapCollisions = false;
 
-	// SHOP
+	this.Tag("has window");
+
+	//INIT COSTS
+	InitCosts();
 
 	this.set_Vec2f("shop offset", Vec2f(0, 0));
 	this.set_Vec2f("shop menu size", Vec2f(6,8));	
@@ -26,9 +35,10 @@ void onInit( CBlob@ this )
 	
 	this.Tag(SHOP_AUTOCLOSE);
 	
+	int team_num = this.getTeamNum();
 	
 	{
-		ShopItem@ s = addShopItem( this, "Dormitory", "$dorm$", "dorm", "Respawn, heal yourself or switch classes." );
+		ShopItem@ s = addShopItem( this, "Dormitory", "$dorm$", "dorm", "Heal yourself and care for migrants." );
 		AddRequirement( s.requirements, "blob", "mat_wood", "Wood", 50 );
 		AddRequirement( s.requirements, "blob", "mat_stone", "Stone", 25 );
 		//AddRequirement(s.requirements, "blob", "migrantbot", "Migrant", 1);
@@ -39,19 +49,19 @@ void onInit( CBlob@ this )
 	}	
 	{
 		ShopItem@ s = addShopItem( this, "Builder Shop", "$buildershop$", "buildershop", "Craft and buy important gadgets or switch to Builder here." );
-		AddRequirement( s.requirements, "blob", "mat_wood", "Wood", COST_WOOD_FACTORY );
+		AddRequirement( s.requirements, "blob", "mat_wood", "Wood", 50 );
 	}
 	{
 		ShopItem@ s = addShopItem( this, "Knight Shop", "$knightshop$", "knightshop", "Buy bombs or switch to Knight here." );
-		AddRequirement( s.requirements, "blob", "mat_wood", "Wood", COST_WOOD_FACTORY );
+		AddRequirement( s.requirements, "blob", "mat_wood", "Wood", 50 );
 	}	
 	{
 		ShopItem@ s = addShopItem( this, "Archer Shop", "$archershop$", "archershop", "Buy arrows or switch to Archer here." );
-		AddRequirement( s.requirements, "blob", "mat_wood", "Wood", COST_WOOD_FACTORY );
+		AddRequirement( s.requirements, "blob", "mat_wood", "Wood", 50 );
 	}
 		{
 		ShopItem@ s = addShopItem( this, "Priest's Shop", "$priestshop$", "priestshop", "Buy orbs or switch to Priest here." );
-		AddRequirement( s.requirements, "blob", "mat_wood", "Wood", COST_WOOD_FACTORY );
+		AddRequirement( s.requirements, "blob", "mat_wood", "Wood", 50 );
 	}	
 	{
 		ShopItem@ s = addShopItem( this, "Dragoon Shop", "$dragoonshop$", "dragoonshop", "Become a Dragoon!" );
@@ -101,41 +111,73 @@ void onInit( CBlob@ this )
 		AddRequirement( s.requirements, "blob", "mat_wood", "Wood", 100 );
 		AddRequirement( s.requirements, "blob", "mat_stone", "Stone", 50 );
 	}
-
-
-
 }
 
-void GetButtonsFor( CBlob@ this, CBlob@ caller )
+void GetButtonsFor(CBlob@ this, CBlob@ caller)
 {
-	if(this.isOverlapping(caller))
-		this.set_bool("shop available", !builder_only || caller.getName() == "builder" );
+	if (!canSeeButtons(this, caller)) return;
+
+	if (this.isOverlapping(caller))
+		this.set_bool("shop available", !builder_only || caller.getName() == "builder");
 	else
-		this.set_bool("shop available", false );
+		this.set_bool("shop available", false);
 }
-								   
-void onCommand( CBlob@ this, u8 cmd, CBitStream @params )
+
+void onShopMadeItem(CBitStream@ params)
 {
-	bool isServer = getNet().isServer();
-	if (cmd == this.getCommandID("shop made item"))
+	if (!isServer()) return;
+
+	u16 this_id, caller_id, item_id;
+	string name;
+
+	if (!params.saferead_u16(this_id) || !params.saferead_u16(caller_id) || !params.saferead_u16(item_id) || !params.saferead_string(name))
 	{
-		this.Tag("shop disabled"); //no double-builds
-		
-		CBlob@ caller = getBlobByNetworkID( params.read_netid() );
-		CBlob@ item = getBlobByNetworkID( params.read_netid() );
+		return;
+	}
+
+	CBlob@ this = getBlobByNetworkID(this_id);
+	if (this is null) return;
+
+	CBlob@ caller = getBlobByNetworkID(caller_id);
+	if (caller is null) return;
+
+	CBlob@ item = getBlobByNetworkID(item_id);
+	if (item is null) return;
+
+	this.Tag("shop disabled"); //no double-builds
+	this.Sync("shop disabled", true);
+
+	this.server_Die();
+
+	// open factory upgrade menu immediately
+	if (item.getName() == "factory")
+	{
+		CBitStream factoryParams;
+		factoryParams.write_netid(caller.getNetworkID());
+		item.SendCommand(item.getCommandID("upgrade factory menu"), factoryParams); // NOT SANITIZED; TTH
+	}
+}
+
+void onCommand(CBlob@ this, u8 cmd, CBitStream @params)
+{
+	if (cmd == this.getCommandID("shop made item client") && isClient())
+	{
+		u16 this_id, caller_id, item_id;
+		string name;
+
+		if (!params.saferead_u16(this_id) || !params.saferead_u16(caller_id) || !params.saferead_u16(item_id) || !params.saferead_string(name))
+		{
+			return;
+		}
+
+		CBlob@ caller = getBlobByNetworkID(caller_id);
+		CBlob@ item = getBlobByNetworkID(item_id);
+
 		if (item !is null && caller !is null)
 		{
-			this.getSprite().PlaySound("/Construct.ogg" ); 
+			this.getSprite().PlaySound("/Construct.ogg");
 			this.getSprite().getVars().gibbed = true;
-			this.server_Die();
-
-			// open factory upgrade menu immediately
-			if (item.getName() == "factory")
-			{
-				CBitStream factoryParams;
-				factoryParams.write_netid( caller.getNetworkID() );
-				item.SendCommand( item.getCommandID("upgrade factory menu"), factoryParams );
-			}
+			caller.ClearMenus();
 		}
 	}
 }

@@ -1,16 +1,12 @@
 ﻿// Knight Workshop
 
 #include "Requirements.as"
-#include "ShopCommon.as";
-#include "Descriptions.as";
-#include "WARCosts.as";
-#include "CheckSpam.as";
-#include "CTFShopCommon.as";
-
-s32 cost_bomb = 25;
-s32 cost_waterbomb = 50;
-s32 cost_keg = 200;
-s32 cost_mine = 75;
+#include "ShopCommon.as"
+#include "Descriptions.as"
+#include "Costs.as"
+#include "CheckSpam.as"
+#include "GenericButtonCommon.as"
+#include "TeamIconToken.as"
 
 void onInit(CBlob@ this)
 {
@@ -19,68 +15,60 @@ void onInit(CBlob@ this)
 	this.getSprite().SetZ(-50); //background
 	this.getShape().getConsts().mapCollisions = false;
 
-	//load config
-	if (getRules().exists("ctf_costs_config"))
-	{
-		cost_config_file = getRules().get_string("ctf_costs_config");
-	}
+	this.Tag("has window");
 
-	ConfigFile cfg = ConfigFile();
-	cfg.loadFile(cost_config_file);
-
-	cost_bomb = cfg.read_s32("cost_bomb_plain", cost_bomb);
-	cost_waterbomb = cfg.read_s32("cost_bomb_water", cost_waterbomb);
-	cost_mine = cfg.read_s32("cost_mine", cost_mine);
-	cost_keg = cfg.read_s32("cost_keg", cost_keg);
+	//INIT COSTS
+	InitCosts();
 
 	// SHOP
 	this.set_Vec2f("shop offset", Vec2f_zero);
 	this.set_Vec2f("shop menu size", Vec2f(4, 1));
-	this.set_string("shop description", "Buy Bombs");
+	this.set_string("shop description", "Buy");
 	this.set_u8("shop icon", 25);
 
 	// CLASS
 	this.set_Vec2f("class offset", Vec2f(-6, 0));
 	this.set_string("required class", "knight");
 
+	int team_num = this.getTeamNum();
+
 	{
 		ShopItem@ s = addShopItem(this, "Bomb", "$bomb$", "mat_bombs", descriptions[1], true);
-		AddRequirement(s.requirements, "coin", "", "Coins", cost_bomb);
+		AddRequirement(s.requirements, "coin", "", "Coins", 25);
 	}
 	{
 		ShopItem@ s = addShopItem(this, "Water Bomb", "$waterbomb$", "mat_waterbombs", descriptions[52], true);
-		AddRequirement(s.requirements, "coin", "", "Coins", cost_waterbomb);
+		AddRequirement(s.requirements, "coin", "", "Coins", 50);
 	}
 	{
 		ShopItem@ s = addShopItem(this, "Mine", "$mine$", "mine", descriptions[20], false);
-		AddRequirement(s.requirements, "coin", "", "Coins", cost_mine);
+		AddRequirement(s.requirements, "coin", "", "Coins", 75);
 	}
 	{
 		ShopItem@ s = addShopItem(this, "Keg", "$keg$", "keg", descriptions[4], false);
-		AddRequirement(s.requirements, "coin", "", "Coins", cost_keg);
+		AddRequirement(s.requirements, "coin", "", "Coins", 200);
 	}
 }
 
+
 void GetButtonsFor(CBlob@ this, CBlob@ caller)
 {
-	u8 kek = caller.getTeamNum();	
-	if (kek == 0)
+	if (!canSeeButtons(this, caller)) return;
+
+	if (caller.getConfig() == this.get_string("required class"))
 	{
-		if(caller.getConfig() == this.get_string("required class"))
-		{
-			this.set_Vec2f("shop offset", Vec2f_zero);
-		}
-		else
-		{
-			this.set_Vec2f("shop offset", Vec2f(6, 0));
-		}
-		this.set_bool("shop available", this.isOverlapping(caller));
+		this.set_Vec2f("shop offset", Vec2f_zero);
 	}
+	else
+	{
+		this.set_Vec2f("shop offset", Vec2f(6, 0));
+	}
+	this.set_bool("shop available", this.isOverlapping(caller));
 }
 
 void onCommand(CBlob@ this, u8 cmd, CBitStream @params)
 {
-	if (cmd == this.getCommandID("shop made item"))
+	if (cmd == this.getCommandID("shop made item client") && isClient())
 	{
 		this.getSprite().PlaySound("/ChaChing.ogg");
 	}
