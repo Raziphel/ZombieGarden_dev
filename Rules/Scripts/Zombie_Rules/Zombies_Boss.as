@@ -1,5 +1,4 @@
 // Zombies_Boss.as
-// Returns (possibly updated) transition value. Matches your original boss logic.
 int RunBossWave(const int dayNumber,
                 const float zombdiff,
                 Vec2f[]@ zombiePlaces,

@@ -7,7 +7,7 @@
 
 void Config(ZombiesCore@ this)
 {
-	string configstr = "../Mods/" + sv_gamemode + "/Rules/zombies_vars.cfg";
+	string configstr = "../Mods/" + sv_gamemode + "/Rules/Zombie_Rules/Zombies_Vars.cfg";
 	if (getRules().exists("Zombiesconfig"))
 	{
 		configstr = getRules().get_string("Zombiesconfig");

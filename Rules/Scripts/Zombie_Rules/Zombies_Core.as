@@ -155,6 +155,11 @@ class ZombiesCore : RulesCore
 					( dayNumber > ignore_light && _num_z < max_zombies )
 				 || ( rules.hasTag("night")   && _num_z < max_zombies );
 
+				if (zombdiff >= 120)
+				{
+					zombdiff = 120;
+				}
+
 				if (canSpawnNow)
 				{
 					const int r = XORRandom(zombdiff + 5);
@@ -284,6 +289,7 @@ void DrawZombiesHUDTopRight(CRules@ rules)
 
 	// counters
 	const int num_zombies      = rules.get_s32("num_zombies");
+	const int max_zombies      = rules.get_s32("max_zombies");
 	const int num_pzombies     = rules.get_s32("num_pzombies");
 	const int num_hands        = rules.get_s32("num_ruinstorch");
 	const int num_zombiePortals= rules.get_s32("num_zombiePortals");
@@ -300,7 +306,7 @@ void DrawZombiesHUDTopRight(CRules@ rules)
 	lines.insertLast("Survivors: " + num_survivors_p);
 	lines.insertLast("Undead: " + num_undead);
 	lines.insertLast("Difficulty: " + difficulty_i);
-	lines.insertLast("Zombies: " + (num_zombies + num_pzombies) + "/300");
+	lines.insertLast("Zombies: " + (num_zombies + num_pzombies) + "/" + max_zombies);
 	lines.insertLast("Hard Starts: " + hardmode_day + " (- " + days_offset + ")");
 	lines.insertLast("Curse Starts: " + curse_day);
 	lines.insertLast("Altars Remaining: " + num_zombiePortals);

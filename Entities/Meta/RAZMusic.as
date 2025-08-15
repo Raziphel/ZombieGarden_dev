@@ -44,9 +44,9 @@ void AddGameMusic(CBlob@ this, CMixer@ mixer)
 
 	this.set_bool("initialized game", true);
 	mixer.ResetMixer();
+	mixer.AddTrack("../Mods/RaziZombies/Sounds/Music/darkworld.ogg", background_jam);
 	mixer.AddTrack("../Mods/RaziZombies/Sounds/Music/caenua.ogg", background_jam);
 	mixer.AddTrack("../Mods/RaziZombies/Sounds/Music/balladofgoddess.ogg", background_jam);
-	mixer.AddTrack("../Mods/RaziZombies/Sounds/Music/darkworld.ogg", background_jam);
 	mixer.AddTrack("../Mods/RaziZombies/Sounds/Music/songofstorms.ogg", background_jam);
 	mixer.AddTrack("../Mods/RaziZombies/Sounds/Music/ocarinaoftime.ogg", background_jam);
 	mixer.AddTrack("../Mods/RaziZombies/Sounds/Music/fairyfountain.ogg", background_jam);

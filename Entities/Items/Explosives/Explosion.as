@@ -454,6 +454,14 @@ bool HitBlob(CBlob@ this, CBlob@ hit_blob, f32 radius, f32 damage, const u8 hitt
 	Vec2f wall_hit;
 	Vec2f hitvec = hit_blob_pos - pos;
 
+	// --- FRIENDLY-FIRE GUARD ---
+	// Skip same-team targets unless explicitly allowed.
+	if (!should_teamkill && hit_blob.getTeamNum() == this.getTeamNum())
+	{
+		return false;
+	}
+	// ---------------------------
+
 	if (bother_raycasting) // have we already checked the rays?
 	{
 		// no wall in front

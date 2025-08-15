@@ -42,7 +42,7 @@ void onInit(CBlob@ this)
 	this.set_f32("map_damage_radius", 72.0f);
 	this.set_f32("map_damage_ratio", 0.4f);
 	this.set_bool("map_damage_raycast", true);
-	this.set_bool("explosive_teamkill", true);
+	this.set_bool("explosive_teamkill", false);
 	//
 
 	this.getCurrentScript().runFlags |= Script::tick_not_attached;

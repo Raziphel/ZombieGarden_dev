@@ -50,7 +50,7 @@ void onInit(CBlob@ this)
 	// used by Explosion.as
 	this.set_f32("explosive_radius", 32.0f);
 	this.set_f32("explosive_damage", 4.0f);
-	this.set_bool("explosive_teamkill", true);
+	this.set_bool("explosive_teamkill", false);
 
 	this.set_f32("map_damage_radius", 40.0f);
 	this.set_f32("map_damage_ratio", 0.5f);
