@@ -11,7 +11,7 @@ void GetButtonsFor( CBlob@ this, CBlob@ caller )
 {
 	CBitStream params;
 	params.write_u16(caller.getNetworkID());
-	caller.CreateGenericButton( 11, Vec2f_zero, this, this.getCommandID("2weeks"), "Use this to skip 2 weeks in to the future.", params );
+	caller.CreateGenericButton( 11, Vec2f_zero, this, this.getCommandID("2weeks"), "Use this to skip 2 weeks in to the future (has consequences)", params );
 }
 
 void onCommand( CBlob@ this, u8 cmd, CBitStream @params )
