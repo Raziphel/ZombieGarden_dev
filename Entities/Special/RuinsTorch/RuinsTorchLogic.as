@@ -157,15 +157,24 @@ f32 onHit(CBlob@ this, Vec2f worldPoint, Vec2f velocity, f32 damage, CBlob@ hitt
 
 	if (isClient() && damage != 0)
 	{
-		CParticle@ p = ParticleSpark(this.getPosition(), getRandomVelocity(0, 10, 360), SColor(255, 252, 152, 3));
-		if (p !is null)
+		// Spawn a bunch of sparks
+		const int sparkCount = 5 + XORRandom(4); // 5–8 sparks
+		for (int i = 0; i < sparkCount; ++i)
 		{
-			p.gravity = Vec2f(0, 1);
+			Vec2f vel = getRandomVelocity(0, 5 + XORRandom(6), 360); // varied speed
+			CParticle@ p = ParticleSpark(worldPoint, vel, SColor(255, 252, 152, 3));
+			if (p !is null)
+			{
+				p.gravity = Vec2f(0, 0.5f); // gentle fall
+				p.timeout = 15 + XORRandom(10); // linger a bit
+			}
 		}
+
+		// Play a metallic clank sound
+		this.getSprite().PlaySound("MetalClang1.ogg", 1.0f, 1.0f);
 	}
 
-
-	return damage; //done, we've used all the damage
+	return damage; // pass damage through
 }
 
 u8 msgtimer;

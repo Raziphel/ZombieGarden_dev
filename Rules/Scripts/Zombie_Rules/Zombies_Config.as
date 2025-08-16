@@ -1,49 +1,47 @@
 // Zombies_Config.as
-#include "CTF_Structs.as"
-#include "RulesCore.as"
-#include "RespawnSystem.as"
+// Central place to configure zombie survival values without external .cfg
 
-// NOTE: ZombiesCore is defined in Zombies_Core.as (included before this file by Zombies_Main.as)
+#include "Zombies_Core.as"
 
 void Config(ZombiesCore@ this)
 {
-	string configstr = "../Mods/" + sv_gamemode + "/Rules/Zombie_Rules/Zombies_Vars.cfg";
-	if (getRules().exists("Zombiesconfig"))
-	{
-		configstr = getRules().get_string("Zombiesconfig");
-	}
-	ConfigFile cfg = ConfigFile(configstr);
+	// ============================
+	// Tunables
+	// ============================
 
-	// no timer
-	this.gameDuration = 0;
-	getRules().set_bool("no timer", true);
+	// How long a dead player waits before they can respawn (seconds)
+	this.spawnTime = 60;
 
-	// ---------- caps from cfg ----------
-	const s32 max_zombies      = cfg.read_s32("max_zombies",      125);
-	const s32 max_pzombies     = cfg.read_s32("max_pzombies",      25);
-	const s32 max_migrantbots  = cfg.read_s32("max_migrantbots",    5);
-	const s32 max_wraiths      = cfg.read_s32("max_wraiths",        9);
-	const s32 max_gregs        = cfg.read_s32("max_gregs",          6);
-	const s32 max_imol         = cfg.read_s32("max_imol",           8);  // NEW
+	// ----------------------------
+	// Mob limits (hard caps)
+	// New waves will not spawn if the active count for that mob is >= its cap
+	// ----------------------------
+	this.rules.set_s32("max_zombies",     250);   // standard zombies
+	this.rules.set_s32("max_pzombies",    25);    // portal-spawned zombies
+	this.rules.set_s32("max_migrantbots", 5);     // migrants
+	this.rules.set_s32("max_wraiths",     15);
+	this.rules.set_s32("max_gregs",       10);
+	this.rules.set_s32("max_imol",        10);
 
-	getRules().set_s32("max_zombies",      max_zombies);
-	getRules().set_s32("max_pzombies",     max_pzombies);
-	getRules().set_s32("max_migrantbots",  max_migrantbots);
-	getRules().set_s32("max_wraiths",      max_wraiths);
-	getRules().set_s32("max_gregs",        max_gregs);
-	getRules().set_s32("max_imol",         max_imol);               // NEW
+	// ----------------------------
+	// Win/Loss pacing
+	// ----------------------------
+	this.rules.set_s32("days_to_survive", 0);   // <= 0 means endless
+	this.rules.set_s32("curse_day",       75);  // night(s) from which survivors can auto-zombify
+	this.rules.set_s32("hardmode_day",    50);  // the day zombies can spawn during the day
 
-	// ---------- misc tunables ----------
-	getRules().set_bool("grave_spawn",     cfg.read_bool("grave_spawn", true));
-	getRules().set_bool("zombify",         cfg.read_bool("zombify",     false));
-	getRules().set_s32 ("days_to_survive", cfg.read_s32("days_to_survive", 100));
-	getRules().set_s32 ("curse_day",       cfg.read_s32("curse_day",       75));
-	getRules().set_s32 ("hardmode_day",       cfg.read_s32("hardmode_day",       50));
-	getRules().set_s32 ("days_offset",     0);
+	// ----------------------------
+	// Flavor toggles
+	// ----------------------------
+	this.rules.set_bool("grave_spawn", true);  // spawn graves with loot at markers
+	this.rules.set_bool("zombify",     true);  // allow players to zombify after death
 
-	// respawn time (seconds -> ticks)
-	this.spawnTime = (getTicksASecond() * cfg.read_s32("spawn_time", 10));
+	// ----------------------------
+	// Debug logging (optional)
+	// ----------------------------
+	print("Zombies_Config :: Loaded static config");
 }
+
 
 /**
  * Centralized, lightweight counter refresh.

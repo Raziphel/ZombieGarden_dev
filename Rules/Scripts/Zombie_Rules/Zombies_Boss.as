@@ -10,7 +10,7 @@ int RunBossWave(const int dayNumber,
 	{
 		transition = 0;
 		Vec2f sp = zombiePlaces[XORRandom(zombiePlaces.length)];
-		int boss = XORRandom(zombdiff);
+		int boss = XORRandom(90+zombdiff);
 
 		if (boss <= 10)
 		{
@@ -48,8 +48,8 @@ int RunBossWave(const int dayNumber,
 		}
 		else if (boss <= 50)
 		{
-			for (int i = 0; i < 6; i++) server_CreateBlob("immolator", -1, sp);
-			getNet().server_SendMsg("6x immolator\n7 Explosion Blast.");
+			for (int i = 0; i < 16; i++) server_CreateBlob("immolator", -1, sp);
+			getNet().server_SendMsg("16x immolator\n7 Explosion Blast.");
 			server_CreateBlob("minimessage");
 		}
 		else if (boss <= 60)
@@ -63,7 +63,8 @@ int RunBossWave(const int dayNumber,
 		{
 			server_CreateBlob("writher", -1, sp);
 			server_CreateBlob("writher", -1, sp);
-			getNet().server_SendMsg("2x Writhers\n20 Explosion Blast\nSpawns 2 Wraiths on death.");
+			server_CreateBlob("writher", -1, sp);
+			getNet().server_SendMsg("3x Writhers\n20 Explosion Blast\nSpawns 2 Wraiths on death.");
 			server_CreateBlob("bossmessage");
 		}
 	}

@@ -39,13 +39,28 @@ void onInit(CBlob@ this)
 	this.getCurrentScript().removeIfTag = "dead";
 }
 
-void onCollision( CBlob@ this, CBlob@ blob, bool solid, Vec2f normal, Vec2f point1 )
+void onCollision(CBlob@ this, CBlob@ blob, bool solid, Vec2f normal, Vec2f point1)
 {
-	if (blob !is null && blob is this.getBrain().getTarget())
+	if (blob is null) return;
+
+	// Ignore torches completely (and clear target if it was the torch)
+	if (blob.getName() == "ruinstorch")
+	{
+		CBrain@ brain = this.getBrain();
+		if (brain !is null && brain.getTarget() is blob)
+			brain.SetTarget(null);
+		return;
+	}
+
+	CBrain@ brain = this.getBrain();
+	if (brain is null) return;
+
+	if (blob is brain.getTarget())
 	{
 		this.server_AttachTo(blob, "PICKUP");
 	}
 }
+
 
 f32 onHit( CBlob@ this, Vec2f worldPoint, Vec2f velocity, f32 damage, CBlob@ hitterBlob, u8 customData )
 {
