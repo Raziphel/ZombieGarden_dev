@@ -17,10 +17,6 @@ void onInit(CBlob@ this)
 		infos.push_back(i);
 	}
 	{
-		TargetInfo i("enemy", 0.9f, true);
-		infos.push_back(i);
-	}
-	{
 		TargetInfo i("dead", 0.5f, true);
 		infos.push_back(i);
 	}	
@@ -53,7 +49,7 @@ void onInit(CBlob@ this)
 	
 	this.getCurrentScript().runFlags |= Script::tick_not_attached;
 	this.getCurrentScript().removeIfTag = "dead";
-	this.server_SetTimeToDie(30);	
+	this.server_SetTimeToDie(120);	
 }
 
 void onTick(CBlob@ this)

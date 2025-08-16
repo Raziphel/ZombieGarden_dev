@@ -5,7 +5,7 @@ namespace custom_colors
 	enum color
 	{
  		//color_goldenbrick = 0xfffea01e, //(255, 254, 160, 30)
- 		color_steelore  =   0xffd2dee4, //(255, 210, 222, 228)
+ 		color_ironore  =   0xffd2dee4, //(255, 210, 222, 228)
  		color_bloodground = 0xffb73333, //(255, 183, 51, 51)
  		color_bloodgrass  = 0xff647814, //(255, 100, 120, 20)
  	}
@@ -65,14 +65,14 @@ namespace CMap
 		tile_goldbackwall_d5 	= 422,
 		tile_goldbackwall_d6 	= 423,
 
-		tile_steelbackwall    	= 424,
-		tile_steelbackwall_d0 	= 425,
-		tile_steelbackwall_d1 	= 426,
-		tile_steelbackwall_d2 	= 427,
-		tile_steelbackwall_d3 	= 428,
-		tile_steelbackwall_d4 	= 429,
-		tile_steelbackwall_d5 	= 430,
-		tile_steelbackwall_d6 	= 431,
+		tile_ironbackwall    	= 424,
+		tile_ironbackwall_d0 	= 425,
+		tile_ironbackwall_d1 	= 426,
+		tile_ironbackwall_d2 	= 427,
+		tile_ironbackwall_d3 	= 428,
+		tile_ironbackwall_d4 	= 429,
+		tile_ironbackwall_d5 	= 430,
+		tile_ironbackwall_d6 	= 431,
 
 		// solids //
 		tile_littlebloodground 		= 432,
@@ -110,27 +110,27 @@ namespace CMap
 		tile_heapsbloodgrassground	    = 461,
 		tile_heapsbloodgrassground_d0   = 462,
 
-		tile_steelbrick    	= 464,
-		tile_steelbrick_d0 	= 465,
-		tile_steelbrick_d1 	= 466,
-		tile_steelbrick_d2 	= 467,
-		tile_steelbrick_d3 	= 468,
-		tile_steelbrick_d4 	= 469,
-		tile_steelbrick_d5 	= 470,
-		tile_steelbrick_d6 	= 471,
-		tile_steelbrick_d7 	= 472,
-		tile_steelbrick_d8 	= 473,
-		tile_steelbrick_d9 	= 474,
-		tile_steelbrick_d10 = 475,
-		tile_steelbrick_d11 = 476,
+		tile_ironbrick    	= 464,
+		tile_ironbrick_d0 	= 465,
+		tile_ironbrick_d1 	= 466,
+		tile_ironbrick_d2 	= 467,
+		tile_ironbrick_d3 	= 468,
+		tile_ironbrick_d4 	= 469,
+		tile_ironbrick_d5 	= 470,
+		tile_ironbrick_d6 	= 471,
+		tile_ironbrick_d7 	= 472,
+		tile_ironbrick_d8 	= 473,
+		tile_ironbrick_d9 	= 474,
+		tile_ironbrick_d10 = 475,
+		tile_ironbrick_d11 = 476,
 
-		tile_steelore    	= 480,
-		tile_steelore_d0 	= 481,
-		tile_steelore_d1 	= 482,
-		tile_steelore_d2 	= 483,
-		tile_steelore_d3 	= 484,
-		tile_steelore_d4 	= 485,
-		tile_steelore_d5 	= 486,
+		tile_ironore    	= 480,
+		tile_ironore_d0 	= 481,
+		tile_ironore_d1 	= 482,
+		tile_ironore_d2 	= 483,
+		tile_ironore_d3 	= 484,
+		tile_ironore_d4 	= 485,
+		tile_ironore_d5 	= 486,
 
 		tile_copperore    	= 496,
 		tile_copperore_d0 	= 497,
@@ -146,8 +146,8 @@ void HandleCustomTile(CMap@ map, int offset, SColor pixel)
 {
 	switch (pixel.color)
 	{
-		case custom_colors::color_steelore:		
-		map.SetTile(offset, CMap::tile_steelore +XORRandom(3) );
+		case custom_colors::color_ironore:		
+		map.SetTile(offset, CMap::tile_ironore +XORRandom(3) );
 		map.RemoveTileFlag( offset, Tile::LIGHT_SOURCE | Tile::LIGHT_PASSES);
 		map.AddTileFlag( offset, Tile::SOLID | Tile::COLLISION ); break;
 	

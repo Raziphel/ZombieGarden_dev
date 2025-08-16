@@ -67,7 +67,7 @@ void onInit(CBlob@ this)
 		ShopItem@ s = addShopItem( this, "Dragoon Shop", "$dragoonshop$", "dragoonshop", "Become a Dragoon!" );
 		AddRequirement( s.requirements, "blob", "mat_wood", "Wood", 100 );
 		AddRequirement( s.requirements, "blob", "mat_stone", "Stone", 100 );
-		AddRequirement( s.requirements, "blob", "mat_steel", "Steel", 100 );
+		AddRequirement( s.requirements, "blob", "mat_iron", "Iron", 100 );
 		AddRequirement( s.requirements, "blob", "dragoonwings", "Dragoon Wings", 2 );
 	}
 	{
@@ -81,7 +81,7 @@ void onInit(CBlob@ this)
 		ShopItem@ s = addShopItem( this, "Crossbow Shop", "$crossbowshop$", "crossbowshop", "Become a Crossbow!" );
 		AddRequirement( s.requirements, "blob", "mat_wood", "Wood", 100 );
 		AddRequirement( s.requirements, "blob", "mat_stone", "Stone", 100 );
-		AddRequirement( s.requirements, "blob", "mat_steel", "Steel", 100 );
+		AddRequirement( s.requirements, "blob", "mat_iron", "Iron", 100 );
 		AddRequirement( s.requirements, "blob", "crossbow_item", "Crossbow", 2 );
 	}
 	{

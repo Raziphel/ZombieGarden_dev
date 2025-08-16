@@ -21,7 +21,7 @@ void goldtilesparks(Vec2f at, f32 angle, f32 damage)
 	}
 }
 
-void steeltilesparks(Vec2f at, f32 angle, f32 damage)
+void irontilesparks(Vec2f at, f32 angle, f32 damage)
 {
 	int amount = damage * 5 + XORRandom(5);
 

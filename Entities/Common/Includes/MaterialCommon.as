@@ -276,31 +276,31 @@ namespace Material
 					createFor(this, 'mat_gold', 1 * damage);
 				break;
 				
-				case CMap::tile_steelbrick:
-				case CMap::tile_steelbrick_d0:
-				case CMap::tile_steelbrick_d1:
-				case CMap::tile_steelbrick_d2:
-				case CMap::tile_steelbrick_d3:
-				case CMap::tile_steelbrick_d4:
-				case CMap::tile_steelbrick_d5:
-				case CMap::tile_steelbrick_d6:
-				case CMap::tile_steelbrick_d7:
-				case CMap::tile_steelbrick_d8:
-				case CMap::tile_steelbrick_d9:
-				case CMap::tile_steelbrick_d10:
-				case CMap::tile_steelbrick_d11:
-					createFor(this, 'mat_steel', 1 * damage);
+				case CMap::tile_ironbrick:
+				case CMap::tile_ironbrick_d0:
+				case CMap::tile_ironbrick_d1:
+				case CMap::tile_ironbrick_d2:
+				case CMap::tile_ironbrick_d3:
+				case CMap::tile_ironbrick_d4:
+				case CMap::tile_ironbrick_d5:
+				case CMap::tile_ironbrick_d6:
+				case CMap::tile_ironbrick_d7:
+				case CMap::tile_ironbrick_d8:
+				case CMap::tile_ironbrick_d9:
+				case CMap::tile_ironbrick_d10:
+				case CMap::tile_ironbrick_d11:
+					createFor(this, 'mat_iron', 1 * damage);
 				break;
 				
 				
-				case CMap::tile_steelore:
-				case CMap::tile_steelore_d0:
-				case CMap::tile_steelore_d1:
-				case CMap::tile_steelore_d2:
-				case CMap::tile_steelore_d3:
-				case CMap::tile_steelore_d4:
-				case CMap::tile_steelore_d5:
-					createFor(this, 'mat_steel', 3 * damage);
+				case CMap::tile_ironore:
+				case CMap::tile_ironore_d0:
+				case CMap::tile_ironore_d1:
+				case CMap::tile_ironore_d2:
+				case CMap::tile_ironore_d3:
+				case CMap::tile_ironore_d4:
+				case CMap::tile_ironore_d5:
+					createFor(this, 'mat_iron', 3 * damage);
 				break;
 			}
 		}

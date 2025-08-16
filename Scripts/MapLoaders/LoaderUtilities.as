@@ -65,28 +65,28 @@ TileType server_onTileHit(CMap@ map, f32 damage, u32 index, TileType oldTileType
 			case CMap::tile_goldenbrick_d7: {OnGoldTileDestroyed(map, index); return CMap::tile_empty;}
 
 			//STEEL BRICK
-			case CMap::tile_steelbrick: {OnSteelTileHit(map, index); return CMap::tile_steelbrick_d0;}		
-			case CMap::tile_steelbrick_d0:
-			case CMap::tile_steelbrick_d1:
-			case CMap::tile_steelbrick_d2:
-			case CMap::tile_steelbrick_d3:
-			case CMap::tile_steelbrick_d4:
-			case CMap::tile_steelbrick_d5:
-			case CMap::tile_steelbrick_d6:
-			case CMap::tile_steelbrick_d7:
-			case CMap::tile_steelbrick_d8:
-			case CMap::tile_steelbrick_d9:
-			case CMap::tile_steelbrick_d10: {OnSteelTileHit(map, index); return oldTileType + 1;}		
-			case CMap::tile_steelbrick_d11: { OnSteelTileDestroyed(map, index); return CMap::tile_empty;}	
+			case CMap::tile_ironbrick: {OnIronTileHit(map, index); return CMap::tile_ironbrick_d0;}		
+			case CMap::tile_ironbrick_d0:
+			case CMap::tile_ironbrick_d1:
+			case CMap::tile_ironbrick_d2:
+			case CMap::tile_ironbrick_d3:
+			case CMap::tile_ironbrick_d4:
+			case CMap::tile_ironbrick_d5:
+			case CMap::tile_ironbrick_d6:
+			case CMap::tile_ironbrick_d7:
+			case CMap::tile_ironbrick_d8:
+			case CMap::tile_ironbrick_d9:
+			case CMap::tile_ironbrick_d10: {OnIronTileHit(map, index); return oldTileType + 1;}		
+			case CMap::tile_ironbrick_d11: { OnIronTileDestroyed(map, index); return CMap::tile_empty;}	
 
 			//STEEL BRICK
-			case CMap::tile_steelore: {OnSteelTileHit(map, index); return CMap::tile_steelore_d0;}	
-			case CMap::tile_steelore_d0:
-			case CMap::tile_steelore_d1:
-			case CMap::tile_steelore_d2:
-			case CMap::tile_steelore_d3:
-			case CMap::tile_steelore_d4:{OnSteelTileHit(map, index); return oldTileType + 1;}		
-			case CMap::tile_steelore_d5: { OnSteelTileDestroyed(map, index); return CMap::tile_empty;}		
+			case CMap::tile_ironore: {OnIronTileHit(map, index); return CMap::tile_ironore_d0;}	
+			case CMap::tile_ironore_d0:
+			case CMap::tile_ironore_d1:
+			case CMap::tile_ironore_d2:
+			case CMap::tile_ironore_d3:
+			case CMap::tile_ironore_d4:{OnIronTileHit(map, index); return oldTileType + 1;}		
+			case CMap::tile_ironore_d5: { OnIronTileDestroyed(map, index); return CMap::tile_empty;}		
 
 			//BLOOD DIRT
 			case CMap::tile_littlebloodground:
@@ -226,25 +226,25 @@ void onSetTile(CMap@ map, u32 index, TileType tile_new, TileType tile_old)
 				break;
 			}
 
-			// steel brick
-			case CMap::tile_steelbrick:
+			// iron brick
+			case CMap::tile_ironbrick:
 			{
 				map.RemoveTileFlag( index, Tile::LIGHT_PASSES |Tile::LIGHT_SOURCE );
 				map.AddTileFlag(index, Tile::SOLID | Tile::COLLISION);
 				if (getNet().isClient()) Sound::Play("build_wall2.ogg", map.getTileWorldPosition(index), 1.0f, 1.0f);
 				break;
 			}
-			case CMap::tile_steelbrick_d0:
-			case CMap::tile_steelbrick_d1:
-			case CMap::tile_steelbrick_d2:
-			case CMap::tile_steelbrick_d3:
-			case CMap::tile_steelbrick_d4:
-			case CMap::tile_steelbrick_d5:
-			case CMap::tile_steelbrick_d6:
-			case CMap::tile_steelbrick_d7:
-			case CMap::tile_steelbrick_d8:
-			case CMap::tile_steelbrick_d9:
-			case CMap::tile_steelbrick_d10:
+			case CMap::tile_ironbrick_d0:
+			case CMap::tile_ironbrick_d1:
+			case CMap::tile_ironbrick_d2:
+			case CMap::tile_ironbrick_d3:
+			case CMap::tile_ironbrick_d4:
+			case CMap::tile_ironbrick_d5:
+			case CMap::tile_ironbrick_d6:
+			case CMap::tile_ironbrick_d7:
+			case CMap::tile_ironbrick_d8:
+			case CMap::tile_ironbrick_d9:
+			case CMap::tile_ironbrick_d10:
 			{
 				OnGoldTileHit(map, index);
 				map.RemoveTileFlag( index, Tile::LIGHT_PASSES |Tile::LIGHT_SOURCE );
@@ -252,14 +252,14 @@ void onSetTile(CMap@ map, u32 index, TileType tile_new, TileType tile_old)
 				break;
 			}
 
-			case CMap::tile_steelore_d0:
-			case CMap::tile_steelore_d1:
-			case CMap::tile_steelore_d2:
-			case CMap::tile_steelore_d3:
-			case CMap::tile_steelore_d4:
-			case CMap::tile_steelore_d5:
+			case CMap::tile_ironore_d0:
+			case CMap::tile_ironore_d1:
+			case CMap::tile_ironore_d2:
+			case CMap::tile_ironore_d3:
+			case CMap::tile_ironore_d4:
+			case CMap::tile_ironore_d5:
 			{
-				OnSteelTileHit(map, index);
+				OnIronTileHit(map, index);
 				map.RemoveTileFlag( index, Tile::LIGHT_PASSES |Tile::LIGHT_SOURCE );
 				map.AddTileFlag(index, Tile::SOLID | Tile::COLLISION);
 				break;
@@ -347,7 +347,7 @@ void OnGoldTileDestroyed(CMap@ map, u32 index)
 	}
 }
 
-void OnSteelTileHit(CMap@ map, u32 index)
+void OnIronTileHit(CMap@ map, u32 index)
 {
 	map.AddTileFlag(index, Tile::SOLID | Tile::COLLISION);
 	map.RemoveTileFlag( index, Tile::LIGHT_PASSES | Tile::LIGHT_SOURCE | Tile::BACKGROUND );
@@ -355,13 +355,13 @@ void OnSteelTileHit(CMap@ map, u32 index)
 	if (getNet().isClient())
 	{ 
 		Vec2f pos = map.getTileWorldPosition(index);
-		steeltilesparks(pos, -180+XORRandom(180), 1.0f);
+		irontilesparks(pos, -180+XORRandom(180), 1.0f);
 	
 		Sound::Play("dig_metal"+ (XORRandom(3) + 1)+".ogg", pos, 0.5f, 1.0f);
 	}
 }
 
-void OnSteelTileDestroyed(CMap@ map, u32 index)
+void OnIronTileDestroyed(CMap@ map, u32 index)
 {
 	if (getNet().isClient())
 	{ 

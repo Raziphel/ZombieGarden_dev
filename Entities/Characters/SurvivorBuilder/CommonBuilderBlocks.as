@@ -123,24 +123,24 @@ void addCommonBuilderBlocks(BuildBlock[][]@ blocks)
 		blocks[0].push_back(b);
 	}
 	{
-		BuildBlock b( 0, "steeltriangle", "$steeltriangle$", "Steel Triangle" );
-		AddRequirement( b.reqs, "blob", "mat_steel", "Steel", 25 );
+		BuildBlock b( 0, "irontriangle", "$irontriangle$", "Iron Triangle" );
+		AddRequirement( b.reqs, "blob", "mat_iron", "Iron", 25 );
 		blocks[0].push_back(b);
 	}
 	{
-		AddIconToken( "$SteelBrick$", "Sprites/World.png", Vec2f(8,8), CMap::tile_steelbrick);
-		BuildBlock b(CMap::tile_steelbrick, "SteelBrick", "$SteelBrick$", "Steel Block\nStrong Building Block");
-		AddRequirement(b.reqs, "blob", "mat_steel", "Steel", 20);
+		AddIconToken( "$IronBrick$", "Sprites/World.png", Vec2f(8,8), CMap::tile_ironbrick);
+		BuildBlock b(CMap::tile_ironbrick, "IronBrick", "$IronBrick$", "Iron Block\nStrong Building Block");
+		AddRequirement(b.reqs, "blob", "mat_iron", "Iron", 20);
 		blocks[0].push_back(b);
 	}
 	{
-		BuildBlock b(0, "steel_door", "$steel_door$", "Steel Door\nVery Strong");
-		AddRequirement(b.reqs, "blob", "mat_steel", "Steel", 40);
+		BuildBlock b(0, "iron_door", "$iron_door$", "Iron Door\nVery Strong");
+		AddRequirement(b.reqs, "blob", "mat_iron", "Iron", 40);
 		blocks[0].push_back(b);
 	}
 	{
 		AddIconToken( "$GoldBrick$", "Sprites/World.png", Vec2f(8,8), CMap::tile_goldenbrick);
-		BuildBlock b(CMap::tile_goldenbrick, "GoldBrick", "$GoldBrick$", "Gold Block\nRich Building Block\nNot Stronger Than Steel");
+		BuildBlock b(CMap::tile_goldenbrick, "GoldBrick", "$GoldBrick$", "Gold Block\nRich Building Block\nNot Stronger Than Iron");
 		AddRequirement(b.reqs, "blob", "mat_gold", "Gold", 20);
 		blocks[0].push_back(b);
 	}
