@@ -1,4 +1,4 @@
-// Zombie_Spawns.as
+// Zombies_Spawns.as
 #include "CTF_Structs.as"
 #include "RulesCore.as"
 #include "RespawnSystem.as"

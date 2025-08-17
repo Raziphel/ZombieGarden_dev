@@ -7,7 +7,7 @@
 
 // Include order matters: Core defines ZombiesCore, Spawns defines ZombiesSpawns,
 // Config uses ZombiesCore in its function signature.
-#include "Zombie_Spawns.as"   // defines class ZombiesSpawns
+#include "Zombies_Spawns.as"   // defines class ZombiesSpawns
 #include "Zombies_Core.as"    // defines class ZombiesCore and uses ZombiesSpawns
 #include "Zombies_Config.as"  // uses ZombiesCore in function signature
 #include "Zombies_Utils.as"
