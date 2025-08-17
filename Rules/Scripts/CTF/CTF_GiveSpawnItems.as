@@ -333,13 +333,6 @@ void onRender(CRules@ this)
 				verb = "Prepare for Battle";
 				offset = 175.0f;
 			}
-
-			u32 secs = ((next_items - 1 - getGameTime()) / getTicksASecond()) + 1;
-			string units = ((secs != 1) ? "seconds" : "second");
-			GUI::SetFont("menu");
-			GUI::DrawText("Next Resupply in " + secs + " " + units + ", Go " + verb + "!" ,
-			              Vec2f(getScreenWidth() / 2 - offset, getScreenHeight() / 3 - 70.0f + Maths::Sin(getGameTime() / 3.0f) * 5.0f),
-			              SColor(255, 255, 55, 55));
 		}
 	}
 }

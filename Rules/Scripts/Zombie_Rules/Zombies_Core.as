@@ -298,7 +298,7 @@ void DrawZombiesHUDTopRight(CRules@ rules)
 	const int difficulty_i     = int(rules.get_f32("difficulty") + 0.5f);
 
 	// content
-	const string title = "ZOMBIE STATUS";
+	const string title = "ROUND STATUS";
 
 	array<string> lines;
 	lines.insertLast("Day: " + dayNumber);
@@ -307,7 +307,7 @@ void DrawZombiesHUDTopRight(CRules@ rules)
 	lines.insertLast("Undead: " + num_undead);
 	lines.insertLast("Difficulty: " + difficulty_i);
 	lines.insertLast("Zombies: " + (num_zombies + num_pzombies) + "/" + max_zombies);
-	lines.insertLast("Hard Starts: " + hardmode_day + " (- " + days_offset + ")");
+	lines.insertLast("Hard Starts: " + (hardmode_day-days_offset));
 	lines.insertLast("Curse Starts: " + curse_day);
 	lines.insertLast("Altars Remaining: " + num_zombiePortals);
 
