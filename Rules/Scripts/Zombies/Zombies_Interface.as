@@ -50,9 +50,9 @@ void DrawRevivalTimer(CRules@ this, CPlayer@ p)
 			{
 				GUI::SetFont("menu");
 				Vec2f pos(getScreenWidth()/2 - 70, getScreenHeight()/3 + Maths::Sin(getGameTime() / 3.0f) * 5.0f);
-				GUI::DrawText("Revival in: " + spawn, pos, SColor(255, 255, 255, 55));
-			}
-		}
+                                GUI::DrawText("Revival in: " + spawn + "s", pos, SColor(255, 255, 255, 55));
+                        }
+                }
 	}
 }
 
