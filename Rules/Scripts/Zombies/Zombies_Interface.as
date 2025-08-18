@@ -90,8 +90,10 @@ void DrawZombiesHUDTopRight(CRules@ rules)
 	const int num_zombiePortals = rules.get_s32("num_zombiePortals");
 	const int num_survivors_p   = CountTeamPlayers(0);
 	const int num_undead        = rules.get_s32("num_undead");
-	const int difficulty      = rules.get_f32("difficulty");
-	const int difficulty_bonus      = rules.get_f32("difficulty_bonus");
+	const int difficulty        = rules.get_f32("difficulty");
+	const int difficulty_bonus  = rules.get_f32("difficulty_bonus");
+
+	string diff_str = "" + formatFloat(difficulty + difficulty_bonus, "", 0, 1);
 
 	// content
 	const string title = "ROUND STATUS";
@@ -101,7 +103,7 @@ void DrawZombiesHUDTopRight(CRules@ rules)
 	lines.insertLast("Pillars: " + num_hands);
 	lines.insertLast("Survivors: " + num_survivors_p);
 	lines.insertLast("Undead: " + num_undead);
-	lines.insertLast("Difficulty: " + (difficulty+difficulty_bonus));
+	lines.insertLast("Difficulty: " + diff_str);
 	lines.insertLast("Zombies: " + (num_zombies + num_pzombies) + "/" + max_zombies);
 	lines.insertLast("Hard Starts: " + (hardmode_day - ((days_offset/14)*10)));
 	lines.insertLast("Curse Starts: " + curse_day);

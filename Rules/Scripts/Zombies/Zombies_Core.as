@@ -41,7 +41,7 @@ class ZombiesCore : RulesCore
 		if (rules.isGameOver()) return;
 
 		const int day_cycle  = getRules().daycycle_speed * 60;
-		int       transition = rules.get_s32("transition");
+		int transition       = rules.get_s32("transition");
 		const int gamestart  = rules.get_s32("gamestart");
 
 		// easy reads (all counts come from rules now)
@@ -65,9 +65,8 @@ class ZombiesCore : RulesCore
 		const int days_offset  = rules.get_s32("days_offset");
 		const int dayNumber    = days_offset + ((getGameTime() - gamestart) / getTicksASecond() / day_cycle) + 1;
 
-		const int timeElapsed = getGameTime() - gamestart;
-
-		const int ignore_light = (hardmode_day - ((days_offset/14)*10));
+		const int timeElapsed  = getGameTime() - gamestart;
+		const int ignore_light = (hardmode_day - ((days_offset / 14) * 10));
 
 		// quick player team pass (used for max_undead)
 		int num_survivors_p = 0;
@@ -92,19 +91,42 @@ class ZombiesCore : RulesCore
 			rules.SetCurrentState(GAME);
 		}
 
-		// recompute base difficulty
+		// ------------------------------
+		// Difficulty calculation + wipe bonus (once per day)
+		// ------------------------------
 		float difficulty_base = dayNumber * 0.2f;
 
 		// persistent bonus from wipes (defaults to 0 if missing)
-		const float diff_bonus = rules.exists("difficulty_bonus") ? rules.get_f32("difficulty_bonus") : 0.0f;
+		float diff_bonus = rules.exists("difficulty_bonus") ? rules.get_f32("difficulty_bonus") : 0.0f;
 
-		// final difficulty
+		// Wipe bonus: if all survivors are dead, add +1 once per day
+		{
+			const int live_survivors = rules.get_s32("num_survivors"); 
+			const int num_hands      = rules.get_s32("num_ruinstorch");
+			const int last_wipe_day  = rules.exists("last_wipe_day") ? rules.get_s32("last_wipe_day") : -1;
+
+			// Only once per dayNumber, only when truly wiped
+			if ((live_survivors-num_hands) <= 0 && last_wipe_day != dayNumber)
+			{
+				diff_bonus += 1.0f;
+				rules.set_f32("difficulty_bonus", diff_bonus);
+				rules.set_s32("last_wipe_day", dayNumber);
+
+				const float previewDifficulty = Maths::Min(13.0f, difficulty_base + diff_bonus);
+
+				Server_GlobalPopup(rules,
+					"All survivors have fallen!\n\n+1 Difficulty (now " + previewDifficulty + ")",
+					SColor(255, 255, 0, 0),
+					6 * getTicksASecond());
+			}
+		}
+
+		// final difficulty (apply cap after any bonus change)
 		float difficulty = difficulty_base + diff_bonus;
+		if (difficulty > 13.0f) difficulty = 13.0f;
 		rules.set_f32("difficulty", difficulty);
-		if (difficulty > 13.0f) difficulty = 13.0f; // cap to match spawn table
 
-
-		int spawnRate = 100 - int(difficulty)*5;
+		int spawnRate = 100 - int(difficulty) * 5;
 		if (spawnRate < 20) spawnRate = 20;
 
 		// === periodic maintenance: refresh *all* counts into rules ===
@@ -133,7 +155,7 @@ class ZombiesCore : RulesCore
 
 				// Curse logic
 				if (dayNumber >= curse_day && rules.get_s32("num_undead") < max_undead &&
-				    (map.getDayTime() > 0.7f || map.getDayTime() < 0.2f))
+					(map.getDayTime() > 0.7f || map.getDayTime() < 0.2f))
 				{
 					const u8 pCount = getPlayersCount();
 					if (pCount > 0)
@@ -211,29 +233,25 @@ class ZombiesCore : RulesCore
 				const int _max_im = rules.get_s32("max_imol");
 
 				const bool canSpawnNow =
-					( dayNumber > ignore_light && _num_z < max_zombies )
-				 || ( rules.hasTag("night")   && _num_z < max_zombies );
+					   (dayNumber >= ignore_light && _num_z < max_zombies)
+					|| (rules.hasTag("night")     && _num_z < max_zombies);
 
 				if (canSpawnNow)
 				{
-					const int r = XORRandom(int(difficulty) + 0.5f);
+					const int r = XORRandom(int(difficulty) + 1); // +1 so int cast doesn't zero-out
 
-					if      (r >= 11.3 && (_num_gr + _num_wr) < (_max_gr + _max_wr)) server_CreateBlob("writher", -1, sp);
-					else if (r >=  9.8)                                              server_CreateBlob("pbanshee", -1, sp);
-					else if (r >=  9.5)                                              server_CreateBlob("zbison", -1, sp);
-					else if (r >=  9.1)                                              server_CreateBlob("horror", -1, sp);
-					else if (r >=  7.9 && _num_wr < _max_wr)                         server_CreateBlob("wraith", -1, sp);
-					else if (r >=  7.2 && _num_gr < _max_gr)                         server_CreateBlob("greg", -1, sp);
-					else if (r >=  6.4 && _num_im < _max_im)                         server_CreateBlob("immolator", -1, sp);
-					else if (r >=  5.4)                                              server_CreateBlob("gasbag", -1, sp);
-					else if (r >=  3.6)                                              server_CreateBlob("zombieknight", -1, sp);
-					else if (r >=  3.1)                                              server_CreateBlob("evilzombie", -1, sp);
-					else if (r >=  2.6)                                              server_CreateBlob("bloodzombie", -1, sp);
-					else if (r >=  1.9)                                              server_CreateBlob("plantzombie", -1, sp);
-					else if (r >=  1.1)                                              server_CreateBlob("zombie", -1, sp);
-					else if (r >=  0.6)                                              server_CreateBlob("skeleton", -1, sp);
-					else if (r >=  0.2)                                              server_CreateBlob("catto", -1, sp);
-					else                                                             server_CreateBlob("zchicken", -1, sp);
+					if      (r >= 11 && (_num_gr + _num_wr) < (_max_gr + _max_wr)) server_CreateBlob("writher", -1, sp);
+					else if (r >= 10)                                              server_CreateBlob("pbanshee", -1, sp);
+					else if (r >=  9)                                              server_CreateBlob("zbison", -1, sp);
+					else if (r >=  8)                                              server_CreateBlob("horror", -1, sp);
+					else if (r >=  7 && _num_wr < _max_wr)                         server_CreateBlob("wraith", -1, sp);
+					else if (r >=  6 && _num_gr < _max_gr)                         server_CreateBlob("greg", -1, sp);
+					else if (r >=  5 && _num_im < _max_im)                         server_CreateBlob("immolator", -1, sp);
+					else if (r >=  4)                                              server_CreateBlob("gasbag", -1, sp);
+					else if (r >=  3)                                              server_CreateBlob("zombieknight", -1, sp);
+					else if (r >=  2)                                              server_CreateBlob("evilzombie", -1, sp);
+					else if (r >=  1)                                              server_CreateBlob("bloodzombie", -1, sp);
+					else if (r >=  0)                                              server_CreateBlob("plantzombie", -1, sp);
 
 					// === boss waves ===
 					int newTransition = RunBossWave(dayNumber, difficulty, zombiePlaces, transition);
@@ -266,20 +284,22 @@ class ZombiesCore : RulesCore
 		warn("sync");
 	}
 
-        void onPlayerDie(CPlayer@ victim, CPlayer@ killer, u8 customData)
-        {
-                RulesCore::onPlayerDie(victim, killer, customData);
+	void onPlayerDie(CPlayer@ victim, CPlayer@ killer, u8 customData)
+	{
+		RulesCore::onPlayerDie(victim, killer, customData);
 
-                if (victim !is null)
-                {
-                        Zombies_spawns.AddPlayerToSpawn(victim);
-                }
+		if (victim !is null)
+		{
+			Zombies_spawns.AddPlayerToSpawn(victim);
+		}
 
-                if (!rules.isMatchRunning()) return;
+		if (!rules.isMatchRunning()) return;
 
-                if (victim !is null && killer !is null && killer.getTeamNum() != victim.getTeamNum())
-                        addKill(killer.getTeamNum());
-        }
+		if (victim !is null && killer !is null && killer.getTeamNum() != victim.getTeamNum())
+		{
+			addKill(killer.getTeamNum());
+		}
+	}
 
 	void Zombify(CPlayer@ player)
 	{
@@ -291,51 +311,28 @@ class ZombiesCore : RulesCore
 			SColor(255, 255, 0, 0), 10 * getTicksASecond());
 	}
 
-void CheckTeamWon()
-{
-	if (!rules.isMatchRunning()) return;
-
-	const int gamestart   = rules.get_s32("gamestart");
-	const int day_cycle   = getRules().daycycle_speed * 60;
-	const int dayNumber   = ((getGameTime() - gamestart) / getTicksASecond() / day_cycle) + 1;
-	const int days_offset = rules.get_s32("days_offset");
-
-	CBlob@[] bases; getBlobsByName(base_name(), @bases);
-	const int num_survivors = rules.get_s32("num_survivors"); // set by your counters
-
-	// Game over if pillars are gone
-	if (bases.length == 0)
+	void CheckTeamWon()
 	{
-		rules.SetTeamWon(1);
-		rules.SetCurrentState(GAME_OVER);
-		Server_GlobalPopup(rules,
-			"Gameover!\nThe Pillars Have Been destroyed\nOn day " + (dayNumber + days_offset) + ".",
-			SColor(255, 255, 0, 0), 10 * getTicksASecond());
-		return;
+		if (!rules.isMatchRunning()) return;
+
+		const int gamestart   = rules.get_s32("gamestart");
+		const int day_cycle   = getRules().daycycle_speed * 60;
+		const int dayNumber   = ((getGameTime() - gamestart) / getTicksASecond() / day_cycle) + 1;
+		const int days_offset = rules.get_s32("days_offset");
+
+		CBlob@[] bases; getBlobsByName(base_name(), @bases);
+
+		// Game over if pillars are gone
+		if (bases.length == 0)
+		{
+			rules.SetTeamWon(1);
+			rules.SetCurrentState(GAME_OVER);
+			Server_GlobalPopup(rules,
+				"Gameover!\nThe Pillars Have Been destroyed\nOn day " + (dayNumber + days_offset) + ".",
+				SColor(255, 255, 0, 0), 10 * getTicksASecond());
+			return;
+		}
 	}
-
-	// --- wipe gating: award once when survivors drop to zero, re-arm when any survive again ---
-	bool wipeArmed = rules.exists("wipe_armed") ? rules.get_bool("wipe_armed") : true;
-
-	if (num_survivors <= 0 && wipeArmed)
-	{
-		// add to a persistent bonus, not the computed value (see step 2)
-		rules.add_f32("difficulty_bonus", 1.0f);
-		rules.set_bool("wipe_armed", false);
-		rules.set_u32("wipe_last_tick", getGameTime());
-
-		const float bonus = rules.get_f32("difficulty_bonus");
-		Server_GlobalPopup(rules,
-			"All Survivors have fallen!\n\nDifficulty +1 (bonus +" + formatFloat(bonus, "", 0, 0) + ")",
-			SColor(255, 255, 0, 0), 10 * getTicksASecond());
-	}
-	else if (num_survivors > 0 && !wipeArmed)
-	{
-		// survivors are back — allow next wipe to award again
-		rules.set_bool("wipe_armed", true);
-	}
-}
-
 
 	void addKill(int team)
 	{

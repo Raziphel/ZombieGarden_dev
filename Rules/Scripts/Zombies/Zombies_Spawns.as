@@ -232,47 +232,78 @@ class ZombiesSpawns : RespawnSystem
 		info.can_spawn_time = 0;
 	}
 
-	void AddPlayerToSpawn(CPlayer@ player)
+void AddPlayerToSpawn(CPlayer@ player)
+{
+	getRules().Sync("gold_structures", true);
+
+	s32 tickspawndelay = 0;
+
+	// optional: base spawn time from rules (seconds) -> ticks
+	s32 base_spawn_secs = getRules().exists("spawn_time") ? getRules().get_s32("spawn_time") : 0;
+	if (base_spawn_secs < 0) base_spawn_secs = 0;
+
+	if (player.getDeaths() != 0)
 	{
-		getRules().Sync("gold_structures", true);
-		s32 tickspawndelay = 0;
-                if (player.getDeaths() != 0)
-                {
-                        int gamestart = getRules().get_s32("gamestart");
-                        int day_cycle = getRules().daycycle_speed * 60;
-                        int timeElapsed = ((getGameTime() - gamestart) / getTicksASecond()) % day_cycle;
-                        int half_day = day_cycle / 2;
-                        int seconds_to_midday = timeElapsed <= half_day
-                                               ? (half_day - timeElapsed)
-                                               : (day_cycle - timeElapsed + half_day);
-                        tickspawndelay = Maths::Min((60 * 30), seconds_to_midday * getTicksASecond());
-                }
+		int gamestart   = getRules().get_s32("gamestart");
+		int day_cycle   = getRules().daycycle_speed * 60; // seconds in a full KAG day
+		int timeElapsed = ((getGameTime() - gamestart) / getTicksASecond()) % day_cycle;
+		int half_day    = day_cycle / 2;
 
-		CTFPlayerInfo@ info = cast<CTFPlayerInfo@>(core.getInfoFromPlayer(player));
+		int seconds_to_midday = (timeElapsed <= half_day)
+		                      ? (half_day - timeElapsed)
+		                      : (day_cycle - timeElapsed + half_day);
 
-		if (info is null)
-		{
-			warn("Zombies LOGIC: Couldn't get player info  ( in void AddPlayerToSpawn(CPlayer@ player) )"); return;
-		}
+		// cap at 30s, then add base spawn time
+		int final_secs = Maths::Min(60 * 30, seconds_to_midday) + base_spawn_secs;
+		if (final_secs < 0) final_secs = 0;
 
-		RemovePlayerFromSpawn(player);
-		if (player.getTeamNum() == core.rules.getSpectatorTeamNum())
-			return;
-
-		if (info.team < Zombies_core.teams.length)
-		{
-			CTFTeamInfo@ team = cast<CTFTeamInfo@>(Zombies_core.teams[info.team]);
-
-			info.can_spawn_time = tickspawndelay;
-
-			info.spawn_point = player.getSpawnPoint();
-			team.spawns.push_back(info);
-		}
-		else
-		{
-			error("PLAYER TEAM NOT SET CORRECTLY!");
-		}
+		tickspawndelay = final_secs * getTicksASecond();
 	}
+	else
+	{
+		// first life; just use base spawn time if any
+		if (base_spawn_secs > 0)
+			tickspawndelay = base_spawn_secs * getTicksASecond();
+	}
+
+	CTFPlayerInfo@ info = cast<CTFPlayerInfo@>(core.getInfoFromPlayer(player));
+	if (info is null)
+	{
+		warn("Zombies LOGIC: Couldn't get player info (in AddPlayerToSpawn)"); 
+		return;
+	}
+
+	RemovePlayerFromSpawn(player);
+	if (player.getTeamNum() == core.rules.getSpectatorTeamNum())
+		return;
+
+	if (info.team < Zombies_core.teams.length)
+	{
+		CTFTeamInfo@ team = cast<CTFTeamInfo@>(Zombies_core.teams[info.team]);
+
+		// IMPORTANT: can_spawn_time is absolute, not a delay.
+		info.can_spawn_time = getGameTime() + tickspawndelay;
+
+		info.spawn_point = player.getSpawnPoint();
+		team.spawns.push_back(info);
+
+		// Seed the client HUD timer (u8 seconds, 255 = ready)
+		const string hudKey = "Zombies spawn time " + player.getUsername();
+		u8 hudSecs = 255;
+		if (tickspawndelay > 0)
+		{
+			int s = tickspawndelay / getTicksASecond();
+			hudSecs = u8(Maths::Clamp(s, 0, 254));
+		}
+		getRules().set_u8(hudKey, hudSecs);
+		getRules().Sync(hudKey, true);
+	}
+	else
+	{
+		error("PLAYER TEAM NOT SET CORRECTLY!");
+	}
+}
+
 
 	bool isSpawning(CPlayer@ player)
 	{

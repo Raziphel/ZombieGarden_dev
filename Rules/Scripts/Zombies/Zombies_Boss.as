@@ -83,35 +83,35 @@ array<BossEntry@> BuildMiniTable()
 	{
 		BossEntry b; b.weight = 3;
 		b.names = {"horror"}; b.counts = {3};
-		b.popup = "Mini-wave: 3x Horrors\n16 Hearts • Spawns specials";
+		b.popup = "MINI-WAVE\n\n3x Horrors\n16 Hearts • Spawns specials";
 		b.color = SColor(255,255,200,0); b.popupTicks = 10 * getTicksASecond();
 		b.sound = "/dontyoudare.ogg"; t.push_back(b);
 	}
 	{
 		BossEntry b; b.weight = 3;
 		b.names = {"pbanshee"}; b.counts = {2};
-		b.popup = "Mini-wave: 2x Banshee\nBlast + Stunning Scream";
+		b.popup = "MINI-WAVE\n\n2x Banshee\nBlast + Stunning Scream";
 		b.color = SColor(255,255,200,0); b.popupTicks = 10 * getTicksASecond();
 		b.sound = "/dontyoudare.ogg"; t.push_back(b);
 	}
 	{
 		BossEntry b; b.weight = 2;
 		b.names = {"writher"}; b.counts = {1};
-		b.popup = "Mini-wave: 1x Writher\nExplodes • Spawns Wraiths on death";
+		b.popup = "MINI-WAVE\n\n1x Writher\nExplodes • Spawns Wraiths on death";
 		b.color = SColor(255,255,200,0); b.popupTicks = 10 * getTicksASecond();
 		b.sound = "/dontyoudare.ogg"; t.push_back(b);
 	}
 	{
 		BossEntry b; b.weight = 2;
 		b.names = {"zbison","zbison2"}; b.counts = {4,4};
-		b.popup = "Mini-wave: Bison Horde\n8 total (4 of each)";
+		b.popup = "MINI-WAVE\n\nBison Horde\n8 total (4 of each)";
 		b.color = SColor(255,255,200,0); b.popupTicks = 10 * getTicksASecond();
 		b.sound = "/dontyoudare.ogg"; t.push_back(b);
 	}
 	{
 		BossEntry b; b.weight = 2;
 		b.names = {"immolator"}; b.counts = {8};
-		b.popup = "Mini-wave: 8x Immolator\nChain booms — keep distance";
+		b.popup = "MINI-WAVE\n\n8x Immolator\nChain booms — keep distance";
 		b.color = SColor(255,255,200,0); b.popupTicks = 10 * getTicksASecond();
 		b.sound = "/dontyoudare.ogg"; t.push_back(b);
 	}
@@ -127,28 +127,28 @@ array<BossEntry@> BuildBossTable()
 	{
 		BossEntry b; b.weight = 3;
 		b.names = {"abomination"}; b.counts = {2};
-		b.popup = "Boss wave: 2x Abominations\n60 Hearts • 4 DMG";
+		b.popup = "BOSS WAVE\n\n2x Abominations\n60 Hearts • 4 DMG";
 		b.color = SColor(255,255,0,0); b.popupTicks = 10 * getTicksASecond();
 		b.sound = "/dontyoudare.ogg"; t.push_back(b);
 	}
 	{
 		BossEntry b; b.weight = 2;
 		b.names = {"writher"}; b.counts = {3};
-		b.popup = "Boss wave: 3x Writhers\nExplodes • Spawns Wraiths";
+		b.popup = "BOSS WAVE\n\n3x Writhers\nExplodes • Spawns Wraiths";
 		b.color = SColor(255,255,0,0); b.popupTicks = 10 * getTicksASecond();
 		b.sound = "/dontyoudare.ogg"; t.push_back(b);
 	}
 	{
 		BossEntry b; b.weight = 2;
 		b.names = {"immolator"}; b.counts = {16};
-		b.popup = "Boss wave: 16x Immolator\nWide-area blast pressure";
+		b.popup = "BOSS WAVE\n\n16x Immolator\nWide-area blast pressure";
 		b.color = SColor(255,255,0,0); b.popupTicks = 10 * getTicksASecond();
 		b.sound = "/dontyoudare.ogg"; t.push_back(b);
 	}
 	{
 		BossEntry b; b.weight = 1;
 		b.names = {"zbison","zbison2"}; b.counts = {8,8};
-		b.popup = "Boss wave: Stampede\n16 total (8 of each)";
+		b.popup = "BOSS WAVE\n\nStampede\n16 total (8 of each)";
 		b.color = SColor(255,255,0,0); b.popupTicks = 10 * getTicksASecond();
 		b.sound = "/dontyoudare.ogg"; t.push_back(b);
 	}
@@ -168,12 +168,12 @@ array<BossEntry@> BuildCataclysmTable(const int dayNumber)
 	                       dayNumber % 75  == 0 ? 75  :
 	                       dayNumber % 50  == 0 ? 50  : 25);
 
-	string banner = "Cataclysm Wave (" + milestone + "): ";
+	string banner = "CATACLYSM WAVE\n\n";
 
 	{
 		BossEntry b; b.weight = 3;
-		b.names = {"abomination","writher"}; b.counts = {2,2};
-		b.popup = banner + "2x Abomination + 2x Writher\nTank + burst combo";
+		b.names = {"abomination","writher"}; b.counts = {3,3};
+		b.popup = banner + "3x Abomination + 3x Writher\nTank + burst combo";
 		b.color = SColor(255,255,80,40); b.popupTicks = 12 * getTicksASecond();
 		b.sound = "/dontyoudare.ogg"; t.push_back(b);
 	}
@@ -193,8 +193,8 @@ array<BossEntry@> BuildCataclysmTable(const int dayNumber)
 	}
 	{
 		BossEntry b; b.weight = 2;
-		b.names = {"zbison","zbison2","horror"}; b.counts = {8,8,2};
-		b.popup = banner + "Bison stampede + 2x Horror\nCrowd + elites";
+		b.names = {"zbison","zbison2","horror"}; b.counts = {8,8,4};
+		b.popup = banner + "Bison stampede + 4x Horror\nCrowd + elites";
 		b.color = SColor(255,255,80,40); b.popupTicks = 12 * getTicksASecond();
 		b.sound = "/dontyoudare.ogg"; t.push_back(b);
 	}
