@@ -236,15 +236,17 @@ class ZombiesSpawns : RespawnSystem
 	{
 		getRules().Sync("gold_structures", true);
 		s32 tickspawndelay = 0;
-		if (player.getDeaths() != 0)
-		{
-			int gamestart = getRules().get_s32("gamestart");
-			int day_cycle = getRules().daycycle_speed * 60;
-			int timeElapsed = ((getGameTime() - gamestart) / getTicksASecond()) % day_cycle;
-			int spawnlimit = (((getGameTime() - gamestart) / getTicksASecond() / day_cycle) + 1) * 300;
-			tickspawndelay = Maths::Min((60 * 30), ((day_cycle - timeElapsed) * getTicksASecond()));
-			if (timeElapsed < 30) tickspawndelay = 0;
-		}
+                if (player.getDeaths() != 0)
+                {
+                        int gamestart = getRules().get_s32("gamestart");
+                        int day_cycle = getRules().daycycle_speed * 60;
+                        int timeElapsed = ((getGameTime() - gamestart) / getTicksASecond()) % day_cycle;
+                        int half_day = day_cycle / 2;
+                        int seconds_to_midday = timeElapsed <= half_day
+                                               ? (half_day - timeElapsed)
+                                               : (day_cycle - timeElapsed + half_day);
+                        tickspawndelay = Maths::Min((60 * 30), seconds_to_midday * getTicksASecond());
+                }
 
 		CTFPlayerInfo@ info = cast<CTFPlayerInfo@>(core.getInfoFromPlayer(player));
 
