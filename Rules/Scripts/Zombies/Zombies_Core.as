@@ -4,6 +4,7 @@
 #include "RespawnSystem.as"
 #include "Zombies_Boss.as"
 #include "Zombies_Utils.as"
+#include "GlobalPopup.as"
 
 class ZombiesCore : RulesCore
 {
@@ -76,12 +77,9 @@ class ZombiesCore : RulesCore
 		const int max_undead = (num_survivors_p/3);
 		rules.set_s32("max_undead", max_undead);
 
-		// old center message: clear it so nothing shows in the middle
-		rules.SetGlobalMessage("");
-
-		// also stash a couple values for the HUD renderer
-		rules.set_s32("hud_dayNumber", dayNumber);
-		rules.set_s32("hud_ignore_light", ignore_light);
+                // also stash a couple values for the HUD renderer
+                rules.set_s32("hud_dayNumber", dayNumber);
+                rules.set_s32("hud_ignore_light", ignore_light);
 
 		if (rules.isWarmup() && timeElapsed > getTicksASecond()*30)
 			rules.SetCurrentState(GAME);
@@ -234,12 +232,14 @@ class ZombiesCore : RulesCore
 		CBlob@[] bases; getBlobsByName(base_name(), @bases);
 		const int num_survivors = rules.get_s32("num_survivors");
 
-		if (bases.length == 0)
-		{
-			rules.SetTeamWon(1);
-			rules.SetCurrentState(GAME_OVER);
-			rules.SetGlobalMessage("Gameover!\nThe Pillars Have Been destroyed\nOn day " + (dayNumber + days_offset) + ".");
-		}
+                if (bases.length == 0)
+                {
+                        rules.SetTeamWon(1);
+                        rules.SetCurrentState(GAME_OVER);
+                        Server_GlobalPopup(rules,
+                                           "Gameover!\nThe Pillars Have Been destroyed\nOn day " + (dayNumber + days_offset) + ".",
+                                           SColor(255, 255, 0, 0), 10 * getTicksASecond());
+                }
 	}
 	void addKill(int team)
 	{

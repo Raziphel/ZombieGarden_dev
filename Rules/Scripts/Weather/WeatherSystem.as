@@ -101,8 +101,8 @@ void ChangeRainLevel(CRules@ this, int newLevel)
 	// Show storm popup when entering level 4 (centralized popup)
 	if (newLevel == 4 && oldLevel != 4)
 	{
-		Server_GlobalPopup(this, "⚡ You hear an intense storm approaching ⚡",
-		                   SColor(255, 255, 240, 0), 8 * getTicksASecond());
+                Server_GlobalPopup(this, "⚡ You hear an intense storm approaching ⚡",
+                                   SColor(255, 255, 240, 0), 10 * getTicksASecond());
 	}
 	
 	print("Weather: Changing rain level from " + oldLevel + " to " + newLevel);

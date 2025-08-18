@@ -6,7 +6,8 @@ const string POP_START_KEY    = "popup_start";
 const string POP_COLOR_KEY    = "popup_color";
 const string POP_DURATION_KEY = "popup_duration";
 
-const u16    POP_DEFAULT_DURATION = 8 * getTicksASecond(); // 8 seconds
+// Default popup duration in ticks (10 seconds)
+const u16    POP_DEFAULT_DURATION = 10 * getTicksASecond();
 const SColor POP_DEFAULT_COLOR(255, 255, 240, 0);          // warm yellow
 
 // ---- SERVER API ----
