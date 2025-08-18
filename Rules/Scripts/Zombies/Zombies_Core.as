@@ -266,12 +266,13 @@ class ZombiesCore : RulesCore
 		warn("sync");
 	}
 
-	void onPlayerDie(CPlayer@ victim, CPlayer@ killer, u8 customData)
-	{
-		if (!rules.isMatchRunning()) return;
-		if (victim !is null && killer !is null && killer.getTeamNum() != victim.getTeamNum())
-			addKill(killer.getTeamNum());
-	}
+        void onPlayerDie(CPlayer@ victim, CPlayer@ killer, u8 customData)
+        {
+                RulesCore::onPlayerDie(victim, killer, customData);
+                if (!rules.isMatchRunning()) return;
+                if (victim !is null && killer !is null && killer.getTeamNum() != victim.getTeamNum())
+                        addKill(killer.getTeamNum());
+        }
 
 	void Zombify(CPlayer@ player)
 	{
