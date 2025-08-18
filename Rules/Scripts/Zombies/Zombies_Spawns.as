@@ -52,24 +52,31 @@ class ZombiesSpawns : RespawnSystem
 		}
 	}
 
-	void UpdateSpawnTime(CTFPlayerInfo@ info, int i)
-	{
-		if (info !is null)
-		{
-			u8 spawn_property = 255;
+        void UpdateSpawnTime(CTFPlayerInfo@ info, int i)
+        {
+                if (info !is null)
+                {
+                        u8 spawn_property = 255;
 
-			if (info.can_spawn_time > 0)
-			{
-				info.can_spawn_time--;
-				spawn_property = u8(Maths::Min(200, (info.can_spawn_time / 30)));
-			}
+                        // can_spawn_time is an absolute game time. Convert it into a
+                        // remaining second countdown for the HUD.
+                        if (info.can_spawn_time > getGameTime())
+                        {
+                                const s32 diff = info.can_spawn_time - getGameTime();
+                                spawn_property = u8(Maths::Min(200, diff / getTicksASecond()));
+                        }
+                        else if (info.can_spawn_time > 0)
+                        {
+                                // ensure it doesn't stay positive once the timer has elapsed
+                                info.can_spawn_time = 0;
+                        }
 
-			string propname = "Zombies spawn time " + info.username;
+                        string propname = "Zombies spawn time " + info.username;
 
-			Zombies_core.rules.set_u8(propname, spawn_property);
-			Zombies_core.rules.SyncToPlayer(propname, getPlayerByUsername(info.username));
-		}
-	}
+                        Zombies_core.rules.set_u8(propname, spawn_property);
+                        Zombies_core.rules.SyncToPlayer(propname, getPlayerByUsername(info.username));
+                }
+        }
 
 	bool SetMaterials(CBlob@ blob, const string &in name, const int quantity)
 	{
@@ -149,8 +156,9 @@ class ZombiesSpawns : RespawnSystem
 			return false;
 		}
 
-		return info.can_spawn_time <= 0;
-	}
+                // can_spawn_time stores the absolute tick when spawning is allowed
+                return info.can_spawn_time <= getGameTime();
+        }
 
 	Vec2f getSpawnLocation(PlayerInfo@ p_info)
 	{
