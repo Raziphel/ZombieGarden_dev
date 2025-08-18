@@ -2,7 +2,7 @@
 
 #include "CreatureCommon.as";
 
-const s32 TIME_TO_EXPLODE = 7 * 30;
+const s32 TIME_TO_EXPLODE = 15 * 30;
 
 const int COINS_ON_DEATH = 10;
 

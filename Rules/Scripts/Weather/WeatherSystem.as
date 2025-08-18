@@ -102,7 +102,7 @@ void ChangeRainLevel(CRules@ this, int newLevel)
 	if (newLevel == 4 && oldLevel != 4)
 	{
                 Server_GlobalPopup(this, "⚡ You hear an intense storm approaching ⚡",
-                                   SColor(255, 255, 240, 0), 10 * getTicksASecond());
+                                   SColor(255, 255, 0, 0), 10 * getTicksASecond());
 	}
 	
 	print("Weather: Changing rain level from " + oldLevel + " to " + newLevel);
