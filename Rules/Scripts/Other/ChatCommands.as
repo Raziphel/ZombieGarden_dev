@@ -141,7 +141,7 @@ bool onServerProcessChat( CRules@ this, const string& in text_in, string& out te
     }
     else if (text_in == "!flowers" && canSpawn)
     {
-        server_CreateBlob( "Entities/Natural/Flowers/Flowers.cfg", blob.getTeamNum(), blob.getPosition() );
+        server_CreateBlob( "Entities/Environment/Flowers/Flowers.cfg", blob.getTeamNum(), blob.getPosition() );
     }
     else if (text_in == "!catapult" && canSpawn)
     {
@@ -157,7 +157,7 @@ bool onServerProcessChat( CRules@ this, const string& in text_in, string& out te
     }
     else if (text_in == "!bison" && canSpawn)
     {
-        server_CreateBlob( "Entities/Natural/Animals/Bison/Bison.cfg", blob.getTeamNum(), blob.getPosition() );
+        server_CreateBlob( "Entities/Environment/Animals/Bison/Bison.cfg", blob.getTeamNum(), blob.getPosition() );
     }
     else if (text_in == "!piranha" && canSpawn)
     {
@@ -165,7 +165,7 @@ bool onServerProcessChat( CRules@ this, const string& in text_in, string& out te
     }
     else if (text_in == "!stones" && canSpawn)
     {
-        CBlob@ b = server_CreateBlob( "Entities/Materials/MaterialStone.cfg", blob.getTeamNum(), blob.getPosition() );
+        CBlob@ b = server_CreateBlob( "Entities/Resources/MaterialStone.cfg", blob.getTeamNum(), blob.getPosition() );
 
         if (b !is null) {
             b.server_SetQuantity(320);
@@ -175,7 +175,7 @@ bool onServerProcessChat( CRules@ this, const string& in text_in, string& out te
     {
         for (int i = 0; i < 3; i++)
         {
-            CBlob@ b = server_CreateBlob( "Entities/Materials/MaterialArrows.cfg", blob.getTeamNum(), blob.getPosition() );
+            CBlob@ b = server_CreateBlob( "Entities/Resources/MaterialArrows.cfg", blob.getTeamNum(), blob.getPosition() );
 
             if (b !is null) {
                 b.server_SetQuantity(30);
@@ -185,7 +185,7 @@ bool onServerProcessChat( CRules@ this, const string& in text_in, string& out te
     else if (text_in == "!bombs" && canSpawn)
     {
         //  for (int i = 0; i < 3; i++)
-        CBlob@ b = server_CreateBlob( "Entities/Materials/MaterialBombs.cfg", blob.getTeamNum(), blob.getPosition() );
+        CBlob@ b = server_CreateBlob( "Entities/Resources/MaterialBombs.cfg", blob.getTeamNum(), blob.getPosition() );
 
         if (b !is null) {
             b.server_SetQuantity(30);
