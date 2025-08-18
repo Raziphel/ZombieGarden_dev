@@ -57,8 +57,8 @@ void onInit(CBlob@ this)
 	this.set_u16("harvestWoodDoorCap", 4);
 	this.set_u16("harvestPlatformCap", 2);
 
-	AddIconToken("$opaque_heatbar$", "Entities/Industry/Drill/HeatBar.png", Vec2f(24, 6), 0);
-	AddIconToken("$transparent_heatbar$", "Entities/Industry/Drill/HeatBar.png", Vec2f(24, 6), 1);
+	AddIconToken("$opaque_heatbar$", "Entities/Shops/Drill/HeatBar.png", Vec2f(24, 6), 0);
+	AddIconToken("$transparent_heatbar$", "Entities/Shops/Drill/HeatBar.png", Vec2f(24, 6), 1);
 
 	this.set_u32(last_drill_prop, 0);
 }
