@@ -403,11 +403,11 @@ bool loadMap( CMap@ _map, const string& in filename)
 					if (r == 7)
 						server_CreateBlob("casket2",-1,Vec2f((x+_size/2)*8.0,floor_height*8.0 - 16.0));							
 					else
-						server_CreateBlob("zombieportal",-1,Vec2f((x+_size/2)*8.0,floor_height*8.0-24.0));
+						server_CreateBlob("zombiealter",-1,Vec2f((x+_size/2)*8.0,floor_height*8.0-24.0));
 				} else
 				if (!grave_spawn)
 				{
-					server_CreateBlob("zombieportal",-1,Vec2f((x+_size/2)*8.0,floor_height*8.0-24.0));
+					server_CreateBlob("zombiealter",-1,Vec2f((x+_size/2)*8.0,floor_height*8.0-24.0));
 				} 
 			}
 		}
