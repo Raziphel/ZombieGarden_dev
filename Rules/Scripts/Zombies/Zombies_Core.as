@@ -1,5 +1,5 @@
 // Zombies_Core.as
-#include "CTF_Structs.as"
+#include "Core/Structs.as"
 #include "RulesCore.as"
 #include "RespawnSystem.as"
 #include "Zombies_Boss.as"

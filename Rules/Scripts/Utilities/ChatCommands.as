@@ -7,7 +7,7 @@
 #include "MakeScroll.as";
 //#include "RPC_War.as";
 #include "RulesCore.as";
-#include "CTF_Structs.as";
+#include "Core/Structs.as";
 #include "WeatherSystem.as";
 
 bool onServerProcessChat( CRules@ this, const string& in text_in, string& out text_out, CPlayer@ player )
