@@ -1,13 +1,13 @@
 // spawn resources
 
 #include "RulesCore.as";
-#include "CTF_Structs.as";
+#include "Core/Structs.as";
 
 const u32 materials_wait = 20; //seconds between free mats
 const u32 materials_wait_warmup = 40; //seconds between free mats
 
 //property
-const string SPAWN_ITEMS_TIMER = "CTF SpawnItems:";
+const string SPAWN_ITEMS_TIMER = "SpawnItems:";
 
 string base_name() { return "tent"; }
 
@@ -157,7 +157,7 @@ void onPlayerDie(CRules@ this, CPlayer@ victim, CPlayer@ attacker, u8 customData
 
 bool canGetSpawnmats(CRules@ this, CPlayer@ p, RulesCore@ core)
 {
-	s32 next_items = getCTFTimer(this, p);
+	s32 next_items = getSpawnTimer(this, p);
 	s32 gametime = getGameTime();
 
 	CTFPlayerInfo@ info = cast < CTFPlayerInfo@ > (core.getInfoFromPlayer(p));
@@ -200,23 +200,23 @@ bool canGetSpawnmats(CRules@ this, CPlayer@ p, RulesCore@ core)
 
 }
 
-string getCTFTimerPropertyName(CPlayer@ p)
+string getSpawnTimerPropertyName(CPlayer@ p)
 {
 	return SPAWN_ITEMS_TIMER + p.getUsername();
 }
 
-s32 getCTFTimer(CRules@ this, CPlayer@ p)
+s32 getSpawnTimer(CRules@ this, CPlayer@ p)
 {
-	string property = getCTFTimerPropertyName(p);
+	string property = getSpawnTimerPropertyName(p);
 	if (this.exists(property))
 		return this.get_s32(property);
 	else
 		return 0;
 }
 
-void SetCTFTimer(CRules@ this, CPlayer@ p, s32 time)
+void SetSpawnTimer(CRules@ this, CPlayer@ p, s32 time)
 {
-	string property = getCTFTimerPropertyName(p);
+	string property = getSpawnTimerPropertyName(p);
 	this.set_s32(property, time);
 	this.SyncToPlayer(property, p);
 }
@@ -234,7 +234,7 @@ void doGiveSpawnMats(CRules@ this, CPlayer@ p, CBlob@ b, RulesCore@ core)
 		bool gotmats = GiveSpawnResources(this, b, p, info);
 		if (gotmats)
 		{
-			SetCTFTimer(this, p, gametime + (this.isWarmup() ? materials_wait_warmup : materials_wait)*getTicksASecond());
+			SetSpawnTimer(this, p, gametime + (this.isWarmup() ? materials_wait_warmup : materials_wait)*getTicksASecond());
 		}
 	}
 }
@@ -245,7 +245,7 @@ void Reset(CRules@ this)
 {
 	//restart everyone's timers
 	for (uint i = 0; i < getPlayersCount(); ++i)
-		SetCTFTimer(this, getPlayer(i), materials_wait_warmup);//this used to be set to 0, but now its not
+		SetSpawnTimer(this, getPlayer(i), materials_wait_warmup);//this used to be set to 0, but now its not
 }
 
 void onRestart(CRules@ this)
@@ -315,7 +315,7 @@ void onRender(CRules@ this)
 	CPlayer@ p = getLocalPlayer();
 	if (p is null || !p.isMyPlayer()) { return; }
 
-	string propname = getCTFTimerPropertyName(p);
+	string propname = getSpawnTimerPropertyName(p);
 	CBlob@ b = p.getBlob();
 	if (b !is null && this.exists(propname))
 	{

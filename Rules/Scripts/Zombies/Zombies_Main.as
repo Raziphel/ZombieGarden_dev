@@ -1,7 +1,7 @@
 // Zombies_Main.as
 #define SERVER_ONLY
 
-#include "CTF_Structs.as"
+#include "Core/Structs.as"
 #include "RulesCore.as"
 #include "RespawnSystem.as"
 

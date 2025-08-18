@@ -1,4 +1,4 @@
-#include "CTF_Structs.as";
+#include "Core/Structs.as";
 
 void onInit( CRules@ this )
 {
