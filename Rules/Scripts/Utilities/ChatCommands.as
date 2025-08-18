@@ -99,6 +99,18 @@ bool onServerProcessChat( CRules@ this, const string& in text_in, string& out te
 					BanPlayer(target_player, 60);
 				}				
 			}
+            else 
+            if (tokens[0] == "!weather")
+            {
+                if (tokens.length < 2) {
+                    //server_SendGlobalMessage(this, "Usage: !weather [level 0-4]", 5, color_white.color, player);
+                    return false;
+                }
+                int newLevel = parseInt(tokens[1]);
+                ForceChangeRainLevel(this, newLevel); // Use the new robust function
+                //server_SendGlobalMessage(this, "Weather level forced to " + Maths::Clamp(newLevel, 0, 4), 5, color_white.color, player);
+                return false;
+            }
 			else
 			if (tokens[0] == "!settime" && isMe)
 			{
