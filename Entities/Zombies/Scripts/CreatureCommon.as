@@ -44,6 +44,11 @@ shared class TargetInfo
     }
 }
 
+void addTargetInfo(TargetInfo[]@ infos, const string &in identifier, f32 priority = 0.5f, bool tag = false, bool seeThroughWalls = false)
+{
+    infos.push_back(TargetInfo(identifier, priority, tag, seeThroughWalls));
+}
+
 shared class CreatureMoveVars
 {
     //walking vars

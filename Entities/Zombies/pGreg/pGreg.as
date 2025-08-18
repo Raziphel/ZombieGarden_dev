@@ -7,31 +7,24 @@ const int COINS_ON_DEATH = 25;
 void onInit(CBlob@ this)
 {
 	TargetInfo[] infos;
+	addTargetInfo(infos, "survivorplayer", 1.0f, true, true);
+	addTargetInfo(infos, "mage", 0.6f);
 
-	{
-		TargetInfo i("survivorplayer", 1.0f, true, true);
-		infos.push_back(i);
-	}
-	{
-		TargetInfo i("mage", 0.6f);
-		infos.push_back(i);
-	}	
-	
 	this.set("target infos", @infos);
 
 	this.set_u16("coins on death", COINS_ON_DEATH);
 	this.set_f32(target_searchrad_property, 512.0f);
 
-    this.getSprite().SetEmitSound("Wings.ogg");
-    this.getSprite().SetEmitSoundPaused(false);
+	this.getSprite().SetEmitSound("Wings.ogg");
+	this.getSprite().SetEmitSoundPaused(false);
 
-    this.getSprite().PlayRandomSound("/GargCry");
+	this.getSprite().PlayRandomSound("/GargCry");
 	this.getShape().SetRotationsAllowed(false);
 
 	this.getBrain().server_SetActive(true);
 
 	this.set_f32("gib health", 0.0f);
-    this.Tag("flesh");
+	this.Tag("flesh");
 	this.Tag("zombie");
 	this.Tag("enemy");
 	
@@ -73,5 +66,5 @@ f32 onHit( CBlob@ this, Vec2f worldPoint, Vec2f velocity, f32 damage, CBlob@ hit
 
 void onDie( CBlob@ this )
 {
-    this.getSprite().PlaySound("/GargRoar");	
+	this.getSprite().PlaySound("/GargRoar");	
 }

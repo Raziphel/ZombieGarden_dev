@@ -11,21 +11,14 @@ const int COINS_ON_DEATH = 0;
 void onInit(CBlob@ this)
 {
 	TargetInfo[] infos;
-
-	{
-		TargetInfo i("undeadplayer", 1.0f, true, true);
-		infos.push_back(i);
-	}
-	{
-		TargetInfo i("zombie", 0.5f, true);
-		infos.push_back(i);
-	}	
+	addTargetInfo(infos, "undeadplayer", 1.0f, true, true);
+	addTargetInfo(infos, "zombie", 0.5f, true);
 
 	//for EatOthers
 	string[] tags = {"dead"};
 	this.set("tags to eat", tags);
-	
-	this.set_f32("bite damage", 0.5f);	
+
+	this.set_f32("bite damage", 0.5f);
 
 	this.set("target infos", infos);
 	
@@ -40,13 +33,13 @@ void onInit(CBlob@ this)
 	this.SetLightRadius(64.0f);
 	this.SetLightColor(SColor(255, 25, 94, 157));	
 
-    this.getSprite().PlayRandomSound("WaterBubble1");
+	this.getSprite().PlayRandomSound("WaterBubble1");
 	this.getShape().SetRotationsAllowed(false);
 
 	this.getBrain().server_SetActive(true);
 
 	this.set_f32("gib health", 0.0f);
-    this.Tag("flesh");
+	this.Tag("flesh");
 	
 	this.getCurrentScript().runFlags |= Script::tick_not_attached;
 	this.getCurrentScript().removeIfTag = "dead";
@@ -91,5 +84,5 @@ void onDie( CBlob@ this )
 {
 	server_DropCoins(this.getPosition() + Vec2f(0, -3.0f), COINS_ON_DEATH);
 
-    this.getSprite().PlaySound("GlassBreak");	
+	this.getSprite().PlaySound("GlassBreak");	
 }
