@@ -15,10 +15,10 @@ void onInit(CRules@ this)
 
 void onRender(CRules@ this)
 {
-	if (g_videorecording) return;
+        if (g_videorecording) return;
 
-	// Always show popups
-	DrawGlobalPopup(this);
+        // Always show popups
+        DrawGlobalPopup(this);
 
 	CPlayer@ lp = getLocalPlayer();
 	if (lp is null) return;
@@ -29,8 +29,9 @@ void onRender(CRules@ this)
 		return; // popup already shown above
 	}
 
-	DrawZombiesHUDTopRight(this);
-	DrawRevivalTimer(this, lp);
+        const float offset = DrawRecordStatus(this);
+        DrawZombiesHUDTopRight(this, offset);
+        DrawRevivalTimer(this, lp);
 }
 
 
@@ -53,15 +54,110 @@ void DrawRevivalTimer(CRules@ this, CPlayer@ p)
                                 GUI::DrawText("Revival in: " + spawn + "s", pos, SColor(255, 255, 255, 55));
                         }
                 }
-	}
+        }
+}
+
+// ------------------------------
+// HUD: Record status box (top-right)
+// ------------------------------
+float DrawRecordStatus(CRules@ rules)
+{
+        if (g_videorecording) return 0.0f;
+
+        GUI::SetFont("menu");
+
+        const float margin   = 24.0f;   // distance from screen edges
+        const float padX     = 10.0f;   // inner padding
+        const float padY     = 8.0f;
+        const float lineH    = 18.0f;
+        const float titleH   = 20.0f;   // approximate title height without measuring
+        const float titleGap = 6.0f;
+
+        const string title = "RECORD STATUS";
+
+        // pull data
+        const int days          = rules.get_s32("hud_dayNumber");
+        const u16 mapRecord     = rules.get_u16("map_record");
+        const bool beatMap      = days > mapRecord;
+        const u16 globalRecord  = rules.get_u16("global_record");
+        const bool beatGlobal   = days > globalRecord;
+        const bool cheated      = rules.get_bool("dayCheated");
+        const u32 undeadKills   = rules.get_u32("undead_kills");
+
+        SColor goodColor   = SColor(255, 0, 255, 0);
+        SColor normalColor = SColor(255, 255, 255, 255);
+
+        array<string> lines;
+        array<SColor> cols;
+
+        lines.insertLast("Days Survived: " + days);
+        cols.push_back(normalColor);
+
+        lines.insertLast("Undead Killed: " + undeadKills);
+        cols.push_back(normalColor);
+
+        if (beatMap)
+        {
+                lines.insertLast("Map Record Beat!");
+                cols.push_back(goodColor);
+        }
+        else
+        {
+                lines.insertLast("Map Record: " + mapRecord);
+                cols.push_back(normalColor);
+        }
+
+        if (beatGlobal)
+        {
+                lines.insertLast("Global Record Beat!");
+                cols.push_back(goodColor);
+        }
+        else
+        {
+                lines.insertLast("Global Record: " + globalRecord);
+                cols.push_back(normalColor);
+        }
+
+        if (cheated)
+        {
+                lines.insertLast("Record Disqualified (!day)");
+                cols.push_back(SColor(255, 255, 0, 0));
+        }
+
+        // fixed width panel
+        const float boxW = 260.0f;
+        const float boxH = padY*2.0f + titleH + titleGap + (lines.length() * lineH);
+
+        Vec2f screen = getDriver().getScreenDimensions();
+        Vec2f br(screen.x - margin, margin + boxH);
+        Vec2f tl(br.x - boxW, br.y - boxH);
+
+        GUI::DrawRectangle(tl, br, SColor(140, 0, 0, 0));
+        GUI::DrawRectangle(tl, Vec2f(br.x, tl.y + 1), SColor(80, 255, 255, 255));
+        GUI::DrawRectangle(Vec2f(tl.x, br.y - 1), br, SColor(80, 255, 255, 255));
+        GUI::DrawRectangle(tl, Vec2f(tl.x + 1, br.y), SColor(80, 255, 255, 255));
+        GUI::DrawRectangle(Vec2f(br.x - 1, tl.y), br, SColor(80, 255, 255, 255));
+
+        Vec2f cursor = Vec2f(tl.x + padX, tl.y + padY);
+        GUI::DrawText(title, cursor, SColor(255, 255, 220, 90));
+        cursor.y += titleH + titleGap;
+
+        for (uint i = 0; i < lines.length(); i++)
+        {
+                GUI::DrawText(lines[i], cursor, cols[i]);
+                cursor.y += lineH;
+        }
+
+        return boxH + margin;
 }
 
 // ------------------------------
 // HUD: Top-right status panel
 // ------------------------------
-void DrawZombiesHUDTopRight(CRules@ rules)
+// existing round status panel (can be offset vertically)
+void DrawZombiesHUDTopRight(CRules@ rules, const float topOffset = 0.0f)
 {
-	if (g_videorecording) return;
+        if (g_videorecording) return;
 
 	GUI::SetFont("menu"); // try "hud" if you want smaller text
 
@@ -114,9 +210,9 @@ void DrawZombiesHUDTopRight(CRules@ rules)
 	const float boxH = padY*2.0f + titleH + titleGap + (lines.length() * lineH);
 
 	// top-right anchored rect
-	Vec2f screen = getDriver().getScreenDimensions();
-	Vec2f br(screen.x - margin, margin + boxH);
-	Vec2f tl(br.x - boxW, br.y - boxH);
+        Vec2f screen = getDriver().getScreenDimensions();
+        Vec2f br(screen.x - margin, margin + boxH + topOffset);
+        Vec2f tl(br.x - boxW, br.y - boxH);
 
 	// background + thin border
 	GUI::DrawRectangle(tl, br, SColor(140, 0, 0, 0));

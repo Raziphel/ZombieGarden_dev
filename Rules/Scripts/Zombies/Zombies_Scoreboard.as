@@ -43,14 +43,17 @@ void onBlobDie(CRules@ this, CBlob@ blob)
 
 	const u8 killerTeam = killer.getTeamNum();
 	const u8 victimTeam = blob.getTeamNum();
-	const bool victimIsZombie = blob.hasTag("zombie");
+        const bool victimIsZombie = blob.hasTag("zombie");
 
-	// Rule 1: Team 0 killing a blob tagged "zombie" gets a kill
-	if (killerTeam == 0 && victimIsZombie)
-	{
-		addKillAndRescore(killer);
-		return;
-	}
+        // Rule 1: Team 0 killing a blob tagged "zombie" gets a kill
+        if (killerTeam == 0 && victimIsZombie)
+        {
+                addKillAndRescore(killer);
+                // track total undead killed for record status
+                this.add_u32("undead_kills", 1);
+                this.Sync("undead_kills", true);
+                return;
+        }
 
 	// Rule 2: Team 1 killing anyone on team 0 gets a kill
 	if (killerTeam == 1 && victimTeam == 0)

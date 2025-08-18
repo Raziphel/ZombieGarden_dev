@@ -28,13 +28,17 @@ class ZombiesCore : RulesCore
 		rules.set_s32("gamestart", gamestart);
 		rules.SetCurrentState(WARMUP);
 
-		// Arm the boss transition for the first cycle
-		rules.set_s32("transition", 1);
-		rules.set_s32("last_boss_day", 0);
+                // Arm the boss transition for the first cycle
+                rules.set_s32("transition", 1);
+                rules.set_s32("last_boss_day", 0);
 
-		// seed counters once (single source of truth)
-		RefreshMobCountsToRules();
-	}
+                // reset kill counter for new record tracking
+                rules.set_u32("undead_kills", 0);
+                rules.Sync("undead_kills", true);
+
+                // seed counters once (single source of truth)
+                RefreshMobCountsToRules();
+        }
 
 	void Update()
 	{
