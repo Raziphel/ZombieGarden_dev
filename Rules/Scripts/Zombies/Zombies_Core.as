@@ -261,7 +261,8 @@ void onRender(CRules@ rules)
 	if (lp is null) return;
 	if (!rules.isMatchRunning() && !rules.isWarmup()) return;
 
-	DrawZombiesHUDTopRight(rules);
+	DrawGlobalPopup(rules);        // popup first
+	DrawZombiesHUDTopRight(rules); // then HUD
 }
 
 void DrawZombiesHUDTopRight(CRules@ rules)
