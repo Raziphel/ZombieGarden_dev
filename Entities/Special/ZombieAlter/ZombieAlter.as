@@ -1,4 +1,4 @@
-﻿// Zombie Portal
+﻿// Zombie Alter
 
 //#include "Requirements.as"
 //#include "ShopCommon.as";
@@ -15,7 +15,7 @@ void onInit( CBlob@ this )
 	this.Tag("builder always hit");
 	this.getSprite().SetZ(-50); //background
 	
-	CSpriteLayer@ portal = this.getSprite().addSpriteLayer( "portal", "ZombiePortal.png" , 64, 64);
+	CSpriteLayer@ portal = this.getSprite().addSpriteLayer( "portal", "ZombieAlter.png" , 64, 64);
 	Animation@ anim = portal.addAnimation("default", 0, false);
 	anim.AddFrame(1);
 	portal.SetRelativeZ(-60);

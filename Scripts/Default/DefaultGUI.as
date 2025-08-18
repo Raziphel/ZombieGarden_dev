@@ -43,7 +43,7 @@ void LoadDefaultGUI()
 		AddIconToken( "$abomination$", "../UndeadTraderIcons.png", Vec2f(16,16), 1 );
 		AddIconToken( "$undeadbarracks$", "../UndeadBarracks.png", Vec2f(40,24), 0 );
 		AddIconToken( "$undeadbuilding$", "../UndeadBuilding.png", Vec2f(40,24), 0 );
-		AddIconToken( "$ZP$", "..Industry/ZombiePortal/ZPIcon.png", Vec2f(16,16), 0 );
+		AddIconToken( "$ZA$", "../Entities/Special/ZombieAlter/ZombieAlterIcon.png", Vec2f(16,16), 0 );
 		AddIconToken( "$tradershop$", "../Entities/Industry/TraderShop/tradershopIcon.png", Vec2f(40,24), 0 );
 		AddIconToken( "$minibuilding$", "../Entities/Industry/Building/MiniBuilding.png", Vec2f(16,16), 0 );
 		AddIconToken( "$minibuildershop$", "../Entities/Industry/BuilderShop/MiniBuilderShop.png", Vec2f(16,16), 0 );

@@ -113,7 +113,7 @@ void addCommonBuilderBlocks(BuildBlock[][]@ blocks)
 		blocks[0].push_back(b);
 	}
 	{
-		BuildBlock b(0, "zombieportal", "$ZP$", "Zombie Portal\nStand in an open space\nand tap this button.");
+		BuildBlock b(0, "zombiealter", "$ZA$", "Zombie Alter\nStand in an open space\nand tap this button.");
 		AddRequirement(b.reqs, "blob", "mat_stone", "Stone", 1000);
 		AddRequirement(b.reqs, "blob", "mat_gold", "Gold", 500);
 		AddRequirement(b.reqs, "blob", "mat_wood", "Wood", 250);

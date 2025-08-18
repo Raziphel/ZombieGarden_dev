@@ -3,7 +3,7 @@ shared string base_name() { return "ruinstorch"; }
 
 void spawnPortal(Vec2f pos)
 {
-	server_CreateBlob("zombieportal",-1,pos+Vec2f(0,-24.0));
+	server_CreateBlob("zombiealter",-1,pos+Vec2f(0,-24.0));
 }
 
 void spawnGraves(Vec2f pos)

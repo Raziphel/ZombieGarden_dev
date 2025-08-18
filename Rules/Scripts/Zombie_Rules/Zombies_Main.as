@@ -27,7 +27,7 @@ void Reset(CRules@ this)
 	Config(core);
 
 	// spawn initial portals/graves from map markers
-	Vec2f[] zombiePlaces; getMap().getMarkers("zombie portal", zombiePlaces);
+	Vec2f[] zombiePlaces; getMap().getMarkers("zombie alter", zombiePlaces);
 	for (int i = 0; i < zombiePlaces.length; i++) spawnPortal(zombiePlaces[i]);
 
 	Vec2f[] gravePlaces; getMap().getMarkers("grave", gravePlaces);

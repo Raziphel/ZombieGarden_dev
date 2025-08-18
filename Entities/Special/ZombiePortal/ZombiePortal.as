@@ -3,7 +3,7 @@
 #include "StandardRespawnCommand.as"
 void onInit( CBlob@ this )
 {
-	this.addCommandID( "ZombieSpawn" );
+	this.addCommandID( "ZombiePortal" );
 	this.Tag("invincible");
 	this.SetLight(true);
 	this.SetLightRadius(124.0f);

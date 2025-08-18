@@ -272,7 +272,7 @@ class PNGLoader
 			offsets[autotile_offset].push_back( offset );
 		}	
 		else if (pixel == color_zombie_spawn) {
-			spawnBlob( map, "zombiespawn", offset, 1);
+			spawnBlob( map, "zombieportal", offset, 1);
 			AddMarker( map, offset, "zombie spawn" );
 		}			
 		else if (pixel == color_zombie_ruins) {
@@ -280,7 +280,7 @@ class PNGLoader
 			AddMarker( map, offset, "zombie spawn" );
 		}	
 		else if (pixel == color_zombie_portal) {
-			AddMarker( map, offset, "zombie portal" );
+			AddMarker( map, offset, "zombie alter" );
 		}		
 		else if (pixel == color_grave) {
 			AddMarker( map, offset, "grave" );
