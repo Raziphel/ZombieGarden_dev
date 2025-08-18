@@ -2,7 +2,7 @@
 
 void onInit(CBlob@ this)
 {
-	this.getCurrentScript().tickFrequency = 20;
+	this.getCurrentScript().tickFrequency = 40;
 	this.getCurrentScript().removeIfTag	= "dead";
 }
 

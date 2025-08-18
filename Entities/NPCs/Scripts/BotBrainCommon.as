@@ -1,6 +1,6 @@
 // brain
 
-#include "/Entities/Shared/Emotes/EmotesCommon.as"
+#include "/Entities/Common/Emotes/EmotesCommon.as"
 
 namespace Strategy
 {
@@ -21,9 +21,6 @@ void InitBrain( CBrain@ this )
 	blob.set_u8("strategy", Strategy::idle);
 	this.getCurrentScript().removeIfTag = "dead";   //won't be removed if not bot cause it isnt run
 
-	if(!blob.exists("difficulty")) {
-		blob.set_s32("difficulty", 15); // max
-	}
 }
 
 CBlob@ getNewTarget( CBrain@ this, CBlob @blob, const bool seeThroughWalls = false, const bool seeBehindBack = false )
@@ -42,7 +39,7 @@ CBlob@ getNewTarget( CBrain@ this, CBlob @blob, const bool seeThroughWalls = fal
 			&& (pos2 - pos).getLength() < 600.0f
 			&& (isBot || seeBehindBack || Maths::Abs(pos.x-pos2.x) < 40.0f || (blob.isFacingLeft() && pos.x > pos2.x) ||  (!blob.isFacingLeft() && pos.x < pos2.x)) 
 			&& (isBot || seeThroughWalls || isVisible(blob, potential))
-			&& !potential.hasTag("dead") && !potential.hasTag("migrant")
+			&& !potential.hasTag("dead") && !potential.hasTag("migrant") && (!potential.hasTag("survivorplayer"))
 			)
 		{
 			blob.set_Vec2f("last pathing pos", potential.getPosition() );
@@ -311,7 +308,7 @@ void onChangeTarget( CBlob@ blob, CBlob@ target, CBlob@ oldTarget )
 	// !!!
 	if(oldTarget is null)
 	{
-	//	set_emote( blob, Emotes::attn, 1 );
+		//set_emote( blob, Emotes::attn, 1 );
 	}
 }
 

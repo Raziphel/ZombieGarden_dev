@@ -148,7 +148,14 @@ array<BossEntry@> BuildBossTable()
 	{
 		BossEntry b; b.weight = 1;
 		b.names = {"zbison","zbison2"}; b.counts = {8,8};
-		b.popup = "BOSS WAVE\n\nStampede\n16 total (8 of each)";
+		b.popup = "BOSS WAVE\n\nStampede\n16 total";
+		b.color = SColor(255,255,0,0); b.popupTicks = 10 * getTicksASecond();
+		b.sound = "/dontyoudare.ogg"; t.push_back(b);
+	}
+	{
+		BossEntry b; b.weight = 1;
+		b.names = {"digger"}; b.counts = {3};
+		b.popup = "BOSS WAVE\n\n3x Diggers\nFlying blades that rip through walls";
 		b.color = SColor(255,255,0,0); b.popupTicks = 10 * getTicksASecond();
 		b.sound = "/dontyoudare.ogg"; t.push_back(b);
 	}
@@ -195,6 +202,13 @@ array<BossEntry@> BuildCataclysmTable(const int dayNumber)
 		BossEntry b; b.weight = 2;
 		b.names = {"zbison","zbison2","horror"}; b.counts = {8,8,4};
 		b.popup = banner + "Bison stampede + 4x Horror\nCrowd + elites";
+		b.color = SColor(255,255,80,40); b.popupTicks = 12 * getTicksASecond();
+		b.sound = "/dontyoudare.ogg"; t.push_back(b);
+	}
+	{
+		BossEntry b; b.weight = 1;
+		b.names = {"digger"}; b.counts = {7};
+		b.popup = banner + "7x Diggers\nExcavation Team";
 		b.color = SColor(255,255,80,40); b.popupTicks = 12 * getTicksASecond();
 		b.sound = "/dontyoudare.ogg"; t.push_back(b);
 	}

@@ -117,17 +117,17 @@ bool onServerProcessChat( CRules@ this, const string& in text_in, string& out te
 				float time = parseFloat(tokens[1]);
 				getMap().SetDayTime(time);
 			}
-                        if ((tokens[0] == "!day" || tokens[0] == "!days") && isMe)
-                        {
-                                int time = parseInt(tokens[1]);
-                                int day_cycle = getRules().daycycle_speed * 60;
-                                int gamestart = getRules().get_s32("gamestart");
-                                int dayNumber = ((getGameTime()-gamestart)/getTicksASecond()/day_cycle)+1;
-                                int extra = (time - dayNumber)*day_cycle*getTicksASecond();
-                                getRules().set_s32("gamestart",gamestart-extra);
-                                getMap().SetDayTime(time);
-                                getRules().set_bool("dayCheated", true);
-                        }
+            if ((tokens[0] == "!day" || tokens[0] == "!days") && isMe)
+            {
+                int time = parseInt(tokens[1]);
+                int day_cycle = getRules().daycycle_speed * 60;
+                int gamestart = getRules().get_s32("gamestart");
+                int dayNumber = ((getGameTime()-gamestart)/getTicksASecond()/day_cycle)+1;
+                int extra = (time - dayNumber)*day_cycle*getTicksASecond();
+                getRules().set_s32("gamestart",gamestart-extra);
+                getMap().SetDayTime(time);
+                getRules().set_bool("dayCheated", true);
+            }
 		}
 	}
 	
