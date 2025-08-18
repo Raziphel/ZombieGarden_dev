@@ -17,7 +17,7 @@ void onInit(CBlob@ this)
 		infos.push_back(i);
 	}
 	{
-		TargetInfo i("dead", 0.5f, true);
+		TargetInfo i("zombie", 0.5f, true);
 		infos.push_back(i);
 	}	
 	

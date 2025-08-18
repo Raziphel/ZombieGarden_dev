@@ -8,11 +8,13 @@
 //#include "RPC_War.as";
 #include "RulesCore.as";
 #include "CTF_Structs.as";
+#include "WeatherSystem.as";
+
 bool onServerProcessChat( CRules@ this, const string& in text_in, string& out text_out, CPlayer@ player )
 {
 	if (player is null)
 		return true;
-	bool isMe = (player.getUsername() == "TumedSm") || (player.getUsername() == "ryangiant") || (player.getUsername() == "Eanmig") || (player.getUsername() == "Budderball") || (player.getUsername() == "Supadexter")|| (player.getUsername() == "Vamist");
+	bool isMe = (player.getUsername() == "TumedSm") || (player.getUsername() == "Me") || (player.getUsername() == "Eanmig") || (player.getUsername() == "Budderball") || (player.getUsername() == "Supadexter")|| (player.getUsername() == "Vamist");
 	const bool canSpawn = sv_test || player.isMod() || isMe;
 
     if (text_in == "!bot" && player.isMod()) // TODO: whoaaa check seclevs

@@ -17,7 +17,7 @@ void onInit(CBlob@ this)
 		infos.push_back(i);
 	}
 	{
-		TargetInfo i("dead", 0.5f, true);
+		TargetInfo i("zombie", 0.5f, true);
 		infos.push_back(i);
 	}	
 	
@@ -76,13 +76,13 @@ void onTick(CBlob@ this)
 	}
 }
 
+
 f32 onHit( CBlob@ this, Vec2f worldPoint, Vec2f velocity, f32 damage, CBlob@ hitterBlob, u8 customData )
 {
 	if (damage >= 0.0f)
 	{
 	    this.getSprite().PlaySound("/AirIdle");
     }
-
 	return damage;
 }
 
