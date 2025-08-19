@@ -8,10 +8,14 @@ const int COINS_ON_DEATH = 0;
 
 void onInit(CBlob@ this)
 {
-	TargetInfo[] infos;
-	addTargetInfo(infos, "survivorplayer", 1.0f, true);
+        TargetInfo[] infos;
+        addTargetInfo(infos, "survivorplayer", 1.0f, true, true);
+        addTargetInfo(infos, "ruinstorch", 1.0f, true, true);
+        addTargetInfo(infos, "stone_door", 0.9f);
+        addTargetInfo(infos, "wooden_door", 0.9f);
+        addTargetInfo(infos, "survivorbuilding", 0.6f, true);
 
-	this.set("target infos", infos);
+        this.set("target infos", infos);
 
 	this.set_u16("coins on death", COINS_ON_DEATH);
 	this.set_f32(target_searchrad_property, 512.0f);
