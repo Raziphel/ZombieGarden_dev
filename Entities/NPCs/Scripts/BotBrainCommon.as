@@ -26,9 +26,9 @@ void InitBrain( CBrain@ this )
 CBlob@ getNewTarget( CBrain@ this, CBlob @blob, const bool seeThroughWalls = false, const bool seeBehindBack = false )
 {
 	CBlob@[] players;
-	getBlobsByTag( "zombie", @players );
-	getBlobsByTag( "flesh", @players );
-	//getBlobsByTag( "player", @players );
+        getBlobsByTag( "zombie", @players );
+        getBlobsByTag( "undeadplayer", @players );
+        //getBlobsByTag( "player", @players );
 	Vec2f pos = blob.getPosition();
 	for(uint i=0; i < players.length; i++)
 	{
@@ -52,8 +52,8 @@ CBlob@ getNewTarget( CBrain@ this, CBlob @blob, const bool seeThroughWalls = fal
 CBlob@ getNewTargetStandGround( CBrain@ this, CBlob @blob, const bool seeThroughWalls = false, const bool seeBehindBack = false )
 {
 	CBlob@[] players;
-	//getBlobsByTag( "zombie", @players );
-	//getBlobsByTag( "flesh", @players );
+        //getBlobsByTag( "zombie", @players );
+        //getBlobsByTag( "undeadplayer", @players );
 	const u8 strategy = blob.get_u8("strategy");
 	Vec2f pos = blob.getPosition();
 	int radius = 0;
@@ -75,7 +75,7 @@ CBlob@ getNewTargetStandGround( CBrain@ this, CBlob @blob, const bool seeThrough
 				//const bool isBot = blob.getPlayer() !is null && blob.getPlayer().isBot();
 				if(potential !is blob && blob.getTeamNum() != potential.getTeamNum()
 				&& (!potential.hasTag("dead") && !potential.hasTag("migrant"))
-				&& (potential.hasTag("zombie") || potential.hasTag("flesh"))
+                               && (potential.hasTag("zombie") || potential.hasTag("undeadplayer"))
 				&& (!potential.hasTag("survivorplayer"))
 				&& (isBot || seeThroughWalls || isVisible(blob, potential))
 				)	
