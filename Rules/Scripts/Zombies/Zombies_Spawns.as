@@ -162,60 +162,80 @@ class ZombiesSpawns : RespawnSystem
 
 	Vec2f getSpawnLocation(PlayerInfo@ p_info)
 	{
-		CTFPlayerInfo@ c_info = cast<CTFPlayerInfo@>(p_info);
-		if (c_info !is null)
+		// null & map guard
+		if (p_info is null)
 		{
-			CMap@ map = getMap();
-			if (map !is null)
-			{
-				CPlayer@ player = getPlayerByUsername(p_info.username);
-				u8 lemo = player.getTeamNum();
+			CMap@ m0 = getMap();
+			if (m0 is null) return Vec2f(0, 0);
+			f32 x0 = (XORRandom(2) == 0 ? 32.0f : m0.tilemapwidth * m0.tilesize - 32.0f);
+			return Vec2f(x0, m0.getLandYAtX(s32(x0 / m0.tilesize)) * m0.tilesize - 16.0f);
+		}
 
-				if (lemo == 0)
+		CMap@ map = getMap();
+		if (map is null) return Vec2f(0, 0);
+
+		// prefer team from PlayerInfo; fallback to live player if needed
+		u8 teamNum = p_info.team;
+		if (teamNum > 1)
+		{
+			// try to read from actual player if in an unexpected team
+			CPlayer@ player = getPlayerByUsername(p_info.username);
+			if (player !is null) teamNum = player.getTeamNum();
+		}
+
+		if (teamNum == 0)
+		{
+			// --- team 0: try "altarrevival" first ---
+			CBlob@[] dorms;
+			getBlobsByName("altarrevival", @dorms);
+			for (uint i = 0; i < dorms.length; i++)
+			{
+				if (dorms[i] !is null)
 				{
-					CBlob@[] dorms;
-					getBlobsByName("altarrevival", @dorms);
-					for (int n = 0; n < dorms.length; n++)
-					if (dorms[n] !is null)
-					{
-						return Vec2f(dorms[n].getPosition());
-					}
-					else
-					{
-						CBlob@[] spawns;
-						getBlobsByName("zombie_ruins", @spawns);
-						if (spawns.length > 0)
-						{
-							return Vec2f(spawns[XORRandom(spawns.length)].getPosition());
-						}
-					}
-				}
-				else if (lemo == 1)
-				{
-					CBlob@[] undeadstatues;
-					getBlobsByName("undeadstatue", @undeadstatues);
-					for (int n = 0; n < undeadstatues.length; n++)
-					if (undeadstatues[n] !is null)
-					{
-						ParticleZombieLightning(undeadstatues[n].getPosition());
-						return Vec2f(undeadstatues[n].getPosition());
-					}
-					else
-					{
-						CBlob@[] spawns;
-						getBlobsByName("zombie_ruins", @spawns);
-						if (spawns.length > 0)
-						{
-							return Vec2f(spawns[XORRandom(spawns.length)].getPosition());
-						}
-					}
+					return dorms[i].getPosition();
 				}
 			}
+
+			// fallback: random "zombieruins" spawn
+			CBlob@[] spawns0;
+			getBlobsByName("zombieruins", @spawns0);
+			if (spawns0.length > 0)
+			{
+				return spawns0[XORRandom(spawns0.length)].getPosition();
+			}
 		}
-                CMap@ map = getMap();
-                f32 x = XORRandom(2) == 0 ? 32.0f : map.tilemapwidth * map.tilesize - 32.0f;
-                return Vec2f(x, map.getLandYAtX(s32(x / map.tilesize)) * map.tilesize - 16.0f);
-        }
+		else if (teamNum == 1)
+		{
+			// --- team 1: try "undeadstatue" first ---
+			CBlob@[] undeadstatues;
+			getBlobsByName("undeadstatue", @undeadstatues);
+			for (uint i = 0; i < undeadstatues.length; i++)
+			{
+				if (undeadstatues[i] !is null)
+				{
+					// particles are client-side; guard to avoid server-only contexts breaking
+					if (isClient())
+					{
+						ParticleZombieLightning(undeadstatues[i].getPosition());
+					}
+					return undeadstatues[i].getPosition();
+				}
+			}
+
+			// fallback: random "zombieruins" spawn
+			CBlob@[] spawns1;
+			getBlobsByName("zombieruins", @spawns1);
+			if (spawns1.length > 0)
+			{
+				return spawns1[XORRandom(spawns1.length)].getPosition();
+			}
+		}
+
+		// ultimate fallback: map edge ground
+		f32 x = (XORRandom(2) == 0 ? 32.0f : map.tilemapwidth * map.tilesize - 32.0f);
+		return Vec2f(x, map.getLandYAtX(s32(x / map.tilesize)) * map.tilesize - 16.0f);
+	}
+
 
 	void RemovePlayerFromSpawn(CPlayer@ player)
 	{

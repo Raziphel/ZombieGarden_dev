@@ -271,13 +271,12 @@ class PNGLoader
 			spawnBlob( map, "ruinstorch", offset, 0);
 			offsets[autotile_offset].push_back( offset );
 		}	
-		else if (pixel == color_zombie_spawn) {
-			spawnBlob( map, "zombieportal", offset, 1);
-			AddMarker( map, offset, "zombie spawn" );
-		}			
-		else if (pixel == color_zombie_ruins) {
-			spawnBlob( map, "zombie_ruins", offset, 1);
-		}	
+        else if (pixel == color_zombie_spawn) {
+            spawnBlob( map, "zombieportal", offset, 1);
+        }
+        else if (pixel == color_zombie_ruins) {
+            spawnBlob( map, "zombieruins", offset, 1);
+        }
 		else if (pixel == color_zombie_portal) {
 			AddMarker( map, offset, "zombie alter" );
 		}		

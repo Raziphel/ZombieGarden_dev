@@ -145,26 +145,6 @@ class ZombiesCore : RulesCore
 		{
             RefreshMobCountsToRules(); // <— single source of truth
 
-            // spawn portals at ruins once the configured day is reached
-            if (getNet().isServer())
-            {
-                if (dayNumber >= ruined_portal_day && !rules.get_bool("ruined_portals_spawned"))
-                {
-                    CBlob@[] ruins;
-                    getBlobsByName("zombie_ruins", @ruins);
-                    for (uint i = 0; i < ruins.length; i++)
-                    {
-                        CBlob@ ruin = ruins[i];
-                        if (ruin !is null)
-                        {
-                            server_CreateBlob("zombieportal", -1, ruin.getPosition());
-                        }
-                    }
-                rules.set_bool("ruined_portals_spawned", true);
-                rules.Sync("ruined_portals_spawned", true);
-                }
-			}
-
 			// night transition + curse logic
 			CMap@ map = getMap();
 			if (map !is null)
@@ -226,22 +206,38 @@ class ZombiesCore : RulesCore
 			CMap@ map = getMap();
 			if (map !is null)
 			{
-				// spawn markers / fallback edges
-				Vec2f[] zombiePlaces;
-				map.getMarkers("zombie spawn", zombiePlaces);
+            	// gather portals and (later) ruins; fallback to edges
+                Vec2f[] zombiePlaces;
 
-				if (zombiePlaces.length <= 0)
-				{
-					// build simple edge fallback list
-					for (int zp = 8; zp < 16; zp++)
-					{
-						Vec2f col;
-						map.rayCastSolid(Vec2f(zp * 8, 0.0f), Vec2f(zp * 8, map.tilemapheight * 8), col);
-						col.y -= 16.0f; zombiePlaces.push_back(col);
-						map.rayCastSolid(Vec2f((map.tilemapwidth - zp) * 8, 0.0f), Vec2f((map.tilemapwidth - zp) * 8, map.tilemapheight * 8), col);
-						col.y -= 16.0f; zombiePlaces.push_back(col);
-					}
-				}
+                CBlob@[] portals;
+                getBlobsByName("zombieportal", @portals);
+                for (uint i = 0; i < portals.length; i++)
+                {
+                    zombiePlaces.push_back(portals[i].getPosition());
+                }
+
+                if (dayNumber >= ruined_portal_day)
+                {
+                    CBlob@[] ruins;
+                    getBlobsByName("zombieruins", @ruins);
+                    for (uint i = 0; i < ruins.length; i++)
+                    {
+                        zombiePlaces.push_back(ruins[i].getPosition());
+                    }
+                }
+
+                if (zombiePlaces.length <= 0)
+                {
+                    // build simple edge fallback list
+                    for (int zp = 8; zp < 16; zp++)
+                    {
+                        Vec2f col;
+                        map.rayCastSolid(Vec2f(zp * 8, 0.0f), Vec2f(zp * 8, map.tilemapheight * 8), col);
+                        col.y -= 16.0f; zombiePlaces.push_back(col);
+                        map.rayCastSolid(Vec2f((map.tilemapwidth - zp) * 8, 0.0f), Vec2f((map.tilemapwidth - zp) * 8, map.tilemapheight * 8), col);
+                        col.y -= 16.0f; zombiePlaces.push_back(col);
+                    }
+                }
 
 				// If still empty somehow, bail this tick safely
 				if (zombiePlaces.length == 0)
@@ -261,8 +257,8 @@ class ZombiesCore : RulesCore
 				const int _max_gr = rules.get_s32("max_gregs");
 				const int _num_im = rules.get_s32("num_immol");
 				const int _max_im = rules.get_s32("max_imol");
-				const int _num_im = rules.get_s32("num_digger");
-				const int _max_im = rules.get_s32("max_digger");
+				const int _num_di = rules.get_s32("num_digger");
+				const int _max_di = rules.get_s32("max_digger");
 
 				const bool canSpawnNow =
 					   (dayNumber >= ignore_light && _num_z < max_zombies)
@@ -272,8 +268,8 @@ class ZombiesCore : RulesCore
 				{
 					const int r = XORRandom(int(difficulty)); // +1 so int cast doesn't zero-out
 
-					if (r >=  12.5)                                                       server_CreateBlob("digger", -1, sp);
-					else if      (r >= 11.3 && (_num_gr + _num_wr) < (_max_gr + _max_wr)) server_CreateBlob("writher", -1, sp);
+					if (r >=  12.5 && _num_di < _max_di)                                server_CreateBlob("digger", -1, sp);
+					else if (r >= 11.3 && (_num_gr + _num_wr) < (_max_gr + _max_wr))      server_CreateBlob("writher", -1, sp);
 					else if (r >=  9.8)                                                   server_CreateBlob("pbanshee", -1, sp);
 					else if (r >=  9.5)                                                   server_CreateBlob("zbison", -1, sp);
 					else if (r >=  9.1)                                                   server_CreateBlob("horror", -1, sp);
