@@ -5,7 +5,7 @@
 #include "BuilderCommon.as";
 #include "ThrowCommon.as";
 #include "RunnerCommon.as";
-#include "MakeMat.as";
+#include "../../Resources/Scripts/MakeMat.as";
 #include "Requirements.as";
 #include "UndeadBunnyHittable.as";
 #include "PlacementCommon.as";
