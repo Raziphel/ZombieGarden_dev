@@ -289,7 +289,7 @@ namespace Material
 				case CMap::tile_ironbrick_d9:
 				case CMap::tile_ironbrick_d10:
 				case CMap::tile_ironbrick_d11:
-					createFor(this, 'mat_ironbar', 1 * damage);
+                                       createFor(this, 'mat_ironingot', 1 * damage);
 				break;
 				
 				
