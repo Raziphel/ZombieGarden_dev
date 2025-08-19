@@ -28,17 +28,17 @@ class ZombiesCore : RulesCore
 		rules.set_s32("gamestart", gamestart);
 		rules.SetCurrentState(WARMUP);
 
-                // Arm the boss transition for the first cycle
-                rules.set_s32("transition", 1);
-                rules.set_s32("last_boss_day", 0);
+        // Arm the boss transition for the first cycle
+        rules.set_s32("transition", 1);
+        rules.set_s32("last_boss_day", 0);
 
-                // reset kill counter for new record tracking
-                rules.set_u32("undead_kills", 0);
-                rules.Sync("undead_kills", true);
+        // reset kill counter for new record tracking
+        rules.set_u32("undead_kills", 0);
+        rules.Sync("undead_kills", true);
 
-                // seed counters once (single source of truth)
-                RefreshMobCountsToRules();
-        }
+        // seed counters once (single source of truth)
+        RefreshMobCountsToRules();
+    }
 
 	void Update()
 	{
@@ -64,11 +64,11 @@ class ZombiesCore : RulesCore
 		const int num_zombiePortals = rules.get_s32("num_zombiePortals");
 
 		// recompute simple derived values
-                const int hardmode_day      = rules.get_s32("hardmode_day");
-                const int curse_day         = rules.get_s32("curse_day");
-                const int days_offset       = rules.get_s32("days_offset");
-                const int ruined_portal_day = rules.get_s32("ruined_portal_day");
-                const int dayNumber         = days_offset + ((getGameTime() - gamestart) / getTicksASecond() / day_cycle) + 1;
+        const int hardmode_day      = rules.get_s32("hardmode_day");
+        const int curse_day         = rules.get_s32("curse_day");
+        const int days_offset       = rules.get_s32("days_offset");
+        const int ruined_portal_day = rules.get_s32("ruined_portal_day");
+        const int dayNumber         = days_offset + ((getGameTime() - gamestart) / getTicksASecond() / day_cycle) + 1;
 
 		const int timeElapsed  = getGameTime() - gamestart;
 		const int ignore_light = (hardmode_day - ((days_offset / 14) * 10));
@@ -143,28 +143,28 @@ class ZombiesCore : RulesCore
 		// === periodic maintenance: refresh *all* counts into rules ===
 		if (getGameTime() % 150 == 0)
 		{
-                        RefreshMobCountsToRules(); // <— single source of truth
+            RefreshMobCountsToRules(); // <— single source of truth
 
-                        // spawn portals at ruins once the configured day is reached
-                        if (getNet().isServer())
+            // spawn portals at ruins once the configured day is reached
+            if (getNet().isServer())
+            {
+                if (dayNumber >= ruined_portal_day && !rules.get_bool("ruined_portals_spawned"))
+                {
+                    CBlob@[] ruins;
+                    getBlobsByName("zombie_ruins", @ruins);
+                    for (uint i = 0; i < ruins.length; i++)
+                    {
+                        CBlob@ ruin = ruins[i];
+                        if (ruin !is null)
                         {
-                                if (dayNumber >= ruined_portal_day && !rules.get_bool("ruined_portals_spawned"))
-                                {
-                                        CBlob@[] ruins;
-                                        getBlobsByName("zombie_ruins", @ruins);
-                                        for (uint i = 0; i < ruins.length; i++)
-                                        {
-                                                CBlob@ ruin = ruins[i];
-                                                if (ruin !is null)
-                                                {
-                                                        server_CreateBlob("zombieportal", -1, ruin.getPosition());
-                                                        ruin.server_Die();
-                                                }
-                                        }
-                                        rules.set_bool("ruined_portals_spawned", true);
-                                        rules.Sync("ruined_portals_spawned", true);
-                                }
+                            server_CreateBlob("zombieportal", -1, ruin.getPosition());
+                            ruin.server_Die();
                         }
+                    }
+                rules.set_bool("ruined_portals_spawned", true);
+                rules.Sync("ruined_portals_spawned", true);
+                }
+			}
 
 			// night transition + curse logic
 			CMap@ map = getMap();

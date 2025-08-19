@@ -5,6 +5,8 @@
 const u16 ATTACK_FREQUENCY = 120;
 const f32 ATTACK_DAMAGE = 1.50f;
 const f32 ATTACK_DISTANCE = 1.0f;
+const f32 DIG_RADIUS = 3.0f;
+const f32 DIG_DAMAGE = 4.5f;
 
 const int COINS_ON_DEATH = 50;
 
@@ -13,6 +15,8 @@ void onInit(CBlob@ this)
 	this.set_u8("attack frequency", ATTACK_FREQUENCY);
 	this.set_f32("attack damage", ATTACK_DAMAGE);
 	this.set_f32("attack distance", ATTACK_DISTANCE);
+	this.set_f32("dig radius", DIG_RADIUS);
+	this.set_f32("dig damage", DIG_DAMAGE);		
 	this.set_string("attack sound", "HellKnightAttack");
 	this.set_u16("coins on death", COINS_ON_DEATH);
 	this.set_f32(target_searchrad_property, 512.0f);

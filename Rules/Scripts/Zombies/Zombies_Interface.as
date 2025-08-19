@@ -40,7 +40,7 @@ void onRender(CRules@ this)
 // ------------------------------
 void DrawRevivalTimer(CRules@ this, CPlayer@ p)
 {
-	if (p is null) return;
+        if (p is null) return;
 	if (p.isMyPlayer() && p.getBlob() is null)
 	{
 		const string propname = "Zombies spawn time " + p.getUsername();

@@ -27,9 +27,9 @@ void Config(ZombiesCore@ this)
 	// Win/Loss pacing
 	// ----------------------------
 	this.rules.set_s32("days_to_survive", 0);   // <= 0 means endless
-        this.rules.set_s32("curse_day",        250);  // night(s) from which survivors can auto-zombify
-        this.rules.set_s32("hardmode_day",     100);  // the day zombies can spawn during the day
-        this.rules.set_s32("ruined_portal_day", 150); // day that ruins convert to portals
+    this.rules.set_s32("curse_day",        250);  // night(s) from which survivors can auto-zombify
+    this.rules.set_s32("hardmode_day",     100);  // the day zombies can spawn during the day
+    this.rules.set_s32("ruined_portal_day", 150); // day that ruins convert to portals
 
 	// ----------------------------
 	// Flavor toggles
@@ -54,12 +54,12 @@ void RefreshMobCountsToRules()
 	CBlob@[] a;
 
 	// by tag (bulk species)
-	getBlobsByTag("zombie",     @a); getRules().set_s32("num_zombies",     a.length); a.clear();
-	getBlobsByTag("pzombie",    @a); getRules().set_s32("num_pzombies",    a.length); a.clear();
-	getBlobsByTag("migrantbot", @a); getRules().set_s32("num_migrantbots", a.length); a.clear();
-	getBlobsByTag("wraiths",    @a); getRules().set_s32("num_wraiths",     a.length); a.clear();
-	getBlobsByTag("gregs",      @a); getRules().set_s32("num_gregs",       a.length); a.clear();
-	getBlobsByTag("ruinstorch", @a); getRules().set_s32("num_ruinstorch",  a.length); a.clear();
+	getBlobsByTag("zombie",     @a); getRules().set_s32("num_zombies",       a.length); a.clear();
+	getBlobsByTag("pzombie",    @a); getRules().set_s32("num_pzombies",      a.length); a.clear();
+	getBlobsByTag("migrantbot", @a); getRules().set_s32("num_migrantbots",   a.length); a.clear();
+	getBlobsByTag("wraiths",    @a); getRules().set_s32("num_wraiths",       a.length); a.clear();
+	getBlobsByTag("gregs",      @a); getRules().set_s32("num_gregs",         a.length); a.clear();
+	getBlobsByTag("ruinstorch", @a); getRules().set_s32("num_ruinstorch",    a.length); a.clear();
 	getBlobsByTag("ZP",         @a); getRules().set_s32("num_zombiePortals", a.length); a.clear();
 
 	// by exact blob name (bossy/specials we sometimes check directly)
