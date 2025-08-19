@@ -6,9 +6,13 @@ const int COINS_ON_DEATH = 25;
 
 void onInit(CBlob@ this)
 {
-	TargetInfo[] infos;
-	addTargetInfo(infos, "survivorplayer", 1.0f, true, true);
-	addTargetInfo(infos, "mage", 0.9f);
+        TargetInfo[] infos;
+        addTargetInfo(infos, "survivorplayer", 1.0f, true, true);
+        addTargetInfo(infos, "ruinstorch", 1.0f, true, true);
+        addTargetInfo(infos, "stone_door", 0.9f);
+        addTargetInfo(infos, "wooden_door", 0.9f);
+        addTargetInfo(infos, "survivorbuilding", 0.6f, true);
+        addTargetInfo(infos, "mage", 0.9f);
 
 	this.set("target infos", @infos);
 
