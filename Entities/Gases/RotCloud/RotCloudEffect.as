@@ -4,18 +4,18 @@ void onInit(CBlob@ this)
 {
 	this.getCurrentScript().tickFrequency = 1;
 	
-	if (this.hasTag("mustarded")) this.getCurrentScript().runFlags |= Script::remove_after_this;
-	this.Tag("mustarded");
+	if (this.hasTag("rotted")) this.getCurrentScript().runFlags |= Script::remove_after_this;
+	this.Tag("rotted");
 }
 
 void onTick(CBlob@ this)
 {
 	if (this.hasTag("dead")) this.getCurrentScript().runFlags |= Script::remove_after_this;
 
-	if (this.get_u8("mustard value") < 5) return;
+	if (this.get_u8("rot value") < 5) return;
 	
-	const int ticks = getGameTime() - this.get_u32("mustard time");
-	const f32 mod = f32(this.get_u8("mustard value") / 64.0f);
+	const int ticks = getGameTime() - this.get_u32("rot time");
+	const f32 mod = f32(this.get_u8("rot value") / 64.0f);
 	const f32 mod_inv = 1.00f - mod;
 
 	
@@ -26,7 +26,7 @@ void onTick(CBlob@ this)
 	{
 		// print("mod: " + mod);
 	
-		if (getNet().isServer()) this.server_Hit(this, this.getPosition(), Vec2f(0, 0), Maths::Min(ticks, 300) * 0.00125f * mod, Hitters::burn);
+		if (getNet().isServer()) this.server_Hit(this, this.getPosition(), Vec2f(0, 0), Maths::Min(ticks, 150) * 0.0015f * mod, Hitters::burn);
 		if (getNet().isClient()) 
 		{
 			this.getSprite().PlaySound("/cough" + XORRandom(5) + ".ogg", 0.6f, this.getSexNum() == 0 ? 1.0f : 2.0f);
@@ -51,12 +51,12 @@ void onTick(CBlob@ this)
 
 void onDie(CBlob@ this)
 {
-	this.RemoveScript("MustardEffect.as");
+	this.RemoveScript("RotCloudEffect.as");
 }
 
 void onDie(CSprite@ this)
 {
-	this.RemoveScript("MustardEffect.as");
+	this.RemoveScript("RotCloudEffect.as");
 }
 
 void onRender(CSprite@ this)
@@ -64,8 +64,8 @@ void onRender(CSprite@ this)
 	CBlob@ blob = this.getBlob();
 	if (!blob.isMyPlayer()) return;
 	
-	const int ticks = getGameTime() - blob.get_u32("mustard time");
-	const f32 mod = f32(blob.get_u8("mustard value") / 100.0f);
+	const int ticks = getGameTime() - blob.get_u32("rot time");
+	const f32 mod = f32(blob.get_u8("rot value") / 100.0f);
 	
 	Driver@ driver = getDriver();
 	Vec2f screenSize(driver.getScreenWidth(), driver.getScreenHeight());

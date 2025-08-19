@@ -289,9 +289,8 @@ namespace Material
 				case CMap::tile_ironbrick_d9:
 				case CMap::tile_ironbrick_d10:
 				case CMap::tile_ironbrick_d11:
-                                       createFor(this, 'mat_ironingot', 1 * damage);
+                    createFor(this, 'mat_ironingot', 1 * damage);
 				break;
-				
 				
 				case CMap::tile_ironore:
 				case CMap::tile_ironore_d0:
@@ -300,28 +299,28 @@ namespace Material
 				case CMap::tile_ironore_d3:
 				case CMap::tile_ironore_d4:
 				case CMap::tile_ironore_d5:
-                                        createFor(this, 'mat_ironore', 3 * damage);
-                                break;
+                	createFor(this, 'mat_ironore', 3 * damage);
+                break;
 
-                                case CMap::tile_copperore:
-                                case CMap::tile_copperore_d0:
-                                case CMap::tile_copperore_d1:
-                                case CMap::tile_copperore_d2:
-                                case CMap::tile_copperore_d3:
-                                case CMap::tile_copperore_d4:
-                                case CMap::tile_copperore_d5:
-                                        createFor(this, 'mat_copperore', 3 * damage);
-                                break;
+                case CMap::tile_copperore:
+                case CMap::tile_copperore_d0:
+                case CMap::tile_copperore_d1:
+                case CMap::tile_copperore_d2:
+                case CMap::tile_copperore_d3:
+                case CMap::tile_copperore_d4:
+                case CMap::tile_copperore_d5:
+                    createFor(this, 'mat_copperore', 3 * damage);
+                break;
 
-                                case CMap::tile_coalore:
-                                case CMap::tile_coalore_d0:
-                                case CMap::tile_coalore_d1:
-                                case CMap::tile_coalore_d2:
-                                case CMap::tile_coalore_d3:
-                                case CMap::tile_coalore_d4:
-                                case CMap::tile_coalore_d5:
-                                        createFor(this, 'mat_coal', 3 * damage);
-                                break;
+                case CMap::tile_coalore:
+                case CMap::tile_coalore_d0:
+                case CMap::tile_coalore_d1:
+                case CMap::tile_coalore_d2:
+                case CMap::tile_coalore_d3:
+                case CMap::tile_coalore_d4:
+                case CMap::tile_coalore_d5:
+                    createFor(this, 'mat_coal', 3 * damage);
+                break;
 			}
 		}
 	}

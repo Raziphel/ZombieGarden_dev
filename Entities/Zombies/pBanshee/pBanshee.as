@@ -63,15 +63,19 @@ void onTick(CBlob@ this)
        	 	if (timer <= 0)
         	{
             	// boom
-	this.server_SetHealth(-1.0f);
-	this.server_Die();
+				this.server_SetHealth(-1.0f);
+				Vec2f sp = this.getPosition();
+				server_CreateBlob("rotcloud", -1, sp);
+				server_CreateBlob("rotcloud", -1, sp);
+				server_CreateBlob("rotcloud", -1, sp);
+				this.server_Die();
             }
 		}
 		else
 		{
-	this.SetLight( true );
-	this.SetLightRadius(this.get_f32("explosive_radius") * 0.5f);
-	this.SetLightColor( SColor(255, 211, 121, 224) );
+			this.SetLight( true );
+			this.SetLightRadius(this.get_f32("explosive_radius") * 0.5f);
+			this.SetLightColor( SColor(255, 211, 121, 224) );
 
             if (XORRandom(128) == 0)
             {

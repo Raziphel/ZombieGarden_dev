@@ -17,7 +17,7 @@ void onInit(CBlob@ this)
 	if (!this.exists("toxicity")) this.set_f32("toxicity", 0.50f);
 	
 	this.getSprite().RotateBy(90 * XORRandom(4), Vec2f());
-	this.server_SetTimeToDie(45 + XORRandom(60));
+	this.server_SetTimeToDie(15 + XORRandom(15));
 }
 
 void onTick(CBlob@ this)
@@ -32,15 +32,15 @@ void onTick(CBlob@ this)
 			CBlob@ blob = blobsInRadius[i];
 			if (blob.hasTag("flesh") && !blob.hasTag("gas immune"))
 			{
-				blob.set_u8("mustard value", Maths::Clamp(blob.get_u8("mustard value") + 1, 0, 64));
+				blob.set_u8("rot value", Maths::Clamp(blob.get_u8("rot value") + 1, 0, 64));
 			
 				if (getNet().isServer()) this.server_Hit(blob, blob.getPosition(), Vec2f(0, 0), 0.225f, Hitters::burn);
 			
-				if (!blob.hasTag("mustarded"))
+				if (!blob.hasTag("rotted"))
 				{
-					blob.set_u32("mustard time", getGameTime());
-					blob.AddScript("MustardEffect.as");
-					blob.getSprite().AddScript("MustardEffect.as");
+					blob.set_u32("rot time", getGameTime());
+					blob.AddScript("RotCloudEffect.as");
+					blob.getSprite().AddScript("RotCloudEffect.as");
 				}
 			}
 		}

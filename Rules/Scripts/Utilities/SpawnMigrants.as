@@ -16,25 +16,21 @@ void onTick(CRules@ this)
 	
 	if (migrant.length < max_migrantbots && map.getDayTime()>0.4 && map.getDayTime()<0.6)
 	{
-		f32 x = XORRandom(2) == 0 ? 32.0f : map.tilemapwidth * map.tilesize - 32.0f;
-
-		Vec2f top = Vec2f(x, map.tilesize);
-		Vec2f bottom = Vec2f(x, map.tilemapheight * map.tilesize);
-		Vec2f end;
-
-		if (map.rayCastSolid(top, bottom, end))
+		CBlob@[] spawns0;
+		getBlobsByName("zombieruins", @spawns0);
+		if (spawns0.length > 0)
 		{
-			f32 y = end.y;
-			int i = 0;
-			while (i ++ < 3)
+			Vec2f pos = spawns0[XORRandom(spawns0.length)].getPosition();
+		}
+
+		while (i ++ < 3)
+		{
+			Vec2f pos = Vec2f(x, y - i * map.tilesize);
+			//if (!map.isInWater(pos))
 			{
-				Vec2f pos = Vec2f(x, y - i * map.tilesize);
-				//if (!map.isInWater(pos))
-				{
-					server_CreateBlob("migrantbot", 0, pos);
-					// Sound::Play("MigrantSayHello.ogg", pos, 1.0f, 1.5f);
-					break;
-				}
+				server_CreateBlob("migrantbot", 0, pos);
+				// Sound::Play("MigrantSayHello.ogg", pos, 1.0f, 1.5f);
+				break;
 			}
 		}
 	}
