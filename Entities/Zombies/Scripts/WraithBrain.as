@@ -50,6 +50,12 @@ void onTick( CBrain@ this )
 			// stay away from anything any nearby obstructions such as a tower
 			//DetectForwardObstructions( blob );
 			
+			// should we be mad?
+            if (getDistanceBetween(target.getPosition(), blob.getPosition()) < blob.get_f32("explosive_radius"))
+            {
+            	// get mad
+            	Enrage(blob);
+            }
 	    }
 	    else
 	    {
@@ -70,7 +76,7 @@ bool ShouldLoseTarget( CBlob@ blob, CBlob@ target )
 	    return false; // if engraged keep going for it
 	if (target.hasTag("dead"))
 		return true;
-	else if(target.getDistanceTo(blob) > blob.get_f32(target_searchrad_property))
+	else if(getDistanceBetween(target.getPosition(), blob.getPosition()) > blob.get_f32(target_searchrad_property))
 		return true;
 	else
 	    return !isTargetVisible(blob, target) && !blob.hasTag("enraged");
@@ -84,7 +90,7 @@ void FlyAround( CBrain@ this, CBlob@ blob )
     // get our destination
 	Vec2f destination = blob.get_Vec2f(destination_property);
 
-	if(!blob.exists(destination_property) || (destination - blob.getPosition()).Length() < 128 || XORRandom(30) == 0)
+	if(!blob.exists(destination_property) || getDistanceBetween(destination, blob.getPosition()) < 128 || XORRandom(30) == 0)
 	{
 		NewDestination(blob);
 		return;
@@ -115,7 +121,7 @@ void FindTarget( CBrain@ this, CBlob@ blob, f32 radius )
 		CBlob@ candidate = nearBlobs[step];
 		if    (candidate is null) continue;
 
-		f32 dist = candidate.getDistanceTo(blob);
+		f32 dist = getDistanceBetween(candidate.getPosition(), blob.getPosition());
 		if (dist < closest_dist && !candidate.hasTag("dead"))
 		{
 			if (isTarget(blob, candidate) && isTargetVisible(blob, candidate))
