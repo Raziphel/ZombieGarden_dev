@@ -46,13 +46,14 @@ void SpawnMany(const string &in blobName, int count, const Vec2f &in pos)
 // - ends with 5 => Mini-boss wave
 WaveKind GetWaveKindForDay(const int dayNumber)
 {
-	if (dayNumber % 25 == 0) return WAVE_CATACLYSM;
+    if (dayNumber % 25 == 0) return WAVE_CATACLYSM; // highest priority & exclusive
 
-	const int lastDigit = dayNumber % 10;
-	if (lastDigit == 0) return WAVE_BOSS;
-	if (lastDigit == 5) return WAVE_MINI;
+    const int lastDigit = dayNumber % 10;
 
-	return WAVE_NONE;
+    if (lastDigit == 0 && (dayNumber % 25 != 0)) return WAVE_BOSS;
+    if (lastDigit == 5 && (dayNumber % 25 != 0)) return WAVE_MINI;
+
+    return WAVE_NONE;
 }
 
 // ---------------------------------------------------------------------

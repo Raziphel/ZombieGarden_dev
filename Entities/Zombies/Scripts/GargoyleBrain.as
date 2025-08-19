@@ -8,17 +8,13 @@
 
 string[] names_to_taxi =
 {
-	"skeleton",
-	"zombie",
 	"abomination",
 	"horror",
 	"phellknight",
 	"zbison",
-	"catto",
 	"pankou",
 	"pbrute",
 	"pcrawler",
-	"immolator",
 	"zombieknight"
 };
 
@@ -146,7 +142,7 @@ bool ShouldLoseTarget( CBlob@ blob, CBlob@ target )
 		return true;
 	else if(target.isAttached())
 	    return true;
-	else if(getDistanceBetween(target.getPosition(), blob.getPosition()) > blob.get_f32(target_searchrad_property))
+	else if(target.getDistanceTo(blob) > blob.get_f32(target_searchrad_property))
 		return true;
 	else
 	    return !isTargetVisible(blob, target);
@@ -160,7 +156,7 @@ void FlyAround( CBrain@ this, CBlob@ blob )
     // get our destination
 	Vec2f destination = blob.get_Vec2f(destination_property);
 
-	if (!blob.exists(destination_property) || getDistanceBetween(destination, blob.getPosition()) < 128 || XORRandom(30) == 0)
+	if (!blob.exists(destination_property) || (destination - blob.getPosition()).Length() < 128 || XORRandom(30) == 0)
 	{
 		NewDestination(blob);
 		return;
@@ -191,7 +187,7 @@ void FindTarget( CBrain@ this, CBlob@ blob, f32 radius, const bool taxiFriendly 
 		CBlob@ candidate = nearBlobs[step];
 		if    (candidate is null) continue;
 
-		f32 dist = getDistanceBetween(candidate.getPosition(), blob.getPosition());
+		f32 dist = candidate.getDistanceTo(blob);
 		if (dist < closest_dist && !candidate.isAttached() && !candidate.hasTag("dead") && !candidate.hasTag("about to be dead"))
 		{
 			bool target = false;
