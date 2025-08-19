@@ -31,7 +31,7 @@ const SColor color_base(0xff2ddbe8);
 const SColor color_cloud(0xff52b9c7);
 const SColor color_torch(0xffe39f20);
 const SColor color_zombie_spawn(0xff05ff05);
-const SColor color_zombie_ruins(0xff329332);
+const SColor color_zombieruins(0xff329332);
 const SColor color_zombie_portal(0xff710d71);
 const SColor color_zombie_statue(255, 61, 16, 123);
 const SColor color_grave(0xffe900f0);
@@ -271,14 +271,12 @@ class PNGLoader
 			spawnBlob( map, "ruinstorch", offset, 0);
 			offsets[autotile_offset].push_back( offset );
 		}	
-		else if (pixel == color_zombie_spawn) {
-			spawnBlob( map, "zombieportal", offset, 1);
-			AddMarker( map, offset, "zombie spawn" );
-		}			
-		else if (pixel == color_zombie_ruins) {
-			spawnBlob( map, "zombie_ruins", offset, 1);
-			AddMarker( map, offset, "zombie spawn" );
-		}	
+                else if (pixel == color_zombie_spawn) {
+                        spawnBlob( map, "zombieportal", offset, 1);
+                }
+                else if (pixel == color_zombieruins) {
+                        spawnBlob( map, "zombieruins", offset, 1);
+                }
 		else if (pixel == color_zombie_portal) {
 			AddMarker( map, offset, "zombie alter" );
 		}		
