@@ -30,7 +30,8 @@ void Config(ZombiesCore@ this)
 	this.rules.set_s32("days_to_survive", 0);   // <= 0 means endless
     this.rules.set_s32("curse_day",        250);  // night(s) from which survivors can auto-zombify
     this.rules.set_s32("hardmode_day",     100);  // the day zombies can spawn during the day
-    this.rules.set_s32("ruined_portal_day", 150); // day that ruins convert to portals
+    this.rules.set_bool("ruins_portal_active", false); // ruins become portals once a pillar falls
+    this.rules.Sync("ruins_portal_active", true);
 
 	// ----------------------------
 	// Flavor toggles

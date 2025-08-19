@@ -231,6 +231,14 @@ void onCommand(CBlob@ this, u8 cmd, CBitStream @params)
 
 void onDie(CBlob@ this)
 {
-	getRules().set_bool("everyones_dead", true);
-	Render::RemoveScript(this.get_u16("renderID"));
+        CRules@ rules = getRules();
+        rules.set_bool("everyones_dead", true);
+
+        if (!rules.get_bool("ruins_portal_active"))
+        {
+                rules.set_bool("ruins_portal_active", true);
+                rules.Sync("ruins_portal_active", true);
+        }
+
+        Render::RemoveScript(this.get_u16("renderID"));
 }

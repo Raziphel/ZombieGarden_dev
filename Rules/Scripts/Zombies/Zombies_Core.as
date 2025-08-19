@@ -67,7 +67,7 @@ class ZombiesCore : RulesCore
         const int hardmode_day      = rules.get_s32("hardmode_day");
         const int curse_day         = rules.get_s32("curse_day");
         const int days_offset       = rules.get_s32("days_offset");
-        const int ruined_portal_day = rules.get_s32("ruined_portal_day");
+        const bool ruins_portal_active = rules.get_bool("ruins_portal_active");
         const int dayNumber         = days_offset + ((getGameTime() - gamestart) / getTicksASecond() / day_cycle) + 1;
 
 		const int timeElapsed  = getGameTime() - gamestart;
@@ -216,7 +216,7 @@ class ZombiesCore : RulesCore
                     zombiePlaces.push_back(portals[i].getPosition());
                 }
 
-                if (dayNumber >= ruined_portal_day)
+                if (ruins_portal_active)
                 {
                     CBlob@[] ruins;
                     getBlobsByName("zombieruins", @ruins);

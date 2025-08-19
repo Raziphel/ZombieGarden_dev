@@ -169,11 +169,10 @@ void DrawZombiesHUDTopRight(CRules@ rules, const float topOffset = 0.0f)
 	const float titleH   = 20.0f;   // approximate title height without measuring
 	const float titleGap = 6.0f;
 
-	// compute basics
+        // compute basics
         const int days_offset = rules.get_s32("days_offset");
         const int hardmode_day       = rules.get_s32("hardmode_day");
         const int curse_day          = rules.get_s32("curse_day");
-        const int ruined_portal_day  = rules.get_s32("ruined_portal_day");
         const int ignore_light       = (hardmode_day - (days_offset));
 
 	// counters
@@ -198,10 +197,9 @@ void DrawZombiesHUDTopRight(CRules@ rules, const float topOffset = 0.0f)
         lines.insertLast("Undead: " + num_undead);
 	lines.insertLast("Difficulty: " + diff_str);
 	lines.insertLast("Zombies: " + (num_zombies + num_pzombies) + "/" + max_zombies);
-	lines.insertLast("Hard Starts: " + (hardmode_day - ((days_offset/14)*10)));
+        lines.insertLast("Hard Starts: " + (hardmode_day - ((days_offset/14)*10)));
         lines.insertLast("Curse Starts: " + curse_day);
-        lines.insertLast("Ruined Portals: " + ruined_portal_day);
-	lines.insertLast("Altars Remaining: " + num_zombiePortals);
+        lines.insertLast("Altars Remaining: " + num_zombiePortals);
 
 	// fixed width panel (tweak to taste)
 	const float boxW = 260.0f;
