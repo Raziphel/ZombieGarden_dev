@@ -5,7 +5,7 @@
 // No map-type checks. Keeps a simple "raining" flag while active.
 
 u32 g_next_weather = 1000;
-const u8 BLIZZARD_PERCENT = 50; // 0–100 chance; set lower if you want blizzards to be rarer
+const u8 BLIZZARD_PERCENT = 15; // 0–100 chance; set lower if you want blizzards to be rarer
 
 void onInit(CRules@ this)
 {

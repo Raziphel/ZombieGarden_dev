@@ -3,8 +3,8 @@
 void onInit(CBlob@ this)
 {
 	this.SetLight(true);
-	this.SetLightRadius(256.0f);
-	this.SetLightColor(SColor(255, 25, 94, 157));
+	this.SetLightRadius(64.0f);
+	this.SetLightColor(SColor(255, 255, 240, 171));
 	this.addCommandID("light on");
 	this.addCommandID("light off");
 	AddIconToken("$lantern on$", "Lantern.png", Vec2f(8, 8), 0);
@@ -12,6 +12,11 @@ void onInit(CBlob@ this)
 
 	this.Tag("dont deactivate");
 	this.Tag("fire source");
+	this.Tag("ignore_arrow");
+	this.Tag("ignore fall");
+
+	this.Tag("place norotate");
+	this.Tag("builder always hit");
 
 	this.getCurrentScript().runFlags |= Script::tick_inwater;
 	this.getCurrentScript().tickFrequency = 24;
@@ -19,6 +24,7 @@ void onInit(CBlob@ this)
 
 void onTick(CBlob@ this)
 {
+	//print(" "+this.getHealth());
 	if (this.isLight() && this.isInWater())
 	{
 		Light(this, false);
@@ -47,4 +53,9 @@ void onCommand(CBlob@ this, u8 cmd, CBitStream @params)
 		Light(this, !this.isLight());
 	}
 
+}
+
+bool doesCollideWithBlob(CBlob@ this, CBlob@ blob)
+{
+    return blob.getShape().isStatic() || blob.hasTag("furniture");
 }

@@ -21,12 +21,6 @@ void onInit( CBlob@ this )
 	this.set_string("shop description", "Exchange materials and buy stuff");
 	this.set_u8("shop icon", 25);
 	
-
-
-	{
-		ShopItem@ s = addShopItem( this, "Blue Lantern", "$bluelantern$", "bluelantern", "A lantern with a bigger light radius but with a dim ilumination.", true );
-		AddRequirement( s.requirements, "coin", "", "Coins", 10 );
-	}
 	{	 
 		ShopItem@ s = addShopItem( this, "Wood", "$mat_wood$", "mat_wood", "Exchange 25 Gold for 250 Wood", true );
 		AddRequirement( s.requirements, "blob", "mat_gold", "Gold", 25 );
@@ -37,8 +31,8 @@ void onInit( CBlob@ this )
 	}
 	{
 		ShopItem@ s = addShopItem( this, "Diving Helmet", "$divinghelmet$", "divinghelmet", "A helmet specially made for underwater exploring.", true );
-		AddRequirement( s.requirements, "coin", "", "Coins", 50 );
-		AddRequirement( s.requirements, "blob", "mat_gold", "Gold", 10 );
+		AddRequirement( s.requirements, "coin", "", "Coins", 100 );
+		AddRequirement( s.requirements, "blob", "mat_steelingot", "Steel Ingot", 10 );
 	}
 	{	 
 		ShopItem@ s = addShopItem( this, "Friendly Shark", "$shark$", "fshark", "It eats the apocalypse.", false, true );
@@ -53,7 +47,7 @@ void onInit( CBlob@ this )
 		AddRequirement(s.requirements, "blob", "migrantbot", "Migrant", 1);
 	}
 	{
-		ShopItem@ s = addShopItem( this, "Heroic Soul", "$whitebook$", "randomBook", "Merge 3 Soul Shards into a random Heroic Soul.", true);
+		ShopItem@ s = addShopItem( this, "Random Chest", "$GoldChest$", "randomChest", "Buy your own chests!", true);
 		AddRequirement( s.requirements, "blob", "whitepage", "Soul Shards", 3 );
 	}
 	{
@@ -67,6 +61,10 @@ void onInit( CBlob@ this )
 	{
 		ShopItem@ s = addShopItem(this, "Bobomax", "$bobomax$", "bobomax", "An unknown drug?.", true);
 		AddRequirement(s.requirements, "coin", "", "Coins", 1000);
+	}
+	{
+		ShopItem@ s = addShopItem( this, "Blue Lantern", "$bluelantern$", "bluelantern", "A lantern with a bigger light radius but with a dim ilumination.", true );
+		AddRequirement( s.requirements, "coin", "", "Coins", 200 );
 	}
 	/*
 	{
@@ -107,7 +105,7 @@ void onCommand( CBlob@ this, u8 cmd, CBitStream @params )
 		string name = params.read_string();
 		
 		{
-			if(name == "randomBook")
+			if(name == "randomChest")
 			{
 				if (isServer)
 				{
