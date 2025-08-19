@@ -194,20 +194,10 @@ class ZombiesSpawns : RespawnSystem
 				}
 			}
 		}
-
-		CBlob@[] zombie_ruins;
-		getBlobsByName("zombie_ruins", @zombie_ruins);
-		int n = XORRandom(zombie_ruins.length);
-		if (zombie_ruins[n] !is null)
-		{
-			ParticleZombieLightning(zombie_ruins[n].getPosition());
-			return Vec2f(zombie_ruins[n].getPosition());
-		}
-
-		CMap@ map = getMap();
-		f32 x = XORRandom(2) == 0 ? 32.0f : map.tilemapwidth * map.tilesize - 32.0f;
-		return Vec2f(x, map.getLandYAtX(s32(x / map.tilesize)) * map.tilesize - 16.0f);
-	}
+                CMap@ map = getMap();
+                f32 x = XORRandom(2) == 0 ? 32.0f : map.tilemapwidth * map.tilesize - 32.0f;
+                return Vec2f(x, map.getLandYAtX(s32(x / map.tilesize)) * map.tilesize - 16.0f);
+        }
 
 	void RemovePlayerFromSpawn(CPlayer@ player)
 	{
