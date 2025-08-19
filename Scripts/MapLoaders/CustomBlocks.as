@@ -139,6 +139,26 @@ namespace CMap
 		tile_copperore_d3 	= 500,
 		tile_copperore_d4 	= 501,
 		tile_copperore_d5 	= 502,		
+
+		// tile_snow           = 504,
+		// tile_snow_v0,       = 505,
+		// tile_snow_v1,       = 506,
+		// tile_snow_v2,       = 507,
+		// tile_snow_v3,       = 508,
+		// tile_snow_v4,       = 509,
+		// tile_snow_v5,       = 510,
+		// tile_snow_d0,       = 511,
+		// tile_snow_d1,       = 512,
+		// tile_snow_d2,       = 513,
+		// tile_snow_d3,       = 514,
+
+		// tile_snow_pile      = 520,
+		// tile_snow_pile_v0,  = 521,
+		// tile_snow_pile_v1,  = 522,
+		// tile_snow_pile_v2,  = 523,
+		// tile_snow_pile_v3,  = 524,
+		// tile_snow_pile_v4,  = 525,
+		// tile_snow_pile_v5,  = 526,
 	};
 };
 
@@ -160,6 +180,5 @@ void HandleCustomTile(CMap@ map, int offset, SColor pixel)
 		map.SetTile(offset, CMap::tile_mediumbloodgrass );
 		map.RemoveTileFlag( offset, Tile::SOLID | Tile::COLLISION );
 		map.AddTileFlag( offset, Tile::BACKGROUND | Tile::LIGHT_SOURCE | Tile::LIGHT_PASSES | Tile::WATER_PASSES ); break;
-	}
-	
+	}	
 }

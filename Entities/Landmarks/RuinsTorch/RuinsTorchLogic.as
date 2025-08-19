@@ -175,7 +175,7 @@ f32 onHit(CBlob@ this, Vec2f worldPoint, Vec2f velocity, f32 damage, CBlob@ hitt
 				p.timeout = 15 + XORRandom(10);
 			}
 		}
-		this.getSprite().PlaySound("MetalClang1.ogg", 1.0f, 1.0f);
+		this.getSprite().PlaySound("HitSolidMetal.ogg", 1.0f, 1.0f);
 	}
 	return damage;
 }

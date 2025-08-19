@@ -183,35 +183,35 @@ array<BossEntry@> BuildCataclysmTable(const int dayNumber)
 		b.names = {"abomination","writher"}; b.counts = {3,3};
 		b.popup = banner + "3x Abomination + 3x Writher\nTank + burst combo";
 		b.color = SColor(255,255,80,40); b.popupTicks = 12 * getTicksASecond();
-		b.sound = "/dontyoudare.ogg"; t.push_back(b);
+		b.sound = "/FanfareLose.ogg"; t.push_back(b);
 	}
 	{
 		BossEntry b; b.weight = 3;
 		b.names = {"pbanshee","wraith"}; b.counts = {3,6};
 		b.popup = banner + "3x Banshee + 6x Wraith\nControl + chasers";
 		b.color = SColor(255,255,80,40); b.popupTicks = 12 * getTicksASecond();
-		b.sound = "/dontyoudare.ogg"; t.push_back(b);
+		b.sound = "/FanfareLose.ogg"; t.push_back(b);
 	}
 	{
 		BossEntry b; b.weight = 2;
 		b.names = {"immolator","writher"}; b.counts = {8,4,4};
 		b.popup = banner + "16x Immolator + 4x Writher\nChain detonation hazard";
 		b.color = SColor(255,255,80,40); b.popupTicks = 12 * getTicksASecond();
-		b.sound = "/dontyoudare.ogg"; t.push_back(b);
+		b.sound = "/FanfareLose.ogg"; t.push_back(b);
 	}
 	{
 		BossEntry b; b.weight = 2;
 		b.names = {"zbison","zbison2","horror"}; b.counts = {8,8,4};
 		b.popup = banner + "Bison stampede + 4x Horror\nCrowd + elites";
 		b.color = SColor(255,255,80,40); b.popupTicks = 12 * getTicksASecond();
-		b.sound = "/dontyoudare.ogg"; t.push_back(b);
+		b.sound = "/FanfareLose.ogg"; t.push_back(b);
 	}
 	{
 		BossEntry b; b.weight = 1;
 		b.names = {"digger"}; b.counts = {7};
 		b.popup = banner + "7x Diggers\nExcavation Team";
 		b.color = SColor(255,255,80,40); b.popupTicks = 12 * getTicksASecond();
-		b.sound = "/dontyoudare.ogg"; t.push_back(b);
+		b.sound = "/FanfareLose.ogg"; t.push_back(b);
 	}
 
 	return t;

@@ -123,7 +123,7 @@ class ZombiesCore : RulesCore
 				rules.set_f32("difficulty_bonus", diff_bonus);
 				rules.set_s32("last_wipe_day", dayNumber);
 
-				const float previewDifficulty = Maths::Min15.0f, difficulty_base + diff_bonus); //! SET MAX DIFFICULTY SETTING HERE AS WELL
+				const float previewDifficulty = Maths::Min(15.0f, difficulty_base + diff_bonus); //! SET MAX DIFFICULTY SETTING HERE AS WELL
 
 				Server_GlobalPopup(rules,
 					"All survivors have fallen!\n\n+0.5 Difficulty (now " + previewDifficulty + ")",
