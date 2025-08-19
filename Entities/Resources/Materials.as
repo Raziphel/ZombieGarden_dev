@@ -103,7 +103,7 @@ void onInit(CBlob@ this)
 	else if (name == "mat_stone")
 	{
 	}
-	else if (name == "mat_iron")
+	else if (name == "mat_ironore" || name == "mat_ironbar" || name == "mat_copperore" || name == "mat_copperbar" || name == "mat_coal")
 	{
 	}
 
