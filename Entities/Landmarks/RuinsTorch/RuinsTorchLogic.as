@@ -231,14 +231,25 @@ void onCommand(CBlob@ this, u8 cmd, CBitStream @params)
 
 void onDie(CBlob@ this)
 {
-        CRules@ rules = getRules();
-        rules.set_bool("everyones_dead", true);
+    CRules@ rules = getRules();
+    rules.set_bool("everyones_dead", true);
 
-        if (!rules.get_bool("ruins_portal_active"))
+    if (!rules.get_bool("ruins_portal_active"))
+    {
+        rules.set_bool("ruins_portal_active", true);
+        rules.Sync("ruins_portal_active", true);
+		
+		CBlob@[] ruins;
+        getBlobsByName("zombieruins", @ruins);
+        for (uint i = 0; i < ruins.length; i++)
         {
-                rules.set_bool("ruins_portal_active", true);
-                rules.Sync("ruins_portal_active", true);
-        }
+            CBlob@ ruin = ruins[i];
+            if (ruin !is null)
+			{
+				server_CreateBlob("zombieportal", -1, ruin.getPosition());
+			}
+		}
+    }
 
         Render::RemoveScript(this.get_u16("renderID"));
 }

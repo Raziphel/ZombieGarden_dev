@@ -196,9 +196,9 @@ class ZombiesSpawns : RespawnSystem
 				}
 			}
 
-			// fallback: random "zombieruins" spawn
+			// fallback: random "ruinstorch" spawn
 			CBlob@[] spawns0;
-			getBlobsByName("zombieruins", @spawns0);
+			getBlobsByName("ruinstorch", @spawns0);
 			if (spawns0.length > 0)
 			{
 				return spawns0[XORRandom(spawns0.length)].getPosition();
