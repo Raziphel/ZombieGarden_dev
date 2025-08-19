@@ -277,7 +277,6 @@ class PNGLoader
 		}			
 		else if (pixel == color_zombie_ruins) {
 			spawnBlob( map, "zombie_ruins", offset, 1);
-			AddMarker( map, offset, "zombie spawn" );
 		}	
 		else if (pixel == color_zombie_portal) {
 			AddMarker( map, offset, "zombie alter" );

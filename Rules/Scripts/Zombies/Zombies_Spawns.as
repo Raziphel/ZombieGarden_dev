@@ -180,6 +180,15 @@ class ZombiesSpawns : RespawnSystem
 					{
 						return Vec2f(dorms[n].getPosition());
 					}
+					else
+					{
+						CBlob@[] spawns;
+						getBlobsByName("zombie_ruins", @spawns);
+						if (spawns.length > 0)
+						{
+							return Vec2f(spawns[XORRandom(spawns.length)].getPosition());
+						}
+					}
 				}
 				else if (lemo == 1)
 				{
@@ -190,6 +199,15 @@ class ZombiesSpawns : RespawnSystem
 					{
 						ParticleZombieLightning(undeadstatues[n].getPosition());
 						return Vec2f(undeadstatues[n].getPosition());
+					}
+					else
+					{
+						CBlob@[] spawns;
+						getBlobsByName("zombie_ruins", @spawns);
+						if (spawns.length > 0)
+						{
+							return Vec2f(spawns[XORRandom(spawns.length)].getPosition());
+						}
 					}
 				}
 			}

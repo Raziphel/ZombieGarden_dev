@@ -184,10 +184,10 @@ void DrawZombiesHUDTopRight(CRules@ rules, const float topOffset = 0.0f)
 	const int num_zombiePortals = rules.get_s32("num_zombiePortals");
 	const int num_survivors_p   = CountTeamPlayers(0);
 	const int num_undead        = rules.get_s32("num_undead");
-	const int difficulty        = rules.get_f32("difficulty");
-	const int difficulty_bonus  = rules.get_f32("difficulty_bonus");
+	const float difficulty        = rules.get_f32("difficulty");
+	const float difficulty_bonus  = rules.get_f32("difficulty_bonus");
 
-	string diff_str = "" + formatFloat(difficulty + difficulty_bonus, "", 0, 1);
+	string diff_str = "" + formatFloat(difficulty + difficulty_bonus, "", 0, 0);
 
 	// content
 	const string title = "ROUND STATUS";

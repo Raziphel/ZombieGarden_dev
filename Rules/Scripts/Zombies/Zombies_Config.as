@@ -22,6 +22,7 @@ void Config(ZombiesCore@ this)
 	this.rules.set_s32("max_wraiths",     15);
 	this.rules.set_s32("max_gregs",       10);
 	this.rules.set_s32("max_imol",        10);
+	this.rules.set_s32("max_digger",      5);
 
 	// ----------------------------
 	// Win/Loss pacing
@@ -66,6 +67,7 @@ void RefreshMobCountsToRules()
 	getBlobsByName("horror",       @a); getRules().set_s32("num_horror", a.length); a.clear();
 	getBlobsByName("abomination",  @a); getRules().set_s32("num_abom",   a.length); a.clear();
 	getBlobsByName("immolator",    @a); getRules().set_s32("num_immol",  a.length); a.clear();
+	getBlobsByName("digger",       @a); getRules().set_s32("num_digger", a.length); a.clear();
 
 	// players by tag (already used elsewhere)
 	getBlobsByTag("survivorplayer", @a); getRules().set_s32("num_survivors", a.length); a.clear();

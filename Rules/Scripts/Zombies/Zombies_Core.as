@@ -119,7 +119,7 @@ class ZombiesCore : RulesCore
 			// Only once per dayNumber, only when truly wiped
 			if ((live_survivors - num_hands) <= 0 && last_wipe_day != dayNumber)
 			{
-				diff_bonus += 1.0f;
+				diff_bonus += .5f;
 				rules.set_f32("difficulty_bonus", diff_bonus);
 				rules.set_s32("last_wipe_day", dayNumber);
 
@@ -158,7 +158,6 @@ class ZombiesCore : RulesCore
                         if (ruin !is null)
                         {
                             server_CreateBlob("zombieportal", -1, ruin.getPosition());
-                            ruin.server_Die();
                         }
                     }
                 rules.set_bool("ruined_portals_spawned", true);
@@ -171,7 +170,7 @@ class ZombiesCore : RulesCore
 			if (map !is null)
 			{
 				// day/night tag + re-arm transition on first night tick
-				if (map.getDayTime() > 0.8f || map.getDayTime() < 0.2f)
+				if (map.getDayTime() > 0.65f || map.getDayTime() < 0.15f) //+ This is the time zombies will spawn between
 				{
 					if (!rules.hasTag("night"))
 					{
@@ -186,8 +185,7 @@ class ZombiesCore : RulesCore
 				}
 
 				// Curse logic
-				if (dayNumber >= curse_day && rules.get_s32("num_undead") < max_undead &&
-					(map.getDayTime() > 0.7f || map.getDayTime() < 0.2f))
+				if (dayNumber >= curse_day && rules.get_s32("num_undead") < max_undead)
 				{
 					const u8 pCount = getPlayersCount();
 					if (pCount > 0)
@@ -263,6 +261,8 @@ class ZombiesCore : RulesCore
 				const int _max_gr = rules.get_s32("max_gregs");
 				const int _num_im = rules.get_s32("num_immol");
 				const int _max_im = rules.get_s32("max_imol");
+				const int _num_im = rules.get_s32("num_digger");
+				const int _max_im = rules.get_s32("max_digger");
 
 				const bool canSpawnNow =
 					   (dayNumber >= ignore_light && _num_z < max_zombies)
@@ -270,24 +270,25 @@ class ZombiesCore : RulesCore
 
 				if (canSpawnNow)
 				{
-					const int r = XORRandom(int(difficulty) + 0.1); // +1 so int cast doesn't zero-out
+					const int r = XORRandom(int(difficulty)); // +1 so int cast doesn't zero-out
 
-					if      (r >= 11.3 && (_num_gr + _num_wr) < (_max_gr + _max_wr)) server_CreateBlob("writher", -1, sp);
-					else if (r >=  9.8)                                              server_CreateBlob("pbanshee", -1, sp);
-					else if (r >=  9.5)                                              server_CreateBlob("zbison", -1, sp);
-					else if (r >=  9.1)                                              server_CreateBlob("horror", -1, sp);
-					else if (r >=  7.9 && _num_wr < _max_wr)                         server_CreateBlob("wraith", -1, sp);
-					else if (r >=  7.2 && _num_gr < _max_gr)                         server_CreateBlob("greg", -1, sp);
-					else if (r >=  6.4 && _num_im < _max_im)                         server_CreateBlob("immolator", -1, sp);
-					else if (r >=  5.4)                                              server_CreateBlob("gasbag", -1, sp);
-					else if (r >=  3.6)                                              server_CreateBlob("zombieknight", -1, sp);
-					else if (r >=  3.1)                                              server_CreateBlob("evilzombie", -1, sp);
-					else if (r >=  2.6)                                              server_CreateBlob("bloodzombie", -1, sp);
-					else if (r >=  1.9)                                              server_CreateBlob("plantzombie", -1, sp);
-					else if (r >=  1.1)                                              server_CreateBlob("zombie", -1, sp);
-					else if (r >=  0.6)                                              server_CreateBlob("skeleton", -1, sp);
-					else if (r >=  0.2)                                              server_CreateBlob("catto", -1, sp);
-					else                                                             server_CreateBlob("zchicken", -1, sp);
+					if (r >=  12.5)                                                       server_CreateBlob("digger", -1, sp);
+					else if      (r >= 11.3 && (_num_gr + _num_wr) < (_max_gr + _max_wr)) server_CreateBlob("writher", -1, sp);
+					else if (r >=  9.8)                                                   server_CreateBlob("pbanshee", -1, sp);
+					else if (r >=  9.5)                                                   server_CreateBlob("zbison", -1, sp);
+					else if (r >=  9.1)                                                   server_CreateBlob("horror", -1, sp);
+					else if (r >=  7.9 && _num_wr < _max_wr)                              server_CreateBlob("wraith", -1, sp);
+					else if (r >=  7.2 && _num_gr < _max_gr)                              server_CreateBlob("greg", -1, sp);
+					else if (r >=  6.4 && _num_im < _max_im)                              server_CreateBlob("immolator", -1, sp);
+					else if (r >=  5.4)                                                   server_CreateBlob("gasbag", -1, sp);
+					else if (r >=  3.6)                                                   server_CreateBlob("zombieknight", -1, sp);
+					else if (r >=  3.1)                                                   server_CreateBlob("evilzombie", -1, sp);
+					else if (r >=  2.6)                                                   server_CreateBlob("bloodzombie", -1, sp);
+					else if (r >=  1.9)                                                   server_CreateBlob("plantzombie", -1, sp);
+					else if (r >=  1.1)                                                   server_CreateBlob("zombie", -1, sp);
+					else if (r >=  0.6)                                                   server_CreateBlob("skeleton", -1, sp);
+					else if (r >=  0.2)                                                   server_CreateBlob("catto", -1, sp);
+					else                                                                  server_CreateBlob("zchicken", -1, sp);
 
 					// === boss waves ===
 					int newTransition = RunBossWave(dayNumber, difficulty, zombiePlaces, transition);
