@@ -33,9 +33,8 @@ void onInit(CBlob@ this)
 	this.Tag("enemy");
 	this.Tag("gregs");
 	
-	this.getCurrentScript().runFlags |= Script::tick_not_attached;
-	this.getCurrentScript().removeIfTag = "dead";
-	this.server_SetTimeToDie(20);
+        this.getCurrentScript().runFlags |= Script::tick_not_attached;
+        this.getCurrentScript().removeIfTag = "dead";
 }
 
 void onCollision(CBlob@ this, CBlob@ blob, bool solid, Vec2f normal, Vec2f point1)
