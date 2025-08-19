@@ -124,18 +124,18 @@ void addCommonBuilderBlocks(BuildBlock[][]@ blocks)
 	}
 	{
 		BuildBlock b( 0, "irontriangle", "$irontriangle$", "Iron Triangle" );
-		AddRequirement( b.reqs, "blob", "mat_iron", "Iron", 25 );
+		AddRequirement( b.reqs, "blob", "mat_ironbar", "Iron Bars", 25 );
 		blocks[0].push_back(b);
 	}
 	{
 		AddIconToken( "$IronBrick$", "Sprites/World.png", Vec2f(8,8), CMap::tile_ironbrick);
 		BuildBlock b(CMap::tile_ironbrick, "IronBrick", "$IronBrick$", "Iron Block\nStrong Building Block");
-		AddRequirement(b.reqs, "blob", "mat_iron", "Iron", 20);
+		AddRequirement(b.reqs, "blob", "mat_ironbar", "Iron Bars", 20);
 		blocks[0].push_back(b);
 	}
 	{
 		BuildBlock b(0, "iron_door", "$iron_door$", "Iron Door\nVery Strong");
-		AddRequirement(b.reqs, "blob", "mat_iron", "Iron", 40);
+		AddRequirement(b.reqs, "blob", "mat_ironbar", "Iron Bars", 40);
 		blocks[0].push_back(b);
 	}
 	{
