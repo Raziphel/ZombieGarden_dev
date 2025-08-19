@@ -9,11 +9,16 @@ void Config(ZombiesCore@ this)
 	// Tunables
 	// ============================
 
-	// How long a dead player waits before they can respawn (seconds)
-	this.spawnTime = 60;
+        // How long a dead player waits before they can respawn (seconds)
+        this.spawnTime = 60;
 
-	// ----------------------------
-	// Mob limits (hard caps)
+        // round-specific bookkeeping so values don't persist between rounds
+        this.rules.set_f32("difficulty_bonus", 0.0f);
+        this.rules.set_s32("last_wipe_day", -1);
+        this.rules.set_s32("days_offset", 0);
+
+        // ----------------------------
+        // Mob limits (hard caps)
 	// New waves will not spawn if the active count for that mob is >= its cap
 	// ----------------------------
 	this.rules.set_s32("max_zombies",     250);   // standard zombies
