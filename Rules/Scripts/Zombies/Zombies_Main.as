@@ -33,12 +33,26 @@ void Reset(CRules@ this)
 	Vec2f[] gravePlaces; getMap().getMarkers("grave", gravePlaces);
 	for (int i = 0; i < gravePlaces.length; i++) spawnGraves(gravePlaces[i]);
 
-	// all players start as survivors
-	for (u8 i = 0; i < getPlayerCount(); i++)
-	{
-		CPlayer@ p = getPlayer(i);
-		if (p !is null) p.server_setTeamNum(0);
-	}
+        // all players start as survivors with clean stats and spawn instantly
+        for (u8 i = 0; i < getPlayerCount(); i++)
+        {
+                CPlayer@ p = getPlayer(i);
+                if (p !is null)
+                {
+                        p.server_setTeamNum(0);
+                        // wipe round-specific stats so nothing carries over
+                        p.setKills(0);
+                        p.setDeaths(0);
+                        p.setAssists(0);
+                        p.setScore(0);
+                        p.set_u8("killstreak", 0);
+
+                        // clear any leftover respawn timer from the previous round
+                        const string propname = "Zombies spawn time " + p.getUsername();
+                        this.set_u8(propname, 255);
+                        this.SyncToPlayer(propname, p);
+                }
+        }
 
 	this.set("core", @core);
 	this.set("start_gametime", getGameTime() + core.warmUpTime);
