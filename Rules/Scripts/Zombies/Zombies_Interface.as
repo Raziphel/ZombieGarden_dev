@@ -251,7 +251,7 @@ float DrawModeStatus(CRules@ rules, const float topOffset = 0.0f)
 {
 	if (g_videorecording) return 0.0f;
 
-	const float margin=24, padX=10, padY=8, lineH=18, titleH=20, titleGap=6;
+	const float margin = 24, padX = 10, padY = 8, lineH = 18, titleH = 20, titleGap = 6;
 	const string title = "MODE STATUS";
 
 	const int curDay   = GetCurrentDay(rules);
@@ -263,41 +263,53 @@ float DrawModeStatus(CRules@ rules, const float topOffset = 0.0f)
 
 	string hardLine;
 	SColor hardCol = COL_TEXT;
-	if (hardRemain <= 0) { hardLine = "Hardmode: ACTIVE"; hardCol = COL_WARN; }
-	else {
+	if (hardRemain <= 0)
+	{
+		hardLine = "Hardmode: ACTIVE";
+		hardCol = COL_BAD;
+	}
+	else
+	{
 		hardLine = "Hardmode in: " + hardRemain + (hardRemain == 1 ? " day" : " days");
 		if (hardRemain <= 10) hardCol = COL_WARN;
 	}
 
 	string curseLine;
 	SColor curseCol = COL_TEXT;
-	if (curseRemain <= 0) { curseLine = "Curse: ACTIVE"; curseCol = COL_BAD; }
-	else {
+	if (curseRemain <= 0)
+	{
+		curseLine = "Curse: ACTIVE";
+		curseCol = COL_BAD;
+	}
+	else
+	{
 		curseLine = "Curse in: " + curseRemain + (curseRemain == 1 ? " day" : " days");
 		if (curseRemain <= 10) curseCol = COL_WARN;
 	}
 
-        const bool ruinsActive = rules.get_bool("ruins_portal_active");
+	const bool ruinsActive = rules.get_bool("ruins_portal_active");
+	const string ruinsLine = ruinsActive ? "Ruin Portals: ACTIVE" : "Ruin Portals: INACTIVE";
+	const SColor ruinsCol  = ruinsActive ? COL_BAD : COL_GOOD;
 
-        const float boxW = 260.0f;
-        const float boxH = padY*2 + titleH + titleGap + ((2 + (ruinsActive ? 1 : 0)) * lineH);
+	// --- box sizing ---
+	const int numLines = 3; // hard + curse + ruins (always drawn)
+	const float boxW = 260.0f;
+	const float boxH = padY*2 + titleH + titleGap + (numLines * lineH);
 
+	// --- corners ---
 	Vec2f screen = getDriver().getScreenDimensions();
 	Vec2f br(screen.x - margin, margin + boxH + topOffset);
 	Vec2f tl(br.x - boxW, br.y - boxH);
 
-        DrawPanel(tl, br);
+	// --- panel + title ---
+	DrawPanel(tl, br);
+	DrawTextCenteredBold(title, Vec2f((tl.x + br.x) * 0.5f, tl.y + padY), COL_TITLE);
 
-        DrawTextCenteredBold(title, Vec2f((tl.x + br.x) * 0.5f, tl.y + padY), COL_TITLE);
-        Vec2f cur = Vec2f(tl.x + padX, tl.y + padY + titleH + titleGap);
-
-        GUI::DrawText(hardLine,  cur, hardCol);  cur.y += lineH;
-        GUI::DrawText(curseLine, cur, curseCol); cur.y += lineH;
-        if (ruinsActive)
-        {
-                GUI::DrawText("Ruins Portals: ACTIVE", cur, COL_BAD);
-                cur.y += lineH;
-        }
+	// --- lines ---
+	Vec2f cur = Vec2f(tl.x + padX, tl.y + padY + titleH + titleGap);
+	GUI::DrawText(hardLine,  cur, hardCol);  cur.y += lineH;
+	GUI::DrawText(curseLine, cur, curseCol); cur.y += lineH;
+	GUI::DrawText(ruinsLine, cur, ruinsCol); cur.y += lineH;
 
 	return boxH + margin + topOffset;
 }
