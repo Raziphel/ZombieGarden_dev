@@ -34,7 +34,7 @@ void onInit(CBrain@ this)
 	if (blob is null) return;
 
 	if (!blob.exists(target_searchrad_property))
-		blob.set_f32(target_searchrad_property, 2048.0f);
+		blob.set_f32(target_searchrad_property, 1024.0f);
 
 	// Allow optional per-blob override
 	if (!blob.exists("awareness_mult"))
