@@ -41,17 +41,27 @@ int GetCurrentDay(CRules@ rules)
 // Consistent panel with soft border
 void DrawPanel(Vec2f tl, Vec2f br)
 {
-	GUI::DrawRectangle(tl, br, COL_BG);
-	GUI::DrawRectangle(tl, Vec2f(br.x, tl.y + 1), COL_BORDER);
-	GUI::DrawRectangle(Vec2f(tl.x, br.y - 1), br, COL_BORDER);
-	GUI::DrawRectangle(tl, Vec2f(tl.x + 1, br.y), COL_BORDER);
-	GUI::DrawRectangle(Vec2f(br.x - 1, tl.y), br, COL_BORDER);
+        GUI::DrawRectangle(tl, br, COL_BG);
+        GUI::DrawRectangle(tl, Vec2f(br.x, tl.y + 1), COL_BORDER);
+        GUI::DrawRectangle(Vec2f(tl.x, br.y - 1), br, COL_BORDER);
+        GUI::DrawRectangle(tl, Vec2f(tl.x + 1, br.y), COL_BORDER);
+        GUI::DrawRectangle(Vec2f(br.x - 1, tl.y), br, COL_BORDER);
+}
+
+// Helper to draw bold, centered titles
+void DrawTextCenteredBold(const string &in text, Vec2f pos, SColor color)
+{
+        GUI::DrawTextCentered(text, pos + Vec2f(-1, 0), color);
+        GUI::DrawTextCentered(text, pos + Vec2f(1, 0), color);
+        GUI::DrawTextCentered(text, pos + Vec2f(0, -1), color);
+        GUI::DrawTextCentered(text, pos + Vec2f(0, 1), color);
+        GUI::DrawTextCentered(text, pos, color);
 }
 
 // small helper for live player count by team
 int CountTeamPlayers(const int teamNum)
 {
-	int c = 0;
+        int c = 0;
 	for (int i = 0; i < getPlayersCount(); i++)
 	{
 		CPlayer@ p = getPlayer(i);
@@ -163,9 +173,8 @@ float DrawRecordStatus(CRules@ rules)
 
 	DrawPanel(tl, br);
 
-	Vec2f cur = Vec2f(tl.x + padX, tl.y + padY);
-	GUI::DrawText(title, cur, COL_TITLE);
-	cur.y += titleH + titleGap;
+        DrawTextCenteredBold(title, Vec2f((tl.x + br.x) * 0.5f, tl.y + padY), COL_TITLE);
+        Vec2f cur = Vec2f(tl.x + padX, tl.y + padY + titleH + titleGap);
 
 	for (uint i = 0; i < lines.length(); ++i)
 	{
@@ -215,9 +224,8 @@ float DrawZombiesHUDTopRight(CRules@ rules, const float topOffset = 0.0f)
 
 	DrawPanel(tl, br);
 
-	Vec2f cur = Vec2f(tl.x + padX, tl.y + padY);
-	GUI::DrawText(title, cur, COL_TITLE);
-	cur.y += titleH + titleGap;
+        DrawTextCenteredBold(title, Vec2f((tl.x + br.x) * 0.5f, tl.y + padY), COL_TITLE);
+        Vec2f cur = Vec2f(tl.x + padX, tl.y + padY + titleH + titleGap);
 
 	for (uint i = 0; i < lines.length(); i++)
 	{
@@ -269,21 +277,27 @@ float DrawModeStatus(CRules@ rules, const float topOffset = 0.0f)
 		if (curseRemain <= 10) curseCol = COL_WARN;
 	}
 
-	const float boxW = 260.0f;
-	const float boxH = padY*2 + titleH + titleGap + (2 * lineH);
+        const bool ruinsActive = rules.get_bool("ruins_portal_active");
+
+        const float boxW = 260.0f;
+        const float boxH = padY*2 + titleH + titleGap + ((2 + (ruinsActive ? 1 : 0)) * lineH);
 
 	Vec2f screen = getDriver().getScreenDimensions();
 	Vec2f br(screen.x - margin, margin + boxH + topOffset);
 	Vec2f tl(br.x - boxW, br.y - boxH);
 
-	DrawPanel(tl, br);
+        DrawPanel(tl, br);
 
-	Vec2f cur = Vec2f(tl.x + padX, tl.y + padY);
-	GUI::DrawText(title, cur, COL_TITLE);
-	cur.y += titleH + titleGap;
+        DrawTextCenteredBold(title, Vec2f((tl.x + br.x) * 0.5f, tl.y + padY), COL_TITLE);
+        Vec2f cur = Vec2f(tl.x + padX, tl.y + padY + titleH + titleGap);
 
-	GUI::DrawText(hardLine,  cur, hardCol);  cur.y += lineH;
-	GUI::DrawText(curseLine, cur, curseCol); cur.y += lineH;
+        GUI::DrawText(hardLine,  cur, hardCol);  cur.y += lineH;
+        GUI::DrawText(curseLine, cur, curseCol); cur.y += lineH;
+        if (ruinsActive)
+        {
+                GUI::DrawText("Ruins Portals: ACTIVE", cur, COL_BAD);
+                cur.y += lineH;
+        }
 
 	return boxH + margin + topOffset;
 }
