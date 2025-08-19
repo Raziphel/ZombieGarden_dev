@@ -170,13 +170,11 @@ void DrawZombiesHUDTopRight(CRules@ rules, const float topOffset = 0.0f)
 	const float titleGap = 6.0f;
 
 	// compute basics
-	const int gamestart   = rules.get_s32("gamestart");
-	const int day_cycle   = getRules().daycycle_speed * 60;
-	const int days_offset = rules.get_s32("days_offset");
-	const int hardmode_day= rules.get_s32("hardmode_day");
-	const int curse_day   = rules.get_s32("curse_day");
-	const int dayNumber   = days_offset + ((getGameTime()-gamestart)/getTicksASecond()/day_cycle) + 1;
-	const int ignore_light= (hardmode_day - (days_offset));
+        const int days_offset = rules.get_s32("days_offset");
+        const int hardmode_day       = rules.get_s32("hardmode_day");
+        const int curse_day          = rules.get_s32("curse_day");
+        const int ruined_portal_day  = rules.get_s32("ruined_portal_day");
+        const int ignore_light       = (hardmode_day - (days_offset));
 
 	// counters
 	const int num_zombies       = rules.get_s32("num_zombies");
@@ -195,14 +193,14 @@ void DrawZombiesHUDTopRight(CRules@ rules, const float topOffset = 0.0f)
 	const string title = "ROUND STATUS";
 
 	array<string> lines;
-	lines.insertLast("Day: " + dayNumber);
-	lines.insertLast("Pillars: " + num_hands);
-	lines.insertLast("Survivors: " + num_survivors_p);
-	lines.insertLast("Undead: " + num_undead);
+        lines.insertLast("Pillars: " + num_hands);
+        lines.insertLast("Survivors: " + num_survivors_p);
+        lines.insertLast("Undead: " + num_undead);
 	lines.insertLast("Difficulty: " + diff_str);
 	lines.insertLast("Zombies: " + (num_zombies + num_pzombies) + "/" + max_zombies);
 	lines.insertLast("Hard Starts: " + (hardmode_day - ((days_offset/14)*10)));
-	lines.insertLast("Curse Starts: " + curse_day);
+        lines.insertLast("Curse Starts: " + curse_day);
+        lines.insertLast("Ruined Portals: " + ruined_portal_day);
 	lines.insertLast("Altars Remaining: " + num_zombiePortals);
 
 	// fixed width panel (tweak to taste)

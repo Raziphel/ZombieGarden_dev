@@ -9,7 +9,8 @@ void onRenderScoreboard(CRules@ this)
     // keep external link but move record details to the HUD
     CControls@ controls = getControls();
     Vec2f mousePos = controls.getMouseScreenPos();
-    makeWebsiteLink(Vec2f(getDriver().getScreenWidth() - 150, 60), "Discord", "https://discord.gg/razi", controls, mousePos);
+    // move Discord button towards the left center of the screen
+    makeWebsiteLink(Vec2f(150, getDriver().getScreenHeight() * 0.5f), "Discord", "https://discord.gg/razi", controls, mousePos);
     mousePress = controls.mousePressed1;
 }
 
