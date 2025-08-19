@@ -5,7 +5,7 @@
 #include "BurdCommon.as";
 #include "ThrowCommon.as";
 #include "RunnerCommon.as";
-#include "../../Resources/Scripts/MakeMat.as";
+#include "MakeMat.as";
 #include "Help.as";
 #include "Requirements.as"
 #include "BuilderHittable.as";
