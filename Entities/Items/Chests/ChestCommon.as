@@ -73,24 +73,6 @@ void InitLoot( CBlob@ this )
 		addLoot(this, "assassinknife", 0, 1);
 	else if (rc2==6)
 		addLoot(this, "firesoul", 0, 1);
-		
-	//third soul
-	int rc3 = XORRandom(7);
-	
-	if (rc3==0)
-		addLoot(this, "blesseddrill", 0, 1);
-	else if (rc3==1)
-		addLoot(this, "chickenhead", 0, 1);
-	else if (rc3==2)
-		addLoot(this, "dragoonwings", 0, 1);
-	else if (rc3==3)
-		addLoot(this, "wizardstaff", 0, 1);
-	else if (rc3==4)
-		addLoot(this, "crossbow_item", 0, 1);
-	else if (rc3==5)
-		addLoot(this, "assassinknife", 0, 1);
-	else if (rc3==6)
-		addLoot(this, "firesoul", 0, 1);
 
 	
 	// item

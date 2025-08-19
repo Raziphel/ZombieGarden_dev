@@ -24,3 +24,4 @@
 #The Soprano's Zeppelin
 # Huge thanks to  MONKEY FEATS for a lot of assets.
 #RaZeR-RBI for the Digger (sprite)
+Olimarrex for the LandWraith (sprite)

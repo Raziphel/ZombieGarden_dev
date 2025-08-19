@@ -267,25 +267,23 @@ class ZombiesCore : RulesCore
 				if (canSpawnNow)
 				{
 					float rmin = Maths::Min((dayNumber * 0.05f), difficulty); // slowly rises with days
-					if (rmin >= 3.5f) rmin = 3.5f; // cap at 3.5f for ZombieKnight
+					if (rmin >= 1.0f) rmin = 1.0f; // cap at 3.5f for ZombieKnight
 					const float r = rmin + XORRandom(Maths::Max(1, int((difficulty - rmin) * 10))) / 10.0f;
 
 					if      (r >= 14.8f && _num_di < _max_di)                                server_CreateBlob("digger", -1, sp);
 					else if (r >= 11.3f && (_num_gr + _num_wr) < (_max_gr + _max_wr))        server_CreateBlob("writher", -1, sp);
 					else if (r >=  9.8f)                                                     server_CreateBlob("pbanshee", -1, sp);
-					else if (r >=  9.5f)                                                     server_CreateBlob("zbison", -1, sp);
+					else if (r >=  9.5f)                                                     { const u8 v = XORRandom(2); server_CreateBlob((v == 0 ? "zbison" : "zbison2"), -1, sp); }
 					else if (r >=  9.1f)                                                     server_CreateBlob("horror", -1, sp);
-					else if (r >=  7.9f && _num_wr < _max_wr)                                server_CreateBlob("wraith", -1, sp);
-					else if (r >=  7.2f && _num_gr < _max_gr)                                server_CreateBlob("greg", -1, sp);
+					else if (r >=  7.9f && _num_wr < _max_wr)                                { const u8 v = XORRandom(2); server_CreateBlob((v == 0 ? "wraith" : "wraith2"), -1, sp); }
+					else if (r >=  7.2f && _num_gr < _max_gr)                                { const u8 v = XORRandom(2); server_CreateBlob((v == 0 ? "greg" : "greg2"), -1, sp); }
 					else if (r >=  6.4f && _num_im < _max_im)                                server_CreateBlob("immolator", -1, sp);
 					else if (r >=  5.4f)                                                     server_CreateBlob("gasbag", -1, sp);
 					else if (r >=  3.6f)                                                     server_CreateBlob("zombieknight", -1, sp);
-					else if (r >=  3.1f)                                                     server_CreateBlob("evilzombie", -1, sp);
-					else if (r >=  2.6f)                                                     server_CreateBlob("bloodzombie", -1, sp);
-					else if (r >=  1.9f)                                                     server_CreateBlob("plantzombie", -1, sp);
-					else if (r >=  1.1f)                                                     server_CreateBlob("zombie", -1, sp);
-					else if (r >=  0.6f)                                                     server_CreateBlob("skeleton", -1, sp);
-					else if (r >=  0.2f)                                                     server_CreateBlob("catto", -1, sp); // now reachable for 0.2 ≤ r < 0.6
+					else if (r >=  2.4f)                                                     { const u8 v = XORRandom(3); server_CreateBlob(v == 0 ? "evilzombie" : (v == 1 ? "bloodzombie" : "plantzombie"), -1, sp); }
+					else if (r >=  1.1f)                                                     { const u8 v = XORRandom(2); server_CreateBlob((v == 0 ? "zombie" : "zombie2"), -1, sp); }
+					else if (r >=  0.6f)                                                     { const u8 v = XORRandom(2); server_CreateBlob((v == 0 ? "skeleton" : "skeleton2"), -1, sp); }
+					else if (r >=  0.2f)                                                     server_CreateBlob("catto", -1, sp); 
 					else                                                                     server_CreateBlob("zchicken", -1, sp);
 
 					// === boss waves ===

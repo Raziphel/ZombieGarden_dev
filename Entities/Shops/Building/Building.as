@@ -41,12 +41,18 @@ void onInit(CBlob@ this)
 		ShopItem@ s = addShopItem( this, "Dormitory", "$dorm$", "dorm", "Heal yourself and care for migrants." );
 		AddRequirement( s.requirements, "blob", "mat_wood", "Wood", 50 );
 		AddRequirement( s.requirements, "blob", "mat_stone", "Stone", 25 );
-		//AddRequirement(s.requirements, "blob", "migrantbot", "Migrant", 1);
+		AddRequirement( s.requirements, "blob", "migrantbot", "Migrant", 1);
+	}
+	{
+		ShopItem@ s = addShopItem( this, "Forge", "$forge$", "forge", "Smelt your ores into bars." );
+		AddRequirement( s.requirements, "blob", "mat_wood", "Wood", 100 );
+		AddRequirement( s.requirements, "blob", "mat_stone", "Stone", 200 );
+		AddRequirement( s.requirements, "blob", "mat_coal", "Coal", 200 );
 	}
 	{
 		ShopItem@ s = addShopItem( this, "Trader Shop", "$tradershop$", "tradershop", "Exchange gold or buy paraphernalia." );
 		AddRequirement( s.requirements, "blob", "mat_wood", "Wood", 50 );
-	}	
+	}		
 	{
 		ShopItem@ s = addShopItem( this, "Builder Shop", "$buildershop$", "buildershop", "Craft and buy important gadgets or switch to Builder here." );
 		AddRequirement( s.requirements, "blob", "mat_wood", "Wood", 50 );
@@ -78,7 +84,7 @@ void onInit(CBlob@ this)
 		AddRequirement( s.requirements, "blob", "firesoul", "Fire Soul", 2 );
 	}
 	{
-		ShopItem@ s = addShopItem( this, "Crossbow Shop", "$crossbowshop$", "crossbowshop", "Become a Crossbow!" );
+		ShopItem@ s = addShopItem( this, "Crossbow Shop", "$crossbowshop$", "crossbowshop", "Become a Crossbow man!" );
 		AddRequirement( s.requirements, "blob", "mat_wood", "Wood", 100 );
 		AddRequirement( s.requirements, "blob", "mat_stone", "Stone", 100 );
 		AddRequirement( s.requirements, "blob", "mat_ironbar", "Iron Bars", 100 );

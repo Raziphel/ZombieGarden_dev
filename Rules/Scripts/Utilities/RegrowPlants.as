@@ -6,12 +6,27 @@ const bool moss_stone = false;
 // random_growth is randomly set from 0 to 1.0
 // don't set values lower than 0.0001
 // if you want to prevent a thing from growing at all, set it's chance to -1 rather than 0
-const f32 grass_grow_chance = 0.015f;
-const f32 bush_grow_chance = 0.003f;
-const f32 flower_grow_chance = 0.0005f;
-const f32 grain_grow_chance = flower_grow_chance + 0.0005f; //add flower chance to prevent them from overriding each other
-const f32 chicken_grow_chance = 0.001f; // chickens are plants don't @ me
-const u8 chicken_limit = 10; 
+const f32 grass_grow_chance   = 0.015f;
+const f32 bush_grow_chance    = 0.003f;
+const f32 flower_grow_chance  = 0.0005f;
+const f32 grain_grow_chance   = flower_grow_chance + 0.0005f; // add flower chance to prevent them from overriding each other
+
+// Animals (grown like plants… chickens are plants don’t @ me)
+const f32 chicken_grow_chance = 0.001f;
+const f32 piglet_grow_chance  = 0.0006f;
+const f32 bunny_grow_chance   = 0.0006f;
+const f32 birb_grow_chance    = 0.0004f;
+const f32 bison_grow_chance   = 0.00015f;
+
+const u8  chicken_limit = 6;
+const u8  piglet_limit  = 5;
+const u8  bunny_limit   = 5;
+const u8  birb_limit    = 8;
+const u8  bison_limit   = 1;
+
+// local anti-clump radii (prevent spamming same animal on one screen)
+const f32 critter_radius_small = 64.0f;  // chicken, piglet, bunny, birb
+const f32 critter_radius_bison = 96.0f;  // big lad
 
 const f32 moss_stone_chance = 0.002f;
 
@@ -20,12 +35,12 @@ const u32 moss_time = 30 * 60 * 10;
 
 // which tiles should turn into moss
 // tile from castle_stuff will turn into a corresponding tile from castle_moss_stuff
-const u16[] castle_stuff = {CMap::tile_castle, CMap::tile_castle_back};
+const u16[] castle_stuff      = {CMap::tile_castle, CMap::tile_castle_back};
 const u16[] castle_moss_stuff = {CMap::tile_castle_moss, CMap::tile_castle_back_moss};
-const string[] plants_stuff = {"bush", "flowers", "grain_plant"};
+const string[] plants_stuff   = {"bush", "flowers", "grain_plant"};
 
 const u16 min_random_time = 200; // minimal time between growth checks
-const u16 max_random_inc = 60; // maximum random increase to time between growth checks
+const u16 max_random_inc  = 60; // maximum random increase to time between growth checks
 
 u32 next_check_time = min_random_time;
 
@@ -90,7 +105,7 @@ class TileInfo
 		f32 luck = 0;
 		CMap@ map = getMap();
 
-		Tile tile_left = map.getTile(coords - Vec2f(map.tilesize, map.tilesize));
+		Tile tile_left  = map.getTile(coords - Vec2f(map.tilesize, map.tilesize));
 		Tile tile_right = map.getTile(coords - Vec2f(-map.tilesize, map.tilesize));
 
 		// increase chance that grass will grow on this tile if there's grass around it
@@ -186,7 +201,6 @@ void onRestart(CRules@ this)
 
 void onSetTile(CMap@ this, u32 index, TileType newtile, TileType oldtile)
 {
-		
 	u32 x = index % this.tilemapwidth;
 	u32 y = index / this.tilemapwidth;
 	Vec2f coords(x * this.tilesize, y * this.tilesize);
@@ -225,33 +239,82 @@ u32 findTileByCoords(const TileInfo@[] &in tiles, Vec2f coords)
 	return 0;
 }
 
+// --------- Helpers for critter spawning ---------
+
+bool underOpenSkyOrGrass(CMap@ map, Vec2f worldPos)
+{
+	const f32 ts = map.tilesize;
+	Tile above = map.getTile(worldPos - Vec2f(0, ts));
+	return (above.type == CMap::tile_empty || map.isTileGrass(above.type));
+}
+
+u32 countBlobsByName(const string &in name)
+{
+	CBlob@[] found;
+	getBlobsByName(name, @found);
+	return found.length;
+}
+
+bool hasBlobNearby(const string &in name, Vec2f pos, f32 radius)
+{
+	CBlob@[] nearby;
+	if (getMap().getBlobsInRadius(pos, radius, nearby))
+	{
+		for (u16 i = 0; i < nearby.length; i++)
+		{
+			if (nearby[i] !is null && nearby[i].getName() == name)
+				return true;
+		}
+	}
+	return false;
+}
+
+void trySpawnCritter(const string &in name, f32 chance, u8 global_cap, Vec2f groundPos, f32 radius)
+{
+	if (chance < 0) return;
+
+	// random draw
+	f32 r = XORRandom(10000) * 0.0001f; // 0..1
+	if (r > chance) return;
+
+	// global cap
+	if (countBlobsByName(name) >= global_cap) return;
+
+	// anti-clump
+	if (hasBlobNearby(name, groundPos, radius)) return;
+
+	server_CreateBlob(name, -1, groundPos);
+}
+
 void onTick(CRules@ this)
-{	
+{
 	if (getGameTime() >= next_check_time)
 	{
 		CMap@ map = getMap();
-		float tilesize = map.tilesize;
+		f32 tilesize = map.tilesize;
 
 		for (int i = 1; i < dirt_tiles.size(); i++)
 		{
 			TileInfo tinfo = dirt_tiles[i];
 			if (tinfo is null) return;
-			Tile tile_above = map.getTile(tinfo.coords - Vec2f(0,tilesize));
+			Vec2f pos_above = tinfo.coords - Vec2f(0, tilesize);
+			Tile tile_above = map.getTile(pos_above);
 
 			if (tile_above.type == CMap::tile_empty || map.isTileGrass(tile_above.type))
 			{
+				// ---- Grass spread
 				f32 random_grow = XORRandom(10000) * 0.0001f;
 
 				if (random_grow - tinfo.grassLuck() <= grass_grow_chance && !map.isTileGrass(tile_above.type))
 				{
-					map.server_SetTile(tinfo.coords - Vec2f(0, tilesize), CMap::tile_grass + XORRandom(3));
+					map.server_SetTile(pos_above, CMap::tile_grass + XORRandom(3));
 				}
 
-				random_grow = XORRandom(10000) * 0.0001f; // generate new random_grow for every growth check to prevent situations where either nothing grows or everything grows on one tile
+				// ---- Plants (bush / flowers / grain)
+				random_grow = XORRandom(10000) * 0.0001f; // re-roll each check
 
 				s16 plant = -1;
-
-				if (random_grow <= bush_grow_chance) plant = 0;
+				if (random_grow <= bush_grow_chance)  plant = 0;
 				if (random_grow <= grain_grow_chance) plant = 2;
 				if (random_grow <= flower_grow_chance) plant = 1; // do checks out of order so flower overrides grain growth
 
@@ -265,11 +328,8 @@ void onTick(CRules@ this)
 						for (int a = 0; a < blobs.size(); a++)
 						{
 							CBlob@ blob = blobs[a];
-							if (blob is null)
-							{
-								continue;
-							}
-							if (plants_stuff.find(blob.getName()) != -1) // check for plants, don't grow if there's already one nearby
+							if (blob is null) continue;
+							if (plants_stuff.find(blob.getName()) != -1) // don't double plant
 							{
 								near_plant = true; 
 								break;
@@ -279,8 +339,22 @@ void onTick(CRules@ this)
 
 					if (!near_plant)
 					{
-						server_CreateBlob(plants_stuff[plant], -1, tinfo.coords - Vec2f(0,tilesize));
+						server_CreateBlob(plants_stuff[plant], -1, pos_above);
 					}
+				}
+
+				// ---- Critters (spawn over ground with sky/grass above)
+				// safety: ensure the spawn location is reasonable
+				if (underOpenSkyOrGrass(map, tinfo.coords))
+				{
+					// small animals
+					trySpawnCritter("chicken", chicken_grow_chance, chicken_limit, pos_above, critter_radius_small);
+					trySpawnCritter("piglet",  piglet_grow_chance,  piglet_limit,  pos_above, critter_radius_small);
+					trySpawnCritter("bunny",   bunny_grow_chance,   bunny_limit,   pos_above, critter_radius_small);
+					trySpawnCritter("birb",    birb_grow_chance,    birb_limit,    pos_above, critter_radius_small);
+
+					// big animal
+					trySpawnCritter("bison",   bison_grow_chance,   bison_limit,   pos_above, critter_radius_bison);
 				}
 			}
 		}
@@ -296,7 +370,8 @@ void onTick(CRules@ this)
 				
 				if (ttype != -1)
 				{
-					if (luck > 0 && random_grow - luck <= moss_stone_chance && (tinfo.mossTime() || tinfo.hasMossAdjacent())) //  check for luck being non-zero so stone structures get mossified starting from ground level
+					// check for luck being non-zero so stone structures get mossified starting from ground level
+					if (luck > 0 && random_grow - luck <= moss_stone_chance && (tinfo.mossTime() || tinfo.hasMossAdjacent()))
 					{
 						map.server_SetTile(tinfo.coords, castle_moss_stuff[ttype]);
 					}
@@ -304,6 +379,7 @@ void onTick(CRules@ this)
 			}
 		}
 
-		next_check_time = getGameTime() + min_random_time + XORRandom(max_random_inc); // make timing for growth checks semi-random so they're not too monotonous
+		// make timing for growth checks semi-random so they're not too monotonous
+		next_check_time = getGameTime() + min_random_time + XORRandom(max_random_inc);
 	}
 }

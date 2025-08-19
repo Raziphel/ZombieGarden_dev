@@ -5,7 +5,8 @@ namespace custom_colors
 	enum color
 	{
  		//color_goldenbrick = 0xfffea01e, //(255, 254, 160, 30)
- 		color_ironore  =   0xffd2dee4, //(255, 210, 222, 228)
+ 		color_ironore     = 0xffd2dee4, //(255, 210, 222, 228)
+ 		color_coalore     = 0xff151716, //(21, 23, 2, ?)
  		color_bloodground = 0xffb73333, //(255, 183, 51, 51)
  		color_bloodgrass  = 0xff647814, //(255, 100, 120, 20)
  	}
@@ -121,8 +122,8 @@ namespace CMap
 		tile_ironbrick_d7 	= 472,
 		tile_ironbrick_d8 	= 473,
 		tile_ironbrick_d9 	= 474,
-		tile_ironbrick_d10 = 475,
-		tile_ironbrick_d11 = 476,
+		tile_ironbrick_d10  = 475,
+		tile_ironbrick_d11  = 476,
 
 		tile_ironore    	= 480,
 		tile_ironore_d0 	= 481,
@@ -131,34 +132,26 @@ namespace CMap
 		tile_ironore_d3 	= 484,
 		tile_ironore_d4 	= 485,
 		tile_ironore_d5 	= 486,
+		tile_ironore_d6 	= 487,
+		tile_ironore_d7 	= 488,
+		tile_ironore_d8 	= 489,
 
-		tile_copperore    	= 496,
-		tile_copperore_d0 	= 497,
-		tile_copperore_d1 	= 498,
-		tile_copperore_d2 	= 499,
-		tile_copperore_d3 	= 500,
-		tile_copperore_d4 	= 501,
-		tile_copperore_d5 	= 502,		
+		tile_copperore    	= 490,
+		tile_copperore_d0 	= 491,
+		tile_copperore_d1 	= 492,
+		tile_copperore_d2 	= 493,
+		tile_copperore_d3 	= 494,
+		tile_copperore_d4 	= 495,
+		tile_copperore_d5 	= 496,		
 
-		// tile_snow           = 504,
-		// tile_snow_v0,       = 505,
-		// tile_snow_v1,       = 506,
-		// tile_snow_v2,       = 507,
-		// tile_snow_v3,       = 508,
-		// tile_snow_v4,       = 509,
-		// tile_snow_v5,       = 510,
-		// tile_snow_d0,       = 511,
-		// tile_snow_d1,       = 512,
-		// tile_snow_d2,       = 513,
-		// tile_snow_d3,       = 514,
+		tile_coalore          = 497,
+		tile_coalore_d0       = 498,
+		tile_coalore_d1       = 499,
+		tile_coalore_d2       = 500,
+		tile_coalore_d3       = 501,
+		tile_coalore_d4       = 502,
+		tile_coalore_d5       = 503,
 
-		// tile_snow_pile      = 520,
-		// tile_snow_pile_v0,  = 521,
-		// tile_snow_pile_v1,  = 522,
-		// tile_snow_pile_v2,  = 523,
-		// tile_snow_pile_v3,  = 524,
-		// tile_snow_pile_v4,  = 525,
-		// tile_snow_pile_v5,  = 526,
 	};
 };
 
@@ -167,10 +160,15 @@ void HandleCustomTile(CMap@ map, int offset, SColor pixel)
 	switch (pixel.color)
 	{
 		case custom_colors::color_ironore:		
-		map.SetTile(offset, CMap::tile_ironore +XORRandom(3) );
+		map.SetTile(offset, CMap::tile_ironore +XORRandom(1) );
 		map.RemoveTileFlag( offset, Tile::LIGHT_SOURCE | Tile::LIGHT_PASSES);
 		map.AddTileFlag( offset, Tile::SOLID | Tile::COLLISION ); break;
-	
+
+		case custom_colors::color_coalore:		
+		map.SetTile(offset, CMap::tile_coalore +XORRandom(1));
+		map.RemoveTileFlag( offset, Tile::LIGHT_SOURCE | Tile::LIGHT_PASSES);
+		map.AddTileFlag( offset, Tile::SOLID | Tile::COLLISION ); break;
+
 		case  custom_colors::color_bloodground:	
 		map.SetTile(offset, CMap::tile_mediumbloodground );
 		map.RemoveTileFlag( offset, Tile::LIGHT_SOURCE | Tile::LIGHT_PASSES);
