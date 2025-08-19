@@ -73,10 +73,10 @@ void onInit(CBlob@ this)
 		max = 10;
 		set = true;	
 	}
-	else if (name == "whitepage") {
-		max = 3;
-		set = false;	
-	}	
+        else if (name == "soulshard") {
+                max = 3;
+                set = false;
+        }
 	else if (name == "mat_bombs")
 	{
 		max = 1;

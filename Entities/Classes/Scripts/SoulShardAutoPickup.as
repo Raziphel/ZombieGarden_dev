@@ -14,7 +14,7 @@ void onCollision(CBlob@ this, CBlob@ blob, bool solid)
 
 	string blobName = blob.getName();
 
-	if (blobName == "whitepage" || blobName == "lifeforce" )
+        if (blobName == "soulshard" || blobName == "lifeforce" )
 	{
 		if (this.server_PutInInventory(blob))
 		{

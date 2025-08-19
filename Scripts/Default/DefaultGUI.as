@@ -97,7 +97,7 @@ void LoadDefaultGUI()
 		AddIconToken( "$midas$", "../Entities/Items/Scrolls/ScrollOfMidas.png", Vec2f(16,16), 0 );
 		AddIconToken( "$sreinforce$", "../Entities/Items/Scrolls/ScrollReinforce.png", Vec2f(16,16), 0 );
 		AddIconToken( "$whitebook$", "../Entities/Items/Scrolls/WhiteBook.png", Vec2f(16,16), 0 );
-		AddIconToken( "$whitepage$", "../Entities/Items/Scrolls/WhitePageIcon.png", Vec2f(16,16), 0 );
+           AddIconToken( "$soulshard$", "../Entities/Items/Scrolls/WhiteBook/SoulShardIcon.png", Vec2f(16,16), 0 );
 		AddIconToken( "$sslayer$", "../Entities/Items/Scrolls/ScrollSlayer.png", Vec2f(16,16), 0 );
 		AddIconToken( "$snecromancer$", "../Entities/Items/Scrolls/ScrollNecromancer.png", Vec2f(16,16), 0 );
 		AddIconToken( "$sgargoyle$", "../Entities/Items/Scrolls/ScrollGargoyle.png", Vec2f(16,16), 0 );
