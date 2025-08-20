@@ -43,7 +43,7 @@ void onInit(CBlob@ this)
     if (isClient())
     {
         Render::addBlobScript(Render::layer_postworld, this, "HellFire.as", "RenderHellFire");
-        if(!Texture::exists("HELLFIRE")) Texture::createFromFile("HELLFIRE", "blizzard.png");
+        if(!Texture::exists("HELLFIRE")) Texture::createFromFile("HELLFIRE", "HellFire.png");
         if(!Texture::exists("FOG")) Texture::createFromFile("FOG", "pixel.png");
     }
 
@@ -66,7 +66,7 @@ void Setup(CSprite@ this)
 {
     if (isClient())
     {
-        this.SetEmitSound("FireLoop.ogg");
+        this.SetEmitSound("HellFire_Loop.ogg");
         this.SetEmitSoundPaused(false);
         CMap@ map = getMap();
         uvs = 2048.0f/f32(spritesize);

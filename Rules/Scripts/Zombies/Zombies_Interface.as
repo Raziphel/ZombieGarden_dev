@@ -199,7 +199,7 @@ float DrawRecordStatus(CRules@ rules)
 
 	if (cheated)
 	{
-		lines.insertLast("Record Disqualified (!day)");
+		lines.insertLast("Record Disqualified (Cheated)");
 		cols.push_back(COL_BAD);
 	}
 
@@ -325,7 +325,7 @@ float DrawModeStatus(CRules@ rules, const float topOffset = 0.0f)
 	{
 		curseLine = "Curse in: " + curseRemain + (curseRemain == 1 ? " day" : " days");
 		if (curseRemain <= 20) curseCol = COL_WARN;
-		else { hardCol = COL_GOOD; }
+		else { curseCol = COL_GOOD; }
 	}
 
 	const bool ruinsActive = rules.get_bool("ruins_portal_active");
