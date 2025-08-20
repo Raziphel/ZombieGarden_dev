@@ -99,7 +99,7 @@ bool GiveSpawnResources(CRules@ this, CBlob@ blob, CPlayer@ player, CTFPlayerInf
 		ret = SetMaterials(blob, "mat_wood", 500) || ret;
 		ret = SetMaterials(blob, "mat_stone", 250) || ret;
 		ret = SetMaterials(blob, "mat_gold", 100) || ret;
-		ret = SetMaterials(blob, "schicken", 1) || ret;
+            ret = SetMaterials(blob, "scrollchicken", 1) || ret;
 
 		if (ret)
 		{

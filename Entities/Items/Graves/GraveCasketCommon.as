@@ -23,31 +23,31 @@ void InitLoot( CBlob@ this )
 	int rs = XORRandom(13);
 	
 	if (rs==0)
-		addLoot(this, "carnage", 1, 1);
+		addLoot(this, "scrollcarnage", 1, 1);
 	else if (rs==1)
-		addLoot(this, "drought", 1, 1);
+		addLoot(this, "scrolldrought", 1, 1);
 	else if (rs==2)
-		addLoot(this, "sfshark", 1, 1);
+		addLoot(this, "scrollfshark", 1, 1);
 	else if (rs==3)
-		addLoot(this, "selemental", 1, 1);
+		addLoot(this, "scrollselemental", 1, 1);
 	else if (rs==4)
-		addLoot(this, "2weeks", 1, 1);
+		addLoot(this, "scroll2weeks", 1, 1);
 	else if (rs==5)
 		addLoot(this, "vodka", 1, 1);
 	else if (rs==6)
-		addLoot(this, "sreinforce", 1, 1);
+		addLoot(this, "scrollreinforce", 1, 1);
 	else if (rs==7)
-		addLoot(this, "midas", 1, 1);
+		addLoot(this, "scrollmidas", 1, 1);
 	else if (rs==8)
-		addLoot(this, "sgreg", 1, 1);
+		addLoot(this, "scrollgreg", 1, 1);
 	else if (rs==9)
-		addLoot(this, "shorde", 1, 1);
+		addLoot(this, "scrollhorde", 1, 1);
 	else if (rs==10)
-		addLoot(this, "sshark", 2, 1);
+		addLoot(this, "scrollshark", 2, 1);
 	else if (rs==11)
-		addLoot(this, "sskeleton", 1, 1);
+		addLoot(this, "scrollskeleton", 1, 1);
 	else if (rs==12)
-		addLoot(this, "szombie", 1, 1);
+		addLoot(this, "scrollzombie", 1, 1);
 	
 	int ruc = XORRandom(3);
 	
@@ -69,8 +69,6 @@ void InitLoot( CBlob@ this )
 	else if (rz==5)
 		addLoot(this, "lifeforce", 3, 1);
 }
-
-
 
 void addLoot(CBlob@ this, string NAME, int RARITY, int QUANTITY)
 {    

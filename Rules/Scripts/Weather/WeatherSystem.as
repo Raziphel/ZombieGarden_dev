@@ -1,11 +1,11 @@
 #define SERVER_ONLY
 
 // WeatherSystem.as
-// Randomly triggers either rain or blizzard with a cooldown.
+// Randomly triggers either rain or hell fire with a cooldown.
 // No map-type checks. Keeps a simple "raining" flag while active.
 
 u32 g_next_weather = 1000;
-const u8 BLIZZARD_PERCENT = 15; // 0–100 chance; set lower if you want blizzards to be rarer
+const u8 HELLFIRE_PERCENT = 10; // 0–100 chance; set lower if you want hell fire to be rarer
 
 void onInit(CRules@ this)
 {
@@ -13,7 +13,7 @@ void onInit(CRules@ this)
 	this.set_u32("rain_end_at", 0);
 
 	const u32 time = getGameTime();
-	g_next_weather = time + 2500 + XORRandom(40000);
+        g_next_weather = time + 2500 + XORRandom(80000);
 }
 
 void onRestart(CRules@ this)
@@ -22,7 +22,7 @@ void onRestart(CRules@ this)
 	this.set_u32("rain_end_at", 0);
 
 	const u32 time = getGameTime();
-	g_next_weather = time + 2500 + XORRandom(40000);
+        g_next_weather = time + 2500 + XORRandom(80000);
 }
 
 void onTick(CRules@ this)
@@ -51,8 +51,8 @@ void onTick(CRules@ this)
 	// Only start new weather if nothing is active
 	if (!this.get_bool("raining"))
 	{
-		const bool do_blizzard = (XORRandom(100) < BLIZZARD_PERCENT);
-		const string blobname = do_blizzard ? "blizzard" : "rain";
+                const bool do_hellfire = (XORRandom(100) < HELLFIRE_PERCENT);
+                const string blobname = do_hellfire ? "hellfire" : "rain";
 
 		CBlob@ weather = server_CreateBlob(blobname, 255, Vec2f(0, 0));
 		if (weather !is null)
@@ -64,5 +64,5 @@ void onTick(CRules@ this)
 	}
 
 	// Schedule the next chance window after this weather plus a cooldown
-	g_next_weather = time + length_ticks + 10000 + XORRandom(75000);
+        g_next_weather = time + length_ticks + 20000 + XORRandom(150000);
 }

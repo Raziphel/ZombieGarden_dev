@@ -22,20 +22,20 @@ void InitLoot( CBlob@ this )
 	// scroll
 	int rs1 = XORRandom(7);
 	
-	if (rs1==0)
-		addLoot(this, "carnage", 0, 1);
-	else if (rs1==1)
-		addLoot(this, "drought", 0, 1);
-	else if (rs1==2)
-		addLoot(this, "sfshark", 0, 1);
-	else if (rs1==3)
-		addLoot(this, "2weeks", 0, 1);
-	else if (rs1==4)
-		addLoot(this, "selemental", 0, 1);
-	else if (rs1==5)
-		addLoot(this, "sreinforce", 0, 1);
-	else if (rs1==6)
-		addLoot(this, "midas", 0, 1);
+        if (rs1==0)
+                addLoot(this, "scrollcarnage", 0, 1);
+        else if (rs1==1)
+                addLoot(this, "scrolldrought", 0, 1);
+        else if (rs1==2)
+                addLoot(this, "scrollfshark", 0, 1);
+        else if (rs1==3)
+                addLoot(this, "scroll2weeks", 0, 1);
+        else if (rs1==4)
+                addLoot(this, "scrollelemental", 0, 1);
+        else if (rs1==5)
+                addLoot(this, "scrollreinforce", 0, 1);
+        else if (rs1==6)
+                addLoot(this, "scrollmidas", 0, 1);
 
 
 	// soul

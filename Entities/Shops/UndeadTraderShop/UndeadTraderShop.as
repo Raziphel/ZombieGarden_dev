@@ -37,28 +37,28 @@ void onInit( CBlob@ this )
 	}
 	/*
 	{
-		ShopItem@ s = addShopItem( this, "Scroll of Skeleton Rain", "$sskeleton$", "sskeleton", "Powered by dark magic.", true );
+             ShopItem@ s = addShopItem( this, "Scroll of Skeleton Rain", "$scrollskeleton$", "scrollskeleton", "Powered by dark magic.", true );
 		AddRequirement( s.requirements, "coin", "", "Coins", 100 );
 	}	
 	{
-		ShopItem@ s = addShopItem( this, "Scroll of Zombie Rain", "$szombie$", "szombie", "Powered by dark magic.", true );
+             ShopItem@ s = addShopItem( this, "Scroll of Zombie Rain", "$scrollzombie$", "scrollzombie", "Powered by dark magic.", true );
 		AddRequirement( s.requirements, "coin", "", "Coins", 100 );
 	}
 	*/	
 	/*{
-		ShopItem@ s = addShopItem(this, "Book of the Slayer", "$sslayer$", "sslayer", "A spellbook to become a Slayer.", true);
+                ShopItem@ s = addShopItem(this, "Book of the Slayer", "$scrollslayer$", "scrollslayer", "A spellbook to become a Slayer.", true);
 		AddRequirement(s.requirements, "coin", "", "Coins", 100 );
 	}	
 	{
-		ShopItem@ s = addShopItem(this, "Book of the Necromancer", "$snecromancer$", "snecromancer", "A spellbook to become a Necromancer.", true);
+                ShopItem@ s = addShopItem(this, "Book of the Necromancer", "$scrollnecromancer$", "scrollnecromancer", "A spellbook to become a Necromancer.", true);
 		AddRequirement(s.requirements, "coin", "", "Coins", 100 );
 	}
 	{
-		ShopItem@ s = addShopItem(this, "Book of the Gargoyle", "$sgargoyle$", "sgargoyle", "A spellbook to become a Gargoyle.", true);
+                ShopItem@ s = addShopItem(this, "Book of the Gargoyle", "$scrollgargoyle$", "scrollgargoyle", "A spellbook to become a Gargoyle.", true);
 		AddRequirement(s.requirements, "coin", "", "Coins", 100 );
 	}
 	{
-		ShopItem@ s = addShopItem(this, "Book of the Undead Bunny", "$sbunny$", "sbunny", "A spellbook to become an Undead Bunny.", true);
+                ShopItem@ s = addShopItem(this, "Book of the Undead Bunny", "$scrollbunny$", "scrollbunny", "A spellbook to become an Undead Bunny.", true);
 		AddRequirement(s.requirements, "coin", "", "Coins", 100 );
 	}*/	
 }

@@ -101,6 +101,16 @@ void onHitBlob(CBlob@ this, Vec2f worldPoint, Vec2f velocity, f32 damage, CBlob@
 		else
 			force.y = XORRandom(force.y);
 
-		hitBlob.AddForce(force);
-	}
+                hitBlob.AddForce(force);
+        }
+}
+
+void onDie(CBlob@ this)
+{
+        if (!getNet().isServer()) return;
+
+        for (int i = 0; i < 2; i++)
+        {
+                server_CreateBlob("soulshard", -1, this.getPosition());
+        }
 }
