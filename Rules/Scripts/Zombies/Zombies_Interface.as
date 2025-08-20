@@ -24,12 +24,12 @@ const SColor COL_INFO      = SColor(255, 120, 180, 255); // blue-ish
 int GetCurrentDay(CRules@ rules)
 {
 	// Prefer HUD-provided day if present (snappier)
-	if (rules.exists("hud_dayNumber"))
-	{
-		int d = rules.get_s32("hud_dayNumber");
-		if (rules.exists("days_offset")) d += rules.get_s32("days_offset");
-		return Maths::Max(1, d);
-	}
+        if (rules.exists("hud_dayNumber"))
+        {
+                // hud_dayNumber already includes any day offset; avoid double counting
+                const int d = rules.get_s32("hud_dayNumber");
+                return Maths::Max(1, d);
+        }
 
 	// Fallback: compute from time
 	const int gamestart = rules.get_s32("gamestart");
