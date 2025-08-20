@@ -15,7 +15,7 @@ const SColor color_zombie_portal (0xff6d12ef);
 const SColor color_zombie_ruins  (0xff2c1e40);
 const SColor color_zombie_alter  (0xff710d71);
 const SColor color_zombie_statue (0xffe42323);
-const SColor color_grave         (0xffacacac);
+const SColor color_grave         (0xfff377d7);
 
 // -----------------------------------------------
 

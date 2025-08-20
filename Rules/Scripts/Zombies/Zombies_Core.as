@@ -62,7 +62,7 @@ class ZombiesCore : RulesCore
 		const int num_gregs         = rules.get_s32("num_gregs");
 		const int max_imol          = rules.get_s32("max_imol");
 		const int num_immol         = rules.get_s32("num_immol");
-		const int num_zombiePortals = rules.get_s32("num_zombiePortals");
+		const int num_alters        = rules.get_s32("zombiealter");
 
 		// recompute simple derived values
         const int hardmode_day      = rules.get_s32("hardmode_day");
@@ -71,8 +71,8 @@ class ZombiesCore : RulesCore
         const bool ruins_portal_active = rules.get_bool("ruins_portal_active");
         const int dayNumber         = days_offset + ((getGameTime() - gamestart) / getTicksASecond() / day_cycle) + 1;
 
-                const int timeElapsed  = getGameTime() - gamestart;
-                const int ignore_light = (hardmode_day - ((days_offset / 14) * 10));
+        const int timeElapsed  = getGameTime() - gamestart;
+        const int ignore_light = (hardmode_day - ((days_offset / 14) * 10));
 
 		// quick player team pass (used for max_undead)
 		int num_survivors_p = 0;
@@ -100,51 +100,49 @@ class ZombiesCore : RulesCore
         // Difficulty calculation + wipe bonus (once per day)
         // ------------------------------
         const int pillars    = rules.get_s32("num_ruinstorch");
-        const int altars     = rules.get_s32("num_zombiePortals");
+        const int altars     = rules.get_s32("num_alters");
         const int survivors  = rules.get_s32("num_survivors");
         const int undead     = rules.get_s32("num_undead");
-        const int days_offset = rules.get_s32("days_offset");
 
-        float baseDifficulty = dayNumber * 0.2f;
+        float baseDifficulty = dayNumber * 0.16f;
 
         // adjustments based on world state
-        float modified = 0.0f;
-        modified -= pillars   * 0.3f;                   // more pillars ease the round
-        modified -= altars    * 0.5f;                   // intact altars reduce difficulty
-        modified -= survivors * 0.1f;                   // more survivors soften the waves
-        modified += undead    * 0.2f;                   // undead players make it tougher
-        modified -= days_offset * 0.1f;                 // manual day skips lower difficulty
+        float modified = -0.3f;
+        modified += pillars     * 0.3f;                   // more pillars ease the round
+        modified -= altars      * 0.5f;                   // intact altars reduce difficulty
+        modified += survivors   * 0.05f;                  // more survivors hardens the waves
+        modified -= undead      * 0.2f;                   // undead players make it tougher
+        modified += days_offset * 0.1f;                 // manual day skips ups difficulty
 
         // persistent bonus from wipes (defaults to 0 if missing)
         float wipeBonus = rules.exists("difficulty_bonus") ? rules.get_f32("difficulty_bonus") : 0.0f;
 
-                // --- Guard: don't let first-day / warmup wipes count ---
-                const bool isLive = rules.isMatchRunning();
-                const bool pastGrace = (timeElapsed > (getTicksASecond() * 45)); // small post-GAME grace
-                const bool allowWipeCheck = isLive && pastGrace && (dayNumber > 1);
+        // --- Guard: don't let first-day / warmup wipes count ---
+        const bool isLive = rules.isMatchRunning();
+        const bool pastGrace = (timeElapsed > (getTicksASecond() * 45)); // small post-GAME grace
+        const bool allowWipeCheck = isLive && pastGrace && (dayNumber > 1);
 
-                // Wipe bonus: if all survivors are dead, add +1 once per day
-                if (allowWipeCheck)
-                {
-                        const int live_survivors = rules.get_s32("num_survivors");
-                        const int num_hands      = rules.get_s32("num_ruinstorch");
-                        const int last_wipe_day  = rules.exists("last_wipe_day") ? rules.get_s32("last_wipe_day") : -1;
+        // Wipe bonus: if all survivors are dead, add +1 once per day
+        if (allowWipeCheck)
+        {
+            const int live_survivors = rules.get_s32("num_survivors");
+            const int num_hands      = rules.get_s32("num_ruinstorch");
+            const int last_wipe_day  = rules.exists("last_wipe_day") ? rules.get_s32("last_wipe_day") : -1;
 
-                        // Only once per dayNumber, only when truly wiped
-            if ((live_survivors - num_hands) <= 0 && last_wipe_day != dayNumber)
-            {
-                wipeBonus += 0.5f;
-                rules.set_f32("difficulty_bonus", wipeBonus);
-                rules.set_s32("last_wipe_day", dayNumber);
+            // Only once per dayNumber, only when truly wiped
+        	if ((live_survivors - num_hands) <= 0 && last_wipe_day != dayNumber)
+        	{
+    	        wipeBonus += 0.5f;
+	            rules.set_f32("difficulty_bonus", wipeBonus);
+            	rules.set_s32("last_wipe_day", dayNumber);
 
-                const float previewDifficulty = Maths::Min(20.0f, baseDifficulty + modified + wipeBonus);
+        	    const float previewDifficulty = Maths::Min(20.0f, baseDifficulty + modified + wipeBonus);
 
-                Server_GlobalPopup(rules,
-                                        "All survivors have fallen!\n\n+0.5 Difficulty (now " + previewDifficulty + ")",
-                                        SColor(255, 255, 0, 0),
-                                        6 * getTicksASecond());
-            }
-                }
+    	        Server_GlobalPopup(rules,
+	                "All survivors have fallen!\n\n+0.5 Difficulty (now " + previewDifficulty + ")",
+            	    SColor(255, 255, 0, 0), 6 * getTicksASecond());
+        	}
+        }
 
         // final difficulty (apply cap after any bonus change)
         float finalDifficulty = baseDifficulty + modified + wipeBonus;
@@ -281,24 +279,24 @@ class ZombiesCore : RulesCore
 
 				if (canSpawnNow)
 				{
-                    float rmin = finalDifficulty * 0.5f; // difficulty directly biases the minimum roll
+                    float rmin = finalDifficulty * 0.1f; // difficulty directly biases the minimum roll
                     const float r = rmin + XORRandom(Maths::Max(1, int((finalDifficulty - rmin) * 10))) / 10.0f;
 
-					if      (r >= 14.8f && _num_di < _max_di)                                server_CreateBlob("digger", -1, sp);
-					else if (r >= 11.3f && (_num_gr + _num_wr) < (_max_gr + _max_wr))        server_CreateBlob("writher", -1, sp);
-					else if (r >=  9.8f)                                                     server_CreateBlob("pbanshee", -1, sp);
-					else if (r >=  9.5f)                                                     { const u8 v = XORRandom(2); server_CreateBlob((v == 0 ? "zbison" : "zbison2"), -1, sp); }
-					else if (r >=  9.1f)                                                     server_CreateBlob("horror", -1, sp);
-					else if (r >=  7.9f && _num_wr < _max_wr)                                { const u8 v = XORRandom(2); server_CreateBlob((v == 0 ? "wraith" : "wraith2"), -1, sp); }
-					else if (r >=  7.2f && _num_gr < _max_gr)                                { const u8 v = XORRandom(2); server_CreateBlob((v == 0 ? "greg" : "greg2"), -1, sp); }
-					else if (r >=  6.4f && _num_im < _max_im)                                server_CreateBlob("immolator", -1, sp);
-					else if (r >=  5.4f)                                                     server_CreateBlob("gasbag", -1, sp);
-					else if (r >=  3.6f)                                                     server_CreateBlob("zombieknight", -1, sp);
-                                        else if (r >=  2.4f)                                                     { const u8 v = XORRandom(3); server_CreateBlob(v == 0 ? "evilzombie" : (v == 1 ? "bloodzombie" : "plantzombie"), -1, sp); }
-                                        else if (finalDifficulty < 8.0f && r >=  1.1f)                           { const u8 v = XORRandom(2); server_CreateBlob((v == 0 ? "zombie" : "zombie2"), -1, sp); }
-                                        else if (finalDifficulty < 6.0f && r >=  0.6f)                           { const u8 v = XORRandom(2); server_CreateBlob((v == 0 ? "skeleton" : "skeleton2"), -1, sp); }
-                                        else if (finalDifficulty < 4.0f && r >=  0.2f)                           server_CreateBlob("catto", -1, sp);
-                                        else if (finalDifficulty < 3.0f)                                          server_CreateBlob("zchicken", -1, sp);
+					if      (r >=  19.0f && _num_di < _max_di)                                 server_CreateBlob("digger", -1, sp);
+					else if (r >=  16.0f && (_num_gr + _num_wr) < (_max_gr + _max_wr))         server_CreateBlob("writher", -1, sp);
+					else if (r >=  13.0f)                                                      server_CreateBlob("pbanshee", -1, sp);
+					else if (r >=  11.0f)                                                      { const u8 v = XORRandom(2); server_CreateBlob((v == 0 ? "zbison" : "zbison2"), -1, sp); }
+					else if (r >=  9.5f)                                                     server_CreateBlob("horror", -1, sp);
+					else if (r >=  9.0f && _num_wr < _max_wr)                                  { const u8 v = XORRandom(2); server_CreateBlob((v == 0 ? "wraith" : "wraith2"), -1, sp); }
+					else if (r >=  8.0f && _num_gr < _max_gr)                                  { const u8 v = XORRandom(2); server_CreateBlob((v == 0 ? "greg" : "greg2"), -1, sp); }
+					else if (r >=  6.5f && _num_im < _max_im)                                server_CreateBlob("immolator", -1, sp);
+					else if (r >=  5.0f)                                                     server_CreateBlob("gasbag", -1, sp);
+					else if (r >=  3.5f)                                                     server_CreateBlob("zombieknight", -1, sp);
+                    else if (r >=  2.0f)                                                     { const u8 v = XORRandom(3); server_CreateBlob(v == 0 ? "evilzombie" : (v == 1 ? "bloodzombie" : "plantzombie"), -1, sp); }
+                    else if (r >=  1.0f)                                                     { const u8 v = XORRandom(2); server_CreateBlob((v == 0 ? "zombie" : "zombie2"), -1, sp); }
+                    else if (r >=  0.5f)                                                     { const u8 v = XORRandom(2); server_CreateBlob((v == 0 ? "skeleton" : "skeleton2"), -1, sp); }
+                    else if (r >=  0.2f)                                                     server_CreateBlob("catto", -1, sp);
+                    else                                                                     { server_CreateBlob("zchicken", -1, sp); }
 
 					// === boss waves ===
                     int newTransition = RunBossWave(dayNumber, finalDifficulty, zombiePlaces, transition);
