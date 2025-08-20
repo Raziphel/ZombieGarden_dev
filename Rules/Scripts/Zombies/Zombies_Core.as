@@ -31,6 +31,7 @@ class ZombiesCore : RulesCore
         // Arm the boss transition for the first cycle
         rules.set_s32("transition", 1);
         rules.set_s32("last_boss_day", 0);
+        rules.set_s32("boss_spawned_day", 0);
 
         // reset kill counter for new record tracking
         rules.set_u32("undead_kills", 0);

@@ -239,13 +239,18 @@ int RunBossWave(const int dayNumber,
                 Vec2f[]@ zombiePlaces,
                 const int transition_in)
 {
-	int transition = transition_in;
+        int transition = transition_in;
+        CRules@ rules = getRules();
 
-	// Only fire once per eligible day when armed
-	if (transition != 1) return transition;
+        // Only fire once per eligible day when armed
+        if (transition != 1) return transition;
 
-	const WaveKind kind = GetWaveKindForDay(dayNumber);
-	if (kind == WAVE_NONE) return transition;
+        // Prevent double boss waves within the same day
+        const int lastSpawnDay = rules.exists("boss_spawned_day") ? rules.get_s32("boss_spawned_day") : -1;
+        if (lastSpawnDay == dayNumber) return transition;
+
+        const WaveKind kind = GetWaveKindForDay(dayNumber);
+        if (kind == WAVE_NONE) return transition;
 
 	// Pick a spawn position (prefer markers, fallback to edge)
 	Vec2f sp;
@@ -266,22 +271,27 @@ int RunBossWave(const int dayNumber,
 	const uint idx = PickWeightedIndex(@table);
 	BossEntry@ e = table[idx];
 
-	// Server: spawn + popup
-	if (isServer())
-	{
-		for (uint k = 0; k < e.names.length; k++)
-		{
-			const int count = (k < e.counts.length ? e.counts[k] : 1);
-			SpawnMany(e.names[k], count, sp);
-		}
-		Server_GlobalPopup(getRules(), e.popup, e.color, e.popupTicks);
-	}
+        // Server: spawn + popup
+        if (isServer())
+        {
+                for (uint k = 0; k < e.names.length; k++)
+                {
+                        const int count = (k < e.counts.length ? e.counts[k] : 1);
+                        SpawnMany(e.names[k], count, sp);
+                }
+                Server_GlobalPopup(rules, e.popup, e.color, e.popupTicks);
+                rules.set_s32("boss_spawned_day", dayNumber);
+        }
 
-	// Client: play the stinger (per-entry customizable)
-	if (isClient() && e.sound.length > 0)
-	{
-		Sound::Play(e.sound);
-	}
+        // Client: play the stinger and echo to chat
+        if (isClient())
+        {
+                client_AddToChat(e.popup, e.color);
+                if (e.sound.length > 0)
+                {
+                        Sound::Play(e.sound);
+                }
+        }
 
-	return transition;
+        return transition;
 }
