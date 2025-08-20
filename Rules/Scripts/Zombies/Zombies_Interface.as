@@ -24,12 +24,12 @@ const SColor COL_INFO      = SColor(255, 120, 180, 255); // blue-ish
 int GetCurrentDay(CRules@ rules)
 {
 	// Prefer HUD-provided day if present (snappier)
-        if (rules.exists("hud_dayNumber"))
-        {
-                // hud_dayNumber already includes any day offset; avoid double counting
-                const int d = rules.get_s32("hud_dayNumber");
-                return Maths::Max(1, d);
-        }
+    if (rules.exists("hud_dayNumber"))
+    {
+        // hud_dayNumber already includes any day offset; avoid double counting
+        const int d = rules.get_s32("hud_dayNumber");
+        return Maths::Max(1, d);
+    }
 
 	// Fallback: compute from time
 	const int gamestart = rules.get_s32("gamestart");
@@ -61,7 +61,7 @@ void DrawTextCenteredBold(const string &in text, Vec2f pos, SColor color)
 // small helper for live player count by team
 int CountTeamPlayers(const int teamNum)
 {
-        int c = 0;
+    int c = 0;
 	for (int i = 0; i < getPlayersCount(); i++)
 	{
 		CPlayer@ p = getPlayer(i);
@@ -263,8 +263,8 @@ float DrawZombiesHUDTopRight(CRules@ rules, const float topOffset = 0.0f)
 
 	DrawPanel(tl, br);
 
-        DrawTextCenteredBold(title, Vec2f((tl.x + br.x) * 0.5f, tl.y + padY), COL_TITLE);
-        Vec2f cur = Vec2f(tl.x + padX, tl.y + padY + titleH + titleGap);
+    DrawTextCenteredBold(title, Vec2f((tl.x + br.x) * 0.5f, tl.y + padY), COL_TITLE);
+    Vec2f cur = Vec2f(tl.x + padX, tl.y + padY + titleH + titleGap);
 
 	for (uint i = 0; i < lines.length(); i++)
 	{

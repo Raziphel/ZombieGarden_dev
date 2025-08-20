@@ -6,8 +6,11 @@ const string[] builder_alwayshit =
 {
 	//handmade
 	"workbench",
-	//"fireplace",
+	"fireplace",
 	"ladder",
+	"iron_platform",
+	"wooden_platform",
+	"ironladder",
 
 	//flora
 	"flowers",

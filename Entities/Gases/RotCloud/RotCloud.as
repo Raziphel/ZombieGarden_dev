@@ -30,7 +30,7 @@ void onTick(CBlob@ this)
 		for (uint i = 0; i < blobsInRadius.length; i++)
 		{
 			CBlob@ blob = blobsInRadius[i];
-			if (blob.hasTag("flesh") && !blob.hasTag("gas immune"))
+			if (blob.hasTag("flesh") && !blob.hasTag("gas immune") && !blob.hasTag("zombie"))
 			{
 				blob.set_u8("rot value", Maths::Clamp(blob.get_u8("rot value") + 1, 0, 64));
 			

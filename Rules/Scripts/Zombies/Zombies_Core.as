@@ -87,8 +87,8 @@ class ZombiesCore : RulesCore
 		const int max_undead = (num_survivors_p / 3);
 		rules.set_s32("max_undead", max_undead);
 
-                // expose the current day to the HUD for snappier rendering
-                rules.set_s32("hud_dayNumber", dayNumber);
+        // expose the current day to the HUD for snappier rendering
+        rules.set_s32("hud_dayNumber", dayNumber);
 
 		// transition from warmup to game
 		if (rules.isWarmup() && timeElapsed > getTicksASecond() * 30)
@@ -96,13 +96,13 @@ class ZombiesCore : RulesCore
 			rules.SetCurrentState(GAME);
 		}
 
-                // ------------------------------
-                // Difficulty calculation + wipe bonus (once per day)
-                // ------------------------------
-                float baseDifficulty = dayNumber * 0.2f;
+        // ------------------------------
+        // Difficulty calculation + wipe bonus (once per day)
+        // ------------------------------
+        float baseDifficulty = dayNumber * 0.2f;
 
-                // persistent bonus from wipes (defaults to 0 if missing)
-                float wipeBonus = rules.exists("difficulty_bonus") ? rules.get_f32("difficulty_bonus") : 0.0f;
+        // persistent bonus from wipes (defaults to 0 if missing)
+        float wipeBonus = rules.exists("difficulty_bonus") ? rules.get_f32("difficulty_bonus") : 0.0f;
 
 		// --- Guard: don't let first-day / warmup wipes count ---
 		const bool isLive = rules.isMatchRunning();
@@ -117,28 +117,28 @@ class ZombiesCore : RulesCore
 			const int last_wipe_day  = rules.exists("last_wipe_day") ? rules.get_s32("last_wipe_day") : -1;
 
 			// Only once per dayNumber, only when truly wiped
-                        if ((live_survivors - num_hands) <= 0 && last_wipe_day != dayNumber)
-                        {
-                                wipeBonus += 0.5f;
-                                rules.set_f32("difficulty_bonus", wipeBonus);
-                                rules.set_s32("last_wipe_day", dayNumber);
+            if ((live_survivors - num_hands) <= 0 && last_wipe_day != dayNumber)
+            {
+                wipeBonus += 0.5f;
+                rules.set_f32("difficulty_bonus", wipeBonus);
+                rules.set_s32("last_wipe_day", dayNumber);
 
-                                const float previewDifficulty = Maths::Min(15.0f, baseDifficulty + wipeBonus);
+                const float previewDifficulty = Maths::Min(15.0f, baseDifficulty + wipeBonus);
 
-                                Server_GlobalPopup(rules,
-                                        "All survivors have fallen!\n\n+0.5 Difficulty (now " + previewDifficulty + ")",
-                                        SColor(255, 255, 0, 0),
-                                        6 * getTicksASecond());
-                        }
+                Server_GlobalPopup(rules,
+					"All survivors have fallen!\n\n+0.5 Difficulty (now " + previewDifficulty + ")",
+					SColor(255, 255, 0, 0),
+					6 * getTicksASecond());
+            }
 		}
 
-                // final difficulty (apply cap after any bonus change)
-                float finalDifficulty = baseDifficulty + wipeBonus;
-                if (finalDifficulty > 15.0f) finalDifficulty = 15.0f; // max difficulty cap
-                rules.set_f32("difficulty", finalDifficulty);
+        // final difficulty (apply cap after any bonus change)
+        float finalDifficulty = baseDifficulty + wipeBonus;
+        if (finalDifficulty > 15.0f) finalDifficulty = 15.0f; // max difficulty cap
+        rules.set_f32("difficulty", finalDifficulty);
 
-                int spawnRate = 100 - int(finalDifficulty) * 5;
-                if (spawnRate < 20) spawnRate = 20;
+        int spawnRate = 100 - int(finalDifficulty) * 5;
+        if (spawnRate < 20) spawnRate = 20;
 
 		// === periodic maintenance: refresh *all* counts into rules ===
 		if (getGameTime() % 150 == 0)
@@ -266,9 +266,9 @@ class ZombiesCore : RulesCore
 
 				if (canSpawnNow)
 				{
-                                        float rmin = Maths::Min((dayNumber * 0.05f), finalDifficulty); // slowly rises with days
-                                        if (rmin >= 1.0f) rmin = 1.0f; // cap at 3.5f for ZombieKnight
-                                        const float r = rmin + XORRandom(Maths::Max(1, int((finalDifficulty - rmin) * 10))) / 10.0f;
+                    float rmin = Maths::Min((dayNumber * 0.05f), finalDifficulty); // slowly rises with days
+                    if (rmin >= 1.0f) rmin = 1.0f; // cap at 3.5f for ZombieKnight
+                    const float r = rmin + XORRandom(Maths::Max(1, int((finalDifficulty - rmin) * 10))) / 10.0f;
 
 					if      (r >= 14.8f && _num_di < _max_di)                                server_CreateBlob("digger", -1, sp);
 					else if (r >= 11.3f && (_num_gr + _num_wr) < (_max_gr + _max_wr))        server_CreateBlob("writher", -1, sp);
@@ -287,7 +287,7 @@ class ZombiesCore : RulesCore
 					else                                                                     server_CreateBlob("zchicken", -1, sp);
 
 					// === boss waves ===
-                                        int newTransition = RunBossWave(dayNumber, finalDifficulty, zombiePlaces, transition);
+                    int newTransition = RunBossWave(dayNumber, finalDifficulty, zombiePlaces, transition);
 					if (newTransition != transition)
 					{
 						transition = newTransition;

@@ -87,15 +87,25 @@ void addCommonBuilderBlocks(BuildBlock[][]@ blocks)
 		blocks[0].push_back(b);
 	}	
 	{
+		BuildBlock b(0, "wooden_platform", "$wooden_platform$", "Wooden Platform\nOne way platform");
+		AddRequirement(b.reqs, "blob", "mat_wood", "Wood", 10);
+		blocks[0].push_back(b);
+	}	
+	{
+		BuildBlock b(0, "iron_platform", "$iron_platform$", "Iron Platform\nStronger one way platform");
+		AddRequirement(b.reqs, "blob", "mat_ironingot", "Iron Ingot", 10);
+		blocks[0].push_back(b);
+	}	
+	{
 		BuildBlock b(0, "ladder", "$ladder$", "Ladder\nAnyone can climb it");
 		AddRequirement(b.reqs, "blob", "mat_wood", "Wood", 5);
 		blocks[0].push_back(b);
 	}
 	{
-		BuildBlock b(0, "wooden_platform", "$wooden_platform$", "Wooden Platform\nOne way platform");
-		AddRequirement(b.reqs, "blob", "mat_wood", "Wood", 10);
+		BuildBlock b(0, "ironladder", "$ironladder$", "Iron Ladder\nMuch stronger ladder");
+		AddRequirement(b.reqs, "blob", "mat_ironingot", "Iron Ingot", 5);
 		blocks[0].push_back(b);
-	}	
+	}
 	{
 		BuildBlock b(0, "spikes", "$spikes$", "Spikes\nPlace on Stone Block\nfor Retracting Trap");
 		AddRequirement(b.reqs, "blob", "mat_stone", "Stone", 30);
