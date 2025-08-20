@@ -9,7 +9,7 @@
 
 // ---- Your custom color constants (preserved) ----
 const SColor color_ruinstorch    (0xff2ddbe8);
-const SColor color_cloud         (0xd0d0d0);
+const SColor color_cloud         (0xffd0d0d0);
 const SColor color_torch         (0xffa179db);
 const SColor color_zombie_portal (0xff6d12ef);
 const SColor color_zombie_ruins  (0xff2c1e40);

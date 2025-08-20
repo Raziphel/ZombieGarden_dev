@@ -7,7 +7,7 @@ namespace custom_colors
  		//color_goldenbrick = 0xfffea01e, //(255, 254, 160, 30)
  		color_ironore     = 0xff977361, 
  		color_coalore     = 0xff151716, 
- 		color_copperore   = 0xffeca419, 
+ 		color_copperore   = 0xffd36910, 
  		color_bloodground = 0xffb73333, 
  		color_bloodgrass  = 0xff647814, 
  	}
@@ -175,7 +175,7 @@ void HandleCustomTile(CMap@ map, int offset, SColor pixel)
 		map.RemoveTileFlag( offset, Tile::LIGHT_SOURCE | Tile::LIGHT_PASSES);
 		map.AddTileFlag( offset, Tile::SOLID | Tile::COLLISION ); break;
 
-		case  custom_colors::color_bloodground:	
+		case custom_colors::color_bloodground:	
 		map.SetTile(offset, CMap::tile_mediumbloodground );
 		map.RemoveTileFlag( offset, Tile::LIGHT_SOURCE | Tile::LIGHT_PASSES);
 		map.AddTileFlag( offset, Tile::SOLID | Tile::COLLISION ); break;

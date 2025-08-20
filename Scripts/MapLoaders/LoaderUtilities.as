@@ -97,6 +97,15 @@ TileType server_onTileHit(CMap@ map, f32 damage, u32 index, TileType oldTileType
 			case CMap::tile_coalore_d4:{OnCoalTileHit(map, index); return oldTileType + 1;}		
 			case CMap::tile_coalore_d5: { OnCoalTileDestroyed(map, index); return CMap::tile_empty;}		
 
+			//Copper Ore
+			case CMap::tile_copperore: {OnCopperTileHit(map, index); return CMap::tile_copperore_d0;}	
+			case CMap::tile_copperore_d0:
+			case CMap::tile_copperore_d1:
+			case CMap::tile_copperore_d2:
+			case CMap::tile_copperore_d3:
+			case CMap::tile_copperore_d4:{OnCopperTileHit(map, index); return oldTileType + 1;}		
+			case CMap::tile_copperore_d5: { OnCopperTileDestroyed(map, index); return CMap::tile_empty;}	
+
 			//BLOOD DIRT
 			case CMap::tile_littlebloodground:
 			case CMap::tile_littlebloodground_d0:
@@ -261,6 +270,7 @@ void onSetTile(CMap@ map, u32 index, TileType tile_new, TileType tile_old)
 				break;
 			}
 
+			case CMap::tile_ironore:
 			case CMap::tile_ironore_d0:
 			case CMap::tile_ironore_d1:
 			case CMap::tile_ironore_d2:
@@ -278,6 +288,7 @@ void onSetTile(CMap@ map, u32 index, TileType tile_new, TileType tile_old)
 			}
 
 			// coal ore
+			case CMap::tile_coalore:
 			case CMap::tile_coalore_d0:
 			case CMap::tile_coalore_d1:
 			case CMap::tile_coalore_d2:
@@ -285,7 +296,22 @@ void onSetTile(CMap@ map, u32 index, TileType tile_new, TileType tile_old)
 			case CMap::tile_coalore_d4:
 			case CMap::tile_coalore_d5:
 			{
-				OnIronTileHit(map, index);
+				OnCoalTileHit(map, index);
+				map.RemoveTileFlag( index, Tile::LIGHT_PASSES |Tile::LIGHT_SOURCE );
+				map.AddTileFlag(index, Tile::SOLID | Tile::COLLISION);
+				break;
+			}
+
+			// copper ore
+			case CMap::tile_copperore:
+			case CMap::tile_copperore_d0:
+			case CMap::tile_copperore_d1:
+			case CMap::tile_copperore_d2:
+			case CMap::tile_copperore_d3:
+			case CMap::tile_copperore_d4:
+			case CMap::tile_copperore_d5:
+			{
+				OnCopperTileHit(map, index);
 				map.RemoveTileFlag( index, Tile::LIGHT_PASSES |Tile::LIGHT_SOURCE );
 				map.AddTileFlag(index, Tile::SOLID | Tile::COLLISION);
 				break;
@@ -394,6 +420,29 @@ void OnIronTileDestroyed(CMap@ map, u32 index)
 		Vec2f pos = map.getTileWorldPosition(index);
 	
 		Sound::Play("dig_metal"+ (XORRandom(3) + 1)+".ogg", pos, 0.5f, 1.0f);
+	}
+}
+
+void OnCopperTileHit(CMap@ map, u32 index)
+{
+	map.AddTileFlag(index, Tile::SOLID | Tile::COLLISION);
+	map.RemoveTileFlag( index, Tile::LIGHT_PASSES | Tile::LIGHT_SOURCE | Tile::BACKGROUND );
+	
+	if (getNet().isClient())
+	{ 
+		Vec2f pos = map.getTileWorldPosition(index);
+	
+		Sound::Play("HitSolidMetal"+ (XORRandom(3) + 1)+".ogg", pos, 0.5f, 1.0f);
+	}
+}
+
+void OnCopperTileDestroyed(CMap@ map, u32 index)
+{
+	if (getNet().isClient())
+	{ 
+		Vec2f pos = map.getTileWorldPosition(index);
+	
+		Sound::Play("HitSolidMetal"+ (XORRandom(3) + 1)+".ogg", pos, 0.5f, 1.0f);
 	}
 }
 

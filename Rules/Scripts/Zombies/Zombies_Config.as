@@ -17,13 +17,13 @@ void Config(ZombiesCore@ this)
         this.rules.set_s32("last_wipe_day", -1);
         this.rules.set_s32("days_offset", 0);
 
-        // ----------------------------
-        // Mob limits (hard caps)
+    // ----------------------------
+    // Mob limits (hard caps)
 	// New waves will not spawn if the active count for that mob is >= its cap
 	// ----------------------------
 	this.rules.set_s32("max_zombies",     250);   // standard zombies
 	this.rules.set_s32("max_pzombies",    25);    // portal-spawned zombies
-	this.rules.set_s32("max_migrantbots", 5);     // migrants
+	this.rules.set_s32("max_migrantbots", 4);     // migrants
 	this.rules.set_s32("max_wraiths",     15);
 	this.rules.set_s32("max_gregs",       10);
 	this.rules.set_s32("max_imol",        10);
@@ -67,13 +67,14 @@ void RefreshMobCountsToRules()
 	getBlobsByTag("wraiths",    @a); getRules().set_s32("num_wraiths",       a.length); a.clear();
 	getBlobsByTag("gregs",      @a); getRules().set_s32("num_gregs",         a.length); a.clear();
 	getBlobsByTag("ruinstorch", @a); getRules().set_s32("num_ruinstorch",    a.length); a.clear();
-	getBlobsByTag("ZP",         @a); getRules().set_s32("num_zombiePortals", a.length); a.clear();
+
 
 	// by exact blob name (bossy/specials we sometimes check directly)
-	getBlobsByName("horror",       @a); getRules().set_s32("num_horror", a.length); a.clear();
-	getBlobsByName("abomination",  @a); getRules().set_s32("num_abom",   a.length); a.clear();
-	getBlobsByName("immolator",    @a); getRules().set_s32("num_immol",  a.length); a.clear();
-	getBlobsByName("digger",       @a); getRules().set_s32("num_digger", a.length); a.clear();
+	getBlobsByName("zombieportal", @a); getRules().set_s32("num_zombiePortals", a.length); a.clear();
+	getBlobsByName("horror",       @a); getRules().set_s32("num_horror",        a.length); a.clear();
+	getBlobsByName("abomination",  @a); getRules().set_s32("num_abom",          a.length); a.clear();
+	getBlobsByName("immolator",    @a); getRules().set_s32("num_immol",         a.length); a.clear();
+	getBlobsByName("digger",       @a); getRules().set_s32("num_digger",        a.length); a.clear();
 
 	// players by tag (already used elsewhere)
 	getBlobsByTag("survivorplayer", @a); getRules().set_s32("num_survivors", a.length); a.clear();

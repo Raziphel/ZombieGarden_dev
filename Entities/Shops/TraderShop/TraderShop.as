@@ -55,12 +55,12 @@ void onInit( CBlob@ this )
 		AddRequirement(s.requirements, "coin", "", "Coins", 75);
 	}
 	{
-		ShopItem@ s = addShopItem(this, "Molotov", "$molotov$", "molotov", "Burn piles of the dead.  (Cheaper for pyros)", true);
-		AddRequirement(s.requirements, "coin", "", "Coins", 300);
+		ShopItem@ s = addShopItem(this, "Vodka", "$vodka$", "vodka", "Are you sure!?", true);
+		AddRequirement(s.requirements, "coin", "", "Coins", 250);
 	}
 	{
-		ShopItem@ s = addShopItem(this, "Bobomax", "$bobomax$", "bobomax", "An unknown drug?.", true);
-		AddRequirement(s.requirements, "coin", "", "Coins", 1000);
+		ShopItem@ s = addShopItem(this, "Molotov", "$molotov$", "molotov", "Burn piles of the dead.  (Cheaper for pyros)", true);
+		AddRequirement(s.requirements, "coin", "", "Coins", 300);
 	}
 	{
 		ShopItem@ s = addShopItem( this, "Blue Lantern", "$bluelantern$", "bluelantern", "A lantern with a bigger light radius but with a dim ilumination.", true );

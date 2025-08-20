@@ -1,35 +1,55 @@
+
 void onInit(CBlob@ this)
 {
-	this.addCommandID("consume");
+	this.addCommandID("server_consume");
+	this.addCommandID("client_consume");
 }
 
 void GetButtonsFor(CBlob@ this, CBlob@ caller)
 {
-	CBitStream params;
-	params.write_u16(caller.getNetworkID());
-	caller.CreateGenericButton(22, Vec2f(0, 0), this, this.getCommandID("consume"), "Drink!", params);
+	caller.CreateGenericButton(22, Vec2f(0, 0), this, this.getCommandID("server_consume"), "Drink");
 }
 
-void onCommand(CBlob@ this, u8 cmd, CBitStream @params)
+void onCommand(CBlob@ this, u8 cmd, CBitStream@ params)
 {
-	if (cmd == this.getCommandID("consume"))
+	if (cmd == this.getCommandID("server_consume") && isServer())
 	{
-		this.getSprite().PlaySound("gasp.ogg");
-		this.getSprite().PlaySound("Gurgle2.ogg");
+		CPlayer@ player = getNet().getActiveCommandPlayer();
+		if (player is null) return;
 
-		CBlob@ caller = getBlobByNetworkID(params.read_u16());
-		if (caller !is null)
-		{
-			if (!caller.exists("drunk") || caller.get_u16("drunk") == 0) caller.AddScript("Drunk.as");
-		
-			caller.set_u16("drunk", Maths::Min(caller.get_u16("drunk") + 1, 250));
-			caller.set_u32("next sober", getGameTime());
-			
-			if (getNet().isServer())
-			{
-				this.server_Die();
-			}
-		
-		}
+		CBlob@ caller = player.getBlob();
+		if (caller is null) return;
+
+		caller.server_Heal(1.0f);
+
+		SetDrunk(caller);
+
+		CBitStream stream;
+		stream.write_netid(caller.getNetworkID());
+		this.SendCommand(this.getCommandID("client_consume"), stream);
+
+		this.server_Die();
 	}
+	else if (cmd == this.getCommandID("client_consume") && isClient())
+	{
+		CBlob@ caller = getBlobByNetworkID(params.read_netid());
+		if (caller is null) return;
+
+		CSprite@ sprite = caller.getSprite();
+		sprite.PlaySound("gasp.ogg");
+		sprite.PlaySound("Gurgle2.ogg");
+
+		SetDrunk(caller);
+	}
+}
+
+void SetDrunk(CBlob@ caller)
+{
+	if (!caller.exists("drunk") || caller.get_u16("drunk") == 0)
+	{
+		caller.AddScript("DrunkEffect.as");
+	}
+	
+	caller.set_u16("drunk", Maths::Min(caller.get_u16("drunk") + 1, 250));
+	caller.set_u32("next sober", getGameTime());
 }

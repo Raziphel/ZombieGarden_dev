@@ -76,25 +76,38 @@ void onCommand(CBlob@ this, u8 cmd, CBitStream @params)
 void onDie(CBlob@ this)
 {
     CRules@ rules = getRules();
-    rules.set_bool("everyones_dead", true);
 
-    if (!rules.get_bool("ruins_portal_active"))
+    // Count torches (includes the one that's dying)
+    CBlob@[] ruinstorch;
+    getBlobsByName("ruinstorch", @ruinstorch);
+
+    // Adjust for the one that just died
+    int remaining = ruinstorch.length;
+    if (this.getName() == "ruinstorch")
+        remaining -= 1;
+
+    // Only trigger once, when 3 or fewer remain
+    if (!rules.get_bool("ruins_portal_active") && remaining <= 3)
     {
         rules.set_bool("ruins_portal_active", true);
         rules.Sync("ruins_portal_active", true);
-		
-		CBlob@[] ruins;
-        getBlobsByName("zombieruins", @ruins);
-        for (uint i = 0; i < ruins.length; i++)
+
+        if (getNet().isServer())
         {
-            CBlob@ ruin = ruins[i];
-            if (ruin !is null)
-			{
-				Vec2f pos = ruin.getPosition();
-                pos.x -= 2.0f; 
-                pos.y += 16.0f; 
+            // Spawn portals at each remaining ruins
+            CBlob@[] ruins;
+            getBlobsByName("zombieruins", @ruins);
+
+            for (uint i = 0; i < ruins.length; i++)
+            {
+                CBlob@ ruin = ruins[i];
+                if (ruin is null) continue;
+
+                Vec2f pos = ruin.getPosition();
+                pos.x -= 2.0f;
+                pos.y += 16.0f;
                 server_CreateBlob("zombieportal", -1, pos);
-			}
-		}
+            }
+        }
     }
 }
