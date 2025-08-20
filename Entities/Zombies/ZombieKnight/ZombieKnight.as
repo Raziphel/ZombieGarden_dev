@@ -44,7 +44,7 @@ void onTick( CBlob@ this )
 	{
 		CBlob@ target = this.getBrain().getTarget();
 
-		if (target !is null && this.getDistanceTo(target) < 128.0f)
+		if (target !is null && this.getDistanceTo(target) < 512.0f)
 		{
 			this.Tag(chomp_tag);
 		}

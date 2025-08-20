@@ -52,31 +52,32 @@ class ZombiesSpawns : RespawnSystem
 		}
 	}
 
-        void UpdateSpawnTime(CTFPlayerInfo@ info, int i)
-        {
-            if (info !is null)
-            {
-                u8 spawn_property = 255;
+	void UpdateSpawnTime(CTFPlayerInfo@ info, int i)
+	{
+		if (info !is null)
+		{
+			u16 spawn_property = 65535; // large default (u16 max = 65535)
 
-                // can_spawn_time is an absolute game time. Convert it into a
-                // remaining second countdown for the HUD.
-                if (info.can_spawn_time > getGameTime())
-                {
-                    const s32 diff = info.can_spawn_time - getGameTime();
-                    spawn_property = u8(Maths::Min(200, diff / getTicksASecond()));
-                }
-                else if (info.can_spawn_time > 0)
-                {
-                    // ensure it doesn't stay positive once the timer has elapsed
-                    info.can_spawn_time = 0;
-                }
+			// can_spawn_time is an absolute game time. Convert it into a
+			// remaining second countdown for the HUD.
+			if (info.can_spawn_time > getGameTime())
+			{
+				const s32 diff = info.can_spawn_time - getGameTime();
+				spawn_property = u16(diff / getTicksASecond()); // no cap
+			}
+			else if (info.can_spawn_time > 0)
+			{
+				// ensure it doesn't stay positive once the timer has elapsed
+				info.can_spawn_time = 0;
+			}
 
-                string propname = "Zombies spawn time " + info.username;
+			string propname = "Zombies spawn time " + info.username;
 
-                Zombies_core.rules.set_u8(propname, spawn_property);
-                Zombies_core.rules.SyncToPlayer(propname, getPlayerByUsername(info.username));
-            }
-        }
+			Zombies_core.rules.set_u16(propname, spawn_property);
+			Zombies_core.rules.SyncToPlayer(propname, getPlayerByUsername(info.username));
+		}
+	}
+
 
 	bool SetMaterials(CBlob@ blob, const string &in name, const int quantity)
 	{
