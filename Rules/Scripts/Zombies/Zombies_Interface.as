@@ -250,7 +250,7 @@ float DrawZombiesHUDTopRight(CRules@ rules, const float topOffset = 0.0f)
 	lines.insertLast("Pillars: " + num_hands);
 	lines.insertLast("Survivors: " + survivors);
 	lines.insertLast("Undead: " + undead);
-	lines.insertLast("Difficulty: " + formatFloat(diff_total, "", 0, 0));
+        lines.insertLast("Difficulty: " + formatFloat(diff_total, "", 0, 1));
 	lines.insertLast("Zombies: " + (num_zombies + num_pzombies) + "/" + max_zombies);
 	lines.insertLast("Altars Remaining: " + num_altars);
 
