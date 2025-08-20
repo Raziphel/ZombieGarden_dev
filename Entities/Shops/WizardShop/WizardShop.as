@@ -44,11 +44,11 @@ void onInit( CBlob@ this )
 		AddRequirement( s.requirements, "coin", "", "Coins", 20 );
 	}
 	{
-		ShopItem@ s = addShopItem( this, "Scroll of Town Portal", "$sreturn$", "sreturn", "Come back home safely.", true);
+                ShopItem@ s = addShopItem( this, "Scroll of Town Portal", "$scrollreturn$", "scrollreturn", "Come back home safely.", true);
 		AddRequirement( s.requirements, "coin", "", "Coins", 100 );
 	}
 	{
-		ShopItem@ s = addShopItem( this, "Scroll of Reinforce", "$sreinforce$", "sreinforce", "Turns regular stone into thick stone.", true);
+                ShopItem@ s = addShopItem( this, "Scroll of Reinforce", "$scrollreinforce$", "scrollreinforce", "Turns regular stone into thick stone.", true);
 		AddRequirement( s.requirements, "coin", "", "Coins", 100 );
 	}
 	/*{

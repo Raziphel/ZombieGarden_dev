@@ -76,16 +76,16 @@ void InitLoot(CBlob@ this)
 	addLoot(this, "coins", 0, XORRandom(20) + 20);
 
 	// Tier A - mixed utility/scroll-ish items
-	string[] tA_names = {
-		"carnage","drought","sfshark","selemental","2weeks",
-		"vodka","sreinforce","midas","sgreg","shorde",
-		"sshark","sskeleton","szombie"
-	};
+        string[] tA_names = {
+                "scrollcarnage","scrolldrought","scrollfshark","scrollelemental","scroll2weeks",
+                "vodka","scrollreinforce","scrollmidas","scrollgreg","scrollhorde",
+                "scrollshark","scrollskeleton","scrollzombie"
+        };
 	u8[] tA_rarities = { 1,1,1,1,1,1,1,1,1,1, 2,1,1 };
 	addRandomFromPool(this, tA_names, tA_rarities, 12 /* 12% bonus roll */);
 
 	// Tier B - stronger summons/consumables
-	string[] tB_names = { "sarsonist","sbunny","sgargoyle","snecromancer","sslayer","sstalker" };
+        string[] tB_names = { "scrollarsonist","scrollbunny","scrollgargoyle","scrollnecromancer","scrollslayer","scrollstalker" };
 	u8[] tB_rarities = { 2,2,2,2,2,2 };
 	addRandomFromPool(this, tB_names, tB_rarities, 10 /* 10% */);
 
@@ -97,6 +97,6 @@ void InitLoot(CBlob@ this)
 	// Gentle global sweetener (~15% chance for an extra treat)
 	if (XORRandom(100) < 15)
 	{
-		addLoot(this, "2weeks", 2, 1);
+                addLoot(this, "scroll2weeks", 2, 1);
 	}
 }
