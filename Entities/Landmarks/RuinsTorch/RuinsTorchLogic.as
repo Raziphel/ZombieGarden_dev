@@ -34,14 +34,11 @@ void onInit(CBlob@ this)
 	// Register render callback ABOVE world
 	int cb_id = Render::addScript(Render::layer_postworld, "RuinsTorchLogic.as", "RenderFunction", 0.0f);
 	this.set_u16("renderID", cb_id);
-
-	CreateMeshes(this);
 }
 
 f32 onHit(CBlob@ this, Vec2f worldPoint, Vec2f velocity, f32 damage, CBlob@ hitterBlob, u8 customData)
 {
 	this.Tag("dmgmsg");
-	msgtimer = 150;
 
 	if (isClient() && damage != 0)
 	{

@@ -47,8 +47,8 @@ void onInit( CBlob@ this )
 		AddRequirement(s.requirements, "blob", "migrantbot", "Migrant", 1);
 	}
 	{
-                ShopItem@ s = addShopItem( this, "Random Chest", "$GoldChest$", "randomChest", "Buy your own chests!", true);
-                AddRequirement( s.requirements, "blob", "soulshard", "Soul Shards", 3 );
+        ShopItem@ s = addShopItem( this, "Random Chest", "$chest$", "randomChest", "Buy your own chests!", true);
+        AddRequirement( s.requirements, "blob", "soulshard", "Soul Shards", 3 );
 	}
 	{
 		ShopItem@ s = addShopItem(this, "Beer", "$beer$", "beer", "Gotta unwind from killing zombies!", true);

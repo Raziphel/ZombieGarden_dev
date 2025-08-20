@@ -108,26 +108,65 @@ void onRender(CRules@ this)
 // ------------------------------
 // Revival timer centered on top
 // ------------------------------
+// Safely read "Zombies spawn time <username>" regardless of u8/u16 storage.
+// Returns: (true, seconds>=0) when present & valid; otherwise (false, 0).
+bool SafeGetSpawnSeconds(CRules@ rules, const string &in propname, u16 &out seconds)
+{
+	seconds = 0;
+	if (!rules.exists(propname)) return false;
+
+	// Try u16 first (most flexible)
+	u16 val16 = rules.get_u16(propname);
+	// If it's actually stored as u8, get_u16 on a u8 often yields 0, so double-check:
+	u8  val8  = rules.get_u8(propname);
+
+	// Prefer whichever is non-sentinel and non-zero
+	u16 candidate = val16;
+	if (candidate == 0 && val8 > 0) candidate = val8;
+
+	// Filter sentinels/garbage commonly used by scripts
+	// 255 is a common "not set" sentinel when stored as u8.
+	if (candidate == 255 || candidate == 65535) return false;
+
+	// Guard against nonsense (negative via wrap or way too large)
+	if (candidate > 3600) // 1h+ is unrealistic for revival seconds
+		return false;
+
+	seconds = candidate;
+	return true;
+}
+
+
 void DrawRevivalTimer(CRules@ rules, CPlayer@ p)
 {
 	if (p is null) return;
 
-	if (p.isMyPlayer() && p.getBlob() is null)
-	{
-		const string propname = "Zombies spawn time " + p.getUsername();
-		if (rules.exists(propname))
-		{
-			u8 spawn = rules.get_u8(propname);
-			if (spawn != 255)
-			{
-				GUI::SetFont("menu");
-				Vec2f pos(getScreenWidth()/2 - 70,
-				          getScreenHeight()/3 + Maths::Sin(getGameTime() / 3.0f) * 5.0f);
-				GUI::DrawText("Revival in: " + spawn + "s", pos, SColor(255, 255, 255, 55));
-			}
-		}
-	}
+	// Only when I'm dead (no blob) and in an active round/warmup UI context
+	if (!p.isMyPlayer()) return;
+	CBlob@ myBlob = p.getBlob();
+	if (myBlob !is null) return;
+
+	const string propname = "Zombies spawn time " + p.getUsername();
+
+	u16 spawnSec = 0;
+	if (!SafeGetSpawnSeconds(rules, propname, spawnSec)) return;
+
+	// Hide if we're effectively done or bogus
+	if (spawnSec == 0) return;
+
+	// Nicely centered, with a subtle float
+	GUI::SetFont("menu");
+	const f32 wobble = Maths::Sin(getGameTime() / 3.0f) * 5.0f;
+
+	// Center of screen, slightly above mid‑top so it doesn’t clash with your stacked panels
+	const Vec2f screen = getDriver().getScreenDimensions();
+	const Vec2f center = Vec2f(screen.x * 0.5f, screen.y * (1.0f / 3.0f) + wobble);
+
+	// Use your bold centered helper for consistent look; keep colors subtle so it doesn’t scream
+	const string msg = "Revival in: " + spawnSec + "s";
+	DrawTextCenteredBold(msg, center, SColor(255, 255, 240, 180));
 }
+
 
 // ------------------------------
 // HUD: Record status box (top-right)
@@ -271,7 +310,8 @@ float DrawModeStatus(CRules@ rules, const float topOffset = 0.0f)
 	else
 	{
 		hardLine = "Hardmode in: " + hardRemain + (hardRemain == 1 ? " day" : " days");
-		if (hardRemain <= 10) hardCol = COL_WARN;
+		if (hardRemain <= 20) hardCol = COL_WARN;
+		else { hardCol = COL_GOOD; }
 	}
 
 	string curseLine;
@@ -284,7 +324,8 @@ float DrawModeStatus(CRules@ rules, const float topOffset = 0.0f)
 	else
 	{
 		curseLine = "Curse in: " + curseRemain + (curseRemain == 1 ? " day" : " days");
-		if (curseRemain <= 10) curseCol = COL_WARN;
+		if (curseRemain <= 20) curseCol = COL_WARN;
+		else { hardCol = COL_GOOD; }
 	}
 
 	const bool ruinsActive = rules.get_bool("ruins_portal_active");

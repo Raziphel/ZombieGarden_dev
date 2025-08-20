@@ -49,7 +49,7 @@ void Reset(CRules@ this)
 
                         // clear any leftover respawn timer from the previous round
                         const string propname = "Zombies spawn time " + p.getUsername();
-                        this.set_u8(propname, 255);
+                        this.set_u16(propname, 255);
                         this.SyncToPlayer(propname, p);
                 }
         }

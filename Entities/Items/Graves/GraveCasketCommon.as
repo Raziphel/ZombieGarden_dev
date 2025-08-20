@@ -1,102 +1,87 @@
+
 shared class Loot
 {
-	string name;
-	int rarity;
-	int quantity;
+    string name; 
+    int rarity;
+    int quantity;
 };
 
-f32  openHealth   = 0.0f;   // health of wooden chest threshold (0.5f = 1 heart)
-int  itemVelocity = 1;      // how far items fly from chest on open
-bool button       = false;  // open via button (hold E) or by hit
+f32 openHealth = 0.0f; //health of wooden chest when it will be opened     0.5f = 1 heart
+int itemVelocity = 0.5f; //how far item will fly from from the chest on open
+bool button = false; //open chest by button (hold E) or by hit
 
-// -------------------------------------
-// Helper: push a loot entry onto the chest
-// -------------------------------------
+void InitLoot( CBlob@ this )
+{
+    /*if you want a random quantity then write "addLoot(this, item name, item rarity, XORRandom(item quantity));"
+      if you want to add coins then write "addLoot(this, "coins", item rarity, item quantity);" 
+      if you want to make item drop always set "item quantity" as "0"
+    */
+
+    //addLoot(this, item name, item rarity, item quantity)
+    addLoot(this, "coins", 0, XORRandom(39) + 1); //chest will drop coins with quantity 1 - 30
+	
+	int rs = XORRandom(13);
+	
+	if (rs==0)
+		addLoot(this, "scrollcarnage", 1, 1);
+	else if (rs==1)
+		addLoot(this, "scrolldrought", 1, 1);
+	else if (rs==2)
+		addLoot(this, "scrollfshark", 1, 1);
+	else if (rs==3)
+		addLoot(this, "scrollselemental", 1, 1);
+	else if (rs==4)
+		addLoot(this, "scroll2weeks", 1, 1);
+	else if (rs==5)
+		addLoot(this, "vodka", 1, 1);
+	else if (rs==6)
+		addLoot(this, "scrollreinforce", 1, 1);
+	else if (rs==7)
+		addLoot(this, "scrollmidas", 1, 1);
+	else if (rs==8)
+		addLoot(this, "scrollgreg", 1, 1);
+	else if (rs==9)
+		addLoot(this, "scrollhorde", 1, 1);
+	else if (rs==10)
+		addLoot(this, "scrollshark", 2, 1);
+	else if (rs==11)
+		addLoot(this, "scrollskeleton", 1, 1);
+	else if (rs==12)
+		addLoot(this, "scrollzombie", 1, 1);
+	
+	int ruc = XORRandom(3);
+	
+	if (ruc==0)
+		addLoot(this, "soulshard", 2, 1);
+
+	int rz = XORRandom(6);
+	
+	if (rz==0)
+		addLoot(this, "skeleton", 3, 1);
+	else if (rz==1)
+		addLoot(this, "zombie", 3, 1);
+	else if (rz==2)
+		addLoot(this, "pcrawler", 3, 1);
+	else if (rz==3)
+		addLoot(this, "pankou", 3, 1);
+	else if (rz==4)
+		addLoot(this, "zombieknight", 3, 1);
+	else if (rz==5)
+		addLoot(this, "lifeforce", 3, 1);
+}
+
 void addLoot(CBlob@ this, string NAME, int RARITY, int QUANTITY)
-{
-	if (!this.exists("loot"))
-	{
-		Loot[] loot;
-		this.set("loot", loot);
-	}
+{    
+    if (!this.exists("loot"))
+    {
+        Loot[] loot;
+        this.set( "loot", loot );
+    }
 
-	Loot l;
-	l.name     = NAME;
-	l.rarity   = RARITY;
-	l.quantity = QUANTITY;
+    Loot l;
+    l.name = NAME;
+    l.rarity = RARITY;
+    l.quantity = QUANTITY;
 
-	this.push("loot", l);
-}
-
-// -------------------------------------
-// Helper: pick 1 random item from a pool (names + rarities aligned)
-// - Softly buffs drop chance by reducing rarity by 1 (min 0)
-// - Optional chance to add an extra item from the same pool
-// -------------------------------------
-void addRandomFromPool(CBlob@ this, const string[] &in names, const u8[] &in rarities, u8 extraChancePct, int qty = 1)
-{
-	if (names.length == 0 || names.length != rarities.length) return;
-
-	const u32 pick = XORRandom(names.length);
-	const int softenedRarity = Maths::Max(0, int(rarities[pick]) - 1); // slight buff
-
-	addLoot(this, names[pick], softenedRarity, qty);
-
-	// small chance for a bonus item from the same tier
-	if (XORRandom(100) < extraChancePct)
-	{
-		const u32 bonus = XORRandom(names.length);
-		const int softenedRarity2 = Maths::Max(0, int(rarities[bonus]) - 1);
-		addLoot(this, names[bonus], softenedRarity2, qty);
-	}
-}
-
-// -------------------------------------
-// Configure chest contents
-// Notes:
-// - Coins slightly increased overall
-// - Each tier gets a tiny chance to roll one extra item
-// - Rarity softened by -1 on pick to make drops "slightly more likely"
-// -------------------------------------
-void InitLoot(CBlob@ this)
-{
-	/*
-		If you want a random quantity:
-			addLoot(this, item_name, item_rarity, XORRandom(max_qty)+1);
-
-		If you want to add coins:
-			addLoot(this, "coins", coin_rarity, coin_quantity);
-
-		If you want an item to always drop:
-			set quantity to 0 in whatever consumes this table
-			(or add multiple entries / lower rarity).
-	*/
-
-	// Coins (buffed floor & range)
-	addLoot(this, "coins", 0, XORRandom(20) + 20);
-
-	// Tier A - mixed utility/scroll-ish items
-        string[] tA_names = {
-                "scrollcarnage","scrolldrought","scrollfshark","scrollelemental","scroll2weeks",
-                "vodka","scrollreinforce","scrollmidas","scrollgreg","scrollhorde",
-                "scrollshark","scrollskeleton","scrollzombie"
-        };
-	u8[] tA_rarities = { 1,1,1,1,1,1,1,1,1,1, 2,1,1 };
-	addRandomFromPool(this, tA_names, tA_rarities, 12 /* 12% bonus roll */);
-
-	// Tier B - stronger summons/consumables
-        string[] tB_names = { "scrollarsonist","scrollbunny","scrollgargoyle","scrollnecromancer","scrollslayer","scrollstalker" };
-	u8[] tB_rarities = { 2,2,2,2,2,2 };
-	addRandomFromPool(this, tB_names, tB_rarities, 10 /* 10% */);
-
-	// Tier C - classic mobs + lifeforce
-	string[] tC_names = { "skeleton","zombie","pcrawler","pankou","zombieknight","lifeforce" };
-	u8[] tC_rarities = { 3,3,3,3,3,3 };
-	addRandomFromPool(this, tC_names, tC_rarities, 8 /* 8% */);
-
-	// Gentle global sweetener (~15% chance for an extra treat)
-	if (XORRandom(100) < 15)
-	{
-                addLoot(this, "scroll2weeks", 2, 1);
-	}
+    this.push("loot", l);
 }
