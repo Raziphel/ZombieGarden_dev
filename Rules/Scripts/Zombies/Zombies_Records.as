@@ -1,7 +1,12 @@
 #define SERVER_ONLY
 
-// store records outside of the scripts directory
-const string records_file = "Cache/ZombieRecords.cfg";
+// Store records alongside the mod instead of the game's root Cache
+// folder.  Previously this pointed at "Cache/ZombieRecords.cfg" which
+// resolved to Base/Cache when running in‑game.  As a result the file in
+// Mods/ZombieGarden_dev/Cache was never updated and players couldn't see
+// their new records.  Use the explicit mod path so the file we ship gets
+// updated and persists between runs.
+const string records_file = "../Mods/ZombieGarden_dev/Cache/ZombieRecords.cfg";
 
 u16 getDaysSurvived(CRules @rules)
 {

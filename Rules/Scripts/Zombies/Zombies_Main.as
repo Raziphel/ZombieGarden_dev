@@ -58,9 +58,15 @@ void Reset(CRules @ this)
 
 			// clear any leftover respawn timer from the previous round
 			// so everyone spawns instantly on the new map
-			const string propname = "Zombies spawn time " + p.getUsername();
-			this.set_u16(propname, 0);
-			this.SyncToPlayer(propname, p);
+                        // Track each player's respawn countdown using a unique
+                        // property name.  The previous implementation used
+                        // "Zombies spawn time" which clashed with scripts that
+                        // accessed the property as a u8 and spammed the console
+                        // with type‑mismatch warnings.  Using a mod‑specific
+                        // prefix avoids the conflict.
+                        const string propname = "zg spawn time " + p.getUsername();
+                        this.set_u16(propname, 0);
+                        this.SyncToPlayer(propname, p);
 		}
 	}
 

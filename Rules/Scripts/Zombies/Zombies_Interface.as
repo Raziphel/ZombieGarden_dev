@@ -113,7 +113,7 @@ void onRender(CRules @ this)
 // ------------------------------
 // Revival timer centered on top
 // ------------------------------
-// Safely read "Zombies spawn time <username>".
+// Safely read "zg spawn time <username>".
 // Returns: (true, seconds>=0) when present & valid; otherwise (false, 0).
 //
 // The property is consistently stored as u16. Previous code attempted to read
@@ -154,7 +154,7 @@ void DrawRevivalTimer(CRules @rules, CPlayer @p)
 	if (myBlob !is null)
 		return;
 
-	const string propname = "Zombies spawn time " + p.getUsername();
+        const string propname = "zg spawn time " + p.getUsername();
 
 	u16 spawnSec = 0;
 	if (!SafeGetSpawnSeconds(rules, propname, spawnSec))

@@ -15,12 +15,23 @@ void onInit(CBlob@ this)
 
 	if (isServer())
 	{
-		for (int i = 0; i < 4 + XORRandom(4); i++)
-		{
-			CBlob@ blob = server_CreateBlob("flame", -1, strikePos + Vec2f(0.0f, -map.tilesize));
-			blob.setVelocity(Vec2f(XORRandom(40) / 10.0f - 2.0f, -XORRandom(20) / 10.0f));
-			blob.server_SetTimeToDie(4 + XORRandom(6));
-		}
+                for (int i = 0; i < 4 + XORRandom(4); i++)
+                {
+                        // The old code attempted to spawn a blob named "flame" which
+                        // doesn't exist in this mod, resulting in null blobs and noisy
+                        // "Config file not found" errors followed by a null-pointer
+                        // access.  Spawn the existing "fireblob" instead and guard
+                        // against creation failure.
+                        CBlob@ blob =
+                                server_CreateBlob("fireblob", -1,
+                                                                 strikePos + Vec2f(0.0f, -map.tilesize));
+                        if (blob !is null)
+                        {
+                                blob.setVelocity(Vec2f(XORRandom(40) / 10.0f - 2.0f,
+                                                                 -XORRandom(20) / 10.0f));
+                                blob.server_SetTimeToDie(4 + XORRandom(6));
+                        }
+                }
 
 		CBlob@[] blobs;
 		map.getBlobsInRadius(strikePos, 48.0f, @blobs);

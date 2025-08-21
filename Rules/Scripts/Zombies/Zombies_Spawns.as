@@ -73,7 +73,9 @@ class ZombiesSpawns : RespawnSystem
 				info.can_spawn_time = 0;
 			}
 
-			string propname = "Zombies spawn time " + info.username;
+                        // Use mod-specific property to avoid conflicts with other
+                        // scripts expecting a different type for "Zombies spawn time".
+                        string propname = "zg spawn time " + info.username;
 
 			Zombies_core.rules.set_u16(propname, spawn_property);
 			Zombies_core.rules.SyncToPlayer(propname,
@@ -298,7 +300,7 @@ class ZombiesSpawns : RespawnSystem
 			return;
 		}
 
-		string propname = "Zombies spawn time " + info.username;
+            string propname = "zg spawn time " + info.username;
 
 		for (uint i = 0; i < Zombies_core.teams.length; i++)
 		{
@@ -378,15 +380,18 @@ class ZombiesSpawns : RespawnSystem
 			team.spawns.push_back(info);
 
 			// Seed the client HUD timer (u8 seconds, 255 = ready)
-			const string hudKey = "Zombies spawn time " + player.getUsername();
-			u8 hudSecs = 255;
-			if (tickspawndelay > 0)
-			{
-				int s = tickspawndelay / getTicksASecond();
-				hudSecs = u8(Maths::Clamp(s, 0, 254));
-			}
-			getRules().set_u8(hudKey, hudSecs);
-			getRules().Sync(hudKey, true);
+                    const string hudKey = "zg spawn time " + player.getUsername();
+                        // store HUD seconds as u16 to match server property and
+                        // avoid type-mismatch warnings.  65535 acts as the
+                        // "ready" sentinel used by SafeGetSpawnSeconds.
+                        u16 hudSecs = 65535;
+                        if (tickspawndelay > 0)
+                        {
+                                int s = tickspawndelay / getTicksASecond();
+                                hudSecs = u16(Maths::Clamp(s, 0, 65534));
+                        }
+                        getRules().set_u16(hudKey, hudSecs);
+                        getRules().Sync(hudKey, true);
 		}
 		else
 		{
