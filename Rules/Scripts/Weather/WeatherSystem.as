@@ -4,7 +4,7 @@
 // Randomly triggers either rain or hell fire with a cooldown.
 // No map-type checks. Keeps a simple "raining" flag while active.
 
-u32 g_next_weather = 1000;
+shared u32 g_next_weather = 1000;
 const u8 HELLFIRE_PERCENT = 10; // 0–100 chance; set lower if you want hell fire to be rarer
 
 void onInit(CRules@ this)
