@@ -4,7 +4,7 @@
 // Randomly triggers either rain or hell fire with a cooldown.
 // No map-type checks. Keeps a simple "raining" flag while active.
 
-shared u32 g_next_weather = 1000;
+u32 g_next_weather = 1000;
 const u8 HELLFIRE_PERCENT = 10; // 0–100 chance; set lower if you want hell fire to be rarer
 
 void onInit(CRules@ this)
@@ -63,25 +63,6 @@ void onTick(CRules@ this)
 		}
 	}
 
-        // Schedule the next chance window after this weather plus a cooldown
-        g_next_weather = time + length_ticks + 20000 + XORRandom(150000);
-}
-
-shared void TriggerStorm(CRules@ this, const string &in blobname)
-{
-        const u32 time = getGameTime();
-        const u32 length_ticks = (30 * 60 * 1) + XORRandom(30 * 60 * 5);
-
-        if (!this.get_bool("raining"))
-        {
-                CBlob@ weather = server_CreateBlob(blobname, 255, Vec2f(0, 0));
-                if (weather !is null)
-                {
-                        weather.server_SetTimeToDie(length_ticks / 30.0f);
-                        this.set_bool("raining", true);
-                        this.set_u32("rain_end_at", time + length_ticks);
-                }
-        }
-
+	// Schedule the next chance window after this weather plus a cooldown
         g_next_weather = time + length_ticks + 20000 + XORRandom(150000);
 }
