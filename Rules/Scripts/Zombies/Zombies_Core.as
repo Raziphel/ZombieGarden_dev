@@ -452,19 +452,21 @@ class ZombiesCore : RulesCore
 		CBlob @[] bases;
 		getBlobsByName(base_name(), @bases);
 
-		// Game over if pillars are gone
-		if (bases.length == 0)
-		{
-			rules.SetTeamWon(1);
-			rules.SetCurrentState(GAME_OVER);
-			Server_GlobalPopup(rules,
-							   "Gameover!\nThe Pillars Have Been destroyed\nOn day " +
-								   (dayNumber + days_offset) + ".",
-							   SColor(255, 255, 0, 0),
-							   10 * getTicksASecond());
-			return;
-		}
-	}
+                // Game over if pillars are gone
+                if (bases.length == 0)
+                {
+                        // announce before changing state so the message has time to sync
+                        Server_GlobalPopup(rules,
+                                                           "Gameover!\nThe Pillars Have Been destroyed\nOn day " +
+                                                                   (dayNumber + days_offset) + ".",
+                                                           SColor(255, 255, 0, 0),
+                                                           10 * getTicksASecond());
+
+                        rules.SetTeamWon(1);
+                        rules.SetCurrentState(GAME_OVER);
+                        return;
+                }
+        }
 
 	void addKill(int team)
 	{
