@@ -48,8 +48,9 @@ void Reset(CRules@ this)
                         p.set_u8("killstreak", 0);
 
                         // clear any leftover respawn timer from the previous round
+                        // so everyone spawns instantly on the new map
                         const string propname = "Zombies spawn time " + p.getUsername();
-                        this.set_u16(propname, 255);
+                        this.set_u16(propname, 0);
                         this.SyncToPlayer(propname, p);
                 }
         }
