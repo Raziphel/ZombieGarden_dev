@@ -41,7 +41,7 @@ class ZombiesCore : RulesCore
         RefreshMobCountsToRules();
 
         // seed initial difficulty value
-        rules.set_f32("difficulty", 0.0f);
+        rules.set_f32("difficulty", 0.25f);
     }
 
 	void Update()
@@ -164,7 +164,7 @@ class ZombiesCore : RulesCore
         bool isNight = false;
         if (map !is null)
         {
-                isNight = (map.getDayTime() > 0.65f || map.getDayTime() < 0.15f);
+                isNight = (map.getDayTime() > 0.7f || map.getDayTime() < 0.1f);
                 if (isNight)
                 {
                         if (!rules.hasTag("night"))
