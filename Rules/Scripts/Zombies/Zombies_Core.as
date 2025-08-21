@@ -159,46 +159,47 @@ class ZombiesCore : RulesCore
         int spawnRate = 90 - int(difficulty * 3);
         if (spawnRate < 15) spawnRate = 15;
 
-		// === periodic maintenance: refresh *all* counts into rules ===
-		if (getGameTime() % 150 == 0)
-		{
-            RefreshMobCountsToRules(); // <— single source of truth
+        // === day/night detection ===
+        CMap@ map = getMap();
+        bool isNight = false;
+        if (map !is null)
+        {
+                isNight = (map.getDayTime() > 0.65f || map.getDayTime() < 0.15f);
+                if (isNight)
+                {
+                        if (!rules.hasTag("night"))
+                        {
+                                rules.Tag("night");
+                                transition = 1; // allow boss trigger when night begins
+                                rules.set_s32("transition", transition);
+                        }
+                }
+                else
+                {
+                        rules.Untag("night");
+                }
+        }
 
-			// night transition + curse logic
-			CMap@ map = getMap();
-			if (map !is null)
-			{
-				// day/night tag + re-arm transition on first night tick
-				if (map.getDayTime() > 0.65f || map.getDayTime() < 0.15f) //+ This is the time zombies will spawn between
-				{
-					if (!rules.hasTag("night"))
-					{
-						rules.Tag("night");
-						transition = 1; // allow boss trigger when night begins
-						rules.set_s32("transition", transition);
-					}
-				}
-				else
-				{
-					rules.Untag("night");
-				}
+        // === periodic maintenance: refresh *all* counts into rules ===
+        if (getGameTime() % 150 == 0)
+        {
+                RefreshMobCountsToRules(); // <— single source of truth
 
-				// Curse logic
-				if (dayNumber >= curse_day && rules.get_s32("num_undead") < max_undead)
-				{
-					const u8 pCount = getPlayersCount();
-					if (pCount > 0)
-					{
-						CPlayer@ player = getPlayer(XORRandom(pCount));
-						if (player !is null && player.getTeamNum() == 0)
-						{
-							Zombify(player);
-							server_CreateBlob("cursemessage");
-						}
-					}
-				}
-			}
-		}
+                // Curse logic (throttled)
+                if (map !is null && dayNumber >= curse_day && rules.get_s32("num_undead") < max_undead)
+                {
+                        const u8 pCount = getPlayersCount();
+                        if (pCount > 0)
+                        {
+                                CPlayer@ player = getPlayer(XORRandom(pCount));
+                                if (player !is null && player.getTeamNum() == 0)
+                                {
+                                        Zombify(player);
+                                        server_CreateBlob("cursemessage");
+                                }
+                        }
+                }
+        }
 
 		// === Day change bookkeeping to re-arm boss trigger on non-boss days ===
 		{
@@ -220,11 +221,10 @@ class ZombiesCore : RulesCore
 		}
 
 		// === spawning system ===
-		if (getGameTime() % spawnRate == 0)
-		{
-			CMap@ map = getMap();
-			if (map !is null)
-			{
+                if (getGameTime() % spawnRate == 0)
+                {
+                        if (map !is null)
+                        {
             	// gather portals and (later) ruins; fallback to edges
                 Vec2f[] zombiePlaces;
 
@@ -280,7 +280,7 @@ class ZombiesCore : RulesCore
 				const int _max_di = rules.get_s32("max_digger");
 
                                 const bool canSpawnNow =
-                                        (hardmode || rules.hasTag("night"))
+                                        (hardmode || isNight)
                                         && (_num_z < max_zombies);
 
 				if (canSpawnNow)
