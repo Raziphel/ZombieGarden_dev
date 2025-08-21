@@ -108,32 +108,30 @@ void onRender(CRules@ this)
 // ------------------------------
 // Revival timer centered on top
 // ------------------------------
-// Safely read "Zombies spawn time <username>" regardless of u8/u16 storage.
+// Safely read "Zombies spawn time <username>".
 // Returns: (true, seconds>=0) when present & valid; otherwise (false, 0).
+//
+// The property is consistently stored as u16. Previous code attempted to read
+// both u16 and u8 which triggered noisy "Type mismatch" warnings from the
+// engine.  Reading it only as u16 avoids the log spam while keeping existing
+// behaviour.
 bool SafeGetSpawnSeconds(CRules@ rules, const string &in propname, u16 &out seconds)
 {
-	seconds = 0;
-	if (!rules.exists(propname)) return false;
+        seconds = 0;
+        if (!rules.exists(propname)) return false;
 
-	// Try u16 first (most flexible)
-	u16 val16 = rules.get_u16(propname);
-	// If it's actually stored as u8, get_u16 on a u8 often yields 0, so double-check:
-	u8  val8  = rules.get_u8(propname);
+        u16 candidate = rules.get_u16(propname);
 
-	// Prefer whichever is non-sentinel and non-zero
-	u16 candidate = val16;
-	if (candidate == 0 && val8 > 0) candidate = val8;
+        // Filter sentinels/garbage commonly used by scripts
+        // 255 is a common "not set" sentinel when stored as u8.
+        if (candidate == 255 || candidate == 65535) return false;
 
-	// Filter sentinels/garbage commonly used by scripts
-	// 255 is a common "not set" sentinel when stored as u8.
-	if (candidate == 255 || candidate == 65535) return false;
+        // Guard against nonsense (negative via wrap or way too large)
+        if (candidate > 3600) // 1h+ is unrealistic for revival seconds
+                return false;
 
-	// Guard against nonsense (negative via wrap or way too large)
-	if (candidate > 3600) // 1h+ is unrealistic for revival seconds
-		return false;
-
-	seconds = candidate;
-	return true;
+        seconds = candidate;
+        return true;
 }
 
 
