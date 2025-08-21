@@ -220,8 +220,6 @@ class ZombiesCore : RulesCore
 					if (transition != 1)
 					{
 						transition = 1;
-						rules.set_s32("transition", transition);
-					}
 				}
 			}
 		}
@@ -275,22 +273,22 @@ class ZombiesCore : RulesCore
 				Vec2f sp = zombiePlaces[XORRandom(zombiePlaces.length)];
 
 				// read current caps/counters from rules (already refreshed)
-                                const int _num_wr = rules.get_s32("num_wraiths");
-                                const int _max_wr = rules.get_s32("max_wraiths");
-                                const int _num_gr = rules.get_s32("num_gregs");
-                                const int _max_gr = rules.get_s32("max_gregs");
-                                const int _num_im = rules.get_s32("num_immol");
-                                const int _max_im = rules.get_s32("max_imol");
-                                const int _num_di = rules.get_s32("num_digger");
-                                const int _max_di = rules.get_s32("max_digger");
-                                const int _num_bi = rules.get_s32("num_bisons");
-                                const int _max_bi = rules.get_s32("max_bisons");
-                                const int _num_ba = rules.get_s32("num_banshees");
-                                const int _max_ba = rules.get_s32("max_banshees");
-                                const int _num_ho = rules.get_s32("num_horror");
-                                const int _max_ho = rules.get_s32("max_horror");
-                                const int _num_ga = rules.get_s32("num_gasbags");
-                                const int _max_ga = rules.get_s32("max_gasbags");
+                const int _num_wr = rules.get_s32("num_wraiths");
+                const int _max_wr = rules.get_s32("max_wraiths");
+            	const int _num_gr = rules.get_s32("num_gregs");
+                const int _max_gr = rules.get_s32("max_gregs");
+                const int _num_im = rules.get_s32("num_immol");
+                const int _max_im = rules.get_s32("max_imol");
+                const int _num_di = rules.get_s32("num_digger");
+                const int _max_di = rules.get_s32("max_digger");
+                const int _num_bi = rules.get_s32("num_bisons");
+                const int _max_bi = rules.get_s32("max_bisons");
+                const int _num_ba = rules.get_s32("num_banshees");
+                const int _max_ba = rules.get_s32("max_banshees");
+            	const int _num_ho = rules.get_s32("num_horror");
+                const int _max_ho = rules.get_s32("max_horror");
+                const int _num_ga = rules.get_s32("num_gasbags");
+                const int _max_ga = rules.get_s32("max_gasbags");
 
                 const bool canSpawnNow = (hardmode || isNight) && (num_zombies < max_zombies);
 
@@ -300,15 +298,15 @@ class ZombiesCore : RulesCore
                     const float r = rmin + XORRandom(Maths::Max(1, int((difficulty - rmin) * 10))) / 10.0f;
 
 					if      (r >=  19.0f && _num_di < _max_di)                               server_CreateBlob("digger", -1, sp);
-					else if (r >=  16.0f && (_num_gr + _num_wr) < (_max_gr + _max_wr))       server_CreateBlob("writher", -1, sp);
-                                        else if (r >=  13.0f && _num_ba < _max_ba)                               server_CreateBlob("pbanshee", -1, sp);
-                                        else if (r >=  11.0f && _num_bi < _max_bi)                               { const u8 v = XORRandom(2); server_CreateBlob((v == 0 ? "zbison" : "zbison2"), -1, sp); }
-                                        else if (r >=  9.5f && _num_ho < _max_ho)                                server_CreateBlob("horror", -1, sp);
-                                        else if (r >=  9.0f && _num_wr < _max_wr)                                { const u8 v = XORRandom(2); server_CreateBlob((v == 0 ? "wraith" : "wraith2"), -1, sp); }
-                                        else if (r >=  8.0f && _num_gr < _max_gr)                                { const u8 v = XORRandom(2); server_CreateBlob((v == 0 ? "greg" : "greg2"), -1, sp); }
-                                        else if (r >=  6.5f && _num_im < _max_im)                                server_CreateBlob("immolator", -1, sp);
-                                        else if (r >=  5.0f && _num_ga < _max_ga)                                server_CreateBlob("gasbag", -1, sp);
-                                        else if (r >=  3.5f)                                                     server_CreateBlob("zombieknight", -1, sp);
+					else if (r >=  16.0f && _num_wr < _max_wr)                               server_CreateBlob("writher", -1, sp);
+                    else if (r >=  13.0f && _num_ba < _max_ba)                               server_CreateBlob("pbanshee", -1, sp);
+                	else if (r >=  11.0f && _num_bi < _max_bi)                               { const u8 v = XORRandom(2); server_CreateBlob((v == 0 ? "zbison" : "zbison2"), -1, sp); }
+                    else if (r >=  9.5f && _num_ho < _max_ho)                                server_CreateBlob("horror", -1, sp);
+                    else if (r >=  9.0f && _num_wr < _max_wr)                                { const u8 v = XORRandom(2); server_CreateBlob((v == 0 ? "wraith" : "wraith2"), -1, sp); }
+                    else if (r >=  8.0f && _num_gr < _max_gr)                                { const u8 v = XORRandom(2); server_CreateBlob((v == 0 ? "greg" : "greg2"), -1, sp); }
+                    else if (r >=  6.5f && _num_im < _max_im)                                server_CreateBlob("immolator", -1, sp);
+                    else if (r >=  5.0f && _num_ga < _max_ga)                                server_CreateBlob("gasbag", -1, sp);
+                    else if (r >=  3.5f)                                                     server_CreateBlob("zombieknight", -1, sp);
                     else if (r >=  2.0f)                                                     { const u8 v = XORRandom(3); server_CreateBlob(v == 0 ? "evilzombie" : (v == 1 ? "bloodzombie" : "plantzombie"), -1, sp); }
                     else if (r >=  1.0f)                                                     { const u8 v = XORRandom(2); server_CreateBlob((v == 0 ? "zombie" : "zombie2"), -1, sp); }
                     else if (r >=  0.5f)                                                     { const u8 v = XORRandom(2); server_CreateBlob((v == 0 ? "skeleton" : "skeleton2"), -1, sp); }
