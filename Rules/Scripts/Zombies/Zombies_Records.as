@@ -74,37 +74,37 @@ void onTick(CRules @ this) {
   }
 
   this.set_u16("day_number", getDaysSurvived(this));
-
-  if (this.isGameOver() && !this.get_bool("records_saved")) {
-    this.set_bool("records_saved", true);
-    const u16 days = getDaysSurvived(this);
-    const u32 kills = this.get_u32("undead_kills");
-    if (!this.get_bool("dayCheated")) {
-      u16 mapRec = this.get_u16("map_record");
-      u16 globRec = this.get_u16("global_record");
-      u32 mapKillRec = this.get_u32("map_kill_record");
-      u32 globKillRec = this.get_u32("global_kill_record");
-
-      if (days > mapRec)
-        this.set_u16("map_record", days);
-      if (days > globRec)
-        this.set_u16("global_record", days);
-      if (kills > mapKillRec)
-        this.set_u32("map_kill_record", kills);
-      if (kills > globKillRec)
-        this.set_u32("global_kill_record", kills);
-
-      SaveRecords(this);
-      this.Sync("map_record", true);
-      this.Sync("global_record", true);
-      this.Sync("map_kill_record", true);
-      this.Sync("global_kill_record", true);
-    }
-  }
 }
 
 void onStateChange(CRules @ this, const u8 oldState) {
-  if (!this.isGameOver()) {
+  if (this.isGameOver()) {
+    if (!this.get_bool("records_saved")) {
+      this.set_bool("records_saved", true);
+      const u16 days = getDaysSurvived(this);
+      const u32 kills = this.get_u32("undead_kills");
+      if (!this.get_bool("dayCheated")) {
+        u16 mapRec = this.get_u16("map_record");
+        u16 globRec = this.get_u16("global_record");
+        u32 mapKillRec = this.get_u32("map_kill_record");
+        u32 globKillRec = this.get_u32("global_kill_record");
+
+        if (days > mapRec)
+          this.set_u16("map_record", days);
+        if (days > globRec)
+          this.set_u16("global_record", days);
+        if (kills > mapKillRec)
+          this.set_u32("map_kill_record", kills);
+        if (kills > globKillRec)
+          this.set_u32("global_kill_record", kills);
+
+        SaveRecords(this);
+        this.Sync("map_record", true);
+        this.Sync("global_record", true);
+        this.Sync("map_kill_record", true);
+        this.Sync("global_kill_record", true);
+      }
+    }
+  } else {
     this.set_bool("records_saved", false);
   }
 }
