@@ -1,7 +1,7 @@
 #define SERVER_ONLY
 
-// store records outside of the scripts directory like Zombies_Reborn
-const string records_file = "../Cache/ZombieRecords.cfg";
+// store records inside the Cache directory to allow saving
+const string records_file = "Cache/ZombieRecords.cfg";
 
 u16 getDaysSurvived(CRules @rules)
 {
