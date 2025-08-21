@@ -238,7 +238,7 @@ bool onServerProcessChat( CRules@ this, const string& in text_in, string& out te
         }
         return false;
     }
-    else if (text_in == "!endruins" && isMe)
+    else if (text_in == "!killruins" && isMe)
     {
         // Destroy all ruinstorch blobs to force the round to end
         CBlob@[] torches;

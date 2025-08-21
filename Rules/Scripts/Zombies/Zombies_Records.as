@@ -1,6 +1,6 @@
 #define SERVER_ONLY
 
-const string records_file = "../Cache/ZombieRecords.cfg";
+const string records_file = "Cache/ZombieRecords.cfg";
 
 u16 getDaysSurvived(CRules @rules) {
   const int gamestart = rules.get_s32("gamestart");

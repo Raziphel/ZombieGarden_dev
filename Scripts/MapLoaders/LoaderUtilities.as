@@ -432,7 +432,7 @@ void OnCopperTileHit(CMap@ map, u32 index)
 	{ 
 		Vec2f pos = map.getTileWorldPosition(index);
 	
-		Sound::Play("HitSolidMetal"+ (XORRandom(3) + 1)+".ogg", pos, 0.5f, 1.0f);
+		Sound::Play("dig_metal"+ (XORRandom(3) + 1)+".ogg", pos, 0.5f, 1.0f);
 	}
 }
 
@@ -442,7 +442,7 @@ void OnCopperTileDestroyed(CMap@ map, u32 index)
 	{ 
 		Vec2f pos = map.getTileWorldPosition(index);
 	
-		Sound::Play("HitSolidMetal"+ (XORRandom(3) + 1)+".ogg", pos, 0.5f, 1.0f);
+		Sound::Play("dig_metal"+ (XORRandom(3) + 1)+".ogg", pos, 0.5f, 1.0f);
 	}
 }
 
@@ -455,7 +455,7 @@ void OnCoalTileHit(CMap@ map, u32 index)
 	{ 
 		Vec2f pos = map.getTileWorldPosition(index);
 	
-		Sound::Play("HitSolidMetal"+ (XORRandom(3) + 1)+".ogg", pos, 0.5f, 1.0f);
+		Sound::Play("dig_metal"+ (XORRandom(3) + 1)+".ogg", pos, 0.5f, 1.0f);
 	}
 }
 
@@ -465,6 +465,6 @@ void OnCoalTileDestroyed(CMap@ map, u32 index)
 	{ 
 		Vec2f pos = map.getTileWorldPosition(index);
 	
-		Sound::Play("HitSolidMetal"+ (XORRandom(3) + 1)+".ogg", pos, 0.5f, 1.0f);
+		Sound::Play("dig_metal"+ (XORRandom(3) + 1)+".ogg", pos, 0.5f, 1.0f);
 	}
 }
