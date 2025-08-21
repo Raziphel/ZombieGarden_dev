@@ -1,107 +1,101 @@
 
 shared class Loot
 {
-    string name; 
-    int rarity;
-    int quantity;
+	string name;
+	int rarity;
+	int quantity;
 };
 
-f32 openHealth = 1.0f; //health of wooden chest when it will be opened     0.5f = 1 heart
-int itemVelocity = 2.0f; //how far item will fly from from the chest on open
-bool button = true; //open chest by button (hold E) or by hit
+f32 openHealth = 1.0f;	 // health of wooden chest when it will be opened     0.5f = 1 heart
+int itemVelocity = 2.0f; // how far item will fly from from the chest on open
+bool button = true;		 // open chest by button (hold E) or by hit
 
-void InitLoot( CBlob@ this )
+void InitLoot(CBlob @ this)
 {
-    /*if you want a random quantity then write "addLoot(this, item name, item rarity, XORRandom(item quantity));"
-      if you want to add coins then write "addLoot(this, "coins", item rarity, item quantity);" 
-      if you want to make item drop always set "item quantity" as "0"
-    */
+	/*if you want a random quantity then write "addLoot(this, item name, item rarity, XORRandom(item quantity));"
+	  if you want to add coins then write "addLoot(this, "coins", item rarity, item quantity);"
+	  if you want to make item drop always set "item quantity" as "0"
+	*/
 
-	addLoot(this, "coins", 0, XORRandom(100) + 1); //chest will drop coins with quantity 1 - 30
-	
+	addLoot(this, "coins", 0, XORRandom(100) + 1); // chest will drop coins with quantity 1 - 30
+
 	// scroll
 	int rs1 = XORRandom(7);
-	
-        if (rs1==0)
-                addLoot(this, "scrollcarnage", 0, 1);
-        else if (rs1==1)
-                addLoot(this, "scrolldrought", 0, 1);
-        else if (rs1==2)
-                addLoot(this, "scrollfshark", 0, 1);
-        else if (rs1==3)
-                addLoot(this, "scroll2weeks", 0, 1);
-        else if (rs1==4)
-                addLoot(this, "scrollelemental", 0, 1);
-        else if (rs1==5)
-                addLoot(this, "scrollreinforce", 0, 1);
-        else if (rs1==6)
-                addLoot(this, "scrollmidas", 0, 1);
 
+	if (rs1 == 0)
+		addLoot(this, "scrollcarnage", 0, 1);
+	else if (rs1 == 1)
+		addLoot(this, "scrolldrought", 0, 1);
+	else if (rs1 == 2)
+		addLoot(this, "scrollfshark", 0, 1);
+	else if (rs1 == 3)
+		addLoot(this, "scroll2weeks", 0, 1);
+	else if (rs1 == 4)
+		addLoot(this, "scrollelemental", 0, 1);
+	else if (rs1 == 5)
+		addLoot(this, "scrollreinforce", 0, 1);
+	else if (rs1 == 6)
+		addLoot(this, "scrollmidas", 0, 1);
 
 	// soul
 	int rc1 = XORRandom(7);
-	
-	if (rc1==0)
+
+	if (rc1 == 0)
 		addLoot(this, "lifeforce", 0, 1);
-	else if (rc1==1)
+	else if (rc1 == 1)
 		addLoot(this, "chickenhead", 0, 1);
-	else if (rc1==2)
+	else if (rc1 == 2)
 		addLoot(this, "dragoonwings", 0, 1);
-	else if (rc1==3)
+	else if (rc1 == 3)
 		addLoot(this, "wizardstaff", 0, 1);
-	else if (rc1==4)
+	else if (rc1 == 4)
 		addLoot(this, "crossbow_item", 0, 1);
-	else if (rc1==5)
+	else if (rc1 == 5)
 		addLoot(this, "assassinknife", 0, 1);
-	else if (rc1==6)
+	else if (rc1 == 6)
 		addLoot(this, "firesoul", 0, 1);
 
-	//second soul
+	// second soul
 	int rc2 = XORRandom(7);
-	
-	if (rc2==0)
+
+	if (rc2 == 0)
 		addLoot(this, "lifeforce", 0, 1);
-	else if (rc2==1)
+	else if (rc2 == 1)
 		addLoot(this, "chickenhead", 0, 1);
-	else if (rc2==2)
+	else if (rc2 == 2)
 		addLoot(this, "dragoonwings", 0, 1);
-	else if (rc2==3)
+	else if (rc2 == 3)
 		addLoot(this, "wizardstaff", 0, 1);
-	else if (rc2==4)
+	else if (rc2 == 4)
 		addLoot(this, "crossbow_item", 0, 1);
-	else if (rc2==5)
+	else if (rc2 == 5)
 		addLoot(this, "assassinknife", 0, 1);
-	else if (rc2==6)
+	else if (rc2 == 6)
 		addLoot(this, "firesoul", 0, 1);
 
-	
 	// item
 	int ri1 = XORRandom(9);
-	
-	if (ri1==0)
+
+	if (ri1 == 0)
 		addLoot(this, "blesseddrill", 0, 1);
-	else if (ri1==1)
+	else if (ri1 == 1)
 		addLoot(this, "rocketlauncher", 0, 1);
-	else if (ri1==2)
+	else if (ri1 == 2)
 		addLoot(this, "megasaw", 0, 1);
-
-
 }
 
+void addLoot(CBlob @ this, string NAME, int RARITY, int QUANTITY)
+{
+	if (!this.exists("loot"))
+	{
+		Loot[] loot;
+		this.set("loot", loot);
+	}
 
+	Loot l;
+	l.name = NAME;
+	l.rarity = RARITY;
+	l.quantity = QUANTITY;
 
-void addLoot(CBlob@ this, string NAME, int RARITY, int QUANTITY)
-{    
-    if (!this.exists("loot"))
-    {
-        Loot[] loot;
-        this.set( "loot", loot );
-    }
-
-    Loot l;
-    l.name = NAME;
-    l.rarity = RARITY;
-    l.quantity = QUANTITY;
-
-    this.push("loot", l);
+	this.push("loot", l);
 }

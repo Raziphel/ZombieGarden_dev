@@ -1,4 +1,4 @@
-//common knight header
+// common knight header
 namespace KnightStates
 {
 	enum States
@@ -56,20 +56,16 @@ namespace BombType
 	};
 }
 
-const string[] bombNames = { "Bomb",
-                             "Water Bomb"
-                           };
+const string[] bombNames = {"Bomb",
+							"Water Bomb"};
 
-const string[] bombIcons = { "$Bomb$",
-                             "$WaterBomb$"
-                           };
+const string[] bombIcons = {"$Bomb$",
+							"$WaterBomb$"};
 
-const string[] bombTypeNames = { "mat_bombs",
-                                 "mat_waterbombs"
-                               };
+const string[] bombTypeNames = {"mat_bombs",
+								"mat_waterbombs"};
 
-
-//checking state stuff
+// checking state stuff
 
 bool isShieldState(u8 state)
 {
@@ -91,9 +87,9 @@ bool inMiddleOfAttack(u8 state)
 	return ((state > KnightStates::sword_drawn && state <= KnightStates::sword_power_super));
 }
 
-//checking angle stuff
+// checking angle stuff
 
-f32 getCutAngle(CBlob@ this, u8 state)
+f32 getCutAngle(CBlob @ this, u8 state)
 {
 	f32 attackAngle = (this.isFacingLeft() ? 180.0f : 0.0f);
 
@@ -117,7 +113,7 @@ f32 getCutAngle(CBlob@ this, u8 state)
 	return attackAngle;
 }
 
-f32 getCutAngle(CBlob@ this)
+f32 getCutAngle(CBlob @ this)
 {
 	Vec2f aimpos = this.getMovement().getVars().aimpos;
 	int tempState;
@@ -147,7 +143,7 @@ f32 getCutAngle(CBlob@ this)
 	return getCutAngle(this, tempState);
 }
 
-//shared attacking/bashing constants (should be in KnightVars but used all over)
+// shared attacking/bashing constants (should be in KnightVars but used all over)
 
 const int DELTA_BEGIN_ATTACK = 2;
 const int DELTA_END_ATTACK = 5;

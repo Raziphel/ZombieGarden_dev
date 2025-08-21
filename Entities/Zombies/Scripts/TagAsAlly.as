@@ -1,6 +1,6 @@
 // Aphelion \\
 
-void onInit( CBlob@ this )
+void onInit(CBlob @ this)
 {
 	this.Tag("ally");
 }

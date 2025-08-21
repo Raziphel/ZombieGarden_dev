@@ -2,19 +2,19 @@
 
 #include "MigrantCommon.as"
 
-void onInit(CBlob@ this)
+void onInit(CBlob @ this)
 {
 	this.getCurrentScript().tickFrequency = 29;
 }
 
-void onTick(CBlob@ this)
+void onTick(CBlob @ this)
 {
 	if (this.hasTag("dead"))
 	{
-		CPlayer@ p = getLocalPlayer();
+		CPlayer @p = getLocalPlayer();
 		if (p !is null && p.getTeamNum() == this.getTeamNum())
 		{
-			//Sound::Play("/depleting.ogg");
+			// Sound::Play("/depleting.ogg");
 		}
 		this.getCurrentScript().runFlags |= Script::remove_after_this;
 	}
@@ -28,10 +28,10 @@ void onTick(CBlob@ this)
 	u8 strategy = this.get_u8("strategy");
 	if (strategy == Strategy::runaway)
 	{
-		//if (XORRandom(7) == 0)
+		// if (XORRandom(7) == 0)
 		//{
 		//	this.getSprite().PlaySound("/MigrantScream");  // temp: fix for migrants screaming all the time
-		//}
+		// }
 	}
 	else
 	{
@@ -44,7 +44,7 @@ void onTick(CBlob@ this)
 	}
 }
 
-void onCollision(CBlob@ this, CBlob@ blob, bool solid)
+void onCollision(CBlob @ this, CBlob @blob, bool solid)
 {
 	if (blob !is null)
 	{
@@ -73,7 +73,7 @@ void onCollision(CBlob@ this, CBlob@ blob, bool solid)
 
 // sound when player spawns into migrant
 
-void onSetPlayer(CBlob@ this, CPlayer@ player)
+void onSetPlayer(CBlob @ this, CPlayer @player)
 {
 	if (player !is null)
 	{
@@ -88,8 +88,7 @@ void onSetPlayer(CBlob@ this, CPlayer@ player)
 	}
 }
 
-
-void onChangeTeam(CBlob@ this, const int oldTeam)
+void onChangeTeam(CBlob @ this, const int oldTeam)
 {
 	// calm down
 

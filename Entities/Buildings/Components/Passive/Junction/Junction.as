@@ -14,13 +14,13 @@ class Junction : Component
 		id = netID;
 	}
 
-	u8 Special(MapPowerGrid@ _grid, u8 _old, u8 _new)
+	u8 Special(MapPowerGrid @_grid, u8 _old, u8 _new)
 	{
-		if(_old == 0 && _new > 0)
+		if (_old == 0 && _new > 0)
 		{
 			packet_AddChangeFrame(_grid.packet, id, 1);
 		}
-		else if(_old > 0 && _new == 0)
+		else if (_old > 0 && _new == 0)
 		{
 			packet_AddChangeFrame(_grid.packet, id, 0);
 		}
@@ -29,7 +29,7 @@ class Junction : Component
 	}
 };
 
-void onInit(CBlob@ this)
+void onInit(CBlob @ this)
 {
 	// used by BuilderHittable.as
 	this.Tag("builder always hit");
@@ -47,44 +47,47 @@ void onInit(CBlob@ this)
 	this.getShape().getConsts().waterPasses = true;
 }
 
-void onSetStatic(CBlob@ this, const bool isStatic)
+void onSetStatic(CBlob @ this, const bool isStatic)
 {
-	if(!isStatic || this.exists("component")) return;
+	if (!isStatic || this.exists("component"))
+		return;
 
 	const Vec2f position = this.getPosition() / 8;
 
 	Junction component(position, this.getNetworkID());
 	this.set("component", component);
 
-	if(getNet().isServer())
+	if (getNet().isServer())
 	{
-		MapPowerGrid@ grid;
-		if(!getRules().get("power grid", @grid)) return;
+		MapPowerGrid @grid;
+		if (!getRules().get("power grid", @grid))
+			return;
 
 		grid.setAll(
-		component.x,                        // x
-		component.y,                        // y
-		TOPO_CARDINAL,                      // input topology
-		TOPO_CARDINAL,                      // output topology
-		INFO_SPECIAL,                       // information
-		0,                                  // power
-		component.id);                      // id
+			component.x,   // x
+			component.y,   // y
+			TOPO_CARDINAL, // input topology
+			TOPO_CARDINAL, // output topology
+			INFO_SPECIAL,  // information
+			0,			   // power
+			component.id); // id
 	}
 
-	CSprite@ sprite = this.getSprite();
-	if(sprite is null) return;
+	CSprite @sprite = this.getSprite();
+	if (sprite is null)
+		return;
 
 	sprite.SetZ(-60);
 	sprite.SetFacingLeft(false);
 
-	CSpriteLayer@ layer = sprite.addSpriteLayer("background", "Junction.png", 16, 16);
+	CSpriteLayer @layer = sprite.addSpriteLayer("background", "Junction.png", 16, 16);
 	layer.addAnimation("default", 0, false);
 	layer.animation.AddFrame(2);
 	layer.SetRelativeZ(-1);
 	layer.SetFacingLeft(false);
 }
 
-bool canBePickedUp(CBlob@ this, CBlob@ byBlob)
+bool canBePickedUp(CBlob @ this, CBlob @byBlob)
 {
 	return false;
 }

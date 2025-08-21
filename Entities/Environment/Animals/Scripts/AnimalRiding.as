@@ -1,6 +1,6 @@
 #include "AnimalConsts.as";
 
-void onInit(CBlob@ this)
+void onInit(CBlob @ this)
 {
 	this.set_u16("seat ride time", 90);
 	this.Tag("animal");
@@ -11,7 +11,7 @@ void onInit(CBlob@ this)
 	this.getCurrentScript().runFlags |= Script::tick_not_attached;
 }
 
-void onAttach(CBlob@ this, CBlob@ attached, AttachmentPoint @attachedPoint)
+void onAttach(CBlob @ this, CBlob @attached, AttachmentPoint @attachedPoint)
 {
 	if (attachedPoint.socket)
 	{
@@ -20,7 +20,7 @@ void onAttach(CBlob@ this, CBlob@ attached, AttachmentPoint @attachedPoint)
 	}
 }
 
-void onDetach(CBlob@ this, CBlob@ detached, AttachmentPoint @attachedPoint)
+void onDetach(CBlob @ this, CBlob @detached, AttachmentPoint @attachedPoint)
 {
 	if (attachedPoint.socket)
 	{
@@ -30,26 +30,26 @@ void onDetach(CBlob@ this, CBlob@ detached, AttachmentPoint @attachedPoint)
 	}
 }
 
-void onTick(CBlob@ this)
+void onTick(CBlob @ this)
 {
 	// hack to disable seats
 
 	const u32 seattime = this.get_u32("seat time");
 	const u32 gametime = getGameTime();
 
-	AttachmentPoint@[] aps;
+	AttachmentPoint @[] aps;
 	if (this.getAttachmentPoints(@aps))
 	{
 		u16 ridetime = this.get_u16("seat ride time");
 		for (uint i = 0; i < aps.length; i++)
 		{
-			AttachmentPoint@ ap = aps[i];
+			AttachmentPoint @ap = aps[i];
 
 			if (ap.socket)
 			{
-				CBlob@ occ = ap.getOccupied();
+				CBlob @occ = ap.getOccupied();
 
-				CBlob@ friend = getBlobByNetworkID(this.get_netid(friend_property));
+				CBlob @ friend = getBlobByNetworkID(this.get_netid(friend_property));
 
 				if (occ is null && seattime + ridetime > gametime)
 					ap.SetKeysToTake(0);
@@ -64,7 +64,6 @@ void onTick(CBlob@ this)
 						this.setKeyPressed(key_up, ap.isKeyPressed(key_action1));
 						this.setKeyPressed(key_down, ap.isKeyPressed(key_action2));
 					}
-
 				}
 
 				// GET OUT

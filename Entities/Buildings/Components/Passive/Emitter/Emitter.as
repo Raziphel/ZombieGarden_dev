@@ -14,13 +14,13 @@ class Emitter : Component
 		m_id = id;
 	}
 
-	u8 Special(MapPowerGrid@ grid, u8 power_old, u8 power_new)
+	u8 Special(MapPowerGrid @grid, u8 power_old, u8 power_new)
 	{
-		if(power_old == 0 && power_new > 0)
+		if (power_old == 0 && power_new > 0)
 		{
 			packet_AddChangeFrame(grid.packet, m_id, 1);
 		}
-		else if(power_old > 0 && power_new == 0)
+		else if (power_old > 0 && power_new == 0)
 		{
 			packet_AddChangeFrame(grid.packet, m_id, 0);
 		}
@@ -31,7 +31,7 @@ class Emitter : Component
 
 const string EMITTER = "emitter";
 
-void onInit(CBlob@ this)
+void onInit(CBlob @ this)
 {
 	// used by BuilderHittable.as
 	this.Tag("builder always hit");
@@ -43,9 +43,10 @@ void onInit(CBlob@ this)
 	this.set_TileType("background tile", CMap::tile_castle_back);
 }
 
-void onSetStatic(CBlob@ this, const bool isStatic)
+void onSetStatic(CBlob @ this, const bool isStatic)
 {
-	if(!isStatic || this.exists("component")) return;
+	if (!isStatic || this.exists("component"))
+		return;
 
 	const Vec2f POSITION = this.getPosition() / 8;
 	const u16 ANGLE = this.getAngleDegrees();
@@ -53,51 +54,55 @@ void onSetStatic(CBlob@ this, const bool isStatic)
 	Emitter component(POSITION, this.getNetworkID());
 	this.set("component", component);
 
-	if(getNet().isServer())
+	if (getNet().isServer())
 	{
-		MapPowerGrid@ grid;
-		if(!getRules().get("power grid", @grid)) return;
+		MapPowerGrid @grid;
+		if (!getRules().get("power grid", @grid))
+			return;
 
 		grid.setAll(
-		component.x,                        // x
-		component.y,                        // y
-		rotateTopology(ANGLE, TOPO_DOWN),   // input topology
-		TOPO_NONE,                          // output topology
-		INFO_SPECIAL,                       // information
-		0,                                  // power
-		component.m_id);                    // id
+			component.x,					  // x
+			component.y,					  // y
+			rotateTopology(ANGLE, TOPO_DOWN), // input topology
+			TOPO_NONE,						  // output topology
+			INFO_SPECIAL,					  // information
+			0,								  // power
+			component.m_id);				  // id
 
 		Vec2f offset = Vec2f(0, -1).RotateBy(ANGLE);
 
-		for(u8 i = 1; i < signal_strength; i++)
+		for (u8 i = 1; i < signal_strength; i++)
 		{
 			const Vec2f TARGET = offset * i + POSITION;
 
-			CBlob@ blob = getBlobByNetworkID(grid.getID(TARGET.x, TARGET.y));
-			if(blob is null || blob.getName() != "receiver" || !blob.getShape().isStatic()) continue;
+			CBlob @blob = getBlobByNetworkID(grid.getID(TARGET.x, TARGET.y));
+			if (blob is null || blob.getName() != "receiver" || !blob.getShape().isStatic())
+				continue;
 
 			u16 difference = Maths::Abs(ANGLE - blob.getAngleDegrees());
-			if(difference != 180) continue;
+			if (difference != 180)
+				continue;
 
 			blob.push(EMITTER, component.m_id);
 		}
 	}
 
-	CSprite@ sprite = this.getSprite();
-	if(sprite is null) return;
+	CSprite @sprite = this.getSprite();
+	if (sprite is null)
+		return;
 
-	const bool facing = ANGLE < 180? false : true;
+	const bool facing = ANGLE < 180 ? false : true;
 
 	sprite.SetZ(-60);
 	sprite.SetFacingLeft(facing);
 
-	CSpriteLayer@ layer = sprite.addSpriteLayer("background", "Receiver.png", 16, 16);
+	CSpriteLayer @layer = sprite.addSpriteLayer("background", "Receiver.png", 16, 16);
 	layer.addAnimation("default", 0, false);
 	layer.animation.AddFrame(2);
 	layer.SetRelativeZ(-1);
 	layer.SetFacingLeft(facing);
 
-	if(ANGLE == 90 || ANGLE == 180)
+	if (ANGLE == 90 || ANGLE == 180)
 	{
 		sprite.SetOffset(Vec2f(0, 1));
 		layer.SetOffset(Vec2f(0, 1));
@@ -130,7 +135,7 @@ void onDie(CBlob@ this)
 }
 */
 
-bool canBePickedUp(CBlob@ this, CBlob@ byBlob)
+bool canBePickedUp(CBlob @ this, CBlob @byBlob)
 {
 	return false;
 }

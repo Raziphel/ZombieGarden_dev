@@ -2,37 +2,37 @@
 
 #include "CrossbowCommon.as"
 #include "FireParticle.as"
+#include "HeadOffsetUtil.as";
+#include "KnockedCommon.as";
 #include "RunnerAnimCommon.as";
 #include "RunnerCommon.as";
-#include "KnockedCommon.as";
-#include "HeadOffsetUtil.as";
+
 
 const f32 config_offset = -4.0f;
 const string shiny_layer = "shiny bit";
 
-void onInit(CSprite@ this)
+void onInit(CSprite @ this)
 {
 	LoadSprites(this);
 }
 
-void LoadSprites(CSprite@ this)
+void LoadSprites(CSprite @ this)
 {
 	string texname = "CrossbowMale.png";
-    this.ReloadSprite( texname, this.getConsts().frameWidth, this.getConsts().frameHeight,
-                       this.getBlob().getTeamNum(), this.getBlob().getSkinNum() );
-    setupHeadOffsets(this, "crossbow", texname);
+	this.ReloadSprite(texname, this.getConsts().frameWidth, this.getConsts().frameHeight, this.getBlob().getTeamNum(), this.getBlob().getSkinNum());
+	setupHeadOffsets(this, "crossbow", texname);
 	this.RemoveSpriteLayer("frontarm");
-	CSpriteLayer@ frontarm = this.addSpriteLayer("frontarm", texname , 32, 16, this.getBlob().getTeamNum(), this.getBlob().getSkinNum());
+	CSpriteLayer @frontarm = this.addSpriteLayer("frontarm", texname, 32, 16, this.getBlob().getTeamNum(), this.getBlob().getSkinNum());
 
 	if (frontarm !is null)
 	{
-		Animation@ animcharge = frontarm.addAnimation("charge", 0, false);
+		Animation @animcharge = frontarm.addAnimation("charge", 0, false);
 		animcharge.AddFrame(16);
 		animcharge.AddFrame(24);
 		animcharge.AddFrame(32);
-		Animation@ animshoot = frontarm.addAnimation("fired", 0, false);
+		Animation @animshoot = frontarm.addAnimation("fired", 0, false);
 		animshoot.AddFrame(40);
-		Animation@ animnoarrow = frontarm.addAnimation("no_arrow", 0, false);
+		Animation @animnoarrow = frontarm.addAnimation("no_arrow", 0, false);
 		animnoarrow.AddFrame(25);
 		frontarm.SetOffset(Vec2f(-1.0f, 5.0f + config_offset));
 		frontarm.SetAnimation("fired");
@@ -40,53 +40,53 @@ void LoadSprites(CSprite@ this)
 	}
 
 	this.RemoveSpriteLayer("backarm");
-	CSpriteLayer@ backarm = this.addSpriteLayer("backarm", texname , 32, 16, this.getBlob().getTeamNum(), this.getBlob().getSkinNum());
+	CSpriteLayer @backarm = this.addSpriteLayer("backarm", texname, 32, 16, this.getBlob().getTeamNum(), this.getBlob().getSkinNum());
 
 	if (backarm !is null)
 	{
-		Animation@ anim = backarm.addAnimation("default", 0, false);
+		Animation @anim = backarm.addAnimation("default", 0, false);
 		anim.AddFrame(17);
 		backarm.SetOffset(Vec2f(-1.0f, 5.0f + config_offset));
 		backarm.SetAnimation("default");
 		backarm.SetVisible(false);
 	}
 
-	//quiver
+	// quiver
 	this.RemoveSpriteLayer("quiver");
-	CSpriteLayer@ quiver = this.addSpriteLayer("quiver", texname , 16, 16, this.getBlob().getTeamNum(), this.getBlob().getSkinNum());
+	CSpriteLayer @quiver = this.addSpriteLayer("quiver", texname, 16, 16, this.getBlob().getTeamNum(), this.getBlob().getSkinNum());
 
 	if (quiver !is null)
 	{
-		Animation@ anim = quiver.addAnimation("default", 0, false);
+		Animation @anim = quiver.addAnimation("default", 0, false);
 		anim.AddFrame(67);
 		anim.AddFrame(66);
 		quiver.SetOffset(Vec2f(-10.0f, 2.0f + config_offset));
 		quiver.SetRelativeZ(-0.1f);
 	}
 
-	//Shield
+	// Shield
 	this.RemoveSpriteLayer("shield");
-	CSpriteLayer@ shield = this.addSpriteLayer("shield", texname, 32, 32, this.getBlob().getTeamNum(), this.getBlob().getSkinNum());
+	CSpriteLayer @shield = this.addSpriteLayer("shield", texname, 32, 32, this.getBlob().getTeamNum(), this.getBlob().getSkinNum());
 
 	if (shield !is null)
 	{
-		Animation@ anim = shield.addAnimation("default", 0, false);
+		Animation @anim = shield.addAnimation("default", 0, false);
 		anim.AddFrame(19);
-		Animation@ anim1 = shield.addAnimation("raised", 0, false);
+		Animation @anim1 = shield.addAnimation("raised", 0, false);
 		anim1.AddFrame(20);
-		Animation@ anim2 = shield.addAnimation("slide", 0, false);
+		Animation @anim2 = shield.addAnimation("slide", 0, false);
 		anim2.AddFrame(21);
 		shield.SetOffset(Vec2f(2.0f, -0.5f));
 		shield.SetRelativeZ(100.0f);
-	}	
-	
+	}
+
 	// add shiny
 	this.RemoveSpriteLayer(shiny_layer);
-	CSpriteLayer@ shiny = this.addSpriteLayer(shiny_layer, "AnimeShiny.png", 16, 16);
+	CSpriteLayer @shiny = this.addSpriteLayer(shiny_layer, "AnimeShiny.png", 16, 16);
 
 	if (shiny !is null)
 	{
-		Animation@ anim = shiny.addAnimation("default", 2, true);
+		Animation @anim = shiny.addAnimation("default", 2, true);
 		int[] frames = {0, 1, 2, 3};
 		anim.AddFrames(frames);
 		shiny.SetVisible(false);
@@ -94,7 +94,7 @@ void LoadSprites(CSprite@ this)
 	}
 }
 
-void setArmValues(CSpriteLayer@ arm, bool visible, f32 angle, f32 relativeZ, string anim, Vec2f around, Vec2f offset)
+void setArmValues(CSpriteLayer @arm, bool visible, f32 angle, f32 relativeZ, string anim, Vec2f around, Vec2f offset)
 {
 	if (arm !is null)
 	{
@@ -115,7 +115,7 @@ void setArmValues(CSpriteLayer@ arm, bool visible, f32 angle, f32 relativeZ, str
 	}
 }
 
-void setAimValues(CSpriteLayer@ arm2, bool visible, f32 angle, Vec2f around, string anim)
+void setAimValues(CSpriteLayer @arm2, bool visible, f32 angle, Vec2f around, string anim)
 {
 	if (arm2 !is null)
 	{
@@ -127,7 +127,7 @@ void setAimValues(CSpriteLayer@ arm2, bool visible, f32 angle, Vec2f around, str
 			{
 				arm2.SetAnimation(anim);
 			}
-		
+
 			arm2.ResetTransform();
 			arm2.RotateBy(angle, around);
 		}
@@ -139,10 +139,10 @@ bool needs_shiny = false;
 Vec2f shiny_offset;
 f32 shiny_angle = 0.0f;
 
-void onTick(CSprite@ this)
+void onTick(CSprite @ this)
 {
 	// store some vars for ease and speed
-	CBlob@ blob = this.getBlob();
+	CBlob @blob = this.getBlob();
 
 	if (blob.hasTag("dead"))
 	{
@@ -175,7 +175,7 @@ void onTick(CSprite@ this)
 		return;
 	}
 
-	CrossbowInfo@ crossbow;
+	CrossbowInfo @crossbow;
 	if (!blob.get("crossbowInfo", @crossbow))
 	{
 		return;
@@ -200,7 +200,7 @@ void onTick(CSprite@ this)
 	// get the angle of aiming with mouse
 	Vec2f vec = aimpos - pos;
 	f32 angle = vec.Angle();
-	
+
 	if (knocked)
 	{
 		if (inair)
@@ -223,7 +223,7 @@ void onTick(CSprite@ this)
 			this.SetAnimation("shoot_jump");
 		}
 		else if ((left || right) ||
-		         (blob.isOnLadder() && (up || down)))
+				 (blob.isOnLadder() && (up || down)))
 		{
 			this.SetAnimation("shoot_run");
 		}
@@ -231,7 +231,7 @@ void onTick(CSprite@ this)
 		{
 			this.SetAnimation("shoot");
 		}
-	}	
+	}
 	else if (action2)
 	{
 		if (inair)
@@ -239,7 +239,7 @@ void onTick(CSprite@ this)
 			this.SetAnimation("shoot_jump");
 		}
 		else if ((left || right) ||
-		         (blob.isOnLadder() && (up || down)))
+				 (blob.isOnLadder() && (up || down)))
 		{
 			this.SetAnimation("shoot_run");
 		}
@@ -258,7 +258,7 @@ void onTick(CSprite@ this)
 	*/
 	else if (inair)
 	{
-		RunnerMoveVars@ moveVars;
+		RunnerMoveVars @moveVars;
 		if (!blob.get("moveVars", @moveVars))
 		{
 			return;
@@ -289,7 +289,7 @@ void onTick(CSprite@ this)
 		}
 	}
 	else if ((left || right) ||
-	         (blob.isOnLadder() && (up || down)))
+			 (blob.isOnLadder() && (up || down)))
 	{
 		this.SetAnimation("run");
 	}
@@ -301,7 +301,7 @@ void onTick(CSprite@ this)
 		int direction;
 
 		if ((angle > 330 && angle < 361) || (angle > -1 && angle < 30) ||
-		        (angle > 150 && angle < 210))
+			(angle > 150 && angle < 210))
 		{
 			direction = 0;
 		}
@@ -317,7 +317,7 @@ void onTick(CSprite@ this)
 		defaultIdleAnim(this, blob, direction);
 	}
 
-	//arm anims
+	// arm anims
 	Vec2f armOffset = Vec2f(-1.0f, 4.0f + config_offset);
 	const u8 arrowType = getArrowType(blob);
 
@@ -348,9 +348,9 @@ void onTick(CSprite@ this)
 		setArmValues(this.getSpriteLayer("backarm"), false, 0.0f, -0.1f, "default", Vec2f(0, 0), armOffset);
 	}
 
-	//set the shiny dot on the arrow
+	// set the shiny dot on the arrow
 
-	CSpriteLayer@ shiny = this.getSpriteLayer(shiny_layer);
+	CSpriteLayer @shiny = this.getSpriteLayer(shiny_layer);
 	if (shiny !is null)
 	{
 		shiny.SetVisible(needs_shiny);
@@ -358,14 +358,15 @@ void onTick(CSprite@ this)
 		{
 			shiny.RotateBy(10, Vec2f());
 
-			shiny_offset.RotateBy(this.isFacingLeft() ?  shiny_angle : -shiny_angle);
+			shiny_offset.RotateBy(this.isFacingLeft() ? shiny_angle : -shiny_angle);
 			shiny.SetOffset(shiny_offset);
 		}
 	}
 
 	DrawBowEffects(this, blob, crossbow, arrowType);
 
-	if((action2) && !blob.hasTag("dead")){
+	if ((action2) && !blob.hasTag("dead"))
+	{
 		f32 angle = -vec.Angle();
 		if (this.isFacingLeft())
 		{
@@ -380,17 +381,23 @@ void onTick(CSprite@ this)
 		while (angle < -180.0f)
 		{
 			angle += 360.0f;
-		}	
-		if(vec.Angle() > 45 && vec.Angle() < 135){
+		}
+		if (vec.Angle() > 45 && vec.Angle() < 135)
+		{
 			setAimValues(this.getSpriteLayer("shield"), true, 0, Vec2f(0, 0), "raised");
-		} else
-		if(vec.Angle() > 270-45 && vec.Angle() < 270+45){
+		}
+		else if (vec.Angle() > 270 - 45 && vec.Angle() < 270 + 45)
+		{
 			setAimValues(this.getSpriteLayer("shield"), true, 0, Vec2f(0, 0), "slide");
 			this.SetAnimation("slide");
-		} else setAimValues(this.getSpriteLayer("shield"), true, angle, Vec2f(0, 0), "default");
-	} else setAimValues(this.getSpriteLayer("shield"), false, angle, Vec2f(0, 0), "default");	
-	
-	//set the head anim
+		}
+		else
+			setAimValues(this.getSpriteLayer("shield"), true, angle, Vec2f(0, 0), "default");
+	}
+	else
+		setAimValues(this.getSpriteLayer("shield"), false, angle, Vec2f(0, 0), "default");
+
+	// set the head anim
 	if (knocked || crouch)
 	{
 		blob.Tag("dead head");
@@ -405,14 +412,12 @@ void onTick(CSprite@ this)
 		blob.Untag("attack head");
 		blob.Untag("dead head");
 	}
-
-
 }
 
-void DrawBow(CSprite@ this, CBlob@ blob, CrossbowInfo@ crossbow, f32 armangle, const u8 arrowType, Vec2f armOffset)
+void DrawBow(CSprite @ this, CBlob @blob, CrossbowInfo @crossbow, f32 armangle, const u8 arrowType, Vec2f armOffset)
 {
 	f32 sign = (this.isFacingLeft() ? 1.0f : -1.0f);
-	CSpriteLayer@ frontarm = this.getSpriteLayer("frontarm");
+	CSpriteLayer @frontarm = this.getSpriteLayer("frontarm");
 
 	if (!crossbow.has_arrow || crossbow.charge_state == CrossbowParams::no_arrows || crossbow.charge_state == CrossbowParams::legolas_charging)
 	{
@@ -453,7 +458,7 @@ void DrawBow(CSprite@ this, CBlob@ blob, CrossbowInfo@ crossbow, f32 armangle, c
 		if (crossbow.charge_state == CrossbowParams::legolas_ready)
 		{
 			needs_shiny = true;
-			shiny_offset = Vec2f(-12.0f, 0.0f);   //TODO:
+			shiny_offset = Vec2f(-12.0f, 0.0f); // TODO:
 			shiny_angle = armangle;
 		}
 	}
@@ -481,7 +486,7 @@ void DrawBow(CSprite@ this, CBlob@ blob, CrossbowInfo@ crossbow, f32 armangle, c
 	}*/
 }
 
-void DrawBowEffects(CSprite@ this, CBlob@ blob, CrossbowInfo@ crossbow, const u8 arrowType)
+void DrawBowEffects(CSprite @ this, CBlob @blob, CrossbowInfo @crossbow, const u8 arrowType)
 {
 	// set fire light
 
@@ -498,19 +503,19 @@ void DrawBowEffects(CSprite@ this, CBlob@ blob, CrossbowInfo@ crossbow, const u8
 		}
 	}*/
 
-	//quiver
+	// quiver
 	bool has_arrows = blob.get_bool("has_arrow");
 	doQuiverUpdate(this, has_arrows, true);
 }
 
-bool IsFiring(CBlob@ blob)
+bool IsFiring(CBlob @blob)
 {
 	return blob.isKeyPressed(key_action1);
 }
 
-void doQuiverUpdate(CSprite@ this, bool has_arrows, bool quiver)
+void doQuiverUpdate(CSprite @ this, bool has_arrows, bool quiver)
 {
-	CSpriteLayer@ quiverLayer = this.getSpriteLayer("quiver");
+	CSpriteLayer @quiverLayer = this.getSpriteLayer("quiver");
 
 	if (quiverLayer !is null)
 	{
@@ -535,7 +540,6 @@ void doQuiverUpdate(CSprite@ this, bool has_arrows, bool quiver)
 				off.Set(this.getFrameWidth() / 2, -this.getFrameHeight() / 2);
 				off += this.getOffset();
 				off += Vec2f(-po.x, po.y);
-
 
 				f32 y = (down ? 3.0f : 7.0f);
 				f32 x = (down ? 5.0f : 4.0f);
@@ -566,21 +570,21 @@ void doQuiverUpdate(CSprite@ this, bool has_arrows, bool quiver)
 	}
 }
 
-void onGib(CSprite@ this)
+void onGib(CSprite @ this)
 {
 	if (g_kidssafe)
 	{
 		return;
 	}
 
-	CBlob@ blob = this.getBlob();
+	CBlob @blob = this.getBlob();
 	Vec2f pos = blob.getPosition();
 	Vec2f vel = blob.getVelocity();
 	vel.y -= 3.0f;
 	f32 hp = Maths::Min(Maths::Abs(blob.getHealth()), 2.0f) + 1.0f;
 	const u8 team = blob.getTeamNum();
-	CParticle@ Body     = makeGibParticle("Entities/Classes/Crossbow/CrossbowGibs.png", pos, vel + getRandomVelocity(90, hp , 80), 0, 0, Vec2f(16, 16), 2.0f, 20, "/BodyGibFall", team);
-	CParticle@ Arm      = makeGibParticle("Entities/Classes/Crossbow/CrossbowGibs.png", pos, vel + getRandomVelocity(90, hp - 0.2 , 80), 1, 0, Vec2f(16, 16), 2.0f, 20, "/BodyGibFall", team);
-	CParticle@ Shield   = makeGibParticle("Entities/Classes/Crossbow/CrossbowGibs.png", pos, vel + getRandomVelocity(90, hp , 80), 2, 0, Vec2f(16, 16), 2.0f, 0, "Sounds/material_drop.ogg", team);
-	CParticle@ Sword    = makeGibParticle("Entities/Classes/Crossbow/CrossbowGibs.png", pos, vel + getRandomVelocity(90, hp + 1 , 80), 3, 0, Vec2f(16, 16), 2.0f, 0, "Sounds/material_drop.ogg", team);
+	CParticle @Body = makeGibParticle("Entities/Classes/Crossbow/CrossbowGibs.png", pos, vel + getRandomVelocity(90, hp, 80), 0, 0, Vec2f(16, 16), 2.0f, 20, "/BodyGibFall", team);
+	CParticle @Arm = makeGibParticle("Entities/Classes/Crossbow/CrossbowGibs.png", pos, vel + getRandomVelocity(90, hp - 0.2, 80), 1, 0, Vec2f(16, 16), 2.0f, 20, "/BodyGibFall", team);
+	CParticle @Shield = makeGibParticle("Entities/Classes/Crossbow/CrossbowGibs.png", pos, vel + getRandomVelocity(90, hp, 80), 2, 0, Vec2f(16, 16), 2.0f, 0, "Sounds/material_drop.ogg", team);
+	CParticle @Sword = makeGibParticle("Entities/Classes/Crossbow/CrossbowGibs.png", pos, vel + getRandomVelocity(90, hp + 1, 80), 3, 0, Vec2f(16, 16), 2.0f, 0, "Sounds/material_drop.ogg", team);
 }

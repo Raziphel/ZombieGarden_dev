@@ -14,14 +14,14 @@ class HarvestBlobPair
 };
 
 HarvestBlobPair[] pairs =
-{
-	HarvestBlobPair("log", 20.0f, 0.0f),
-	HarvestBlobPair("wooden_door", 5.0f, 0.0f),
-	HarvestBlobPair("stone_door", 0.0f, 5.0f),
-	HarvestBlobPair("trap_block", 0.0f, 2.5f),
+	{
+		HarvestBlobPair("log", 20.0f, 0.0f),
+		HarvestBlobPair("wooden_door", 5.0f, 0.0f),
+		HarvestBlobPair("stone_door", 0.0f, 5.0f),
+		HarvestBlobPair("trap_block", 0.0f, 2.5f),
 };
 
-void onHitBlob(CBlob@ this, Vec2f worldPoint, Vec2f velocity, f32 damage, CBlob@ hitBlob, u8 customData)
+void onHitBlob(CBlob @ this, Vec2f worldPoint, Vec2f velocity, f32 damage, CBlob @hitBlob, u8 customData)
 {
 	if (!getNet().isServer() || hitBlob is null)
 		return;

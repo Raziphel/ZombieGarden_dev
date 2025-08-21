@@ -154,7 +154,7 @@ void DrawRevivalTimer(CRules @rules, CPlayer @p)
 	if (myBlob !is null)
 		return;
 
-        const string propname = "zg spawn time " + p.getUsername();
+	const string propname = "zg spawn time " + p.getUsername();
 
 	u16 spawnSec = 0;
 	if (!SafeGetSpawnSeconds(rules, propname, spawnSec))

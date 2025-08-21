@@ -1,24 +1,24 @@
 // Slayer animations
 
-#include "UndeadSlayerCommon.as";
+#include "KnockedCommon.as";
 #include "RunnerAnimCommon.as";
 #include "RunnerCommon.as";
-#include "KnockedCommon.as";
+#include "UndeadSlayerCommon.as";
+
 
 const string shiny_layer = "shiny bit";
 
-void onInit(CSprite@ this)
+void onInit(CSprite @ this)
 {
 	string texname = "UndeadSlayer.png";
-	this.ReloadSprite(texname, this.getConsts().frameWidth, this.getConsts().frameHeight,
-	                  this.getBlob().getTeamNum(), this.getBlob().getSkinNum());
+	this.ReloadSprite(texname, this.getConsts().frameWidth, this.getConsts().frameHeight, this.getBlob().getTeamNum(), this.getBlob().getSkinNum());
 	// add blade
 	this.RemoveSpriteLayer("chop");
-	CSpriteLayer@ chop = this.addSpriteLayer("chop");
+	CSpriteLayer @chop = this.addSpriteLayer("chop");
 
 	if (chop !is null)
 	{
-		Animation@ anim = chop.addAnimation("default", 0, true);
+		Animation @anim = chop.addAnimation("default", 0, true);
 		anim.AddFrame(35);
 		anim.AddFrame(43);
 		anim.AddFrame(63);
@@ -28,11 +28,11 @@ void onInit(CSprite@ this)
 
 	// add shiny
 	this.RemoveSpriteLayer(shiny_layer);
-	CSpriteLayer@ shiny = this.addSpriteLayer(shiny_layer, "AnimeShiny.png", 16, 16);
+	CSpriteLayer @shiny = this.addSpriteLayer(shiny_layer, "AnimeShiny.png", 16, 16);
 
 	if (shiny !is null)
 	{
-		Animation@ anim = shiny.addAnimation("default", 2, true);
+		Animation @anim = shiny.addAnimation("default", 2, true);
 		int[] frames = {0, 1, 2, 3};
 		anim.AddFrames(frames);
 		shiny.SetVisible(false);
@@ -40,22 +40,20 @@ void onInit(CSprite@ this)
 	}
 }
 
-void onTick(CSprite@ this)
+void onTick(CSprite @ this)
 {
 	// store some vars for ease and speed
-	CBlob@ blob = this.getBlob();
-	u8 fballTimer = blob.get_u8( "fball timer" );
+	CBlob @blob = this.getBlob();
+	u8 fballTimer = blob.get_u8("fball timer");
 	Vec2f pos = blob.getPosition();
 	Vec2f aimpos;
 
-	SlayerInfo@ knight;
+	SlayerInfo @knight;
 	if (!blob.get("knightInfo", @knight))
 	{
 		return;
 	}
 
-	
-	
 	bool knocked = isKnocked(blob);
 
 	bool shieldState = isShieldState(knight.state);
@@ -80,8 +78,8 @@ void onTick(CSprite@ this)
 			this.SetAnimation("dead");
 		}
 		Vec2f oldvel = blob.getOldVelocity();
-		
-		//TODO: trigger frame one the first time we server_Die()()
+
+		// TODO: trigger frame one the first time we server_Die()()
 		if (vel.y < -1.0f)
 		{
 			this.SetFrameIndex(1);
@@ -95,7 +93,7 @@ void onTick(CSprite@ this)
 			this.SetFrameIndex(2);
 		}
 
-		CSpriteLayer@ chop = this.getSpriteLayer("chop");
+		CSpriteLayer @chop = this.getSpriteLayer("chop");
 
 		if (chop !is null)
 		{
@@ -105,7 +103,6 @@ void onTick(CSprite@ this)
 		return;
 	}
 
-	
 	// get the angle of aiming with mouse
 	Vec2f vec;
 	int direction = blob.getAimDirection(vec);
@@ -140,10 +137,10 @@ void onTick(CSprite@ this)
 	{
 		return;
 	}
-	else if ( fballTimer > 64 && pressed_a2  || (this.isAnimation("charging") && !this.isAnimationEnded()))
+	else if (fballTimer > 64 && pressed_a2 || (this.isAnimation("charging") && !this.isAnimationEnded()))
 	{
 		this.SetAnimation("charging");
-	}	
+	}
 	else if (blob.hasTag("seated"))
 	{
 		this.SetAnimation("crouch");
@@ -254,7 +251,7 @@ void onTick(CSprite@ this)
 	}
 	else if (inair)
 	{
-		RunnerMoveVars@ moveVars;
+		RunnerMoveVars @moveVars;
 		if (!blob.get("moveVars", @moveVars))
 		{
 			return;
@@ -284,7 +281,7 @@ void onTick(CSprite@ this)
 		}
 	}
 	else if (walking ||
-	         (blob.isOnLadder() && (blob.isKeyPressed(key_up) || blob.isKeyPressed(key_down))))
+			 (blob.isOnLadder() && (blob.isKeyPressed(key_up) || blob.isKeyPressed(key_down))))
 	{
 		this.SetAnimation("run");
 	}
@@ -293,7 +290,7 @@ void onTick(CSprite@ this)
 		defaultIdleAnim(this, blob, direction);
 	}
 
-	CSpriteLayer@ chop = this.getSpriteLayer("chop");
+	CSpriteLayer @chop = this.getSpriteLayer("chop");
 
 	if (chop !is null)
 	{
@@ -318,9 +315,9 @@ void onTick(CSprite@ this)
 		}
 	}
 
-	//set the shiny dot on the sword
+	// set the shiny dot on the sword
 
-	CSpriteLayer@ shiny = this.getSpriteLayer(shiny_layer);
+	CSpriteLayer @shiny = this.getSpriteLayer(shiny_layer);
 
 	if (shiny !is null)
 	{
@@ -335,7 +332,7 @@ void onTick(CSprite@ this)
 		}
 	}
 
-	//set the head anim
+	// set the head anim
 	if (knocked)
 	{
 		blob.Tag("dead head");
@@ -350,44 +347,43 @@ void onTick(CSprite@ this)
 		blob.Untag("attack head");
 		blob.Untag("dead head");
 	}
-
 }
 
-void onGib(CSprite@ this)
+void onGib(CSprite @ this)
 {
 	if (g_kidssafe)
 	{
 		return;
 	}
 
-	CBlob@ blob = this.getBlob();
+	CBlob @blob = this.getBlob();
 	Vec2f pos = blob.getPosition();
 	Vec2f vel = blob.getVelocity();
 	vel.y -= 3.0f;
 	f32 hp = Maths::Min(Maths::Abs(blob.getHealth()), 2.0f) + 1.0f;
 	const u8 team = blob.getTeamNum();
-	CParticle@ Body     = makeGibParticle("../UndeadSlayerGibs.png", pos, vel + getRandomVelocity(90, hp , 80), 0, 0, Vec2f(16, 16), 2.0f, 20, "/BodyGibFall", team);
-	CParticle@ Arm      = makeGibParticle("../UndeadSlayerGibs.png", pos, vel + getRandomVelocity(90, hp - 0.2 , 80), 1, 0, Vec2f(16, 16), 2.0f, 20, "/BodyGibFall", team);
-	CParticle@ Shield   = makeGibParticle("../UndeadSlayerGibs.png", pos, vel + getRandomVelocity(90, hp , 80), 2, 0, Vec2f(16, 16), 2.0f, 0, "Sounds/material_drop.ogg", team);
-	CParticle@ Sword    = makeGibParticle("../UndeadSlayerGibs.png", pos, vel + getRandomVelocity(90, hp + 1 , 80), 3, 0, Vec2f(16, 16), 2.0f, 0, "Sounds/material_drop.ogg", team);
+	CParticle @Body = makeGibParticle("../UndeadSlayerGibs.png", pos, vel + getRandomVelocity(90, hp, 80), 0, 0, Vec2f(16, 16), 2.0f, 20, "/BodyGibFall", team);
+	CParticle @Arm = makeGibParticle("../UndeadSlayerGibs.png", pos, vel + getRandomVelocity(90, hp - 0.2, 80), 1, 0, Vec2f(16, 16), 2.0f, 20, "/BodyGibFall", team);
+	CParticle @Shield = makeGibParticle("../UndeadSlayerGibs.png", pos, vel + getRandomVelocity(90, hp, 80), 2, 0, Vec2f(16, 16), 2.0f, 0, "Sounds/material_drop.ogg", team);
+	CParticle @Sword = makeGibParticle("../UndeadSlayerGibs.png", pos, vel + getRandomVelocity(90, hp + 1, 80), 3, 0, Vec2f(16, 16), 2.0f, 0, "Sounds/material_drop.ogg", team);
 }
-
 
 // render cursors
 
 void DrawCursorAt(Vec2f position, string& in filename)
 {
 	position = getMap().getAlignedWorldPos(position);
-	if (position == Vec2f_zero) return;
+	if (position == Vec2f_zero)
+		return;
 	position = getDriver().getScreenPosFromWorldPos(position - Vec2f(1, 1));
 	GUI::DrawIcon(filename, position, getCamera().targetDistance * getDriver().getResolutionScaleFactor());
 }
 
 const string cursorTexture = "Entities/Classes/Sprites/TileCursor.png";
 
-void onRender(CSprite@ this)
+void onRender(CSprite @ this)
 {
-	CBlob@ blob = this.getBlob();
+	CBlob @blob = this.getBlob();
 	if (!blob.isMyPlayer())
 	{
 		return;
@@ -401,7 +397,7 @@ void onRender(CSprite@ this)
 
 	if (blob.isKeyPressed(key_action1))
 	{
-		CMap@ map = blob.getMap();
+		CMap @map = blob.getMap();
 		Vec2f position = blob.getPosition();
 		Vec2f cursor_position = blob.getAimPos();
 		Vec2f surface_position;

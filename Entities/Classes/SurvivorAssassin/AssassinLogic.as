@@ -1,48 +1,47 @@
 // Assassin logic
-//based on GrappleKnight by Pirate-Rob
+// based on GrappleKnight by Pirate-Rob
 
-#include "ThrowCommon.as"
 #include "AssassinCommon.as";
-#include "RunnerCommon.as";
+#include "Help.as";
 #include "Hitters.as";
 #include "KnockedCommon.as"
-#include "Help.as";
 #include "Requirements.as";
+#include "RunnerCommon.as";
+#include "ThrowCommon.as"
 
+// attacks limited to the one time per-actor before reset.
 
-//attacks limited to the one time per-actor before reset.
-
-void knight_actorlimit_setup(CBlob@ this)
+void knight_actorlimit_setup(CBlob @ this)
 {
 	u16[] networkIDs;
 	this.set("LimitedActors", networkIDs);
 }
 
-bool knight_has_hit_actor(CBlob@ this, CBlob@ actor)
+bool knight_has_hit_actor(CBlob @ this, CBlob @actor)
 {
-	u16[]@ networkIDs;
+	u16[] @networkIDs;
 	this.get("LimitedActors", @networkIDs);
 	return networkIDs.find(actor.getNetworkID()) >= 0;
 }
 
-u32 knight_hit_actor_count(CBlob@ this)
+u32 knight_hit_actor_count(CBlob @ this)
 {
-	u16[]@ networkIDs;
+	u16[] @networkIDs;
 	this.get("LimitedActors", @networkIDs);
 	return networkIDs.length;
 }
 
-void knight_add_actor_limit(CBlob@ this, CBlob@ actor)
+void knight_add_actor_limit(CBlob @ this, CBlob @actor)
 {
 	this.push("LimitedActors", actor.getNetworkID());
 }
 
-void knight_clear_actor_limits(CBlob@ this)
+void knight_clear_actor_limits(CBlob @ this)
 {
 	this.clear("LimitedActors");
 }
 
-void onInit(CBlob@ this)
+void onInit(CBlob @ this)
 {
 	AssassinInfo knight;
 
@@ -50,7 +49,7 @@ void onInit(CBlob@ this)
 	knight.swordTimer = 0;
 	knight.doubleslash = false;
 	knight.tileDestructionLimiter = 0;
-	this.set_Vec2f("grapple_offset",Vec2f(0,0));
+	this.set_Vec2f("grapple_offset", Vec2f(0, 0));
 	this.set("knightInfo", @knight);
 
 	this.set_f32("gib health", -3.0f);
@@ -70,24 +69,24 @@ void onInit(CBlob@ this)
 		this.addCommandID("pick " + bombTypeNames[i]);
 	}
 
-	AddIconToken( "$Blink$", "aSpellIcons.png", Vec2f(16,16), 0 );	
-	
+	AddIconToken("$Blink$", "aSpellIcons.png", Vec2f(16, 16), 0);
+
 	this.addCommandID(grapple_sync_cmd);
-	
-	//centered on bomb select
-	//this.set_Vec2f("inventory offset", Vec2f(0.0f, 122.0f));
-	//centered on inventory
+
+	// centered on bomb select
+	// this.set_Vec2f("inventory offset", Vec2f(0.0f, 122.0f));
+	// centered on inventory
 	this.set_Vec2f("inventory offset", Vec2f(0.0f, 0.0f));
 
 	SetHelp(this, "help self action", "knight", "$Jab$Jab        $LMB$", "", 4);
 	SetHelp(this, "help self action2", "knight", "$Grapple$ Grappling hook    $RMB$", "", 4);
-	SetHelp( this, "help self action3", "knight", "$Blink$ Blink using V", "", 4);
+	SetHelp(this, "help self action3", "knight", "$Blink$ Blink using V", "", 4);
 
 	this.getCurrentScript().runFlags |= Script::tick_not_attached;
 	this.getCurrentScript().removeIfTag = "dead";
 }
 
-void onSetPlayer(CBlob@ this, CPlayer@ player)
+void onSetPlayer(CBlob @ this, CPlayer @player)
 {
 	if (player !is null)
 	{
@@ -95,30 +94,29 @@ void onSetPlayer(CBlob@ this, CPlayer@ player)
 	}
 }
 
-
-void onTick(CBlob@ this)
+void onTick(CBlob @ this)
 {
 	bool knocked = isKnocked(this);
 
 	if (this.isInInventory())
 		return;
-		
-	//knight logic stuff
-	//get the vars to turn various other scripts on/off
-	RunnerMoveVars@ moveVars;
+
+	// knight logic stuff
+	// get the vars to turn various other scripts on/off
+	RunnerMoveVars @moveVars;
 	if (!this.get("moveVars", @moveVars))
 	{
 		return;
 	}
 
-	AssassinInfo@ knight;
+	AssassinInfo @knight;
 	if (!this.get("knightInfo", @knight))
 	{
 		return;
 	}
-	
+
 	ManageGrapple(this, knight);
-	
+
 	Vec2f pos = this.getPosition();
 	Vec2f vel = this.getVelocity();
 	Vec2f aimpos = this.getAimPos();
@@ -136,27 +134,26 @@ void onTick(CBlob@ this)
 
 	const bool myplayer = this.isMyPlayer();
 
-	//with the code about menus and myplayer you can slash-cancel;
-	//we'll see if knights dmging stuff while in menus is a real issue and go from there
-	if (knocked)// || myplayer && getHUD().hasMenus())
+	// with the code about menus and myplayer you can slash-cancel;
+	// we'll see if knights dmging stuff while in menus is a real issue and go from there
+	if (knocked)							 // || myplayer && getHUD().hasMenus())
 	{
-		knight.state = KnightStates::normal; //cancel any attacks
+		knight.state = KnightStates::normal; // cancel any attacks
 		knight.swordTimer = 0;
 		knight.doubleslash = false;
 
 		pressed_a1 = false;
 		pressed_a2 = false;
 		walking = false;
-
 	}
 	else if (!pressed_a1 && !swordState &&
-	         (pressed_a2))
+			 (pressed_a2))
 	{
 		moveVars.jumpFactor *= 0.5f;
 		moveVars.walkFactor *= 0.9f;
 		knight.swordTimer = 0;
 	}
-	else if ((pressed_a1 || swordState) && !moveVars.wallsliding)   //no attacking during a slide
+	else if ((pressed_a1 || swordState) && !moveVars.wallsliding) // no attacking during a slide
 	{
 		if (getNet().isClient())
 		{
@@ -182,12 +179,12 @@ void onTick(CBlob@ this)
 
 		if (!inair)
 		{
-			this.AddForce(Vec2f(vel.x * -5.0, 0.0f));   //horizontal slowing force (prevents SANICS)
+			this.AddForce(Vec2f(vel.x * -5.0, 0.0f)); // horizontal slowing force (prevents SANICS)
 		}
 
 		if (knight.state == KnightStates::normal ||
-		        this.isKeyJustPressed(key_action1) &&
-		        (!inMiddleOfAttack(knight.state)))
+			this.isKeyJustPressed(key_action1) &&
+				(!inMiddleOfAttack(knight.state)))
 		{
 			knight.state = KnightStates::sword_drawn;
 			knight.swordTimer = 0;
@@ -198,13 +195,13 @@ void onTick(CBlob@ this)
 			knight_clear_actor_limits(this);
 		}
 
-		//responding to releases/noaction
+		// responding to releases/noaction
 		s32 delta = knight.swordTimer;
 		if (knight.swordTimer < 128)
 			knight.swordTimer++;
 
 		if (knight.state == KnightStates::sword_drawn && !pressed_a1 &&
-		        !this.isKeyJustReleased(key_action1) && delta > KnightVars::resheath_time)
+			!this.isKeyJustReleased(key_action1) && delta > KnightVars::resheath_time)
 		{
 			knight.state = KnightStates::normal;
 		}
@@ -252,11 +249,11 @@ void onTick(CBlob@ this)
 			}
 			else
 			{
-				//knock?
+				// knock?
 			}
 		}
 		else if (knight.state >= KnightStates::sword_cut_mid &&
-		         knight.state <= KnightStates::sword_cut_down) // cut state
+				 knight.state <= KnightStates::sword_cut_down) // cut state
 		{
 			if (delta == DELTA_BEGIN_ATTACK)
 			{
@@ -282,16 +279,16 @@ void onTick(CBlob@ this)
 			}
 		}
 		else if (knight.state == KnightStates::sword_power ||
-		         knight.state == KnightStates::sword_power_super)
+				 knight.state == KnightStates::sword_power_super)
 		{
-			//setting double
+			// setting double
 			if (knight.state == KnightStates::sword_power_super &&
-			        this.isKeyJustPressed(key_action1))
+				this.isKeyJustPressed(key_action1))
 			{
 				knight.doubleslash = true;
 			}
 
-			//attacking + noises
+			// attacking + noises
 			if (delta == 2)
 			{
 				Sound::Play("/ArgLong", this.getPosition());
@@ -302,7 +299,7 @@ void onTick(CBlob@ this)
 				DoAttack(this, 2.0f, -(vec.Angle()), 120.0f, Hitters::sword, delta, knight);
 			}
 			else if (delta >= KnightVars::slash_time ||
-			         (knight.doubleslash && delta >= KnightVars::double_slash_time))
+					 (knight.doubleslash && delta >= KnightVars::double_slash_time))
 			{
 				knight.swordTimer = 0;
 
@@ -319,30 +316,29 @@ void onTick(CBlob@ this)
 			}
 		}
 
-		//special slash movement
+		// special slash movement
 
 		if ((knight.state == KnightStates::sword_power ||
-		        knight.state == KnightStates::sword_power_super) &&
-		        delta < KnightVars::slash_move_time)
+			 knight.state == KnightStates::sword_power_super) &&
+			delta < KnightVars::slash_move_time)
 		{
 
 			if (Maths::Abs(vel.x) < KnightVars::slash_move_max_speed &&
-			        vel.y > -KnightVars::slash_move_max_speed)
+				vel.y > -KnightVars::slash_move_max_speed)
 			{
-				Vec2f slash_vel =  knight.slash_direction * this.getMass() * 0.5f;
+				Vec2f slash_vel = knight.slash_direction * this.getMass() * 0.5f;
 				this.AddForce(slash_vel);
 			}
 		}
 
 		moveVars.canVault = false;
-
 	}
 	else if (this.isKeyJustReleased(key_action2) || this.isKeyJustReleased(key_action1) || this.get_u32("knight_timer") <= getGameTime())
 	{
 		knight.state = KnightStates::normal;
 	}
 
-	//throwing bombs
+	// throwing bombs
 
 	if (myplayer)
 	{
@@ -350,10 +346,10 @@ void onTick(CBlob@ this)
 
 		if (this.isKeyJustPressed(key_action3))
 		{
-			CBlob@ carried = this.getCarriedBlob();
-			bool holding = carried !is null;// && carried.hasTag("exploding");
+			CBlob @carried = this.getCarriedBlob();
+			bool holding = carried !is null; // && carried.hasTag("exploding");
 
-			CInventory@ inv = this.getInventory();
+			CInventory @inv = this.getInventory();
 			bool thrown = false;
 			u8 bombType = this.get_u8("bomb type");
 			if (bombType == 255)
@@ -365,7 +361,7 @@ void onTick(CBlob@ this)
 			{
 				for (int i = 0; i < inv.getItemsCount(); i++)
 				{
-					CBlob@ item = inv.getItem(i);
+					CBlob @item = inv.getItem(i);
 					const string itemname = item.getName();
 					if (!holding && bombTypeNames[bombType] == itemname)
 					{
@@ -402,32 +398,31 @@ void onTick(CBlob@ this)
 		}
 	}
 
-	
 	if (!swordState && getNet().isServer())
 	{
 		knight_clear_actor_limits(this);
 	}
 }
 
-void ManageGrapple(CBlob@ this, AssassinInfo@ knight)
+void ManageGrapple(CBlob @ this, AssassinInfo @knight)
 {
-	CSprite@ sprite = this.getSprite();
+	CSprite @sprite = this.getSprite();
 	Vec2f pos = this.getPosition();
 
 	const bool right_click = this.isKeyJustPressed(key_action2);
 	if (right_click)
 	{
-		if (canSend(this)) //otherwise grapple
+		if (canSend(this)) // otherwise grapple
 		{
 			knight.grappling = true;
 			knight.grapple_id = 0xffff;
 			knight.grapple_pos = pos;
 
-			knight.grapple_ratio = 1.0f; //allow fully extended
+			knight.grapple_ratio = 1.0f; // allow fully extended
 
 			Vec2f direction = this.getAimPos() - pos;
 
-			//aim in direction of cursor
+			// aim in direction of cursor
 			f32 distance = direction.Normalize();
 			if (distance > 1.0f)
 			{
@@ -444,8 +439,8 @@ void ManageGrapple(CBlob@ this, AssassinInfo@ knight)
 
 	if (knight.grappling)
 	{
-		//update grapple
-		//TODO move to its own script?
+		// update grapple
+		// TODO move to its own script?
 
 		if (!this.isKeyPressed(key_action2))
 		{
@@ -460,14 +455,14 @@ void ManageGrapple(CBlob@ this, AssassinInfo@ knight)
 			const f32 knight_grapple_range = knight_grapple_length * knight.grapple_ratio;
 			const f32 knight_grapple_force_limit = this.getMass() * knight_grapple_accel_limit;
 
-			CMap@ map = this.getMap();
+			CMap @map = this.getMap();
 
-			//reel in
-			//TODO: sound
+			// reel in
+			// TODO: sound
 			if (knight.grapple_ratio > 0.2f)
 				knight.grapple_ratio -= 1.0f / getTicksASecond();
 
-			//get the force and offset vectors
+			// get the force and offset vectors
 			Vec2f force;
 			Vec2f offset;
 			f32 dist;
@@ -486,8 +481,8 @@ void ManageGrapple(CBlob@ this, AssassinInfo@ knight)
 				}
 			}
 
-			//left map? close grapple
-			if (knight.grapple_pos.x < map.tilesize || knight.grapple_pos.x > (map.tilemapwidth - 1)*map.tilesize)
+			// left map? close grapple
+			if (knight.grapple_pos.x < map.tilesize || knight.grapple_pos.x > (map.tilemapwidth - 1) * map.tilesize)
 			{
 				if (canSend(this))
 				{
@@ -495,7 +490,7 @@ void ManageGrapple(CBlob@ this, AssassinInfo@ knight)
 					knight.grappling = false;
 				}
 			}
-			else if (knight.grapple_id == 0xffff) //not stuck
+			else if (knight.grapple_id == 0xffff) // not stuck
 			{
 				const f32 drag = map.isInWater(knight.grapple_pos) ? 0.7f : 0.90f;
 				const Vec2f gravity(0, 1);
@@ -509,7 +504,7 @@ void ManageGrapple(CBlob@ this, AssassinInfo@ knight)
 				f32 delta = dir.Normalize();
 				bool found = false;
 				const f32 step = map.tilesize * 0.5f;
-				while (delta > 0 && !found) //fake raycast
+				while (delta > 0 && !found) // fake raycast
 				{
 					if (delta > step)
 					{
@@ -522,25 +517,24 @@ void ManageGrapple(CBlob@ this, AssassinInfo@ knight)
 					delta -= step;
 					found = checkGrappleStep(this, knight, map, dist);
 				}
-
 			}
-			else //stuck -> pull towards pos
+			else // stuck -> pull towards pos
 			{
 
-				//wallrun/jump reset to make getting over things easier
-				//at the top of grapple
-				if (this.isOnWall()) //on wall
+				// wallrun/jump reset to make getting over things easier
+				// at the top of grapple
+				if (this.isOnWall()) // on wall
 				{
-					//close to the grapple point
-					//not too far above
-					//and moving downwards
+					// close to the grapple point
+					// not too far above
+					// and moving downwards
 					Vec2f dif = pos - knight.grapple_pos;
 					if (this.getVelocity().y > 0 &&
-					        dif.y > -10.0f &&
-					        dif.Length() < 24.0f)
+						dif.y > -10.0f &&
+						dif.Length() < 24.0f)
 					{
-						//need move vars
-						RunnerMoveVars@ moveVars;
+						// need move vars
+						RunnerMoveVars @moveVars;
 						if (this.get("moveVars", @moveVars))
 						{
 							moveVars.walljumped_side = Walljump::NONE;
@@ -548,7 +542,7 @@ void ManageGrapple(CBlob@ this, AssassinInfo@ knight)
 					}
 				}
 
-				CBlob@ b = null;
+				CBlob @b = null;
 				if (knight.grapple_id != 0)
 				{
 					@b = getBlobByNetworkID(knight.grapple_id);
@@ -560,10 +554,11 @@ void ManageGrapple(CBlob@ this, AssassinInfo@ knight)
 
 				if (b !is null)
 				{
-					knight.grapple_pos = b.getPosition()+this.get_Vec2f("grapple_offset");;
+					knight.grapple_pos = b.getPosition() + this.get_Vec2f("grapple_offset");
+					;
 					if (b.isKeyJustPressed(key_action1) ||
-					        b.isKeyJustPressed(key_action2) ||
-					        this.isKeyPressed(key_use))
+						b.isKeyJustPressed(key_action2) ||
+						this.isKeyPressed(key_use))
 					{
 						if (canSend(this))
 						{
@@ -581,34 +576,37 @@ void ManageGrapple(CBlob@ this, AssassinInfo@ knight)
 					}
 				}
 
-				if (b !is null){
-					float mod = b.getMass()/this.getMass();
-					if(mod > 1)mod = 1;
-					this.AddForce(force*mod);
-				}else 
+				if (b !is null)
+				{
+					float mod = b.getMass() / this.getMass();
+					if (mod > 1)
+						mod = 1;
+					this.AddForce(force * mod);
+				}
+				else
 					this.AddForce(force);
-				
+
 				Vec2f target = (this.getPosition() + offset);
 				if (!map.rayCastSolid(this.getPosition(), target))
 				{
 					this.setPosition(target);
 				}
 
-				if (b !is null){
+				if (b !is null)
+				{
 					int mod = 2;
-					if(b.getName() == "warboat" || b.getName() == "longboat")mod = 16;
-					b.AddForce(-force*((b.getMass()/this.getMass())/mod));
+					if (b.getName() == "warboat" || b.getName() == "longboat")
+						mod = 16;
+					b.AddForce(-force * ((b.getMass() / this.getMass()) / mod));
 				}
-
 			}
 		}
-
 	}
 }
 
-bool checkGrappleStep(CBlob@ this, AssassinInfo@ knight, CMap@ map, const f32 dist)
+bool checkGrappleStep(CBlob @ this, AssassinInfo @knight, CMap @map, const f32 dist)
 {
-	if (map.getSectorAtPosition(knight.grapple_pos, "barrier") !is null)  //red barrier
+	if (map.getSectorAtPosition(knight.grapple_pos, "barrier") !is null) // red barrier
 	{
 		if (canSend(this))
 		{
@@ -622,18 +620,19 @@ bool checkGrappleStep(CBlob@ this, AssassinInfo@ knight, CMap@ map, const f32 di
 
 		knight.grapple_ratio = Maths::Max(0.2, Maths::Min(knight.grapple_ratio, dist / knight_grapple_length));
 
-		if (canSend(this)) SyncGrapple(this);
+		if (canSend(this))
+			SyncGrapple(this);
 
 		return true;
 	}
 	else
 	{
-		CBlob@ b = map.getBlobAtPosition(knight.grapple_pos);
+		CBlob @b = map.getBlobAtPosition(knight.grapple_pos);
 		if (b !is null)
 		{
 			if (b is this)
 			{
-				//can't grapple self if not reeled in
+				// can't grapple self if not reeled in
 				if (knight.grapple_ratio > 0.5f)
 					return false;
 
@@ -647,14 +646,14 @@ bool checkGrappleStep(CBlob@ this, AssassinInfo@ knight, CMap@ map, const f32 di
 			}
 			else if (b.isCollidable() && !b.isAttached() && b.getShape().isStatic())
 			{
-				//TODO: Maybe figure out a way to grapple moving blobs
+				// TODO: Maybe figure out a way to grapple moving blobs
 				//		without massive desync + forces :)
 
 				knight.grapple_ratio = Maths::Max(0.2, Maths::Min(knight.grapple_ratio, b.getDistanceTo(this) / knight_grapple_length));
 
 				knight.grapple_id = b.getNetworkID();
-				this.set_Vec2f("grapple_offset",knight.grapple_pos-b.getPosition());
-				
+				this.set_Vec2f("grapple_offset", knight.grapple_pos - b.getPosition());
+
 				if (canSend(this))
 				{
 					SyncGrapple(this);
@@ -668,21 +667,21 @@ bool checkGrappleStep(CBlob@ this, AssassinInfo@ knight, CMap@ map, const f32 di
 	return false;
 }
 
-bool grappleHitMap(AssassinInfo@ knight, CMap@ map, const f32 dist = 16.0f)
+bool grappleHitMap(AssassinInfo @knight, CMap @map, const f32 dist = 16.0f)
 {
-	return  map.isTileSolid(knight.grapple_pos + Vec2f(0, -3)) ||			//fake quad
-	        map.isTileSolid(knight.grapple_pos + Vec2f(3, 0)) ||
-	        map.isTileSolid(knight.grapple_pos + Vec2f(-3, 0)) ||
-	        map.isTileSolid(knight.grapple_pos + Vec2f(0, 3)) ||
-	        (dist > 10.0f && map.getSectorAtPosition(knight.grapple_pos, "tree") !is null);   //tree stick
+	return map.isTileSolid(knight.grapple_pos + Vec2f(0, -3)) || // fake quad
+		   map.isTileSolid(knight.grapple_pos + Vec2f(3, 0)) ||
+		   map.isTileSolid(knight.grapple_pos + Vec2f(-3, 0)) ||
+		   map.isTileSolid(knight.grapple_pos + Vec2f(0, 3)) ||
+		   (dist > 10.0f && map.getSectorAtPosition(knight.grapple_pos, "tree") !is null); // tree stick
 }
 
-bool shouldReleaseGrapple(CBlob@ this, AssassinInfo@ knight, CMap@ map)
+bool shouldReleaseGrapple(CBlob @ this, AssassinInfo @knight, CMap @map)
 {
 	return !grappleHitMap(knight, map) || this.isKeyPressed(key_use);
 }
 
-void onCommand(CBlob@ this, u8 cmd, CBitStream @params)
+void onCommand(CBlob @ this, u8 cmd, CBitStream @params)
 {
 	if (cmd == this.getCommandID("get bomb"))
 	{
@@ -731,7 +730,7 @@ void onCommand(CBlob@ this, u8 cmd, CBitStream @params)
 			SetFirstAvailableBomb(this);
 		}
 	}
-	else if (cmd == this.getCommandID("cycle"))  //from standardcontrols
+	else if (cmd == this.getCommandID("cycle")) // from standardcontrols
 	{
 		// cycle arrows
 		u8 type = this.get_u8("bomb type");
@@ -774,31 +773,30 @@ void onCommand(CBlob@ this, u8 cmd, CBitStream @params)
 	}
 }
 
-
-f32 onHit(CBlob@ this, Vec2f worldPoint, Vec2f velocity, f32 damage, CBlob@ hitterBlob, u8 customData)
+f32 onHit(CBlob @ this, Vec2f worldPoint, Vec2f velocity, f32 damage, CBlob @hitterBlob, u8 customData)
 {
 	// play cling sound if other knight attacked us
 	// dmg could be taken out here if we ever want to
 
 	if (hitterBlob.getPosition().x < this.getPosition().x && hitterBlob.getName() == "knight") // knight and the left one (to play only once)
 	{
-		CSprite@ sprite = this.getSprite();
-		CSprite@ hsprite = hitterBlob.getSprite();
+		CSprite @sprite = this.getSprite();
+		CSprite @hsprite = hitterBlob.getSprite();
 
 		if (hsprite.isAnimation("strike_power_ready") || hsprite.isAnimation("strike_mid") ||
-		        hsprite.isAnimation("strike_mid_down") || hsprite.isAnimation("strike_up") ||
-		        hsprite.isAnimation("strike_down") || hsprite.isAnimation("strike_up"))
+			hsprite.isAnimation("strike_mid_down") || hsprite.isAnimation("strike_up") ||
+			hsprite.isAnimation("strike_down") || hsprite.isAnimation("strike_up"))
 		{
 			if (sprite.isAnimation("strike_power_ready") || sprite.isAnimation("strike_mid") ||
-			        sprite.isAnimation("strike_mid_down") || sprite.isAnimation("strike_up") ||
-			        sprite.isAnimation("strike_down") || sprite.isAnimation("strike_up"))
+				sprite.isAnimation("strike_mid_down") || sprite.isAnimation("strike_up") ||
+				sprite.isAnimation("strike_down") || sprite.isAnimation("strike_up"))
 			{
 				this.getSprite().PlaySound("SwordCling");
 			}
 		}
 	}
 
-	return damage; //no block, damage goes through
+	return damage; // no block, damage goes through
 }
 
 /////////////////////////////////////////////////
@@ -808,7 +806,7 @@ bool isJab(f32 damage)
 	return damage < 1.5f;
 }
 
-void DoAttack(CBlob@ this, f32 damage, f32 aimangle, f32 arcdegrees, u8 type, int deltaInt, AssassinInfo@ info)
+void DoAttack(CBlob @ this, f32 damage, f32 aimangle, f32 arcdegrees, u8 type, int deltaInt, AssassinInfo @info)
 {
 	if (!getNet().isServer())
 	{
@@ -830,28 +828,29 @@ void DoAttack(CBlob@ this, f32 damage, f32 aimangle, f32 arcdegrees, u8 type, in
 	f32 attack_distance = Maths::Min(DEFAULT_ATTACK_DISTANCE + Maths::Max(0.0f, 1.75f * this.getShape().vellen * (vel * thinghy)), MAX_ATTACK_DISTANCE);
 
 	f32 radius = this.getRadius();
-	CMap@ map = this.getMap();
+	CMap @map = this.getMap();
 	bool dontHitMore = false;
 	bool dontHitMoreMap = false;
 	const bool jab = isJab(damage);
 
-	//get the actual aim angle
+	// get the actual aim angle
 	f32 exact_aimangle = (this.getAimPos() - blobPos).Angle();
 
 	// this gathers HitInfo objects which contain blob or tile hit information
-	HitInfo@[] hitInfos;
+	HitInfo @[] hitInfos;
 	if (map.getHitInfosFromArc(pos, aimangle, arcdegrees, radius + attack_distance, this, @hitInfos))
 	{
-		//HitInfo objects are sorted, first come closest hits
+		// HitInfo objects are sorted, first come closest hits
 		for (uint i = 0; i < hitInfos.length; i++)
 		{
-			HitInfo@ hi = hitInfos[i];
-			CBlob@ b = hi.blob;
+			HitInfo @hi = hitInfos[i];
+			CBlob @b = hi.blob;
 			if (b !is null && !dontHitMore) // blob
 			{
-				if (b.hasTag("ignore sword")) continue;
+				if (b.hasTag("ignore sword"))
+					continue;
 
-				//big things block attacks
+				// big things block attacks
 				const bool large = b.hasTag("blocks sword") && !b.isAttached() && b.isCollidable();
 
 				if (!canHit(this, b))
@@ -875,7 +874,7 @@ void DoAttack(CBlob@ this, f32 damage, f32 aimangle, f32 arcdegrees, u8 type, in
 				if (!dontHitMore)
 				{
 					Vec2f velocity = b.getPosition() - pos;
-					this.server_Hit(b, hi.hitpos, velocity, damage, type, true);  // server_Hit() is server-side only
+					this.server_Hit(b, hi.hitpos, velocity, damage, type, true); // server_Hit() is server-side only
 
 					// end hitting if we hit something solid, don't if its flesh
 					if (large)
@@ -884,7 +883,7 @@ void DoAttack(CBlob@ this, f32 damage, f32 aimangle, f32 arcdegrees, u8 type, in
 					}
 				}
 			}
-			else  // hitmap
+			else // hitmap
 				if (!dontHitMoreMap && (deltaInt == DELTA_BEGIN_ATTACK + 1))
 				{
 					bool ground = map.isTileGround(hi.tile);
@@ -903,30 +902,30 @@ void DoAttack(CBlob@ this, f32 damage, f32 aimangle, f32 arcdegrees, u8 type, in
 							dif += 360;
 
 						dif = Maths::Abs(dif);
-						//print("dif: "+dif);
+						// print("dif: "+dif);
 
 						if (dif < 20.0f)
 						{
-							//detect corner
+							// detect corner
 
 							int check_x = -(offset.x > 0 ? -1 : 1);
 							int check_y = -(offset.y > 0 ? -1 : 1);
 							if (map.isTileSolid(hi.hitpos - Vec2f(map.tilesize * check_x, 0)) &&
-							        map.isTileSolid(hi.hitpos - Vec2f(0, map.tilesize * check_y)))
+								map.isTileSolid(hi.hitpos - Vec2f(0, map.tilesize * check_y)))
 								continue;
 
-							bool canhit = true; //default true if not jab
-							if (jab) //fake damage
+							bool canhit = true; // default true if not jab
+							if (jab)			// fake damage
 							{
 								info.tileDestructionLimiter++;
 								canhit = ((info.tileDestructionLimiter % ((wood || dirt_stone) ? 3 : 2)) == 0);
 							}
-							else //reset fake dmg for next time
+							else // reset fake dmg for next time
 							{
 								info.tileDestructionLimiter = 0;
 							}
 
-							//dont dig through no build zones
+							// dont dig through no build zones
 							canhit = canhit && map.getSectorAtPosition(tpos, "no build") is null;
 
 							dontHitMoreMap = true;
@@ -942,8 +941,8 @@ void DoAttack(CBlob@ this, f32 damage, f32 aimangle, f32 arcdegrees, u8 type, in
 
 	// destroy grass
 
-	if (((aimangle >= 0.0f && aimangle <= 180.0f) || damage > 1.0f) &&    // aiming down or slash
-	        (deltaInt == DELTA_BEGIN_ATTACK + 1)) // hit only once
+	if (((aimangle >= 0.0f && aimangle <= 180.0f) || damage > 1.0f) && // aiming down or slash
+		(deltaInt == DELTA_BEGIN_ATTACK + 1))						   // hit only once
 	{
 		f32 tilesize = map.tilesize;
 		int steps = Maths::Ceil(2 * radius / tilesize);
@@ -968,14 +967,14 @@ void DoAttack(CBlob@ this, f32 damage, f32 aimangle, f32 arcdegrees, u8 type, in
 	}
 }
 
-//a little push forward
+// a little push forward
 
-void pushForward(CBlob@ this, f32 normalForce, f32 pushingForce, f32 verticalForce)
+void pushForward(CBlob @ this, f32 normalForce, f32 pushingForce, f32 verticalForce)
 {
-	f32 facing_sign = this.isFacingLeft() ? -1.0f : 1.0f ;
+	f32 facing_sign = this.isFacingLeft() ? -1.0f : 1.0f;
 	bool pushing_in_facing_direction =
-	    (facing_sign < 0.0f && this.isKeyPressed(key_left)) ||
-	    (facing_sign > 0.0f && this.isKeyPressed(key_right));
+		(facing_sign < 0.0f && this.isKeyPressed(key_left)) ||
+		(facing_sign > 0.0f && this.isKeyPressed(key_right));
 	f32 force = normalForce;
 
 	if (pushing_in_facing_direction)
@@ -983,16 +982,16 @@ void pushForward(CBlob@ this, f32 normalForce, f32 pushingForce, f32 verticalFor
 		force = pushingForce;
 	}
 
-	this.AddForce(Vec2f(force * facing_sign , verticalForce));
+	this.AddForce(Vec2f(force * facing_sign, verticalForce));
 }
 
-//bomb management
+// bomb management
 
-bool hasItem(CBlob@ this, const string &in name)
+bool hasItem(CBlob @ this, const string&in name)
 {
 	CBitStream reqs, missing;
 	AddRequirement(reqs, "blob", name, "Bombs", 1);
-	CInventory@ inv = this.getInventory();
+	CInventory @inv = this.getInventory();
 
 	if (inv !is null)
 	{
@@ -1006,9 +1005,9 @@ bool hasItem(CBlob@ this, const string &in name)
 	return false;
 }
 
-void TakeItem(CBlob@ this, const string &in name)
+void TakeItem(CBlob @ this, const string&in name)
 {
-	CBlob@ carried = this.getCarriedBlob();
+	CBlob @carried = this.getCarriedBlob();
 	if (carried !is null)
 	{
 		if (carried.getName() == name)
@@ -1020,7 +1019,7 @@ void TakeItem(CBlob@ this, const string &in name)
 
 	CBitStream reqs, missing;
 	AddRequirement(reqs, "blob", name, "Bombs", 1);
-	CInventory@ inv = this.getInventory();
+	CInventory @inv = this.getInventory();
 
 	if (inv !is null)
 	{
@@ -1039,9 +1038,9 @@ void TakeItem(CBlob@ this, const string &in name)
 	}
 }
 
-void onHitBlob(CBlob@ this, Vec2f worldPoint, Vec2f velocity, f32 damage, CBlob@ hitBlob, u8 customData)
+void onHitBlob(CBlob @ this, Vec2f worldPoint, Vec2f velocity, f32 damage, CBlob @hitBlob, u8 customData)
 {
-	AssassinInfo@ knight;
+	AssassinInfo @knight;
 	if (!this.get("knightInfo", @knight))
 	{
 		return;
@@ -1054,11 +1053,9 @@ void onHitBlob(CBlob@ this, Vec2f worldPoint, Vec2f velocity, f32 damage, CBlob@
 	}
 }
 
-
-
 // bomb pick menu
 
-void onCreateInventoryMenu(CBlob@ this, CBlob@ forBlob, CGridMenu @gridmenu)
+void onCreateInventoryMenu(CBlob @ this, CBlob @forBlob, CGridMenu @gridmenu)
 {
 	if (bombTypeNames.length == 0)
 	{
@@ -1067,8 +1064,8 @@ void onCreateInventoryMenu(CBlob@ this, CBlob@ forBlob, CGridMenu @gridmenu)
 
 	this.ClearGridMenusExceptInventory();
 	Vec2f pos(gridmenu.getUpperLeftPosition().x + 0.5f * (gridmenu.getLowerRightPosition().x - gridmenu.getUpperLeftPosition().x),
-	          gridmenu.getUpperLeftPosition().y - 32 * 1 - 2 * 24);
-	CGridMenu@ menu = CreateGridMenu(pos, this, Vec2f(bombTypeNames.length, 2), "Current bomb");
+			  gridmenu.getUpperLeftPosition().y - 32 * 1 - 2 * 24);
+	CGridMenu @menu = CreateGridMenu(pos, this, Vec2f(bombTypeNames.length, 2), "Current bomb");
 	u8 weaponSel = this.get_u8("bomb type");
 
 	if (menu !is null)
@@ -1094,8 +1091,7 @@ void onCreateInventoryMenu(CBlob@ this, CBlob@ forBlob, CGridMenu @gridmenu)
 	}
 }
 
-
-void onAttach(CBlob@ this, CBlob@ attached, AttachmentPoint @attachedPoint)
+void onAttach(CBlob @ this, CBlob @attached, AttachmentPoint @attachedPoint)
 {
 	for (uint i = 0; i < bombTypeNames.length; i++)
 	{
@@ -1107,7 +1103,7 @@ void onAttach(CBlob@ this, CBlob@ attached, AttachmentPoint @attachedPoint)
 	}
 }
 
-void onAddToInventory(CBlob@ this, CBlob@ blob)
+void onAddToInventory(CBlob @ this, CBlob @blob)
 {
 	const string itemname = blob.getName();
 	if (this.isMyPlayer() && this.getInventory().getItemsCount() > 1)
@@ -1135,13 +1131,13 @@ void onAddToInventory(CBlob@ this, CBlob@ blob)
 	}
 }
 
-void SetFirstAvailableBomb(CBlob@ this)
+void SetFirstAvailableBomb(CBlob @ this)
 {
 	u8 type = 255;
 	if (this.exists("bomb type"))
 		type = this.get_u8("bomb type");
 
-	CInventory@ inv = this.getInventory();
+	CInventory @inv = this.getInventory();
 
 	bool typeReal = (uint(type) < bombTypeNames.length);
 	if (typeReal && inv.getItem(bombTypeNames[type]) !is null)
@@ -1167,7 +1163,7 @@ void SetFirstAvailableBomb(CBlob@ this)
 }
 
 // Blame Fuzzle.
-bool canHit(CBlob@ this, CBlob@ b)
+bool canHit(CBlob @ this, CBlob @b)
 {
 
 	if (b.hasTag("invincible"))
@@ -1177,23 +1173,20 @@ bool canHit(CBlob@ this, CBlob@ b)
 	if (b.isAttached())
 	{
 
-		CBlob@ carrier = b.getCarriedBlob();
+		CBlob @carrier = b.getCarriedBlob();
 
 		if (carrier !is null)
-			if (carrier.hasTag("player")
-			        && (this.getTeamNum() == carrier.getTeamNum() || b.hasTag("temp blob")))
+			if (carrier.hasTag("player") && (this.getTeamNum() == carrier.getTeamNum() || b.hasTag("temp blob")))
 				return false;
-
 	}
 
 	if (b.hasTag("dead"))
 		return true;
 
 	return b.getTeamNum() != this.getTeamNum();
-
 }
 
-bool canSend(CBlob@ this)
+bool canSend(CBlob @ this)
 {
 	return (this.isMyPlayer() || this.getPlayer() is null || this.getPlayer().isBot());
 }

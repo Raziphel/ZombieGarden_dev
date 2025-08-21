@@ -2,17 +2,17 @@
 
 const string chomp_tag = "chomping";
 
-void onTick(CSprite@ this)
+void onTick(CSprite @ this)
 {
-	CBlob@ blob = this.getBlob();
-	
+	CBlob @blob = this.getBlob();
+
 	if (blob.hasTag("dead"))
 	{
-	    if(!this.isAnimation("dead"))
-	    {
+		if (!this.isAnimation("dead"))
+		{
 			this.SetAnimation("dead");
-            this.PlaySound("/BossDie");
-	    }
+			this.PlaySound("/BossDie");
+		}
 		return;
 	}
 
@@ -21,26 +21,26 @@ void onTick(CSprite@ this)
 	const bool up = blob.isKeyPressed(key_up);
 	const bool down = blob.isKeyPressed(key_down);
 	const bool inair = (!blob.isOnGround() && !blob.isOnLadder());
-	
-	if(inair)
+
+	if (inair)
 	{
 		if (!this.isAnimation("jump"))
-			 this.SetAnimation("jump");
+			this.SetAnimation("jump");
 	}
-	else if(blob.hasTag(chomp_tag))
+	else if (blob.hasTag(chomp_tag))
 	{
 		if (!this.isAnimation("attack"))
-			 this.SetAnimation("attack");
+			this.SetAnimation("attack");
 	}
 	else if ((left || right) ||
-             (blob.isOnLadder() && (up || down)))
+			 (blob.isOnLadder() && (up || down)))
 	{
 		if (!this.isAnimation("walk"))
-			 this.SetAnimation("walk");
+			this.SetAnimation("walk");
 	}
 	else
 	{
 		if (!this.isAnimation("default"))
-			 this.SetAnimation("default");
+			this.SetAnimation("default");
 	}
 }

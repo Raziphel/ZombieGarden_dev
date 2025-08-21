@@ -1,79 +1,80 @@
 
-namespace FUNHitters {
-shared enum hits {
-    nothing = 0,
-	
-    crush,
-    fall,
-    water, //splash
-    drown,
-    fire,   //initial burst (should ignite things)
-    burn,   //burn damage
-    flying,
+namespace FUNHitters
+{
+	shared enum hits
+	{
+		nothing = 0,
 
-    //common actor
-    stomp,
-    suicide,
-    
-    //natural
-    bite,
+		crush,
+		fall,
+		water, // splash
+		drown,
+		fire,  // initial burst (should ignite things)
+		burn,  // burn damage
+		flying,
 
-    //builders
-    builder,
+		// common actor
+		stomp,
+		suicide,
 
-	//knight
-	sword,
-	shield,
-	bomb,
+		// natural
+		bite,
 
-	//archer
-	stab,
+		// builders
+		builder,
 
-    //arrows and similar projectiles
-    arrow,
-    ballista,
+		// knight
+		sword,
+		shield,
+		bomb,
 
-    //cata
-    cata_stones,
+		// archer
+		stab,
 
-    //siege
-    ram,
-    explosion,
-    keg, //special case
+		// arrows and similar projectiles
+		arrow,
+		ballista,
 
-    //traps
-    spikes,
+		// cata
+		cata_stones,
 
-    //machinery
-    saw,
+		// siege
+		ram,
+		explosion,
+		keg, // special case
 
-    //barbarian
-    muscles,
+		// traps
+		spikes,
 
-	// scrolls
-	suddengib,
-	
-	cannon,
-	boulder,
-	mega_bomb,
-	explosive_trap,
-	wooden_spikes,
-	
-	drill,
-	chainsaw,
-	mega_drill,
-	
-	orb,
-	fire_orb,
-	bomb_orb,
-	water_orb,
-	
-	bison,
-	shark,
-	skeleton,
-	zombie,
-	
-	chaparral
-	
-};
+		// machinery
+		saw,
+
+		// barbarian
+		muscles,
+
+		// scrolls
+		suddengib,
+
+		cannon,
+		boulder,
+		mega_bomb,
+		explosive_trap,
+		wooden_spikes,
+
+		drill,
+		chainsaw,
+		mega_drill,
+
+		orb,
+		fire_orb,
+		bomb_orb,
+		water_orb,
+
+		bison,
+		shark,
+		skeleton,
+		zombie,
+
+		chaparral
+	};
 }

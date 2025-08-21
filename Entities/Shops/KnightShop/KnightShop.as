@@ -1,23 +1,24 @@
 ﻿// Knight Workshop
 
+#include "CheckSpam.as"
+#include "Costs.as"
+#include "Descriptions.as"
+#include "GenericButtonCommon.as"
 #include "Requirements.as"
 #include "ShopCommon.as"
-#include "Descriptions.as"
-#include "Costs.as"
-#include "CheckSpam.as"
-#include "GenericButtonCommon.as"
 #include "TeamIconToken.as"
 
-void onInit(CBlob@ this)
+
+void onInit(CBlob @ this)
 {
 	this.set_TileType("background tile", CMap::tile_wood_back);
 
-	this.getSprite().SetZ(-50); //background
+	this.getSprite().SetZ(-50); // background
 	this.getShape().getConsts().mapCollisions = false;
 
 	this.Tag("has window");
 
-	//INIT COSTS
+	// INIT COSTS
 	InitCosts();
 
 	// SHOP
@@ -33,27 +34,27 @@ void onInit(CBlob@ this)
 	int team_num = this.getTeamNum();
 
 	{
-		ShopItem@ s = addShopItem(this, "Bomb", "$bomb$", "mat_bombs", descriptions[1], true);
+		ShopItem @s = addShopItem(this, "Bomb", "$bomb$", "mat_bombs", descriptions[1], true);
 		AddRequirement(s.requirements, "coin", "", "Coins", 25);
 	}
 	{
-		ShopItem@ s = addShopItem(this, "Water Bomb", "$waterbomb$", "mat_waterbombs", descriptions[52], true);
+		ShopItem @s = addShopItem(this, "Water Bomb", "$waterbomb$", "mat_waterbombs", descriptions[52], true);
 		AddRequirement(s.requirements, "coin", "", "Coins", 50);
 	}
 	{
-		ShopItem@ s = addShopItem(this, "Mine", "$mine$", "mine", descriptions[20], false);
+		ShopItem @s = addShopItem(this, "Mine", "$mine$", "mine", descriptions[20], false);
 		AddRequirement(s.requirements, "coin", "", "Coins", 75);
 	}
 	{
-		ShopItem@ s = addShopItem(this, "Keg", "$keg$", "keg", descriptions[4], false);
+		ShopItem @s = addShopItem(this, "Keg", "$keg$", "keg", descriptions[4], false);
 		AddRequirement(s.requirements, "coin", "", "Coins", 200);
 	}
 }
 
-
-void GetButtonsFor(CBlob@ this, CBlob@ caller)
+void GetButtonsFor(CBlob @ this, CBlob @caller)
 {
-	if (!canSeeButtons(this, caller)) return;
+	if (!canSeeButtons(this, caller))
+		return;
 
 	if (caller.getConfig() == this.get_string("required class"))
 	{
@@ -66,7 +67,7 @@ void GetButtonsFor(CBlob@ this, CBlob@ caller)
 	this.set_bool("shop available", this.isOverlapping(caller));
 }
 
-void onCommand(CBlob@ this, u8 cmd, CBitStream @params)
+void onCommand(CBlob @ this, u8 cmd, CBitStream @params)
 {
 	if (cmd == this.getCommandID("shop made item client") && isClient())
 	{

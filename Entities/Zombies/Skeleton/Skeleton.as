@@ -9,30 +9,30 @@ const f32 DIG_DAMAGE = 2.0f;
 
 const int COINS_ON_DEATH = 5;
 
-void onInit(CBlob@ this)
-{	
+void onInit(CBlob @ this)
+{
 	this.set_u8("attack frequency", ATTACK_FREQUENCY);
 	this.set_f32("attack damage", ATTACK_DAMAGE);
 	this.set_f32("dig radius", DIG_RADIUS);
-	this.set_f32("dig damage", DIG_DAMAGE);	
+	this.set_f32("dig damage", DIG_DAMAGE);
 	this.set_string("attack sound", "SkeletonAttack");
 	this.set_u16("coins on death", COINS_ON_DEATH);
 	this.set_f32(target_searchrad_property, 140.0f);
 
-    this.getSprite().PlayRandomSound("/SkeletonSpawn");
+	this.getSprite().PlayRandomSound("/SkeletonSpawn");
 	this.getShape().SetRotationsAllowed(false);
 
 	this.getBrain().server_SetActive(true);
 
 	this.set_f32("gib health", 0.0f);
-    this.Tag("flesh");
-	
+	this.Tag("flesh");
+
 	this.getCurrentScript().runFlags |= Script::tick_not_attached;
 	this.getCurrentScript().removeIfTag = "dead";
 	this.Tag("search_through_walls");
 }
 
-void onTick(CBlob@ this)
+void onTick(CBlob @ this)
 {
 	if (getNet().isClient() && XORRandom(768) == 0)
 	{
@@ -41,7 +41,7 @@ void onTick(CBlob@ this)
 
 	if (getNet().isServer() && getGameTime() % 10 == 0)
 	{
-		CBlob@ target = this.getBrain().getTarget();
+		CBlob @target = this.getBrain().getTarget();
 
 		if (target !is null && this.getDistanceTo(target) < 72.0f)
 		{
@@ -56,17 +56,17 @@ void onTick(CBlob@ this)
 	}
 }
 
-f32 onHit( CBlob@ this, Vec2f worldPoint, Vec2f velocity, f32 damage, CBlob@ hitterBlob, u8 customData )
+f32 onHit(CBlob @ this, Vec2f worldPoint, Vec2f velocity, f32 damage, CBlob @hitterBlob, u8 customData)
 {
 	if (damage >= 0.0f)
 	{
-	    this.getSprite().PlaySound("/SkeletonHit");
-    }
+		this.getSprite().PlaySound("/SkeletonHit");
+	}
 
 	return damage;
 }
 
-void onDie( CBlob@ this )
+void onDie(CBlob @ this)
 {
-    this.getSprite().PlaySound("/SkeletonBreak1");	
+	this.getSprite().PlaySound("/SkeletonBreak1");
 }

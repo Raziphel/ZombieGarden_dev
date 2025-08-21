@@ -4,72 +4,72 @@ const s32 NUM_HEADFRAMES = 4;
 const s32 NUM_UNIQUEHEADS = 30;
 const int FRAMES_WIDTH = 8 * NUM_HEADFRAMES;
 
-int getHeadFrame(CBlob@ blob, int headIndex)
+int getHeadFrame(CBlob @blob, int headIndex)
 {
-	if(headIndex < NUM_UNIQUEHEADS)
+	if (headIndex < NUM_UNIQUEHEADS)
 	{
 		return headIndex * NUM_HEADFRAMES;
 	}
 
-	if(headIndex == 255 || headIndex == NUM_UNIQUEHEADS)
+	if (headIndex == 255 || headIndex == NUM_UNIQUEHEADS)
 	{
-		CRules@ rules = getRules();
+		CRules @rules = getRules();
 		bool holidayhead = false;
-		if(rules !is null && rules.exists("holiday"))
+		if (rules !is null && rules.exists("holiday"))
 		{
 			const string HOLIDAY = rules.get_string("holiday");
-			if(HOLIDAY == "Halloween")
+			if (HOLIDAY == "Halloween")
 			{
 				headIndex = NUM_UNIQUEHEADS + 43;
 				holidayhead = true;
 			}
-			else if(HOLIDAY == "Christmas")
+			else if (HOLIDAY == "Christmas")
 			{
 				headIndex = NUM_UNIQUEHEADS + 61;
 				holidayhead = true;
 			}
 		}
 
-		//if nothing special set
-		if(!holidayhead)
+		// if nothing special set
+		if (!holidayhead)
 		{
 			string config = blob.getConfig();
-			if(config == "undeadbuilder")
+			if (config == "undeadbuilder")
 			{
 				headIndex = NUM_UNIQUEHEADS;
 			}
-			else if(config == "undeadknight")
+			else if (config == "undeadknight")
 			{
 				headIndex = NUM_UNIQUEHEADS + 1;
 			}
-			else if(config == "undeadarcher")
+			else if (config == "undeadarcher")
 			{
 				headIndex = NUM_UNIQUEHEADS + 44;
 			}
-			else if(config == "undeadnecromancer")
+			else if (config == "undeadnecromancer")
 			{
 				headIndex = NUM_UNIQUEHEADS + 49;
-			}	
-			else if(config == "undeadslayer")
+			}
+			else if (config == "undeadslayer")
 			{
 				headIndex = NUM_UNIQUEHEADS + 18;
-			}	
-			else if(config == "undeadstalker")
+			}
+			else if (config == "undeadstalker")
 			{
 				headIndex = NUM_UNIQUEHEADS + 33;
 			}
-			else if(config == "undeadarsonist")
+			else if (config == "undeadarsonist")
 			{
 				headIndex = NUM_UNIQUEHEADS + 37;
 			}
-			else if(config == "undeadmystic")
+			else if (config == "undeadmystic")
 			{
 				headIndex = NUM_UNIQUEHEADS + 40;
-			}				
-			else if(config == "migrant")
+			}
+			else if (config == "migrant")
 			{
 				Random _r(blob.getNetworkID());
-				headIndex = 69 + _r.NextRanged(2); //head scarf or old
+				headIndex = 69 + _r.NextRanged(2); // head scarf or old
 			}
 			else
 			{
@@ -80,27 +80,25 @@ int getHeadFrame(CBlob@ blob, int headIndex)
 	}
 
 	return (((headIndex - NUM_UNIQUEHEADS / 2) * 2) +
-	        (blob.getSexNum() == 0 ? 0 : 1)) * NUM_HEADFRAMES;
+			(blob.getSexNum() == 0 ? 0 : 1)) *
+		   NUM_HEADFRAMES;
 }
 
-CSpriteLayer@ LoadHead(CSprite@ this, u8 headIndex)
+CSpriteLayer @LoadHead(CSprite @ this, u8 headIndex)
 {
 	this.RemoveSpriteLayer("head");
 	// add head
 	string texname = "..Entities/Classes/Sprites/UndeadHeads.png";
-	CSpriteLayer@ head = this.addSpriteLayer("head", texname, 16, 16,
-	                     this.getBlob().getTeamNum(),
-	                     this.getBlob().getSkinNum());
-	CBlob@ blob = this.getBlob();
+	CSpriteLayer @head = this.addSpriteLayer("head", texname, 16, 16, this.getBlob().getTeamNum(), this.getBlob().getSkinNum());
+	CBlob @blob = this.getBlob();
 
 	// set defaults
 	s32 headFrame = getHeadFrame(blob, headIndex);
 
-
 	blob.set_s32("head index", headFrame);
 	if (head !is null)
 	{
-		Animation@ anim = head.addAnimation("default", 0, false);
+		Animation @anim = head.addAnimation("default", 0, false);
 		anim.AddFrame(headFrame);
 		anim.AddFrame(headFrame + 1);
 		anim.AddFrame(headFrame + 2);
@@ -111,14 +109,14 @@ CSpriteLayer@ LoadHead(CSprite@ this, u8 headIndex)
 	return head;
 }
 
-void onGib(CSprite@ this)
+void onGib(CSprite @ this)
 {
 	if (g_kidssafe)
 	{
 		return;
 	}
 
-	CBlob@ blob = this.getBlob();
+	CBlob @blob = this.getBlob();
 	if (blob !is null && blob.getName() != "bed")
 	{
 		int frame = blob.get_s32("head index");
@@ -129,17 +127,23 @@ void onGib(CSprite@ this)
 		Vec2f vel = blob.getVelocity();
 		f32 hp = Maths::Min(Maths::Abs(blob.getHealth()), 2.0f) + 1.5;
 		makeGibParticle("../Entities/Classes/Sprites/UndeadHeads.png",
-		                pos, vel + getRandomVelocity(90, hp , 30),
-		                framex, framey, Vec2f(16, 16),
-		                2.0f, 20, "/BodyGibFall", blob.getTeamNum());
+						pos,
+						vel + getRandomVelocity(90, hp, 30),
+						framex,
+						framey,
+						Vec2f(16, 16),
+						2.0f,
+						20,
+						"/BodyGibFall",
+						blob.getTeamNum());
 	}
 }
 
-void onTick(CSprite@ this)
+void onTick(CSprite @ this)
 {
-	CBlob@ blob = this.getBlob();
+	CBlob @blob = this.getBlob();
 
-	ScriptData@ script = this.getCurrentScript();
+	ScriptData @script = this.getCurrentScript();
 	if (script is null)
 		return;
 
@@ -152,9 +156,8 @@ void onTick(CSprite@ this)
 		script.tickFrequency = 1;
 	}
 
-
 	// head animations
-	CSpriteLayer@ head = this.getSpriteLayer("head");
+	CSpriteLayer @head = this.getSpriteLayer("head");
 
 	// load head when player is set or it is AI
 	if (head is null && (blob.getPlayer() !is null || (blob.getBrain() !is null && blob.getBrain().isActive()) || blob.getTickSinceCreated() > 3))

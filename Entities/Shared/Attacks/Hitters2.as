@@ -1,62 +1,62 @@
 
-namespace Hitters2 {
-shared enum hits {
-    nothing = 0,
+namespace Hitters2
+{
+	shared enum hits
+	{
+		nothing = 0,
 
-    //env
-    crush,
-    fall,
-    water, //splash
-    drown,
-    fire,   //initial burst (should ignite things)
-    burn,   //burn damage
-    flying,
+		// env
+		crush,
+		fall,
+		water, // splash
+		drown,
+		fire,  // initial burst (should ignite things)
+		burn,  // burn damage
+		flying,
 
-    //common actor
-    stomp,
-    suicide,
-    
-    //natural
-    bite,
+		// common actor
+		stomp,
+		suicide,
 
-    //builders
-    builder,
+		// natural
+		bite,
 
-	//knight
-	sword,
-	shield,
-	bomb,
+		// builders
+		builder,
 
-	//archer
-	stab,
+		// knight
+		sword,
+		shield,
+		bomb,
 
-    //arrows and similar projectiles
-    arrow,
-    ballista,
+		// archer
+		stab,
 
-    //cata
-    cata_stones,
+		// arrows and similar projectiles
+		arrow,
+		ballista,
 
-    //siege
-    ram,
-    explosion,
-    keg, //special case
+		// cata
+		cata_stones,
 
-    //traps
-    spikes,
+		// siege
+		ram,
+		explosion,
+		keg, // special case
 
-    //machinery
-    saw,
+		// traps
+		spikes,
 
-    //barbarian
-    muscles,
+		// machinery
+		saw,
 
-	// scrolls
-	suddengib,
-	
-	
-	
-	orb,
-	wizexplosion
-};
+		// barbarian
+		muscles,
+
+		// scrolls
+		suddengib,
+
+		orb,
+		wizexplosion
+	};
 }

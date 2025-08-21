@@ -1,11 +1,11 @@
 #define SERVER_ONLY
 
-void onInit(CBlob@ this)
+void onInit(CBlob @ this)
 {
 	this.getCurrentScript().removeIfTag = "dead";
 }
 
-void onCollision(CBlob@ this, CBlob@ blob, bool solid)
+void onCollision(CBlob @ this, CBlob @blob, bool solid)
 {
 	if (blob is null || blob.getShape().vellen > 1.0f)
 	{
@@ -22,7 +22,7 @@ void onCollision(CBlob@ this, CBlob@ blob, bool solid)
 		{
 			this.server_PutInInventory(blob);
 		}
-		else if (arrows_count < 60) //merge into current arrow stacks
+		else if (arrows_count < 60) // merge into current arrow stacks
 		{
 			this.getSprite().PlaySound("/PutInInventory.ogg");
 
@@ -32,10 +32,10 @@ void onCollision(CBlob@ this, CBlob@ blob, bool solid)
 			else
 				blob.server_Die();
 
-			CInventory@ inv = this.getInventory();
+			CInventory @inv = this.getInventory();
 			for (int i = 0; i < inv.getItemsCount() && pickup_amount > 0; i++)
 			{
-				CBlob@ arrows = inv.getItem(i);
+				CBlob @arrows = inv.getItem(i);
 				if (arrows !is null && arrows.getName() == blobName)
 				{
 					u32 arrow_amount = arrows.getQuantity();

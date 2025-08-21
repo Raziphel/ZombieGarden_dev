@@ -2,15 +2,15 @@
 
 #include "RunnerCommon.as"
 
-void onInit(CMovement@ this)
+void onInit(CMovement @ this)
 {
 	RunnerMoveVars moveVars;
-	//walking vars
+	// walking vars
 	moveVars.walkSpeed = 3.5f;
 	moveVars.walkSpeedInAir = 3.4f;
 	moveVars.walkFactor = 1.0f;
 	moveVars.walkLadderSpeed.Set(0.25f, 0.8f);
-	//jumping vars
+	// jumping vars
 	moveVars.jumpMaxVel = 2.9f;
 	moveVars.jumpStart = 1.0f;
 	moveVars.jumpMid = 0.55f;
@@ -18,15 +18,15 @@ void onInit(CMovement@ this)
 	moveVars.jumpFactor = 1.0f;
 	moveVars.jumpCount = 0;
 	moveVars.canVault = true;
-	//swimming
+	// swimming
 	moveVars.swimspeed = 1.4;
 	moveVars.swimforce = 30;
 	moveVars.swimEdgeScale = 2.0f;
-	//the overall scale of movement
+	// the overall scale of movement
 	moveVars.overallScale = 1.0f;
-	//stopping forces
-	moveVars.stoppingForce = 0.80f; //function of mass
-	moveVars.stoppingForceAir = 0.30f; //function of mass
+	// stopping forces
+	moveVars.stoppingForce = 0.80f;	   // function of mass
+	moveVars.stoppingForceAir = 0.30f; // function of mass
 	moveVars.stoppingFactor = 1.0f;
 	//
 	moveVars.walljumped = false;

@@ -1,57 +1,56 @@
 ﻿// Dorm
 
-#include "WARCosts.as";
-#include "ShopCommon.as";
+#include "CheckSpam.as";
+#include "ClassSelectMenu.as";
 #include "Descriptions.as";
 #include "MigrantCommon.as";
-#include "ClassSelectMenu.as";
-#include "StandardRespawnCommand.as";
 #include "Requirements.as"
-#include "CheckSpam.as";
+#include "ShopCommon.as";
+#include "StandardRespawnCommand.as";
+#include "WARCosts.as";
 
-void onInit( CBlob@ this )
-{	 
+
+void onInit(CBlob @ this)
+{
 	InitRespawnCommand(this);
 	InitClasses(this);
 	this.Tag("change class drop inventory");
-	
+
 	this.SetLight(true);
-	this.SetLightRadius(64.0f );
-	
+	this.SetLightRadius(64.0f);
+
 	this.set_TileType("background tile", CMap::tile_wood_back);
 	this.Tag("bed");
-	
-	// from TheresAMigrantInTheRoom
-	this.set_u8("migrants max", 1 );		   		 // how many physical migrants it needs	
 
-	this.getSprite().SetZ(-50); //background
+	// from TheresAMigrantInTheRoom
+	this.set_u8("migrants max", 1); // how many physical migrants it needs
+
+	this.getSprite().SetZ(-50);		// background
 	this.getShape().getConsts().mapCollisions = false;
 
 	// SHOP
 	this.set_Vec2f("shop offset", Vec2f(0, 0));
-	this.set_Vec2f("shop menu size", Vec2f(4,1));
+	this.set_Vec2f("shop menu size", Vec2f(4, 1));
 	this.set_string("shop description", "Exchange materials and buy stuff");
 	this.set_u8("shop icon", 25);
 
-
 	{
-		ShopItem@ s = addShopItem(this, "Beer", "$beer$", "beer", "Gotta unwind from killing zombies!", true);
+		ShopItem @s = addShopItem(this, "Beer", "$beer$", "beer", "Gotta unwind from killing zombies!", true);
 		AddRequirement(s.requirements, "coin", "", "Coins", 100);
 	}
 	{
-		ShopItem@ s = addShopItem( this, "Burger", "$food$", "food", "A nice burger!.", true );
-		AddRequirement( s.requirements, "coin", "", "Coins", 50 );
+		ShopItem @s = addShopItem(this, "Burger", "$food$", "food", "A nice burger!.", true);
+		AddRequirement(s.requirements, "coin", "", "Coins", 50);
 	}
 	{
-		ShopItem@ s = addShopItem( this, "Egg", "$egg$", "egg", "Hope it hatches!.", true );
-		AddRequirement( s.requirements, "coin", "", "Coins", 25 );
+		ShopItem @s = addShopItem(this, "Egg", "$egg$", "egg", "Hope it hatches!.", true);
+		AddRequirement(s.requirements, "coin", "", "Coins", 25);
 	}
-
-}	  
+}
 /*
 void GetButtonsFor( CBlob@ this, CBlob@ caller )
 {
-	u8 kek = caller.getTeamNum();	
+	u8 kek = caller.getTeamNum();
 	if (kek == 0)
 	{
 		if (caller.getTeamNum() == this.getTeamNum())
@@ -63,29 +62,29 @@ void GetButtonsFor( CBlob@ this, CBlob@ caller )
 	}
 }
 */
-void onCommand( CBlob@ this, u8 cmd, CBitStream @params )
+void onCommand(CBlob @ this, u8 cmd, CBitStream @params)
 {
 	if (cmd == this.getCommandID("change class"))
 	{
 		onRespawnCommand(this, cmd, params);
-	}	
+	}
 }
 
-void onInit(CSprite@ this)
+void onInit(CSprite @ this)
 {
 	this.SetFrame(0);
 
-	CSpriteLayer@ fire = this.addSpriteLayer( "fire", 8,8 );
-	if(fire !is null)
+	CSpriteLayer @fire = this.addSpriteLayer("fire", 8, 8);
+	if (fire !is null)
 	{
-		fire.addAnimation("default",3,true);
-		int[] frames = {10,11,42,43};
+		fire.addAnimation("default", 3, true);
+		int[] frames = {10, 11, 42, 43};
 		fire.animation.AddFrames(frames);
 		fire.SetOffset(Vec2f(-9, 5));
 		fire.SetRelativeZ(0.1f);
 	}
-	
-	CSpriteLayer@ zzz = this.addSpriteLayer("zzz", "Quarters.png", 8, 8);
+
+	CSpriteLayer @zzz = this.addSpriteLayer("zzz", "Quarters.png", 8, 8);
 	if (zzz !is null)
 	{
 		zzz.addAnimation("default", 15, true);

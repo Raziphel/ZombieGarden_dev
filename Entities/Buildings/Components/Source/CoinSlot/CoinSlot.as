@@ -1,7 +1,8 @@
 // CoinSlot.as
 
-#include "MechanismsCommon.as";
 #include "LootCommon.as";
+#include "MechanismsCommon.as";
+
 
 enum state
 {
@@ -21,7 +22,7 @@ class CoinSlot : Component
 	}
 };
 
-void onInit(CBlob@ this)
+void onInit(CBlob @ this)
 {
 	// used by BuilderHittable.as
 	this.Tag("builder always hit");
@@ -35,7 +36,7 @@ void onInit(CBlob@ this)
 	// background, let water overlap
 	this.getShape().getConsts().waterPasses = true;
 
-	if(getNet().isServer())
+	if (getNet().isServer())
 	{
 		addCoin(this, COIN_COST / 3);
 	}
@@ -47,43 +48,47 @@ void onInit(CBlob@ this)
 	this.getCurrentScript().tickIfTag = "active";
 }
 
-void onSetStatic(CBlob@ this, const bool isStatic)
+void onSetStatic(CBlob @ this, const bool isStatic)
 {
-	if(!isStatic || this.exists("component")) return;
+	if (!isStatic || this.exists("component"))
+		return;
 
 	const Vec2f POSITION = this.getPosition() / 8;
 
 	CoinSlot component(POSITION);
 	this.set("component", component);
 
-	if(getNet().isServer())
+	if (getNet().isServer())
 	{
-		MapPowerGrid@ grid;
-		if(!getRules().get("power grid", @grid)) return;
+		MapPowerGrid @grid;
+		if (!getRules().get("power grid", @grid))
+			return;
 
 		grid.setAll(
-		component.x,                        // x
-		component.y,                        // y
-		TOPO_NONE,                          // input topology
-		TOPO_CARDINAL,                      // output topology
-		INFO_SOURCE,                        // information
-		0,                                  // power
-		0);                                 // id
+			component.x,   // x
+			component.y,   // y
+			TOPO_NONE,	   // input topology
+			TOPO_CARDINAL, // output topology
+			INFO_SOURCE,   // information
+			0,			   // power
+			0);			   // id
 	}
 
-	CSprite@ sprite = this.getSprite();
-	if(sprite is null) return;
+	CSprite @sprite = this.getSprite();
+	if (sprite is null)
+		return;
 
 	sprite.SetFacingLeft(false);
 	sprite.SetZ(-50);
 }
 
-void GetButtonsFor(CBlob@ this, CBlob@ caller)
+void GetButtonsFor(CBlob @ this, CBlob @caller)
 {
-	if(!this.isOverlapping(caller) || !this.getShape().isStatic()) return;
+	if (!this.isOverlapping(caller) || !this.getShape().isStatic())
+		return;
 
-	CPlayer@ player = caller.getPlayer();
-	if(player !is null && player.isMyPlayer() && player.getCoins() < COIN_COST)
+	CPlayer @player = caller.getPlayer();
+	if (player !is null && player.isMyPlayer() && player.getCoins() < COIN_COST)
 	{
 		Sound::Play("NoAmmo.ogg");
 		return;
@@ -92,55 +97,61 @@ void GetButtonsFor(CBlob@ this, CBlob@ caller)
 	CBitStream params;
 	params.write_u16(player.getNetworkID());
 
-	CButton@ button = caller.CreateGenericButton(
-	"$insert_coin$",                            // icon token
-	Vec2f_zero,                                 // button offset
-	this,                                       // button attachment
-	this.getCommandID("activate"),              // command id
-	"Insert 60 coins",                          // description
-	params);                                    // cbitstream parameters
+	CButton @button = caller.CreateGenericButton(
+		"$insert_coin$",			   // icon token
+		Vec2f_zero,					   // button offset
+		this,						   // button attachment
+		this.getCommandID("activate"), // command id
+		"Insert 60 coins",			   // description
+		params);					   // cbitstream parameters
 
 	button.radius = 8.0f;
 	button.enableRadius = 20.0f;
 }
 
-void onTick(CBlob@ this)
+void onTick(CBlob @ this)
 {
-	if(!getNet().isServer() || this.get_u32("duration") > getGameTime()) return;
+	if (!getNet().isServer() || this.get_u32("duration") > getGameTime())
+		return;
 
-	Component@ component = null;
-	if(!this.get("component", @component)) return;
+	Component @component = null;
+	if (!this.get("component", @component))
+		return;
 
-	MapPowerGrid@ grid;
-	if(!getRules().get("power grid", @grid)) return;
+	MapPowerGrid @grid;
+	if (!getRules().get("power grid", @grid))
+		return;
 
 	this.Untag("active");
 
 	this.set_u8("state", DISABLED);
 
 	grid.setInfo(
-	component.x,                        // x
-	component.y,                        // y
-	INFO_SOURCE);                       // information
+		component.x,  // x
+		component.y,  // y
+		INFO_SOURCE); // information
 }
 
-void onCommand(CBlob@ this, u8 cmd, CBitStream @params)
+void onCommand(CBlob @ this, u8 cmd, CBitStream @params)
 {
-	if(cmd == this.getCommandID("activate"))
+	if (cmd == this.getCommandID("activate"))
 	{
-		if(getNet().isServer())
+		if (getNet().isServer())
 		{
-			Component@ component = null;
-			if(!this.get("component", @component)) return;
+			Component @component = null;
+			if (!this.get("component", @component))
+				return;
 
-			MapPowerGrid@ grid;
-			if(!getRules().get("power grid", @grid)) return;
+			MapPowerGrid @grid;
+			if (!getRules().get("power grid", @grid))
+				return;
 
 			u16 id;
-			if(!params.saferead_u16(id)) return;
+			if (!params.saferead_u16(id))
+				return;
 
-			CPlayer@ player = getPlayerByNetworkId(id);
-			if(player !is null)
+			CPlayer @player = getPlayerByNetworkId(id);
+			if (player !is null)
 			{
 				player.server_setCoins(Maths::Max(player.getCoins() - COIN_COST, 0));
 			}
@@ -153,13 +164,14 @@ void onCommand(CBlob@ this, u8 cmd, CBitStream @params)
 			this.set_u8("state", POWERED);
 
 			grid.setInfo(
-			component.x,                        // x
-			component.y,                        // y
-			INFO_SOURCE | INFO_ACTIVE);         // information
+				component.x,				// x
+				component.y,				// y
+				INFO_SOURCE | INFO_ACTIVE); // information
 		}
 
-		CSprite@ sprite = this.getSprite();
-		if(sprite is null) return;
+		CSprite @sprite = this.getSprite();
+		if (sprite is null)
+			return;
 
 		sprite.SetAnimation("default");
 		sprite.SetAnimation("activate");
@@ -167,15 +179,15 @@ void onCommand(CBlob@ this, u8 cmd, CBitStream @params)
 	}
 }
 
-void onDie(CBlob@ this)
+void onDie(CBlob @ this)
 {
-	if(getNet().isServer() && this.exists("component"))
+	if (getNet().isServer() && this.exists("component"))
 	{
 		server_CreateLoot(this, this.getPosition(), this.getTeamNum());
 	}
 }
 
-bool canBePickedUp(CBlob@ this, CBlob@ byBlob)
+bool canBePickedUp(CBlob @ this, CBlob @byBlob)
 {
 	return false;
 }

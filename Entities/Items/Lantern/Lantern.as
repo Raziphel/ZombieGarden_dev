@@ -1,6 +1,6 @@
 // Lantern script
 
-void onInit(CBlob@ this)
+void onInit(CBlob @ this)
 {
 	this.SetLight(true);
 	this.SetLightRadius(64.0f);
@@ -22,16 +22,16 @@ void onInit(CBlob@ this)
 	this.getCurrentScript().tickFrequency = 24;
 }
 
-void onTick(CBlob@ this)
+void onTick(CBlob @ this)
 {
-	//print(" "+this.getHealth());
+	// print(" "+this.getHealth());
 	if (this.isLight() && this.isInWater())
 	{
 		Light(this, false);
 	}
 }
 
-void Light(CBlob@ this, bool on)
+void Light(CBlob @ this, bool on)
 {
 	if (!on)
 	{
@@ -46,16 +46,15 @@ void Light(CBlob@ this, bool on)
 	this.getSprite().PlaySound("SparkleShort.ogg");
 }
 
-void onCommand(CBlob@ this, u8 cmd, CBitStream @params)
+void onCommand(CBlob @ this, u8 cmd, CBitStream @params)
 {
 	if (cmd == this.getCommandID("activate"))
 	{
 		Light(this, !this.isLight());
 	}
-
 }
 
-bool doesCollideWithBlob(CBlob@ this, CBlob@ blob)
+bool doesCollideWithBlob(CBlob @ this, CBlob @blob)
 {
-    return blob.getShape().isStatic() || blob.hasTag("furniture");
+	return blob.getShape().isStatic() || blob.hasTag("furniture");
 }

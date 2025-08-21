@@ -13,60 +13,52 @@ namespace ItemFlag
 	const u32 Nec = 0x08;
 	const u32 Burd = 0x16;
 	const u32 Fighter = 0x24;
-	
 
 }
 
 shared class UIData
 {
-    UIData(){}
-  
-    int[] teams;
-    int[] flagTeams;
-    int[] flagIds;
-    string[] flagStates;
+	UIData()
+	{}
 
-    void addTeam(int team)
-    {
-        for(int i = 0; i < teams.size(); i++)
-        {
-            if(teams[i] == team)
-            {
-                return;
+	int[] teams;
+	int[] flagTeams;
+	int[] flagIds;
+	string[] flagStates;
 
-            }
+	void addTeam(int team)
+	{
+		for (int i = 0; i < teams.size(); i++)
+		{
+			if (teams[i] == team)
+			{
+				return;
+			}
+		}
 
-        }
+		teams.push_back(team);
+	}
 
-        teams.push_back(team);
-
-    }
-
-    CBitStream serialize()
-    {
+	CBitStream serialize()
+	{
 		CBitStream bt;
-		bt.write_u16(0x6afe); //check bits
+		bt.write_u16(0x6afe); // check bits
 
-        for(int i = 0; i < teams.size(); i++)
-        {
-            bt.write_u8(teams[i]);
-            string stuff = "";
-            for(int j = 0; j < flagTeams.size(); j++)
-            {
-                if(flagTeams[j] == teams[i])
-                {
-                    stuff += flagStates[j];
-
-                }
-
-            }
-            bt.write_string(stuff);
-
-        }
-        return bt;
-
-    }
-    
+		for (int i = 0; i < teams.size(); i++)
+		{
+			bt.write_u8(teams[i]);
+			string stuff = "";
+			for (int j = 0; j < flagTeams.size(); j++)
+			{
+				if (flagTeams[j] == teams[i])
+				{
+					stuff += flagStates[j];
+				}
+			}
+			bt.write_string(stuff);
+		}
+		return bt;
+	}
 };
 
 shared class CTFPlayerInfo : PlayerInfo
@@ -79,8 +71,14 @@ shared class CTFPlayerInfo : PlayerInfo
 
 	u32 items_collected;
 
-	CTFPlayerInfo() { Setup("", 0, ""); }
-	CTFPlayerInfo(string _name, u8 _team, string _default_config) { Setup(_name, _team, _default_config); }
+	CTFPlayerInfo()
+	{
+		Setup("", 0, "");
+	}
+	CTFPlayerInfo(string _name, u8 _team, string _default_config)
+	{
+		Setup(_name, _team, _default_config);
+	}
 
 	void Setup(string _name, u8 _team, string _default_config)
 	{
@@ -93,13 +91,16 @@ shared class CTFPlayerInfo : PlayerInfo
 	}
 };
 
-//teams
+// teams
 
 shared class CTFTeamInfo : BaseTeamInfo
 {
-	PlayerInfo@[] spawns;
+	PlayerInfo @[] spawns;
 
-	CTFTeamInfo() { super(); }
+	CTFTeamInfo()
+	{
+		super();
+	}
 
 	CTFTeamInfo(u8 _index, string _name)
 	{
@@ -109,32 +110,35 @@ shared class CTFTeamInfo : BaseTeamInfo
 	void Reset()
 	{
 		BaseTeamInfo::Reset();
-		//spawns.clear();
+		// spawns.clear();
 	}
 };
 
-//how each team is serialised
+// how each team is serialised
 
 shared class CTF_HUD
 {
-	//is this our team?
+	// is this our team?
 	u8 team_num;
-	//easy serial
+	// easy serial
 	string flag_pattern;
 
-	CTF_HUD() { }
-	CTF_HUD(CBitStream@ bt) { Unserialise(bt); }
+	CTF_HUD()
+	{}
+	CTF_HUD(CBitStream @bt)
+	{
+		Unserialise(bt);
+	}
 
-	void Serialise(CBitStream@ bt)
+	void Serialise(CBitStream @bt)
 	{
 		bt.write_u8(team_num);
 		bt.write_string(flag_pattern);
 	}
 
-	void Unserialise(CBitStream@ bt)
+	void Unserialise(CBitStream @bt)
 	{
 		team_num = bt.read_u8();
 		flag_pattern = bt.read_string();
 	}
-
 };

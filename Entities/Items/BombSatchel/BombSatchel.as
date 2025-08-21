@@ -1,19 +1,21 @@
 // BombSatchel.as
 
-#include "Hitters.as";
 #include "BombCommon.as";
 #include "Explosion.as";
+#include "Hitters.as";
 
-void onInit(CSprite@ this)
+
+void onInit(CSprite @ this)
 {
 	this.SetEmitSound("Sparkle.ogg");
 	this.SetEmitSoundPaused(true);
 }
 
-void onTick(CSprite@ this)
+void onTick(CSprite @ this)
 {
-	CBlob@ blob = this.getBlob();
-	if(blob.isOnGround() || blob.getShape().isStatic() || blob.isAttached()) return;
+	CBlob @blob = this.getBlob();
+	if (blob.isOnGround() || blob.getShape().isStatic() || blob.isAttached())
+		return;
 
 	Vec2f velocity = blob.getVelocity();
 	velocity.Normalize();
@@ -26,16 +28,15 @@ void onTick(CSprite@ this)
 
 const u16 fuse = 150;
 
-
 // todo: standardize spark colors and light color on lit fuse
 const SColor[] colors = {
-SColor(0xFFF3AC5C),         // ARGB(255, 243, 172,  92);
-SColor(0xFFF3AC5C),         // weighted
-SColor(0xFFDB5743),         // ARGB(255, 219,  87,  67);
-SColor(0xFFDB5743),         // weighted
-SColor(0xFF7E3041)};        // ARGB(255, 126,  48,  65);
+	SColor(0xFFF3AC5C),	 // ARGB(255, 243, 172,  92);
+	SColor(0xFFF3AC5C),	 // weighted
+	SColor(0xFFDB5743),	 // ARGB(255, 219,  87,  67);
+	SColor(0xFFDB5743),	 // weighted
+	SColor(0xFF7E3041)}; // ARGB(255, 126,  48,  65);
 
-void onInit(CBlob@ this)
+void onInit(CBlob @ this)
 {
 	// Activatable.as adds the following
 	// this.Tag("activatable");
@@ -64,48 +65,51 @@ void onInit(CBlob@ this)
 	this.SetLightColor(SColor(0xFFFFF0AB));
 	this.SetLight(false);
 
-	CShape@ shape = this.getShape();
+	CShape @shape = this.getShape();
 	shape.getVars().waterDragScale = 12.0f;
 	shape.getConsts().collideWhenAttached = false;
 
 	this.getCurrentScript().tickIfTag = "exploding";
 }
 
-void onTick(CBlob@ this)
+void onTick(CBlob @ this)
 {
 	const u32 timer = this.get_u32("timer");
 	const u32 time = getGameTime();
 	const s16 remaining = timer - time;
 
-	if(XORRandom(2) == 0)
+	if (XORRandom(2) == 0)
 	{
 		sparks(this.getPosition(), this.getAngleDegrees(), 3.5f + (XORRandom(10) / 5.0f), colors[XORRandom(colors.length)]);
 	}
 
-	if(remaining > 0) return;
+	if (remaining > 0)
+		return;
 
 	Explode(this, this.get_f32("explosive_radius"), this.get_f32("explosive_damage"));
 
-	if(getNet().isServer())
+	if (getNet().isServer())
 	{
 		this.server_Die();
 	}
 }
 
 // todo: collide and stick to dynamic bodies?
-void onCollision(CBlob@ this, CBlob@ blob, bool solid, Vec2f normal, Vec2f point1)
+void onCollision(CBlob @ this, CBlob @blob, bool solid, Vec2f normal, Vec2f point1)
 {
-	if(!solid || this.isAttached()) return;
+	if (!solid || this.isAttached())
+		return;
 
-	CShape@ shape = this.getShape();
-	if(this.hasTag("spiky") && !shape.isStatic())
+	CShape @shape = this.getShape();
+	if (this.hasTag("spiky") && !shape.isStatic())
 	{
 		this.setPosition(normal * this.getRadius() + point1);
 		shape.SetStatic(true);
 	}
 
-	CSprite@ sprite = this.getSprite();
-	if(sprite is null) return;
+	CSprite @sprite = this.getSprite();
+	if (sprite is null)
+		return;
 
 	const f32 angle = normal.Angle();
 	// const f32 volume = shape.vellen / 4;
@@ -117,14 +121,14 @@ void onCollision(CBlob@ this, CBlob@ blob, bool solid, Vec2f normal, Vec2f point
 	// sprite.PlaySound("WoodHit.ogg", Maths::Min(volume, 1.0f));
 }
 
-void onAttach(CBlob@ this, CBlob@ attached, AttachmentPoint @attachedPoint)
+void onAttach(CBlob @ this, CBlob @attached, AttachmentPoint @attachedPoint)
 {
 	// if shape is static, set to false
-	CShape@ shape = this.getShape();
-	if(shape.isStatic())
+	CShape @shape = this.getShape();
+	if (shape.isStatic())
 	{
 		// if this is stuck in a wall and burning, roast their grubby hands ლ(ಠ益ಠლ)
-		if(getNet().isServer() && this.hasTag("exploding"))
+		if (getNet().isServer() && this.hasTag("exploding"))
 		{
 			this.server_Hit(attached, attached.getPosition(), Vec2f_zero, 0.5f, Hitters::fire, true);
 		}
@@ -136,23 +140,25 @@ void onAttach(CBlob@ this, CBlob@ attached, AttachmentPoint @attachedPoint)
 	this.getSprite().ResetTransform();
 }
 
-void onDetach(CBlob@ this, CBlob@ detached, AttachmentPoint@ attachedPoint)
+void onDetach(CBlob @ this, CBlob @detached, AttachmentPoint @attachedPoint)
 {
 	// double check static, if static set to false
-	CShape@ shape = this.getShape();
-	if(!shape.isStatic()) return;
+	CShape @shape = this.getShape();
+	if (!shape.isStatic())
+		return;
 
 	shape.SetStatic(false);
 }
 
-void onThisAddToInventory( CBlob@ this, CBlob@ inventoryBlob )
+void onThisAddToInventory(CBlob @ this, CBlob @inventoryBlob)
 {
 	this.doTickScripts = true;
 }
 
-void onCommand(CBlob@ this, u8 cmd, CBitStream @params)
+void onCommand(CBlob @ this, u8 cmd, CBitStream @params)
 {
-	if(cmd != this.getCommandID("activate")) return;
+	if (cmd != this.getCommandID("activate"))
+		return;
 
 	// set countdown timer
 	this.set_u32("timer", getGameTime() + fuse);
@@ -166,8 +172,9 @@ void onCommand(CBlob@ this, u8 cmd, CBitStream @params)
 	// turn light on
 	this.SetLight(true);
 
-	CSprite@ sprite = this.getSprite();
-	if(sprite is null) return;
+	CSprite @sprite = this.getSprite();
+	if (sprite is null)
+		return;
 
 	// set animation and un-pause emit sound, play spikes out
 	sprite.SetAnimation("lit");
@@ -175,12 +182,12 @@ void onCommand(CBlob@ this, u8 cmd, CBitStream @params)
 	sprite.PlaySound("SpikesOut.ogg");
 }
 
-void onDie(CBlob@ this)
+void onDie(CBlob @ this)
 {
 	this.getSprite().Gib();
 }
 
-bool doesCollideWithBlob(CBlob@ this, CBlob@ blob)
+bool doesCollideWithBlob(CBlob @ this, CBlob @blob)
 {
 	return blob.getShape().isStatic() && blob.isCollidable();
 }

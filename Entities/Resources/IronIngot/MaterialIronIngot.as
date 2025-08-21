@@ -1,7 +1,7 @@
 
-void onInit(CBlob@ this)
+void onInit(CBlob @ this)
 {
-  this.maxQuantity = 100;
+	this.maxQuantity = 100;
 
-  this.getCurrentScript().runFlags |= Script::remove_after_this;
+	this.getCurrentScript().runFlags |= Script::remove_after_this;
 }

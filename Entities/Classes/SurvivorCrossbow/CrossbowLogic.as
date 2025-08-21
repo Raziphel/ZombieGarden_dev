@@ -1,13 +1,14 @@
 // Crossbow logic
 
+#include "BombCommon.as";
 #include "CrossbowCommon.as"
-#include "ThrowCommon.as"
-#include "KnockedCommon.as"
+#include "Help.as";
 #include "Hitters.as"
+#include "KnockedCommon.as"
 #include "RunnerCommon.as"
 #include "ShieldCommon.as";
-#include "Help.as";
-#include "BombCommon.as";
+#include "ThrowCommon.as"
+
 
 const int FLETCH_COOLDOWN = 45;
 const int PICKUP_COOLDOWN = 15;
@@ -15,7 +16,7 @@ const int fletch_num_arrows = 1;
 const int STAB_DELAY = 10;
 const int STAB_TIME = 22;
 
-void onInit(CBlob@ this)
+void onInit(CBlob @ this)
 {
 	CrossbowInfo crossbow;
 	this.set("crossbowInfo", @crossbow);
@@ -27,12 +28,12 @@ void onInit(CBlob@ this)
 	this.Tag("player");
 	this.Tag("flesh");
 
-	//centered on arrows
-	//this.set_Vec2f("inventory offset", Vec2f(0.0f, 122.0f));
-	//centered on items
+	// centered on arrows
+	// this.set_Vec2f("inventory offset", Vec2f(0.0f, 122.0f));
+	// centered on items
 	this.set_Vec2f("inventory offset", Vec2f(0.0f, 0.0f));
 
-	//no spinning
+	// no spinning
 	this.getShape().SetRotationsAllowed(false);
 	this.getSprite().SetEmitSound("BowPull.ogg");
 	this.addCommandID("shoot arrow");
@@ -41,9 +42,9 @@ void onInit(CBlob@ this)
 
 	SetHelp(this, "help self hide", "crossbow", "Hide    $KEY_S$", "", 1);
 	SetHelp(this, "help self action2", "crossbow", "$Shield$Shield    $KEY_HOLD$$RMB$", "", 3);
-	//SetHelp(this, "help self action3", "crossbow", "$Daggar$$Tree$Fletch/Stab with V", "", 4);
+	// SetHelp(this, "help self action3", "crossbow", "$Daggar$$Tree$Fletch/Stab with V", "", 4);
 
-	//add a command ID for each arrow type
+	// add a command ID for each arrow type
 	for (uint i = 0; i < arrowTypeNames.length; i++)
 	{
 		this.addCommandID("pick " + arrowTypeNames[i]);
@@ -51,11 +52,11 @@ void onInit(CBlob@ this)
 
 	this.getCurrentScript().runFlags |= Script::tick_not_attached;
 	this.getCurrentScript().removeIfTag = "dead";
-	
-	this.set_s16("stab_cooldown",0);	
+
+	this.set_s16("stab_cooldown", 0);
 }
 
-void onSetPlayer(CBlob@ this, CPlayer@ player)
+void onSetPlayer(CBlob @ this, CPlayer @player)
 {
 	if (player !is null)
 	{
@@ -63,9 +64,9 @@ void onSetPlayer(CBlob@ this, CPlayer@ player)
 	}
 }
 
-void ManageBow(CBlob@ this, CrossbowInfo@ crossbow, RunnerMoveVars@ moveVars)
+void ManageBow(CBlob @ this, CrossbowInfo @crossbow, RunnerMoveVars @moveVars)
 {
-	CSprite@ sprite = this.getSprite();
+	CSprite @sprite = this.getSprite();
 	bool ismyplayer = this.isMyPlayer();
 	bool hasarrow = crossbow.has_arrow;
 	s8 charge_time = crossbow.charge_time;
@@ -101,17 +102,20 @@ void ManageBow(CBlob@ this, CrossbowInfo@ crossbow, RunnerMoveVars@ moveVars)
 
 		crossbow.stab_delay = 0;
 	}
-	
-	
-	if(this.isKeyPressed(key_action1) && !stab && !pressed_action2){
-		if(charge_time == 0){
+
+	if (this.isKeyPressed(key_action1) && !stab && !pressed_action2)
+	{
+		if (charge_time == 0)
+		{
 			ClientFire(this, 100, hasarrow, crossbow.arrow_type, false);
 			charge_time = 30;
 		}
 	}
-	if(charge_time != 0)charge_time -= 1;
-	if(!hasarrow)charge_time = 30;
-	
+	if (charge_time != 0)
+		charge_time -= 1;
+	if (!hasarrow)
+		charge_time = 30;
+
 	// safe disable bomb light
 
 	/*if (this.wasKeyPressed(key_action1) && !this.isKeyPressed(key_action1))
@@ -145,7 +149,7 @@ void ManageBow(CBlob@ this, CrossbowInfo@ crossbow, RunnerMoveVars@ moveVars)
 
 		if (crossbow.fletch_cooldown == 0 && this.isKeyPressed(key_action2))
 		{
-			if (getPickupArrow(this) !is null)   // pickup arrow from ground
+			if (getPickupArrow(this) !is null) // pickup arrow from ground
 			{
 				this.SendCommand(this.getCommandID("pickup arrow"));
 				crossbow.fletch_cooldown = PICKUP_COOLDOWN;
@@ -156,14 +160,13 @@ void ManageBow(CBlob@ this, CrossbowInfo@ crossbow, RunnerMoveVars@ moveVars)
 	crossbow.charge_time = charge_time;
 	crossbow.charge_state = charge_state;
 	crossbow.has_arrow = hasarrow;
-
 }
 
-void onTick(CBlob@ this)
+void onTick(CBlob @ this)
 {
-	const bool action1 = this.isKeyPressed(key_action1);	
-	
-	CrossbowInfo@ crossbow;
+	const bool action1 = this.isKeyPressed(key_action1);
+
+	CrossbowInfo @crossbow;
 	if (!this.get("crossbowInfo", @crossbow))
 	{
 		return;
@@ -175,28 +178,37 @@ void onTick(CBlob@ this)
 		crossbow.charge_time = 10;
 		return;
 	}
-	
+
 	bool action2 = this.isKeyPressed(key_action2);
 	f32 angle = getAimAngle(this);
-	
-	if(action2 && !action1){
-		if(angle > 45 && angle < 135){
-			if(this.getVelocity().y > 0)this.getShape().SetGravityScale(0.4);
-		} else {
+
+	if (action2 && !action1)
+	{
+		if (angle > 45 && angle < 135)
+		{
+			if (this.getVelocity().y > 0)
+				this.getShape().SetGravityScale(0.4);
+		}
+		else
+		{
 			this.getShape().SetGravityScale(1.0);
 		}
-		
-		RunnerMoveVars@ moveVars;
+
+		RunnerMoveVars @moveVars;
 		if (this.get("moveVars", @moveVars))
 		{
-			if(angle > 270-45 && angle < 270+45)moveVars.jumpFactor *= 0.0f;
-			else moveVars.jumpFactor *= 0.5f;
+			if (angle > 270 - 45 && angle < 270 + 45)
+				moveVars.jumpFactor *= 0.0f;
+			else
+				moveVars.jumpFactor *= 0.5f;
 		}
 		this.Tag("shielding");
-	} else {
+	}
+	else
+	{
 		this.Untag("shielding");
 	}
-	
+
 	/*
 	if(this.get_s16("stab_cooldown") > 0)this.set_s16("stab_cooldown",this.get_s16("stab_cooldown")-1);
 	if(this.isKeyPressed(key_taunts) && !action2 && !action1)
@@ -212,11 +224,13 @@ void onTick(CBlob@ this)
 
 	// vvvvvvvvvvvvvv CLIENT-SIDE ONLY vvvvvvvvvvvvvvvvvvv
 
-	if (!getNet().isClient()) return;
+	if (!getNet().isClient())
+		return;
 
-	if (this.isInInventory()) return;
+	if (this.isInInventory())
+		return;
 
-	RunnerMoveVars@ moveVars;
+	RunnerMoveVars @moveVars;
 	if (!this.get("moveVars", @moveVars))
 	{
 		return;
@@ -225,7 +239,7 @@ void onTick(CBlob@ this)
 	ManageBow(this, crossbow, moveVars);
 }
 
-void DoAttack(CBlob@ this, f32 damage, f32 aimangle, f32 arcdegrees, u8 type, int deltaInt)
+void DoAttack(CBlob @ this, f32 damage, f32 aimangle, f32 arcdegrees, u8 type, int deltaInt)
 {
 	if (!getNet().isServer())
 	{
@@ -244,31 +258,32 @@ void DoAttack(CBlob@ this, f32 damage, f32 aimangle, f32 arcdegrees, u8 type, in
 	Vec2f pos = blobPos - thinghy * 6.0f + vel + Vec2f(0, -2);
 	vel.Normalize();
 
-	f32 attack_distance = Maths::Min(8 + Maths::Max(0.0f, 1.75f * this.getShape().vellen * (vel * thinghy)), 8)*1.5f;
+	f32 attack_distance = Maths::Min(8 + Maths::Max(0.0f, 1.75f * this.getShape().vellen * (vel * thinghy)), 8) * 1.5f;
 
 	f32 radius = this.getRadius();
-	CMap@ map = this.getMap();
+	CMap @map = this.getMap();
 	bool dontHitMore = false;
 	bool dontHitMoreMap = false;
 	const bool jab = true;
 
-	//get the actual aim angle
+	// get the actual aim angle
 	f32 exact_aimangle = (this.getAimPos() - blobPos).Angle();
 
 	// this gathers HitInfo objects which contain blob or tile hit information
-	HitInfo@[] hitInfos;
+	HitInfo @[] hitInfos;
 	if (map.getHitInfosFromArc(pos, aimangle, arcdegrees, radius + attack_distance, this, @hitInfos))
 	{
-		//HitInfo objects are sorted, first come closest hits
+		// HitInfo objects are sorted, first come closest hits
 		for (uint i = 0; i < hitInfos.length; i++)
 		{
-			HitInfo@ hi = hitInfos[i];
-			CBlob@ b = hi.blob;
+			HitInfo @hi = hitInfos[i];
+			CBlob @b = hi.blob;
 			if (b !is null && !dontHitMore) // blob
 			{
-				if (b.hasTag("ignore sword")) continue;
+				if (b.hasTag("ignore sword"))
+					continue;
 
-				//big things block attacks
+				// big things block attacks
 				const bool large = b.hasTag("blocks sword") && !b.isAttached() && b.isCollidable();
 
 				if (!canHit(this, b))
@@ -283,7 +298,7 @@ void DoAttack(CBlob@ this, f32 damage, f32 aimangle, f32 arcdegrees, u8 type, in
 				if (!dontHitMore)
 				{
 					Vec2f velocity = b.getPosition() - pos;
-					this.server_Hit(b, hi.hitpos, velocity, damage, type, true);  // server_Hit() is server-side only
+					this.server_Hit(b, hi.hitpos, velocity, damage, type, true); // server_Hit() is server-side only
 
 					// end hitting if we hit something solid, don't if its flesh
 					if (large)
@@ -292,7 +307,7 @@ void DoAttack(CBlob@ this, f32 damage, f32 aimangle, f32 arcdegrees, u8 type, in
 					}
 				}
 			}
-			else  // hitmap
+			else // hitmap
 				if (!dontHitMoreMap && (deltaInt == 2 + 1))
 				{
 					bool ground = map.isTileGround(hi.tile);
@@ -311,21 +326,21 @@ void DoAttack(CBlob@ this, f32 damage, f32 aimangle, f32 arcdegrees, u8 type, in
 							dif += 360;
 
 						dif = Maths::Abs(dif);
-						//print("dif: "+dif);
+						// print("dif: "+dif);
 
 						if (dif < 20.0f)
 						{
-							//detect corner
+							// detect corner
 
 							int check_x = -(offset.x > 0 ? -1 : 1);
 							int check_y = -(offset.y > 0 ? -1 : 1);
 							if (map.isTileSolid(hi.hitpos - Vec2f(map.tilesize * check_x, 0)) &&
-							        map.isTileSolid(hi.hitpos - Vec2f(0, map.tilesize * check_y)))
+								map.isTileSolid(hi.hitpos - Vec2f(0, map.tilesize * check_y)))
 								continue;
 
-							bool canhit = true; //default true if not jab
+							bool canhit = true; // default true if not jab
 
-							//dont dig through no build zones
+							// dont dig through no build zones
 							canhit = canhit && map.getSectorAtPosition(tpos, "no build") is null;
 
 							dontHitMoreMap = true;
@@ -341,8 +356,8 @@ void DoAttack(CBlob@ this, f32 damage, f32 aimangle, f32 arcdegrees, u8 type, in
 
 	// destroy grass
 
-	if (((aimangle >= 0.0f && aimangle <= 180.0f) || damage > 1.0f) &&    // aiming down or slash
-	        (deltaInt == 2 + 1)) // hit only once
+	if (((aimangle >= 0.0f && aimangle <= 180.0f) || damage > 1.0f) && // aiming down or slash
+		(deltaInt == 2 + 1))										   // hit only once
 	{
 		f32 tilesize = map.tilesize;
 		int steps = Maths::Ceil(2 * radius / tilesize);
@@ -367,7 +382,7 @@ void DoAttack(CBlob@ this, f32 damage, f32 aimangle, f32 arcdegrees, u8 type, in
 	}
 }
 
-bool canHit(CBlob@ this, CBlob@ b)
+bool canHit(CBlob @ this, CBlob @b)
 {
 
 	if (b.hasTag("invincible"))
@@ -377,31 +392,28 @@ bool canHit(CBlob@ this, CBlob@ b)
 	if (b.isAttached())
 	{
 
-		CBlob@ carrier = b.getCarriedBlob();
+		CBlob @carrier = b.getCarriedBlob();
 
 		if (carrier !is null)
-			if (carrier.hasTag("player")
-			        && (this.getTeamNum() == carrier.getTeamNum() || b.hasTag("temp blob")))
+			if (carrier.hasTag("player") && (this.getTeamNum() == carrier.getTeamNum() || b.hasTag("temp blob")))
 				return false;
-
 	}
 
 	if (b.hasTag("dead"))
 		return true;
 
 	return b.getTeamNum() != this.getTeamNum();
-
 }
 
-bool canSend(CBlob@ this)
+bool canSend(CBlob @ this)
 {
 	return (this.isMyPlayer() || this.getPlayer() is null || this.getPlayer().isBot());
 }
 
-void ClientFire(CBlob@ this, const s8 charge_time, const bool hasarrow, const u8 arrow_type, const bool legolas)
+void ClientFire(CBlob @ this, const s8 charge_time, const bool hasarrow, const u8 arrow_type, const bool legolas)
 {
-	//time to fire!
-	if (hasarrow && canSend(this))  // client-logic
+	// time to fire!
+	if (hasarrow && canSend(this)) // client-logic
 	{
 		f32 arrowspeed;
 
@@ -422,7 +434,7 @@ void ClientFire(CBlob@ this, const s8 charge_time, const bool hasarrow, const u8
 	}
 }
 
-void ShootArrow(CBlob @this, Vec2f arrowPos, Vec2f aimpos, f32 arrowspeed, const u8 arrow_type, const bool legolas = true)
+void ShootArrow(CBlob @ this, Vec2f arrowPos, Vec2f aimpos, f32 arrowspeed, const u8 arrow_type, const bool legolas = true)
 {
 	if (canSend(this))
 	{
@@ -430,7 +442,7 @@ void ShootArrow(CBlob @this, Vec2f arrowPos, Vec2f aimpos, f32 arrowspeed, const
 		Vec2f arrowVel = (aimpos - arrowPos);
 		arrowVel.Normalize();
 		arrowVel *= arrowspeed;
-		//print("arrowspeed " + arrowspeed);
+		// print("arrowspeed " + arrowspeed);
 		CBitStream params;
 		params.write_Vec2f(arrowPos);
 		params.write_Vec2f(arrowVel);
@@ -441,9 +453,9 @@ void ShootArrow(CBlob @this, Vec2f arrowPos, Vec2f aimpos, f32 arrowspeed, const
 	}
 }
 
-CBlob@ getPickupArrow(CBlob@ this)
+CBlob @getPickupArrow(CBlob @ this)
 {
-	CBlob@[] blobsInRadius;
+	CBlob @[] blobsInRadius;
 	if (this.getMap().getBlobsInRadius(this.getPosition(), this.getRadius() * 1.5f, @blobsInRadius))
 	{
 		for (uint i = 0; i < blobsInRadius.length; i++)
@@ -458,16 +470,16 @@ CBlob@ getPickupArrow(CBlob@ this)
 	return null;
 }
 
-bool canPickSpriteArrow(CBlob@ this, bool takeout)
+bool canPickSpriteArrow(CBlob @ this, bool takeout)
 {
-	CBlob@[] blobsInRadius;
+	CBlob @[] blobsInRadius;
 	if (this.getMap().getBlobsInRadius(this.getPosition(), this.getRadius() * 1.5f, @blobsInRadius))
 	{
 		for (uint i = 0; i < blobsInRadius.length; i++)
 		{
 			CBlob @b = blobsInRadius[i];
 			{
-				CSprite@ sprite = b.getSprite();
+				CSprite @sprite = b.getSprite();
 				if (sprite.getSpriteLayer("arrow") !is null)
 				{
 					if (takeout)
@@ -480,9 +492,9 @@ bool canPickSpriteArrow(CBlob@ this, bool takeout)
 	return false;
 }
 
-CBlob@ CreateArrow(CBlob@ this, Vec2f arrowPos, Vec2f arrowVel, u8 arrowType)
+CBlob @CreateArrow(CBlob @ this, Vec2f arrowPos, Vec2f arrowVel, u8 arrowType)
 {
-	CBlob@ arrow = server_CreateBlobNoInit("crossbolt");
+	CBlob @arrow = server_CreateBlobNoInit("crossbolt");
 	if (arrow !is null)
 	{
 		// fire arrow?
@@ -499,7 +511,7 @@ CBlob@ CreateArrow(CBlob@ this, Vec2f arrowPos, Vec2f arrowVel, u8 arrowType)
 	return arrow;
 }
 
-void onCommand(CBlob@ this, u8 cmd, CBitStream @params)
+void onCommand(CBlob @ this, u8 cmd, CBitStream @params)
 {
 	if (cmd == this.getCommandID("shoot arrow"))
 	{
@@ -508,7 +520,7 @@ void onCommand(CBlob@ this, u8 cmd, CBitStream @params)
 		u8 arrowType = params.read_u8();
 		bool legolas = params.read_bool();
 
-		CrossbowInfo@ crossbow;
+		CrossbowInfo @crossbow;
 		if (!this.get("crossbowInfo", @crossbow))
 		{
 			return;
@@ -529,16 +541,16 @@ void onCommand(CBlob@ this, u8 cmd, CBitStream @params)
 			{
 				if (getNet().isServer())
 				{
-					CBlob@ arrow = CreateArrow(this, arrowPos, arrowVel, arrowType);
+					CBlob @arrow = CreateArrow(this, arrowPos, arrowVel, arrowType);
 					if (i > 0 && arrow !is null)
 					{
 						arrow.Tag("shotgunned");
 					}
 				}
-				this.TakeBlob(arrowTypeNames[ arrowType ], 1);
+				this.TakeBlob(arrowTypeNames[arrowType], 1);
 				arrowType = ArrowType::normal;
 
-				//don't keep firing if we're out of arrows
+				// don't keep firing if we're out of arrows
 				if (!hasArrows(this, arrowType))
 					break;
 
@@ -560,20 +572,20 @@ void onCommand(CBlob@ this, u8 cmd, CBitStream @params)
 			}
 
 			this.getSprite().PlaySound("FireCrossbow.ogg");
-			this.TakeBlob(arrowTypeNames[ arrowType ], 1);
+			this.TakeBlob(arrowTypeNames[arrowType], 1);
 		}
 
 		crossbow.fletch_cooldown = FLETCH_COOLDOWN; // just don't allow shoot + make arrow
 	}
 	else if (cmd == this.getCommandID("pickup arrow"))
 	{
-		CBlob@ arrow = getPickupArrow(this);
+		CBlob @arrow = getPickupArrow(this);
 		bool spriteArrow = canPickSpriteArrow(this, false);
 		if (arrow !is null || spriteArrow)
 		{
 			if (arrow !is null)
 			{
-				CrossbowInfo@ crossbow;
+				CrossbowInfo @crossbow;
 				if (!this.get("crossbowInfo", @crossbow))
 				{
 					return;
@@ -587,7 +599,7 @@ void onCommand(CBlob@ this, u8 cmd, CBitStream @params)
 				}*/
 			}
 
-			CBlob@ mat_arrows = server_CreateBlob("mat_arrows", this.getTeamNum(), this.getPosition());
+			CBlob @mat_arrows = server_CreateBlob("mat_arrows", this.getTeamNum(), this.getPosition());
 			if (mat_arrows !is null)
 			{
 				mat_arrows.server_SetQuantity(fletch_num_arrows);
@@ -606,10 +618,10 @@ void onCommand(CBlob@ this, u8 cmd, CBitStream @params)
 			this.getSprite().PlaySound("Entities/Items/Projectiles/Sounds/ArrowHitGround.ogg");
 		}
 	}
-	else if (cmd == this.getCommandID("cycle"))  //from standardcontrols
+	else if (cmd == this.getCommandID("cycle")) // from standardcontrols
 	{
 		// cycle arrows
-		CrossbowInfo@ crossbow;
+		CrossbowInfo @crossbow;
 		if (!this.get("crossbowInfo", @crossbow))
 		{
 			return;
@@ -638,7 +650,7 @@ void onCommand(CBlob@ this, u8 cmd, CBitStream @params)
 	}
 	else
 	{
-		CrossbowInfo@ crossbow;
+		CrossbowInfo @crossbow;
 		if (!this.get("crossbowInfo", @crossbow))
 		{
 			return;
@@ -655,16 +667,16 @@ void onCommand(CBlob@ this, u8 cmd, CBitStream @params)
 }
 
 // arrow pick menu
-void onCreateInventoryMenu(CBlob@ this, CBlob@ forBlob, CGridMenu @gridmenu)
+void onCreateInventoryMenu(CBlob @ this, CBlob @forBlob, CGridMenu @gridmenu)
 {
 }
 
 // auto-switch to appropriate arrow when picked up
-void onAddToInventory(CBlob@ this, CBlob@ blob)
+void onAddToInventory(CBlob @ this, CBlob @blob)
 {
 }
 
-void onHitBlob(CBlob@ this, Vec2f worldPoint, Vec2f velocity, f32 damage, CBlob@ hitBlob, u8 customData)
+void onHitBlob(CBlob @ this, Vec2f worldPoint, Vec2f velocity, f32 damage, CBlob @hitBlob, u8 customData)
 {
 	if (customData == Hitters::stab)
 	{
@@ -672,11 +684,11 @@ void onHitBlob(CBlob@ this, Vec2f worldPoint, Vec2f velocity, f32 damage, CBlob@
 		{
 
 			// fletch arrow
-			if (hitBlob.hasTag("fletchable"))	// make arrow from tree
+			if (hitBlob.hasTag("fletchable")) // make arrow from tree
 			{
 				if (getNet().isServer())
 				{
-					CBlob@ mat_arrows = server_CreateBlob("mat_arrows", this.getTeamNum(), this.getPosition());
+					CBlob @mat_arrows = server_CreateBlob("mat_arrows", this.getTeamNum(), this.getPosition());
 					if (mat_arrows !is null)
 					{
 						mat_arrows.server_SetQuantity(fletch_num_arrows);
@@ -698,75 +710,88 @@ void onHitBlob(CBlob@ this, Vec2f worldPoint, Vec2f velocity, f32 damage, CBlob@
 	}
 }
 
-f32 onHit(CBlob@ this, Vec2f worldPoint, Vec2f velocity, f32 damage, CBlob@ hitterBlob, u8 customData)
+f32 onHit(CBlob @ this, Vec2f worldPoint, Vec2f velocity, f32 damage, CBlob @hitterBlob, u8 customData)
 {
 	// play cling sound if other knight attacked us
 	// dmg could be taken out here if we ever want to
 
-	if(hitterBlob !is null)
-	if(this.hasTag("shielding")){
-		Vec2f pos = this.getPosition();
-		f32 aimangle = getAimAngle(this);
-
-		Vec2f vec = hitterBlob.getPosition() - pos;
-		f32 angle = vec.Angle();
-		
-		if((aimangle+60 > angle && aimangle-60 < angle) || aimangle-60+360 < angle || aimangle+60-360 > angle){
-			return 0;
-			for(int i = 0; i < 3; i += 1){
-				Vec2f velr = getRandomVelocity(!this.isFacingLeft() ? 70 : 110, 4.3f, 40.0f);
-				velr.y = -Maths::Abs(velr.y) + Maths::Abs(velr.x) / 3.0f - 2.0f - float(XORRandom(100)) / 100.0f;
-				ParticlePixel(this.getPosition(), velr, SColor(255, 255, 255, 0), true);
-				this.getSprite().PlaySound("/ShieldHit.ogg");
-			}
-		}
-	}
-
-	return damage; //no block, damage goes through
-}
-
-void onCollision(CBlob@ this, CBlob@ blob, bool solid, Vec2f normal, Vec2f point)
-{
-	if(blob is null){
-		if(solid && point.y > this.getPosition().y)
-		if(this.hasTag("shielding")){
-			if(this.isKeyPressed(key_up))
-			if(getAimAngle(this) > 270-45 && getAimAngle(this) < 270+45){
-				if(this.isKeyPressed(key_right) && this.isKeyPressed(key_left))this.setVelocity(Vec2f(0,-3));
-				else if(this.isKeyPressed(key_left))this.setVelocity(Vec2f(-5,-3));
-				else if(this.isKeyPressed(key_right)) this.setVelocity(Vec2f(5,-3));
-				else this.setVelocity(Vec2f(0,-3));
-				
-				Vec2f velr = getRandomVelocity(!this.isFacingLeft() ? 70 : 110, 4.3f, 40.0f);
-				velr.y = -Maths::Abs(velr.y) + Maths::Abs(velr.x) / 3.0f - 2.0f - float(XORRandom(100)) / 100.0f;
-				ParticlePixel(point, velr, SColor(255, 255, 255, 0), true);
-				this.getSprite().PlayRandomSound("/Scrape.ogg");
-			}
-		}
-	} else {
-		if(solid && blob.getTeamNum() != this.getTeamNum())
-		if(this.hasTag("shielding")){
+	if (hitterBlob !is null)
+		if (this.hasTag("shielding"))
+		{
 			Vec2f pos = this.getPosition();
 			f32 aimangle = getAimAngle(this);
 
-			Vec2f vec = blob.getPosition() - pos;
+			Vec2f vec = hitterBlob.getPosition() - pos;
 			f32 angle = vec.Angle();
-			
-			if((aimangle+40 > angle && aimangle-40 < angle) || aimangle-40+360 < angle || aimangle+40-360 > angle)setKnocked(blob,10);
-			Vec2f velr = getRandomVelocity(!this.isFacingLeft() ? 50 : 90, 4.0f, 20.0f);
-			velr.y = -Maths::Abs(velr.y) + Maths::Abs(velr.x) / 2.0f - 1.5f - float(XORRandom(100)) / 100.0f;
-			ParticlePixel(point, velr, SColor(255, 255, 255, 0), true);
-			this.getSprite().PlaySound("/ShieldHit.ogg");
+
+			if ((aimangle + 60 > angle && aimangle - 60 < angle) || aimangle - 60 + 360 < angle || aimangle + 60 - 360 > angle)
+			{
+				return 0;
+				for (int i = 0; i < 3; i += 1)
+				{
+					Vec2f velr = getRandomVelocity(!this.isFacingLeft() ? 70 : 110, 4.3f, 40.0f);
+					velr.y = -Maths::Abs(velr.y) + Maths::Abs(velr.x) / 3.0f - 2.0f - float(XORRandom(100)) / 100.0f;
+					ParticlePixel(this.getPosition(), velr, SColor(255, 255, 255, 0), true);
+					this.getSprite().PlaySound("/ShieldHit.ogg");
+				}
+			}
 		}
-		
+
+	return damage; // no block, damage goes through
+}
+
+void onCollision(CBlob @ this, CBlob @blob, bool solid, Vec2f normal, Vec2f point)
+{
+	if (blob is null)
+	{
+		if (solid && point.y > this.getPosition().y)
+			if (this.hasTag("shielding"))
+			{
+				if (this.isKeyPressed(key_up))
+					if (getAimAngle(this) > 270 - 45 && getAimAngle(this) < 270 + 45)
+					{
+						if (this.isKeyPressed(key_right) && this.isKeyPressed(key_left))
+							this.setVelocity(Vec2f(0, -3));
+						else if (this.isKeyPressed(key_left))
+							this.setVelocity(Vec2f(-5, -3));
+						else if (this.isKeyPressed(key_right))
+							this.setVelocity(Vec2f(5, -3));
+						else
+							this.setVelocity(Vec2f(0, -3));
+
+						Vec2f velr = getRandomVelocity(!this.isFacingLeft() ? 70 : 110, 4.3f, 40.0f);
+						velr.y = -Maths::Abs(velr.y) + Maths::Abs(velr.x) / 3.0f - 2.0f - float(XORRandom(100)) / 100.0f;
+						ParticlePixel(point, velr, SColor(255, 255, 255, 0), true);
+						this.getSprite().PlayRandomSound("/Scrape.ogg");
+					}
+			}
+	}
+	else
+	{
+		if (solid && blob.getTeamNum() != this.getTeamNum())
+			if (this.hasTag("shielding"))
+			{
+				Vec2f pos = this.getPosition();
+				f32 aimangle = getAimAngle(this);
+
+				Vec2f vec = blob.getPosition() - pos;
+				f32 angle = vec.Angle();
+
+				if ((aimangle + 40 > angle && aimangle - 40 < angle) || aimangle - 40 + 360 < angle || aimangle + 40 - 360 > angle)
+					setKnocked(blob, 10);
+				Vec2f velr = getRandomVelocity(!this.isFacingLeft() ? 50 : 90, 4.0f, 20.0f);
+				velr.y = -Maths::Abs(velr.y) + Maths::Abs(velr.x) / 2.0f - 1.5f - float(XORRandom(100)) / 100.0f;
+				ParticlePixel(point, velr, SColor(255, 255, 255, 0), true);
+				this.getSprite().PlaySound("/ShieldHit.ogg");
+			}
 	}
 }
 
-f32 getAimAngle(CBlob @this){
+f32 getAimAngle(CBlob @ this)
+{
 
 	Vec2f pos = this.getPosition();
 	Vec2f aimpos = this.getAimPos();
 	Vec2f vec = aimpos - pos;
 	return vec.Angle();
-
 }

@@ -1,4 +1,4 @@
-///Minimap Code
+/// Minimap Code
 SColor color_sky = SColor(0xffA5BDC8);
 SColor color_dirt = SColor(0xff844715);
 SColor color_dirt_backwall = SColor(0xff3B1406);
@@ -20,27 +20,27 @@ SColor color_blood_grass = SColor(0xff647814);
 
 bool inRange(const u16 tile, const u16 start, const u16 end)
 {
-        return tile >= start && tile <= end;
+	return tile >= start && tile <= end;
 }
 
-void CalculateMinimapColour( CMap@ map, u32 offset, TileType tile, SColor &out col)
+void CalculateMinimapColour(CMap @map, u32 offset, TileType tile, SColor&out col)
 {
 	int X = offset % map.tilemapwidth;
 	int Y = offset / map.tilemapwidth;
 
 	Vec2f pos = Vec2f(X, Y);
 
-        float ts = map.tilesize;
-        Tile currentTile = map.getTile(pos * ts);
+	float ts = map.tilesize;
+	Tile currentTile = map.getTile(pos * ts);
 
 	bool show_gold = getRules().get_bool("show_gold");
 
-	///Colours
-	
-	if (map.isTileGold(tile))  
-	{ 
+	/// Colours
+
+	if (map.isTileGold(tile))
+	{
 		col = show_gold ? color_gold : color_dirt;
-	} 
+	}
 	else if (map.isTileGround(tile))
 	{
 		col = color_dirt;
@@ -57,125 +57,122 @@ void CalculateMinimapColour( CMap@ map, u32 offset, TileType tile, SColor &out c
 	{
 		col = color_bedrock;
 	}
-	else if (map.isTileWood(tile)) 
-	{ 
+	else if (map.isTileWood(tile))
+	{
 		col = color_wood;
-	} 
-        else if (map.isTileCastle(tile))
-        {
-                col = color_castle;
-        }
-        // custom tiles
-        else if (inRange(tile, CMap::tile_goldenbrick, CMap::tile_goldenbrick_d7) ||
-                 inRange(tile, CMap::tile_goldbackwall, CMap::tile_goldbackwall_d6))
-        {
-                col = color_gold;
-        }
-        else if (inRange(tile, CMap::tile_ironbrick, CMap::tile_ironbrick_d11) ||
-                 inRange(tile, CMap::tile_ironbackwall, CMap::tile_ironbackwall_d6) ||
-                 inRange(tile, CMap::tile_ironore, CMap::tile_ironore_d8))
-        {
-                col = color_iron;
-        }
-        else if (inRange(tile, CMap::tile_copperore, CMap::tile_copperore_d5))
-        {
-                col = color_copper;
-        }
-        else if (inRange(tile, CMap::tile_coalore, CMap::tile_coalore_d5))
-        {
-                col = color_coal;
-        }
-        else if (inRange(tile, CMap::tile_littlebloodground, CMap::tile_heapsbloodground_d3))
-        {
-                col = color_blood;
-        }
-        else if (inRange(tile, CMap::tile_littlebloodgrassground, CMap::tile_heapsbloodgrassground_d0) ||
-                 inRange(tile, CMap::tile_littlebloodgrass, CMap::tile_heapsbloodgrass_d2))
-        {
-                col = color_blood_grass;
-        }
-        else if (inRange(tile, CMap::tile_grass_onesidebackground, CMap::tile_grass_onesidebackground_d3) ||
-                 inRange(tile, CMap::tile_grass_fullbackground1, CMap::tile_grass_3sidesbackground_d3))
-        {
-                col = color_dirt_backwall;
-        }
-        else if (map.isTileBackgroundNonEmpty(currentTile) && !map.isTileGrass(tile))
-        {
-                // TODO(hobey): maybe check if there's a door/platform on this backwall and make a custom color for them?
-                if (tile == CMap::tile_castle_back)
-                {
-                        col = color_castle_backwall;
-                }
-                else if (tile == CMap::tile_wood_back)
-                {
-                        col = color_wood_backwall;
-                }
-                else
-                {
-                        col = color_dirt_backwall;
-                }
+	}
+	else if (map.isTileCastle(tile))
+	{
+		col = color_castle;
+	}
+	// custom tiles
+	else if (inRange(tile, CMap::tile_goldenbrick, CMap::tile_goldenbrick_d7) ||
+			 inRange(tile, CMap::tile_goldbackwall, CMap::tile_goldbackwall_d6))
+	{
+		col = color_gold;
+	}
+	else if (inRange(tile, CMap::tile_ironbrick, CMap::tile_ironbrick_d11) ||
+			 inRange(tile, CMap::tile_ironbackwall, CMap::tile_ironbackwall_d6) ||
+			 inRange(tile, CMap::tile_ironore, CMap::tile_ironore_d8))
+	{
+		col = color_iron;
+	}
+	else if (inRange(tile, CMap::tile_copperore, CMap::tile_copperore_d5))
+	{
+		col = color_copper;
+	}
+	else if (inRange(tile, CMap::tile_coalore, CMap::tile_coalore_d5))
+	{
+		col = color_coal;
+	}
+	else if (inRange(tile, CMap::tile_littlebloodground, CMap::tile_heapsbloodground_d3))
+	{
+		col = color_blood;
+	}
+	else if (inRange(tile, CMap::tile_littlebloodgrassground, CMap::tile_heapsbloodgrassground_d0) ||
+			 inRange(tile, CMap::tile_littlebloodgrass, CMap::tile_heapsbloodgrass_d2))
+	{
+		col = color_blood_grass;
+	}
+	else if (inRange(tile, CMap::tile_grass_onesidebackground, CMap::tile_grass_onesidebackground_d3) ||
+			 inRange(tile, CMap::tile_grass_fullbackground1, CMap::tile_grass_3sidesbackground_d3))
+	{
+		col = color_dirt_backwall;
+	}
+	else if (map.isTileBackgroundNonEmpty(currentTile) && !map.isTileGrass(tile))
+	{
+		// TODO(hobey): maybe check if there's a door/platform on this backwall and make a custom color for them?
+		if (tile == CMap::tile_castle_back)
+		{
+			col = color_castle_backwall;
+		}
+		else if (tile == CMap::tile_wood_back)
+		{
+			col = color_wood_backwall;
+		}
+		else
+		{
+			col = color_dirt_backwall;
+		}
+	}
+	else
+	{
+		col = color_sky;
+	}
 
-        }
-        else
-        {
-                col = color_sky;
-        }
-	
-        ///Tint the map based on Fire/Water State
-        if (map.isInWater( pos * ts ))
-        {
-                col = col.getInterpolated(color_water,0.5f);
-        }
-        else if (map.isInFire( pos * ts ))
-        {
-                col = col.getInterpolated(color_fire,0.5f);
-        }
-
+	/// Tint the map based on Fire/Water State
+	if (map.isInWater(pos * ts))
+	{
+		col = col.getInterpolated(color_water, 0.5f);
+	}
+	else if (map.isInFire(pos * ts))
+	{
+		col = col.getInterpolated(color_fire, 0.5f);
+	}
 }
 
 //(avoid conflict with any other functions)
 namespace MiniMap
 {
-	Vec2f clampInsideMap(Vec2f pos, CMap@ map)
+	Vec2f clampInsideMap(Vec2f pos, CMap @map)
 	{
 		return Vec2f(
 			Maths::Clamp(pos.x, 0, (map.tilemapwidth - 0.1f) * map.tilesize),
-			Maths::Clamp(pos.y, 0, (map.tilemapheight - 0.1f) * map.tilesize)
-		);
+			Maths::Clamp(pos.y, 0, (map.tilemapheight - 0.1f) * map.tilesize));
 	}
 
-	bool isForegroundOutlineTile(Tile tile, CMap@ map)
+	bool isForegroundOutlineTile(Tile tile, CMap @map)
 	{
 		return !map.isTileSolid(tile);
 	}
 
-	bool isOpenAirTile(Tile tile, CMap@ map)
+	bool isOpenAirTile(Tile tile, CMap @map)
 	{
 		return tile.type == CMap::tile_empty ||
-			map.isTileGrass(tile.type);
+			   map.isTileGrass(tile.type);
 	}
 
-	bool isBackgroundOutlineTile(Tile tile, CMap@ map)
+	bool isBackgroundOutlineTile(Tile tile, CMap @map)
 	{
 		return isOpenAirTile(tile, map);
 	}
 
-	bool isGoldOutlineTile(Tile tile, CMap@ map, bool is_gold)
+	bool isGoldOutlineTile(Tile tile, CMap @map, bool is_gold)
 	{
 		return is_gold ?
-			!map.isTileSolid(tile.type) :
-			map.isTileGold(tile.type);
+				   !map.isTileSolid(tile.type) :
+				   map.isTileGold(tile.type);
 	}
 
-	//setup the minimap as required on server or client
+	// setup the minimap as required on server or client
 	void Initialise()
 	{
-		CRules@ rules = getRules();
-		CMap@ map = getMap();
+		CRules @rules = getRules();
+		CMap @map = getMap();
 
-		//add sync script
-		//was done here to avoid needing to modify gamemode.cfg
-		//seems to be unnecessary
+		// add sync script
+		// was done here to avoid needing to modify gamemode.cfg
+		// seems to be unnecessary
 
 		/*
 		if (!rules.hasScript("MinimapSync.as"))
@@ -183,10 +180,10 @@ namespace MiniMap
 			rules.AddScript("MinimapSync.as");
 		}*/
 
-		//init appropriately
+		// init appropriately
 		if (isServer())
 		{
-			//load values from cfg
+			// load values from cfg
 			ConfigFile cfg();
 			cfg.loadFile("Base/Rules/MinimapSettings.cfg");
 
@@ -194,7 +191,7 @@ namespace MiniMap
 			bool show_gold = cfg.read_bool("show_gold", true);
 			bool custom_colors = cfg.read_bool("custom_colors", true);
 
-			//write out values for serialisation
+			// write out values for serialisation
 			rules.set_bool("legacy_minimap", map.legacyTileMinimap);
 			rules.set_bool("show_gold", show_gold);
 			rules.set_bool("custom_colors", custom_colors);
@@ -264,7 +261,7 @@ namespace MiniMap
 					cfg.add_string("color_wood_backwall", "552A11");
 					cfg.add_string("color_castle", "637160");
 					cfg.add_string("color_castle_backwall", "313412");
-				 	cfg.add_string("color_water", "2cafde");
+					cfg.add_string("color_water", "2cafde");
 					cfg.add_string("color_fire", "d5543f");
 					cfg.saveFile("MinimapColors.cfg");
 				}
@@ -272,7 +269,7 @@ namespace MiniMap
 				cfg.saveFile("MinimapColors.cfg");
 			}
 
-			//write defaults for now
+			// write defaults for now
 			map.legacyTileMinimap = false;
 			rules.set_bool("show_gold", true);
 		}

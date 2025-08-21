@@ -9,7 +9,7 @@ const f32 ATTACK_DISTANCE = 1.0f;
 
 const int COINS_ON_DEATH = 15;
 
-void onInit(CBlob@ this)
+void onInit(CBlob @ this)
 {
 	this.set_u8("attack frequency", ATTACK_FREQUENCY);
 	this.set_f32("attack damage", ATTACK_DAMAGE);
@@ -18,27 +18,27 @@ void onInit(CBlob@ this)
 	this.set_string("attack sound", "ZombieBite2");
 	this.set_u16("coins on death", COINS_ON_DEATH);
 	this.set_f32(target_searchrad_property, 512.0f);
-	
-	this.getSprite().SetEmitSound("Wings2.ogg");
-    this.getSprite().SetEmitSoundPaused(false);
 
-    this.getSprite().PlayRandomSound("/GasbagIdle");
+	this.getSprite().SetEmitSound("Wings2.ogg");
+	this.getSprite().SetEmitSoundPaused(false);
+
+	this.getSprite().PlayRandomSound("/GasbagIdle");
 	this.getShape().SetRotationsAllowed(false);
 
 	this.getBrain().server_SetActive(true);
 
 	this.set_f32("gib health", 0.0f);
-    this.Tag("flesh");
-	
+	this.Tag("flesh");
+
 	this.getCurrentScript().runFlags |= Script::tick_not_attached;
 	this.getCurrentScript().removeIfTag = "dead";
-	
+
 	this.SetLight(true);
 	this.SetLightRadius(32.0f);
-	//this.SetLightColor(SColor(255, 120, 50, 140));
+	// this.SetLightColor(SColor(255, 120, 50, 140));
 }
 
-void onTick(CBlob@ this)
+void onTick(CBlob @ this)
 {
 	if (getNet().isClient() && XORRandom(768) == 0)
 	{
@@ -47,7 +47,7 @@ void onTick(CBlob@ this)
 
 	if (getNet().isServer() && getGameTime() % 10 == 0)
 	{
-		CBlob@ target = this.getBrain().getTarget();
+		CBlob @target = this.getBrain().getTarget();
 
 		if (target !is null && this.getDistanceTo(target) < 72.0f)
 		{
@@ -62,17 +62,17 @@ void onTick(CBlob@ this)
 	}
 }
 
-f32 onHit( CBlob@ this, Vec2f worldPoint, Vec2f velocity, f32 damage, CBlob@ hitterBlob, u8 customData )
+f32 onHit(CBlob @ this, Vec2f worldPoint, Vec2f velocity, f32 damage, CBlob @hitterBlob, u8 customData)
 {
 	if (damage >= 0.0f)
 	{
-	    this.getSprite().PlaySound("/SkeletonHit");
-    }
+		this.getSprite().PlaySound("/SkeletonHit");
+	}
 
 	return damage;
 }
 
-void onDie( CBlob@ this )
+void onDie(CBlob @ this)
 {
-    this.getSprite().PlaySound("/SkeletonBreak1");	
+	this.getSprite().PlaySound("/SkeletonBreak1");
 }

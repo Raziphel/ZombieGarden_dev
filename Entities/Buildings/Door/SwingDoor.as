@@ -1,28 +1,28 @@
 // Swing Door logic
 
-#include "Hitters.as"
-#include "FireCommon.as"
-#include "MapFlags.as"
 #include "DoorCommon.as"
+#include "FireCommon.as"
+#include "Hitters.as"
+#include "MapFlags.as"
 
-void onInit(CBlob@ this)
+
+void onInit(CBlob @ this)
 {
 	this.getShape().SetRotationsAllowed(false);
 	this.getSprite().getConsts().accurateLighting = true;
 
-	this.set_s16(burn_duration , 300);
-	//transfer fire to underlying tiles
+	this.set_s16(burn_duration, 300);
+	// transfer fire to underlying tiles
 	this.Tag(spread_fire_tag);
 
 	// this.getCurrentScript().runFlags |= Script::tick_not_attached;
 	this.getCurrentScript().tickFrequency = 0;
 
-
-	//block knight sword
+	// block knight sword
 	this.Tag("blocks sword");
 
-	//HACK
-	// for DefaultNoBuild.as
+	// HACK
+	//  for DefaultNoBuild.as
 	if (this.getName() == "stone_door")
 	{
 		this.set_TileType("background tile", CMap::tile_castle_back);
@@ -35,17 +35,18 @@ void onInit(CBlob@ this)
 	this.Tag("blocks water");
 }
 
-void onSetStatic(CBlob@ this, const bool isStatic)
+void onSetStatic(CBlob @ this, const bool isStatic)
 {
-	if (!isStatic) return;
+	if (!isStatic)
+		return;
 
 	this.getSprite().PlaySound("/build_door.ogg");
 }
 
-//TODO: fix flags sync and hitting
+// TODO: fix flags sync and hitting
 /*void onDie(CBlob@ this)
 {
-    SetSolidFlag(this, false);
+	SetSolidFlag(this, false);
 }*/
 
 // bool isOpen(CBlob@ this)
@@ -53,16 +54,16 @@ void onSetStatic(CBlob@ this, const bool isStatic)
 // 	return !this.getShape().getConsts().collidable;
 // }
 
-void setOpen(CBlob@ this, bool open, bool faceLeft = false)
+void setOpen(CBlob @ this, bool open, bool faceLeft = false)
 {
-	CSprite@ sprite = this.getSprite();
+	CSprite @sprite = this.getSprite();
 	if (open)
 	{
 		sprite.SetZ(-100.0f);
 		sprite.SetAnimation("open");
 		this.getShape().getConsts().collidable = false;
 		this.getCurrentScript().tickFrequency = 3;
-		sprite.SetFacingLeft(faceLeft);   // swing left or right
+		sprite.SetFacingLeft(faceLeft); // swing left or right
 		Sound::Play("/DoorOpen.ogg", this.getPosition());
 	}
 	else
@@ -74,17 +75,18 @@ void setOpen(CBlob@ this, bool open, bool faceLeft = false)
 		Sound::Play("/DoorClose.ogg", this.getPosition());
 	}
 
-	//TODO: fix flags sync and hitting
-	//SetSolidFlag(this, !open);
+	// TODO: fix flags sync and hitting
+	// SetSolidFlag(this, !open);
 }
 
-void onTick(CBlob@ this)
+void onTick(CBlob @ this)
 {
 	const uint count = this.getTouchingCount();
 	for (uint step = 0; step < count; ++step)
 	{
-		CBlob@ blob = this.getTouchingByIndex(step);
-		if (blob is null) continue;
+		CBlob @blob = this.getTouchingByIndex(step);
+		if (blob is null)
+			continue;
 
 		if (canOpenDoor(this, blob) && !isOpen(this))
 		{
@@ -102,14 +104,13 @@ void onTick(CBlob@ this)
 	}
 }
 
-
-bool canClose(CBlob@ this)
+bool canClose(CBlob @ this)
 {
 	const uint count = this.getTouchingCount();
 	uint collided = 0;
 	for (uint step = 0; step < count; ++step)
 	{
-		CBlob@ blob = this.getTouchingByIndex(step);
+		CBlob @blob = this.getTouchingByIndex(step);
 		if (blob.isCollidable())
 		{
 			collided++;
@@ -118,7 +119,7 @@ bool canClose(CBlob@ this)
 	return collided == 0;
 }
 
-void onCollision(CBlob@ this, CBlob@ blob, bool solid)
+void onCollision(CBlob @ this, CBlob @blob, bool solid)
 {
 	if (blob !is null)
 	{
@@ -126,7 +127,7 @@ void onCollision(CBlob@ this, CBlob@ blob, bool solid)
 	}
 }
 
-void onEndCollision(CBlob@ this, CBlob@ blob)
+void onEndCollision(CBlob @ this, CBlob @blob)
 {
 	if (blob !is null)
 	{
@@ -141,22 +142,21 @@ void onEndCollision(CBlob@ this, CBlob@ blob)
 	}
 }
 
-
-bool canBePickedUp(CBlob@ this, CBlob@ byBlob)
+bool canBePickedUp(CBlob @ this, CBlob @byBlob)
 {
 	return false;
 }
 
 // this is such a pain - can't edit animations at the moment, so have to just carefully add destruction frames to the close animation >_>
-f32 onHit(CBlob@ this, Vec2f worldPoint, Vec2f velocity, f32 damage, CBlob@ hitterBlob, u8 customData)
+f32 onHit(CBlob @ this, Vec2f worldPoint, Vec2f velocity, f32 damage, CBlob @hitterBlob, u8 customData)
 {
 	if (customData == Hitters::boulder)
 		return 0;
 
-	//print("custom data: "+customData+" builder: "+Hitters::builder);
+	// print("custom data: "+customData+" builder: "+Hitters::builder);
 	if (customData == Hitters::builder)
 		damage *= 2;
-	if (customData == Hitters::saw)                //Hitters::saw is the drill hitter.... why
+	if (customData == Hitters::saw) // Hitters::saw is the drill hitter.... why
 		damage *= 2;
 	if (customData == Hitters::bomb)
 		damage *= 1.3f;
@@ -174,7 +174,6 @@ f32 onHit(CBlob@ this, Vec2f worldPoint, Vec2f velocity, f32 damage, CBlob@ hitt
 			if (this.getHealth() < this.getInitialHealth())
 			{
 				f32 ratio = (this.getHealth() - damage * getRules().attackdamage_modifier) / this.getInitialHealth();
-
 
 				if (ratio <= 0.0f)
 				{
@@ -200,8 +199,7 @@ f32 onHit(CBlob@ this, Vec2f worldPoint, Vec2f velocity, f32 damage, CBlob@ hitt
 	return damage;
 }
 
-
-bool doesCollideWithBlob(CBlob@ this, CBlob@ blob)
+bool doesCollideWithBlob(CBlob @ this, CBlob @blob)
 {
 	if (isOpen(this))
 		return false;

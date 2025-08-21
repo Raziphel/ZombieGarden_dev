@@ -17,7 +17,7 @@ const int burn_thresh = 70;
 /**
  * Start this's fire and sync everything important
  */
-void server_setFireOn(CBlob@ this)
+void server_setFireOn(CBlob @ this)
 {
 	if (!getNet().isServer())
 		return;
@@ -41,7 +41,7 @@ void server_setFireOn(CBlob@ this)
 /**
  * Put out this's fire and sync everything important
  */
-void server_setFireOff(CBlob@ this)
+void server_setFireOff(CBlob @ this)
 {
 	if (!getNet().isServer())
 		return;
@@ -72,13 +72,21 @@ string randomFireTexture(int smokeRandom = 1)
 
 	switch (XORRandom(XORRandom(smokeRandom) == 0 ? 4 : 2))
 	{
-		case 0: texture = "Entities/Effects/Sprites/SmallFire1.png"; break;
+		case 0:
+			texture = "Entities/Effects/Sprites/SmallFire1.png";
+			break;
 
-		case 1: texture = "Entities/Effects/Sprites/SmallFire2.png"; break;
+		case 1:
+			texture = "Entities/Effects/Sprites/SmallFire2.png";
+			break;
 
-		case 2: texture = "Entities/Effects/Sprites/SmallSmoke1.png"; break;
+		case 2:
+			texture = "Entities/Effects/Sprites/SmallSmoke1.png";
+			break;
 
-		case 3: texture = "Entities/Effects/Sprites/SmallSmoke2.png"; break;
+		case 3:
+			texture = "Entities/Effects/Sprites/SmallSmoke2.png";
+			break;
 	}
 	return texture;
 }

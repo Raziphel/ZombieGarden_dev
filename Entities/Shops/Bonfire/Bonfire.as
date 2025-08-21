@@ -1,15 +1,16 @@
-﻿//Bonfie
+﻿// Bonfie
 
-#include "ProductionCommon.as";
-#include "Requirements.as";
-#include "MakeFood.as";
 #include "FireParticle.as";
 #include "Hitters.as";
+#include "MakeFood.as";
 #include "MigrantCommon.as";
+#include "ProductionCommon.as";
+#include "Requirements.as";
 
-void onInit(CBlob@ this)
+
+void onInit(CBlob @ this)
 {
-	//this.getCurrentScript().tickFrequency = 9;
+	// this.getCurrentScript().tickFrequency = 9;
 	this.getSprite().SetEmitSound("CampfireSound.ogg");
 	this.getSprite().SetAnimation("fire");
 	this.getSprite().SetFacingLeft(XORRandom(2) == 0);
@@ -21,19 +22,19 @@ void onInit(CBlob@ this)
 	this.Tag("bonfire");
 	this.Tag("fire source");
 	this.getSprite().SetZ(-20.0f);
-	
-	this.set_u8("migrants max", 1 );
-	
+
+	this.set_u8("migrants max", 1);
+
 	this.getShape().SetRotationsAllowed(false);
 
-	//this.addCommandID("extinguish");
+	// this.addCommandID("extinguish");
 }
 
-void onCollision(CBlob@ this, CBlob@ blob, bool solid)
-{	
+void onCollision(CBlob @ this, CBlob @blob, bool solid)
+{
 	if (blob !is null && this.getSprite().isAnimation("fire"))
 	{
-		CBlob@ food = cookFood(blob);
+		CBlob @food = cookFood(blob);
 		if (food !is null)
 		{
 			food.setVelocity(blob.getVelocity().opMul(0.5f));
@@ -90,13 +91,13 @@ void Extinguish(CBlob@ this)
 	this.getSprite().SetAnimation("nofire");
 	this.getSprite().SetEmitSoundPaused(true);
 	this.getSprite().PlaySound("/ExtinguishFire.ogg");
-	
+
 	CSpriteLayer@ fire = this.getSprite().getSpriteLayer("fire_animation_large");
 	if (fire !is null)
 	{
 		fire.SetVisible(false);
 	}
-	
+
 	makeSmokeParticle(this.getPosition()); //*poof*
 }
 
@@ -110,7 +111,7 @@ void Ignite(CBlob@ this)
 	this.getSprite().SetAnimation("fire");
 	this.getSprite().SetEmitSoundPaused(false);
 	this.getSprite().PlaySound("/FireFwoosh.ogg");
-	
+
 	CSpriteLayer@ fire = this.getSprite().getSpriteLayer("fire_animation_large");
 	if (fire !is null)
 	{

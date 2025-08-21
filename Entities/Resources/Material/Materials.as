@@ -4,7 +4,7 @@
 
 // use this.Tag("do not set materials") to prevent the amount changing.
 
-void onInit(CBlob@ this)
+void onInit(CBlob @ this)
 {
 	int max = 250; // default
 	string name = this.getName();
@@ -26,7 +26,7 @@ void onInit(CBlob@ this)
 	{
 		max = 150;
 		set = true;
-	}	
+	}
 	else if (name == "mat_rockets")
 	{
 		max = 50;
@@ -36,7 +36,7 @@ void onInit(CBlob@ this)
 	{
 		max = 80;
 		set = true;
-	}	
+	}
 	else if (name == "mat_firearrows")
 	{
 		max = 15;
@@ -57,26 +57,31 @@ void onInit(CBlob@ this)
 		max = 1;
 		set = true;
 	}
-	else if (name == "mat_orbs") {
+	else if (name == "mat_orbs")
+	{
 		max = 30;
-		set = true;	
+		set = true;
 	}
-	else if (name == "mat_fireorbs") {
+	else if (name == "mat_fireorbs")
+	{
 		max = 10;
-		set = true;	
+		set = true;
 	}
-	else if (name == "mat_bomborbs") {
+	else if (name == "mat_bomborbs")
+	{
 		max = 5;
-		set = true;	
+		set = true;
 	}
-	else if (name == "mat_waterorbs") {
+	else if (name == "mat_waterorbs")
+	{
 		max = 10;
-		set = true;	
+		set = true;
 	}
-        else if (name == "soulshard") {
-                max = 3;
-                set = false;
-        }
+	else if (name == "soulshard")
+	{
+		max = 3;
+		set = false;
+	}
 	else if (name == "mat_bombs")
 	{
 		max = 1;
@@ -92,7 +97,7 @@ void onInit(CBlob@ this)
 		SetHelp(this, "help use carried", "", "$mat_bolts$Put in $ballista$    $KEY_E$", "", 3);
 		SetHelp(this, "help pickup", "", "$mat_bolts$Pickup    $KEY_C$", "", 3);
 	}
-	else if (this.getQuantity() == 1)   // hack: fix me!
+	else if (this.getQuantity() == 1) // hack: fix me!
 	{
 		set = true;
 	}
@@ -103,7 +108,7 @@ void onInit(CBlob@ this)
 	else if (name == "mat_stone")
 	{
 	}
-       else if (name == "mat_ironore" || name == "mat_ironingot" || name == "mat_copperore" || name == "mat_copperingot" || name == "mat_coal")
+	else if (name == "mat_ironore" || name == "mat_ironingot" || name == "mat_copperore" || name == "mat_copperingot" || name == "mat_coal")
 	{
 	}
 
@@ -120,18 +125,18 @@ void onInit(CBlob@ this)
 	onQuantityChange(this, -1);
 }
 
-f32 onHit(CBlob@ this, Vec2f worldPoint, Vec2f velocity, f32 damage, CBlob@ hitterBlob, u8 customData)
+f32 onHit(CBlob @ this, Vec2f worldPoint, Vec2f velocity, f32 damage, CBlob @hitterBlob, u8 customData)
 {
-	if (customData == Hitters::crush) //crush removes quantity
+	if (customData == Hitters::crush) // crush removes quantity
 	{
-		//fix massive lag - prevent overflow :)
+		// fix massive lag - prevent overflow :)
 		this.server_SetQuantity(Maths::Max(0, int(this.getQuantity()) - 100));
 	}
 
 	return damage;
 }
 
-void onQuantityChange(CBlob@ this, int oldQuantity)
+void onQuantityChange(CBlob @ this, int oldQuantity)
 {
 	UpdateFrame(this.getSprite());
 
@@ -147,10 +152,10 @@ void onQuantityChange(CBlob@ this, int oldQuantity)
 	}
 }
 
-void UpdateFrame(CSprite@ this)
+void UpdateFrame(CSprite @ this)
 {
 	// set the frame according to the material quantity
-	Animation@ anim = this.getAnimation("default");
+	Animation @anim = this.getAnimation("default");
 
 	if (anim !is null)
 	{
@@ -160,7 +165,7 @@ void UpdateFrame(CSprite@ this)
 		f32 div = float(max / 4);
 		int frame = div < 0.01f ? 0 : Maths::Min(frames - 1, int(Maths::Floor(float(quantity) / div)));
 		anim.SetFrameIndex(frame);
-		CBlob@ blob = this.getBlob();
+		CBlob @blob = this.getBlob();
 		blob.SetInventoryIcon(blob.getSprite().getConsts().filename, anim.getFrame(frame), Vec2f(blob.getSprite().getConsts().frameWidth, blob.getSprite().getConsts().frameHeight));
 	}
 }

@@ -1,28 +1,29 @@
 ﻿// Dorm
 
-#include "WARCosts.as";
-#include "ShopCommon.as";
-#include "Descriptions.as";
 #include "ClassSelectMenu.as";
+#include "Descriptions.as";
+#include "ShopCommon.as";
 #include "StandardRespawnCommand.as";
+#include "WARCosts.as";
 
-void onInit( CBlob@ this )
+
+void onInit(CBlob @ this)
 {
 	InitRespawnCommand(this);
 	InitClasses(this);
 	this.Tag("change class drop inventory");
 
 	this.SetLight(true);
-	this.SetLightRadius(128.0f );
+	this.SetLightRadius(128.0f);
 
 	this.set_TileType("background tile", CMap::tile_wood_back);
 	this.Tag("builder always hit");
 
-	this.getSprite().SetZ(-50); //background
+	this.getSprite().SetZ(-50); // background
 	this.getShape().getConsts().mapCollisions = false;
 }
 
-void GetButtonsFor( CBlob@ this, CBlob@ caller )
+void GetButtonsFor(CBlob @ this, CBlob @caller)
 {
 	u8 kek = caller.getTeamNum();
 	if (kek == 0)
@@ -31,18 +32,18 @@ void GetButtonsFor( CBlob@ this, CBlob@ caller )
 		{
 			CBitStream params;
 			params.write_u16(caller.getNetworkID());
-			CButton@ button = caller.CreateGenericButton("$change_class$", Vec2f(0, 0), this, buildSpawnMenu, "Change class");
+			CButton @button = caller.CreateGenericButton("$change_class$", Vec2f(0, 0), this, buildSpawnMenu, "Change class");
 		}
 	}
 }
 
-void onInit(CSprite@ this)
+void onInit(CSprite @ this)
 {
-	CSpriteLayer@ revivalorb = this.addSpriteLayer( "revivalorb","AltarOrb.png", 16,16 );
+	CSpriteLayer @revivalorb = this.addSpriteLayer("revivalorb", "AltarOrb.png", 16, 16);
 
-	if(revivalorb !is null)
+	if (revivalorb !is null)
 	{
-		Animation@ anim = revivalorb.addAnimation("default", 0, false);
+		Animation @anim = revivalorb.addAnimation("default", 0, false);
 		anim.AddFrame(0);
 		revivalorb.SetAnimation(anim);
 		revivalorb.SetOffset(Vec2f(0, 16));
@@ -50,10 +51,10 @@ void onInit(CSprite@ this)
 	}
 }
 
-void onTick(CSprite@ this)
+void onTick(CSprite @ this)
 {
-	//spin dat orb
-	CSpriteLayer@ revivalorb = this.getSpriteLayer("revivalorb");
+	// spin dat orb
+	CSpriteLayer @revivalorb = this.getSpriteLayer("revivalorb");
 
 	if (revivalorb !is null)
 	{
@@ -64,7 +65,7 @@ void onTick(CSprite@ this)
 	}
 }
 
-void onCommand( CBlob@ this, u8 cmd, CBitStream @params )
+void onCommand(CBlob @ this, u8 cmd, CBitStream @params)
 {
 	if (cmd == this.getCommandID("change class"))
 	{
@@ -72,14 +73,13 @@ void onCommand( CBlob@ this, u8 cmd, CBitStream @params )
 	}
 }
 
-void onDie(CBlob@ this)
+void onDie(CBlob @ this)
 {
 	if (!getNet().isServer())
 		return;
 
-	//int r = XORRandom(2);
-	//if (r == 0)
+	// int r = XORRandom(2);
+	// if (r == 0)
 
 	server_CreateBlob("lifeforce", -1, this.getPosition());
 }
-

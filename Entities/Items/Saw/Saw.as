@@ -5,7 +5,7 @@
 const string toggle_id = "toggle_power";
 const string sawteammate_id = "sawteammate";
 
-void onInit(CBlob@ this)
+void onInit(CBlob @ this)
 {
 	this.Tag("saw");
 
@@ -15,36 +15,37 @@ void onInit(CBlob@ this)
 	SetSawOn(this, true);
 }
 
-//toggling on/off
+// toggling on/off
 
-void SetSawOn(CBlob@ this, const bool on)
+void SetSawOn(CBlob @ this, const bool on)
 {
 	this.set_bool("saw_on", on);
 }
 
-bool getSawOn(CBlob@ this)
+bool getSawOn(CBlob @ this)
 {
 	return this.get_bool("saw_on");
 }
 
-void GetButtonsFor(CBlob@ this, CBlob@ caller)
+void GetButtonsFor(CBlob @ this, CBlob @caller)
 {
-	if (caller.getTeamNum() != this.getTeamNum() || this.getDistanceTo(caller) > 16) return;
+	if (caller.getTeamNum() != this.getTeamNum() || this.getDistanceTo(caller) > 16)
+		return;
 
 	string desc = "Turn Saw " + (getSawOn(this) ? "Off" : "On");
 	caller.CreateGenericButton(8, Vec2f(0, 0), this, this.getCommandID(toggle_id), desc);
 }
 
-void onCommand(CBlob@ this, u8 cmd, CBitStream @params)
+void onCommand(CBlob @ this, u8 cmd, CBitStream @params)
 {
 	if (cmd == this.getCommandID(sawteammate_id))
 	{
-		CBlob@ tobeblended = getBlobByNetworkID(params.read_netid());
+		CBlob @tobeblended = getBlobByNetworkID(params.read_netid());
 		if (tobeblended !is null)
 		{
 			tobeblended.Tag("sawed");
 
-			CSprite@ s = tobeblended.getSprite();
+			CSprite @s = tobeblended.getSprite();
 			if (s !is null)
 			{
 				s.Gib();
@@ -52,7 +53,7 @@ void onCommand(CBlob@ this, u8 cmd, CBitStream @params)
 		}
 
 		this.getSprite().PlaySound("SawOther.ogg");
-		cmd = this.getCommandID(toggle_id);	// proceed with toggle_id stuff
+		cmd = this.getCommandID(toggle_id); // proceed with toggle_id stuff
 	}
 
 	if (cmd == this.getCommandID(toggle_id))
@@ -60,21 +61,21 @@ void onCommand(CBlob@ this, u8 cmd, CBitStream @params)
 		bool set = !getSawOn(this);
 		SetSawOn(this, set);
 
-		if (getNet().isClient()) //closed/opened gfx
+		if (getNet().isClient()) // closed/opened gfx
 		{
-			CSprite@ sprite = this.getSprite();
+			CSprite @sprite = this.getSprite();
 
 			u8 frame = set ? 0 : 1;
 
 			sprite.animation.frame = frame;
 
-			CSpriteLayer@ back = sprite.getSpriteLayer("back");
+			CSpriteLayer @back = sprite.getSpriteLayer("back");
 			if (back !is null)
 			{
 				back.animation.frame = frame;
 			}
 
-			CSpriteLayer@ chop = sprite.getSpriteLayer("chop");
+			CSpriteLayer @chop = sprite.getSpriteLayer("chop");
 			if (chop !is null)
 			{
 				chop.SetOffset(Vec2f());
@@ -83,16 +84,16 @@ void onCommand(CBlob@ this, u8 cmd, CBitStream @params)
 	}
 }
 
-//function for blending things
-void Blend(CBlob@ this, CBlob@ tobeblended)
+// function for blending things
+void Blend(CBlob @ this, CBlob @tobeblended)
 {
 	if (this is tobeblended || tobeblended.hasTag("sawed") ||
-	        tobeblended.hasTag("invincible") || !getSawOn(this))
+		tobeblended.hasTag("invincible") || !getSawOn(this))
 	{
 		return;
 	}
 
-	//make plankfrom wooden stuff
+	// make plankfrom wooden stuff
 	if (tobeblended.getName() == "log")
 	{
 		CBlob @wood = server_CreateBlob("mat_wood", this.getTeamNum(), this.getPosition() + Vec2f(0, 12));
@@ -119,39 +120,38 @@ void Blend(CBlob@ this, CBlob@ tobeblended)
 		this.SendCommand(this.getCommandID(sawteammate_id), params);
 	}
 
-	//random chance undead players break the saws
+	// random chance undead players break the saws
 	if (tobeblended.hasTag("undeadplayer"))
 	{
 		if (getNet().isServer())
 		{
-			if (XORRandom(32)==0)
+			if (XORRandom(32) == 0)
 			{
-				this.getSprite().PlaySound( "SawOther.ogg" );
+				this.getSprite().PlaySound("SawOther.ogg");
 				this.server_SetHealth(-1.0f);
 				this.server_Die();
 			}
 		}
-	} 	
+	}
 
-	CSprite@ s = tobeblended.getSprite();
+	CSprite @s = tobeblended.getSprite();
 	if (s !is null)
 	{
 		s.Gib();
 	}
 
-	//give no fucks about teamkilling
+	// give no fucks about teamkilling
 	tobeblended.server_SetHealth(-1.0f);
 	tobeblended.server_Die();
-
 }
 
-
-bool canSaw(CBlob@ this, CBlob@ blob)
+bool canSaw(CBlob @ this, CBlob @blob)
 {
-	if (blob.hasTag("saw")) return true; //destroy saws in close proximity
+	if (blob.hasTag("saw"))
+		return true; // destroy saws in close proximity
 
 	if (blob.getRadius() >= this.getRadius() * 0.99f || blob.getShape().isStatic() ||
-	        blob.hasTag("sawed") || blob.hasTag("invincible"))
+		blob.hasTag("sawed") || blob.hasTag("invincible"))
 	{
 		return false;
 	}
@@ -159,18 +159,18 @@ bool canSaw(CBlob@ this, CBlob@ blob)
 	string name = blob.getName();
 
 	if (
-	    //name == "migrantbot" ||
-	    name == "wooden_door" ||
-	    name == "mat_wood" ||
-	    name == "tree_bushy" ||
+		// name == "migrantbot" ||
+		name == "wooden_door" ||
+		name == "mat_wood" ||
+		name == "tree_bushy" ||
 		name == "abomination" ||
 		name == "horror" ||
-	    name == "tree_pine")
+		name == "tree_pine")
 	{
 		return false;
 	}
 
-	//flesh blobs have to be fed into the saw part
+	// flesh blobs have to be fed into the saw part
 	if (blob.hasTag("flesh"))
 	{
 		Vec2f pos = this.getPosition();
@@ -183,10 +183,10 @@ bool canSaw(CBlob@ this, CBlob@ blob)
 
 		if (dot > 0.8f)
 		{
-			if (getNet().isClient() && !g_kidssafe) //add blood gfx
+			if (getNet().isClient() && !g_kidssafe) // add blood gfx
 			{
-				CSprite@ sprite = this.getSprite();
-				CSpriteLayer@ chop = sprite.getSpriteLayer("chop");
+				CSprite @sprite = this.getSprite();
+				CSpriteLayer @chop = sprite.getSpriteLayer("chop");
 
 				if (chop !is null)
 				{
@@ -205,7 +205,7 @@ bool canSaw(CBlob@ this, CBlob@ blob)
 	return true;
 }
 
-void onHitBlob(CBlob@ this, Vec2f worldPoint, Vec2f velocity, f32 damage, CBlob@ hitBlob, u8 customData)
+void onHitBlob(CBlob @ this, Vec2f worldPoint, Vec2f velocity, f32 damage, CBlob @hitBlob, u8 customData)
 {
 	if (hitBlob !is null)
 	{
@@ -213,12 +213,12 @@ void onHitBlob(CBlob@ this, Vec2f worldPoint, Vec2f velocity, f32 damage, CBlob@
 	}
 }
 
-//we have contact!
-void onCollision(CBlob@ this, CBlob@ blob, bool solid)
+// we have contact!
+void onCollision(CBlob @ this, CBlob @blob, bool solid)
 {
 	if (blob is null || !getNet().isServer() ||
-	        this.isAttached() || blob.isAttached() ||
-	        !getSawOn(this))
+		this.isAttached() || blob.isAttached() ||
+		!getSawOn(this))
 	{
 		return;
 	}
@@ -232,35 +232,34 @@ void onCollision(CBlob@ this, CBlob@ blob, bool solid)
 	}
 }
 
-//only pickable by enemies if they are _under_ this
-bool canBePickedUp(CBlob@ this, CBlob@ byBlob)
+// only pickable by enemies if they are _under_ this
+bool canBePickedUp(CBlob @ this, CBlob @byBlob)
 {
 	return (byBlob.getTeamNum() == this.getTeamNum() ||
-	        byBlob.getPosition().y > this.getPosition().y + 4);
+			byBlob.getPosition().y > this.getPosition().y + 4);
 }
 
-
-//sprite update
-void onInit(CSprite@ this)
+// sprite update
+void onInit(CSprite @ this)
 {
 	this.SetZ(-10.0f);
 
-	CSpriteLayer@ chop = this.addSpriteLayer("chop", "/Saw.png", 16, 16);
+	CSpriteLayer @chop = this.addSpriteLayer("chop", "/Saw.png", 16, 16);
 
 	if (chop !is null)
 	{
-		Animation@ anim = chop.addAnimation("default", 0, false);
+		Animation @anim = chop.addAnimation("default", 0, false);
 		anim.AddFrame(3);
 		anim.AddFrame(7);
 		chop.SetAnimation(anim);
 		chop.SetRelativeZ(-1.0f);
 	}
 
-	CSpriteLayer@ back = this.addSpriteLayer("back", "/Saw.png", 24, 16);
+	CSpriteLayer @back = this.addSpriteLayer("back", "/Saw.png", 24, 16);
 
 	if (back !is null)
 	{
-		Animation@ anim = back.addAnimation("default", 0, false);
+		Animation @anim = back.addAnimation("default", 0, false);
 		anim.AddFrame(1);
 		anim.AddFrame(3);
 		back.SetAnimation(anim);
@@ -270,15 +269,16 @@ void onInit(CSprite@ this)
 	this.getBlob().getShape().SetRotationsAllowed(false);
 }
 
-void onTick(CSprite@ this)
+void onTick(CSprite @ this)
 {
-	CBlob@ blob = this.getBlob();
-	if (blob is null) return;
+	CBlob @blob = this.getBlob();
+	if (blob is null)
+		return;
 
 	this.SetZ(blob.isAttached() ? 10.0f : -10.0f);
 
-	//spin saw blade
-	CSpriteLayer@ chop = this.getSpriteLayer("chop");
+	// spin saw blade
+	CSpriteLayer @chop = this.getSpriteLayer("chop");
 
 	if (chop !is null && getSawOn(blob))
 	{

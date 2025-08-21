@@ -1,6 +1,6 @@
 // Lantern script
 
-void onInit(CBlob@ this)
+void onInit(CBlob @ this)
 {
 	this.SetLight(true);
 	this.SetLightRadius(256.0f);
@@ -17,7 +17,7 @@ void onInit(CBlob@ this)
 	this.getCurrentScript().tickFrequency = 24;
 }
 
-void onTick(CBlob@ this)
+void onTick(CBlob @ this)
 {
 	if (this.isLight() && this.isInWater())
 	{
@@ -25,7 +25,7 @@ void onTick(CBlob@ this)
 	}
 }
 
-void Light(CBlob@ this, bool on)
+void Light(CBlob @ this, bool on)
 {
 	if (!on)
 	{
@@ -40,11 +40,10 @@ void Light(CBlob@ this, bool on)
 	this.getSprite().PlaySound("SparkleShort.ogg");
 }
 
-void onCommand(CBlob@ this, u8 cmd, CBitStream @params)
+void onCommand(CBlob @ this, u8 cmd, CBitStream @params)
 {
 	if (cmd == this.getCommandID("activate"))
 	{
 		Light(this, !this.isLight());
 	}
-
 }

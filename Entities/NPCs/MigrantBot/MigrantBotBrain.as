@@ -3,26 +3,27 @@
 #define SERVER_ONLY
 
 #include "/Entities/Shared/Emotes/EmotesCommon.as"
-#include "MigrantCommon.as"
 #include "HallCommon.as"
+#include "MigrantCommon.as"
 
-void onInit( CBrain@ this )
+
+void onInit(CBrain @ this)
 {
-    CBlob @blob = this.getBlob();
-    blob.set_bool("justgo", false);
-    blob.set_Vec2f("target spot", Vec2f_zero);
-    blob.set_u8("strategy", 1);
-	this.getCurrentScript().removeIfTag = "dead";   //won't be removed if not bot cause it isnt run	  	
+	CBlob @blob = this.getBlob();
+	blob.set_bool("justgo", false);
+	blob.set_Vec2f("target spot", Vec2f_zero);
+	blob.set_u8("strategy", 1);
+	this.getCurrentScript().removeIfTag = "dead"; // won't be removed if not bot cause it isnt run
 	this.getCurrentScript().runFlags |= Script::tick_not_attached;
 
 	this.getCurrentScript().tickFrequency = 1;
 	this.getBlob().set_s32("difficulty", 15);
-	this.server_SetActive( true );
+	this.server_SetActive(true);
 }
 
-void onTick( CBrain@ this )
+void onTick(CBrain @ this)
 {
-    CBlob @blob = this.getBlob();	     
+	CBlob @blob = this.getBlob();
 	if (blob.getTeamNum() > 10)
 		return;
 
@@ -38,7 +39,7 @@ void onTick( CBrain@ this )
 	}
 
 	u8 strategy = 1;
-	//printf("isStatic = "+isStatic);
+	// printf("isStatic = "+isStatic);
 	if (!isStatic)
 	{
 		strategy = blob.get_u8("strategy");
@@ -46,8 +47,8 @@ void onTick( CBrain@ this )
 		// normal AI
 		if (strategy != Strategy::runaway)
 		{
-			CBlob @target = this.getTarget();  
-			//this.getCurrentScript().tickFrequency = target is null ? 60 : 30;
+			CBlob @target = this.getTarget();
+			// this.getCurrentScript().tickFrequency = target is null ? 60 : 30;
 
 			if (target !is null)
 			{
@@ -55,106 +56,105 @@ void onTick( CBrain@ this )
 
 				if (strategy != Strategy::idle)
 				{
-					//printf("Goto Blob");
-					GoToBlob(this, target );
+					// printf("Goto Blob");
+					GoToBlob(this, target);
 				}
 
 				// change strategy?
 
-				//printf("strategy1 " + strategy );
-			   if ((strategy == Strategy::find_teammate && (state == CBrain::stuck || state == CBrain::wrong_path)) || strategy == Strategy::idle || XORRandom(15) == 0)
-			   {
-				   @target = getOwner(blob);
-				   this.SetTarget( target );
+				// printf("strategy1 " + strategy );
+				if ((strategy == Strategy::find_teammate && (state == CBrain::stuck || state == CBrain::wrong_path)) || strategy == Strategy::idle || XORRandom(15) == 0)
+				{
+					@target = getOwner(blob);
+					this.SetTarget(target);
 
-				   if (target !is null) 
-				   {   				   
-					  strategy = Strategy::find_teammate;
-				   }
-				   /*else
-				   {
-						strategy = Strategy::idle;
-				   }*/
-				  // printf("strategy2 " + strategy);
-				   SetStrategy( blob, strategy );
-			   }
-
+					if (target !is null)
+					{
+						strategy = Strategy::find_teammate;
+					}
+					/*else
+					{
+						 strategy = Strategy::idle;
+					}*/
+					// printf("strategy2 " + strategy);
+					SetStrategy(blob, strategy);
+				}
 
 				// lose target if its killed (with random cooldown)
-				if(target !is null)
-				if (target.isInFlames() || target.isInWater() || (XORRandom(10) == 0 && target.hasTag("dead")))
-				{
-					this.SetTarget( null );
-				}
+				if (target !is null)
+					if (target.isInFlames() || target.isInWater() || (XORRandom(10) == 0 && target.hasTag("dead")))
+					{
+						this.SetTarget(null);
+					}
 			}
 			else
-			{	 
-				this.SetTarget( getNewTarget(this, blob) );
+			{
+				this.SetTarget(getNewTarget(this, blob));
 			}
 		}
 	}
 
-	// attack? 
+	// attack?
 
 	if (this.getCurrentScript().tickFrequency >= 1 || XORRandom(15) == 0)
 	{
-		CBlob@ attacker = getAttacker( this, blob );
+		CBlob @attacker = getAttacker(this, blob);
 		if (attacker !is null)
 		{
 			DitchOwner(blob);
-			
-			//set brain param
-			this.SetTarget( attacker ); 
-			SetStrategy( blob, Strategy::runaway );
+
+			// set brain param
+			this.SetTarget(attacker);
+			SetStrategy(blob, Strategy::runaway);
 		}
 	}
-	
+
 	if (!isStatic && strategy == Strategy::runaway)
 	{
 		this.getCurrentScript().tickFrequency = 1;
 		DitchOwner(blob);
-		
-		if ( !Runaway( this, blob, this.getTarget() ) || XORRandom(50) == 0 )
+
+		if (!Runaway(this, blob, this.getTarget()) || XORRandom(50) == 0)
 		{
-			
-		   blob.set_u8("strategy", Strategy::find_teammate);
-		   this.SetTarget( null ); 
-		   this.getCurrentScript().tickFrequency = 1;
+
+			blob.set_u8("strategy", Strategy::find_teammate);
+			this.SetTarget(null);
+			this.getCurrentScript().tickFrequency = 1;
 		}
 	}
 
 	// water?
 
 	if (!isStatic && blob.isInWater())
-	{	
-		this.getCurrentScript().tickFrequency = 1;		
-		blob.setKeyPressed( key_up, true );
+	{
+		this.getCurrentScript().tickFrequency = 1;
+		blob.setKeyPressed(key_up, true);
 	}
 }
 
-void DitchOwner(CBlob@ blob)
+void DitchOwner(CBlob @blob)
 {
-	//un-owner
-	CBlob@ owner = getOwner(blob);
-	if(owner !is null)
+	// un-owner
+	CBlob @owner = getOwner(blob);
+	if (owner !is null)
 	{
 		returnWorker(owner, getHallsFor(owner, BASE_RADIUS), blob);
 	}
-	ResetWorker( blob ); //unstatic
+	ResetWorker(blob); // unstatic
 }
 
-void SetStrategy( CBlob@ blob, const u8 strategy )
+void SetStrategy(CBlob @blob, const u8 strategy)
 {
 	blob.set_u8("strategy", strategy);
 	blob.Sync("strategy", true);
 }
 
-f32 getSeekTeamPriority( CBlob @this, CBlob @other )
+f32 getSeekTeamPriority(CBlob @ this, CBlob @other)
 {
 	const string othername = other.getName();
 	if (othername == "dorm")
 	{
-		if (!isRoomFullOfMigrants( other ))
+		if (!isRoomFullOfMigrants(other))
 			return 0.0f;
 	}
 	else
@@ -167,16 +167,16 @@ f32 getSeekTeamPriority( CBlob @this, CBlob @other )
 	return 100.9f;
 }
 
-CBlob@ getNewTarget( CBrain@ this, CBlob @blob )
+CBlob @getNewTarget(CBrain @ this, CBlob @blob)
 {
 	const u8 strategy = blob.get_u8("strategy");
 	Vec2f pos = blob.getPosition();
 
-	CBlob@[] potentials;
-	CBlob@[] blobsInRadius;
-	if (blob.getMap().getBlobsInRadius( pos, SEEK_RANGE, @blobsInRadius ))
+	CBlob @[] potentials;
+	CBlob @[] blobsInRadius;
+	if (blob.getMap().getBlobsInRadius(pos, SEEK_RANGE, @blobsInRadius))
 	{
-		if (strategy == Strategy::find_teammate || strategy == Strategy::idle) 
+		if (strategy == Strategy::find_teammate || strategy == Strategy::idle)
 		{
 			// find players or campfires
 
@@ -184,24 +184,24 @@ CBlob@ getNewTarget( CBrain@ this, CBlob @blob )
 			{
 				CBlob @b = blobsInRadius[i];
 				if (b !is blob && b.getTeamNum() == blob.getTeamNum() && !b.isInFlames() && !b.isInWater() && (b.hasTag("bonfire") || b.hasTag("bed"))) //(b.hasTag("player") || b.hasTag("bed"))
-				{								  
+				{
 					// omit full beds or when bot
 					const string name = b.getName();
-					if (name == "dorm" && (blob.getPlayer() !is null || isRoomFullOfMigrants(b))) 
+					if (name == "dorm" && (blob.getPlayer() !is null || isRoomFullOfMigrants(b)))
 
 					{
 						continue;
-					}			 
+					}
 
 					potentials.push_back(b);
 				}
-			}	 
+			}
 		}
 
 		// pick closest/best
 
 		if (potentials.length > 0)
-		{				
+		{
 			while (potentials.size() > 0)
 			{
 				f32 closestDist = 999999.9f;
@@ -212,17 +212,18 @@ CBlob@ getNewTarget( CBrain@ this, CBlob @blob )
 					CBlob @b = potentials[i];
 					Vec2f bpos = b.getPosition();
 					f32 distToPlayer = (bpos - pos).getLength();
-					f32 dist = distToPlayer * getSeekTeamPriority( blob, b );	
+					f32 dist = distToPlayer * getSeekTeamPriority(blob, b);
 					if (distToPlayer > 0.0f && dist < closestDist)
 					{
 						closestDist = dist;
 						closestIndex = i;
 					}
-				} 
-				if (closestIndex >= 999) {
+				}
+				if (closestIndex >= 999)
+				{
 					break;
-				}  
-	
+				}
+
 				return potentials[closestIndex];
 			}
 		}
@@ -230,32 +231,31 @@ CBlob@ getNewTarget( CBrain@ this, CBlob @blob )
 	return null;
 }
 
-CBlob@ getAttacker( CBrain@ this, CBlob @blob )
+CBlob @getAttacker(CBrain @ this, CBlob @blob)
 {
 	Vec2f pos = blob.getPosition();
 
-	CBlob@[] potentials;
-	CBlob@[] blobsInRadius;
-	CMap@ map = blob.getMap();
-	if (map.getBlobsInRadius( pos, ENEMY_RANGE, @blobsInRadius ))
+	CBlob @[] potentials;
+	CBlob @[] blobsInRadius;
+	CMap @map = blob.getMap();
+	if (map.getBlobsInRadius(pos, ENEMY_RANGE, @blobsInRadius))
 	{
 		for (uint i = 0; i < blobsInRadius.length; i++)
 		{
 			CBlob @b = blobsInRadius[i];
-			if (b !is blob 
-				&& (((b.getTeamNum() != blob.getTeamNum() && (b.hasTag("player") || b.hasTag("zombie")) && !b.hasTag("dead")) || (b.isInFlames() || b.hasTag("enemy") || b.hasTag("saw"))) 	// runaway from enemies and from burning stuff
-				    && !map.rayCastSolid( pos, b.getPosition() ))
-				) {
+			if (b !is blob && (((b.getTeamNum() != blob.getTeamNum() && (b.hasTag("player") || b.hasTag("zombie")) && !b.hasTag("dead")) || (b.isInFlames() || b.hasTag("enemy") || b.hasTag("saw"))) // runaway from enemies and from burning stuff
+							   && !map.rayCastSolid(pos, b.getPosition())))
+			{
 				potentials.push_back(b);
 			}
-		}	 
+		}
 	}
 
 	// pick closest/best
 
 	if (potentials.length > 0)
-	{				
-		CBlob@[] closest;
+	{
+		CBlob @[] closest;
 		while (potentials.size() > 0)
 		{
 			f32 closestDist = 999999.9f;
@@ -271,10 +271,11 @@ CBlob@ getAttacker( CBrain@ this, CBlob @blob )
 					closestDist = dist;
 					closestIndex = i;
 				}
-			}		
-			if (closestIndex >= 999) {
+			}
+			if (closestIndex >= 999)
+			{
 				break;
-			}	 
+			}
 			return potentials[closestIndex];
 		}
 	}
@@ -282,140 +283,143 @@ CBlob@ getAttacker( CBrain@ this, CBlob @blob )
 	return null;
 }
 
-void Repath( CBrain@ this )
+void Repath(CBrain @ this)
 {
-    this.SetPathTo( this.getTarget().getPosition(), false );
+	this.SetPathTo(this.getTarget().getPosition(), false);
 }
 
-void GoToBlob( CBrain@ this, CBlob @target )
+void GoToBlob(CBrain @ this, CBlob @target)
 {
-    CBlob @blob = this.getBlob();
+	CBlob @blob = this.getBlob();
 	Vec2f mypos = blob.getPosition();
 	Vec2f targetpos = target.getPosition();
-    Vec2f targetVector = targetpos - blob.getPosition();
-    f32 targetDistance = targetVector.Length();
-    // check if we have a clear area to the target
-    bool justGo = false;
+	Vec2f targetVector = targetpos - blob.getPosition();
+	f32 targetDistance = targetVector.Length();
+	// check if we have a clear area to the target
+	bool justGo = false;
 
 	if (targetDistance < 10.0f && target.hasTag("human_player")) // keep distance from player
 	{
 		return;
 	}
 
-    justGo = true;
-			
-    // repath if no clear path after going at it
-    if (!justGo && blob.get_bool("justgo"))
-    {
-        Repath( this );
-    }
+	justGo = true;
 
-    blob.set_bool("justgo", justGo);
+	// repath if no clear path after going at it
+	if (!justGo && blob.get_bool("justgo"))
+	{
+		Repath(this);
+	}
+
+	blob.set_bool("justgo", justGo);
 
 	const bool stuck = this.getState() == CBrain::stuck;
 
-    if (justGo)
-    {
-		JustGo( this, target );
-    }
-    
-	if (!justGo)
-    {
-        switch (this.getState())
-        {
-        case CBrain::idle:
-            Repath( this );
-            break;
-
-        case CBrain::searching:
-			//if (XORRandom(100) == 0)
-			//	set_emote( blob, Emotes::dots );
-            break;
-
-        case CBrain::has_path:
-            this.SetSuggestedKeys();  // set walk keys here
-            break;
-
-        case CBrain::stuck:
-            Repath( this );
-			if (XORRandom(100) == 0)
-			{
-				set_emote( blob, "frown");
-				f32 dist = Maths::Abs( targetpos.x - mypos.x);
-				if (dist > 20.0f)
-				{
-					if (dist < 50.0f)
-						set_emote( blob, targetpos.y > mypos.y ? "down" : "up");
-					else
-						set_emote( blob, targetpos.x > mypos.x ? "right" : "left");
-				}
-			}  
-            break;
-
-        case CBrain::wrong_path:
-            Repath( this );
-			if (XORRandom(100) == 0)
-			{
-				if (Maths::Abs( targetpos.x - mypos.x) < 50.0f)
-					set_emote( blob, targetpos.y > mypos.y ? "down" : "up");
-				else
-					set_emote( blob, targetpos.x > mypos.x ? "right" : "left");
-			}
-            break;
-        }	  
-    }
-											  				
-    // face the enemy
-    blob.setAimPos( targetpos );
-
-    // jump over small blocks
-
-	JumpOverObstacles( blob );
-}
-
-void JumpOverObstacles( CBlob@ blob )
-{
-	Vec2f pos = blob.getPosition();	  
-	if (!blob.isOnLadder())
-	if ( (blob.isKeyPressed( key_right ) && (getMap().isTileSolid( pos + Vec2f( 1.3f*blob.getRadius(), blob.getRadius())*1.0f ) || blob.getShape().vellen < 0.1f) ) ||
-		 (blob.isKeyPressed( key_left )  && (getMap().isTileSolid( pos + Vec2f(-1.3f*blob.getRadius(), blob.getRadius())*1.0f ) || blob.getShape().vellen < 0.1f) ) )
+	if (justGo)
 	{
-		blob.setKeyPressed( key_up, true );
+		JustGo(this, target);
 	}
+
+	if (!justGo)
+	{
+		switch (this.getState())
+		{
+			case CBrain::idle:
+				Repath(this);
+				break;
+
+			case CBrain::searching:
+				// if (XORRandom(100) == 0)
+				//	set_emote( blob, Emotes::dots );
+				break;
+
+			case CBrain::has_path:
+				this.SetSuggestedKeys(); // set walk keys here
+				break;
+
+			case CBrain::stuck:
+				Repath(this);
+				if (XORRandom(100) == 0)
+				{
+					set_emote(blob, "frown");
+					f32 dist = Maths::Abs(targetpos.x - mypos.x);
+					if (dist > 20.0f)
+					{
+						if (dist < 50.0f)
+							set_emote(blob, targetpos.y > mypos.y ? "down" : "up");
+						else
+							set_emote(blob, targetpos.x > mypos.x ? "right" : "left");
+					}
+				}
+				break;
+
+			case CBrain::wrong_path:
+				Repath(this);
+				if (XORRandom(100) == 0)
+				{
+					if (Maths::Abs(targetpos.x - mypos.x) < 50.0f)
+						set_emote(blob, targetpos.y > mypos.y ? "down" : "up");
+					else
+						set_emote(blob, targetpos.x > mypos.x ? "right" : "left");
+				}
+				break;
+		}
+	}
+
+	// face the enemy
+	blob.setAimPos(targetpos);
+
+	// jump over small blocks
+
+	JumpOverObstacles(blob);
 }
 
-bool JustGo( CBrain@ this, CBlob@ target )
+void JumpOverObstacles(CBlob @blob)
 {
-    CBlob @blob = this.getBlob();
-    Vec2f mypos = blob.getPosition();
-	Vec2f point = target.getPosition();
-    const f32 horiz_distance = Maths::Abs(point.x - mypos.x);
-	
-	if (blob.isOnLadder() && point.y > mypos.y) {
-		blob.setKeyPressed( key_down, true );
-	}
-	else if (blob.isOnLadder() && point.y < mypos.y)	
-		blob.setKeyPressed( key_up, true );	
-
-	if ((target.isOnLadder() && point.y + getMap().tilesize*0.7f < mypos.y) || point.y + getMap().tilesize*0.7f < mypos.y && (target.isOnGround() || target.getShape().isStatic())) {	  // dont hop with me
-        blob.setKeyPressed( key_up, true );
-    }						
-    if (horiz_distance > blob.getRadius()*0.75f)
-    {
-        if (point.x < mypos.x) {
-            blob.setKeyPressed( key_left, true );
-        }
-        else {
-            blob.setKeyPressed( key_right, true );
-        }
-        return true;
-    }
-
-    return false;
+	Vec2f pos = blob.getPosition();
+	if (!blob.isOnLadder())
+		if ((blob.isKeyPressed(key_right) && (getMap().isTileSolid(pos + Vec2f(1.3f * blob.getRadius(), blob.getRadius()) * 1.0f) || blob.getShape().vellen < 0.1f)) ||
+			(blob.isKeyPressed(key_left) && (getMap().isTileSolid(pos + Vec2f(-1.3f * blob.getRadius(), blob.getRadius()) * 1.0f) || blob.getShape().vellen < 0.1f)))
+		{
+			blob.setKeyPressed(key_up, true);
+		}
 }
 
+bool JustGo(CBrain @ this, CBlob @target)
+{
+	CBlob @blob = this.getBlob();
+	Vec2f mypos = blob.getPosition();
+	Vec2f point = target.getPosition();
+	const f32 horiz_distance = Maths::Abs(point.x - mypos.x);
 
-bool Runaway( CBrain@ this, CBlob@ blob, CBlob@ attacker )
+	if (blob.isOnLadder() && point.y > mypos.y)
+	{
+		blob.setKeyPressed(key_down, true);
+	}
+	else if (blob.isOnLadder() && point.y < mypos.y)
+		blob.setKeyPressed(key_up, true);
+
+	if ((target.isOnLadder() && point.y + getMap().tilesize * 0.7f < mypos.y) || point.y + getMap().tilesize * 0.7f < mypos.y && (target.isOnGround() || target.getShape().isStatic()))
+	{ // dont hop with me
+		blob.setKeyPressed(key_up, true);
+	}
+	if (horiz_distance > blob.getRadius() * 0.75f)
+	{
+		if (point.x < mypos.x)
+		{
+			blob.setKeyPressed(key_left, true);
+		}
+		else
+		{
+			blob.setKeyPressed(key_right, true);
+		}
+		return true;
+	}
+
+	return false;
+}
+
+bool Runaway(CBrain @ this, CBlob @blob, CBlob @attacker)
 {
 	if (attacker is null)
 		return false;
@@ -424,26 +428,27 @@ bool Runaway( CBrain@ this, CBlob@ blob, CBlob@ attacker )
 	Vec2f hispos = attacker.getPosition();
 	const f32 horiz_distance = Maths::Abs(hispos.x - mypos.x);
 
-	if (hispos.x > mypos.x) 
+	if (hispos.x > mypos.x)
 	{
-		blob.setKeyPressed( key_left, true );
-		blob.setAimPos( mypos + Vec2f(-10.0f,0.0f) );
+		blob.setKeyPressed(key_left, true);
+		blob.setAimPos(mypos + Vec2f(-10.0f, 0.0f));
 	}
-	else 
+	else
 	{
-		blob.setKeyPressed( key_right, true );
-		blob.setAimPos( mypos + Vec2f(10.0f,0.0f) );
+		blob.setKeyPressed(key_right, true);
+		blob.setAimPos(mypos + Vec2f(10.0f, 0.0f));
 	}
 
-	if (hispos.y - getMap().tilesize > mypos.y) {
-		blob.setKeyPressed( key_up, true );
-	}			
+	if (hispos.y - getMap().tilesize > mypos.y)
+	{
+		blob.setKeyPressed(key_up, true);
+	}
 
-	JumpOverObstacles( blob );
+	JumpOverObstacles(blob);
 
 	// end
-	
-	//out of sight?
+
+	// out of sight?
 	if ((mypos - hispos).getLength() > 200.0f)
 	{
 		return false;
@@ -451,4 +456,3 @@ bool Runaway( CBrain@ this, CBlob@ blob, CBlob@ attacker )
 
 	return true;
 }
-

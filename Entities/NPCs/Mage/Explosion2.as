@@ -1,4 +1,4 @@
-//Explode.as - Explosions
+// Explode.as - Explosions
 
 /**
  *
@@ -16,7 +16,6 @@
  * u8 custom_hitter             - the hitter from Hitters.as to use
  */
 
-
 #include "Hitters.as";
 #include "ShieldCommon.as";
 #include "SplashWater.as";
@@ -24,23 +23,31 @@
 void makeSmallExplosionParticle(Vec2f pos)
 {
 	ParticleAnimated("Entities/Effects/Sprites/SmallExplosion" + (XORRandom(3) + 1) + ".png",
-	                 pos, Vec2f(0, 0.5f), 0.0f, 1.0f,
-	                 3 + XORRandom(3),
-	                 -0.1f, true);
+					 pos,
+					 Vec2f(0, 0.5f),
+					 0.0f,
+					 1.0f,
+					 3 + XORRandom(3),
+					 -0.1f,
+					 true);
 }
 
 void makeLargeExplosionParticle(Vec2f pos)
 {
 	ParticleAnimated("Entities/Effects/Sprites/Explosion.png",
-	                 pos, Vec2f(0, 0.5f), 0.0f, 1.0f,
-	                 3 + XORRandom(3),
-	                 -0.1f, true);
+					 pos,
+					 Vec2f(0, 0.5f),
+					 0.0f,
+					 1.0f,
+					 3 + XORRandom(3),
+					 -0.1f,
+					 true);
 }
 
-void Explode(CBlob@ this, f32 radius, f32 damage)
+void Explode(CBlob @ this, f32 radius, f32 damage)
 {
 	Vec2f pos = this.getPosition();
-	CMap@ map = this.getMap();
+	CMap @map = this.getMap();
 
 	if (!this.exists("custom_explosion_sound"))
 	{
@@ -53,15 +60,15 @@ void Explode(CBlob@ this, f32 radius, f32 damage)
 
 	if (this.isInInventory())
 	{
-		CBlob@ doomed = this.getInventoryBlob();
+		CBlob @doomed = this.getInventoryBlob();
 		if (doomed !is null && !doomed.hasTag("invincible"))
 		{
 			this.server_Hit(doomed, pos, Vec2f(), 100.0f, Hitters::explosion, true);
 		}
 	}
 
-	//load custom properties
-	//map damage
+	// load custom properties
+	// map damage
 	f32 map_damage_radius = 0.0f;
 
 	if (this.exists("map_damage_radius"))
@@ -85,7 +92,7 @@ void Explode(CBlob@ this, f32 radius, f32 damage)
 
 	const bool bomberman = this.hasTag("bomberman_style");
 
-	//actor damage
+	// actor damage
 	u8 hitter = Hitters::explosion;
 
 	if (this.exists("custom_hitter"))
@@ -108,7 +115,6 @@ void Explode(CBlob@ this, f32 radius, f32 damage)
 
 	makeLargeExplosionParticle(pos);
 
-
 	if (bomberman)
 	{
 		BombermanExplosion(this, radius, damage, map_damage_radius, map_damage_ratio, map_damage_raycast, hitter, should_teamkill);
@@ -130,7 +136,7 @@ void Explode(CBlob@ this, f32 radius, f32 damage)
 
 	if (getNet().isServer())
 	{
-		//hit map if we're meant to
+		// hit map if we're meant to
 		if (map_damage_radius > 0.1f)
 		{
 			int tile_rad = int(map_damage_radius / map.tilesize) + 1;
@@ -140,7 +146,7 @@ void Explode(CBlob@ this, f32 radius, f32 damage)
 			m_pos.y = Maths::Floor(m_pos.y);
 			m_pos = (m_pos * map.tilesize) + Vec2f(map.tilesize / 2, map.tilesize / 2);
 
-			//explode outwards
+			// explode outwards
 			for (int x_step = 0; x_step <= tile_rad; ++x_step)
 			{
 				for (int y_step = 0; y_step <= tile_rad; ++y_step)
@@ -151,21 +157,30 @@ void Explode(CBlob@ this, f32 radius, f32 damage)
 					{
 						if (i == 1)
 						{
-							if (x_step == 0) { continue; }
+							if (x_step == 0)
+							{
+								continue;
+							}
 
 							offset.x = -offset.x;
 						}
 
 						if (i == 2)
 						{
-							if (y_step == 0) { continue; }
+							if (y_step == 0)
+							{
+								continue;
+							}
 
 							offset.y = -offset.y;
 						}
 
 						if (i == 3)
 						{
-							if (x_step == 0) { continue; }
+							if (x_step == 0)
+							{
+								continue;
+							}
 
 							offset.x = -offset.x;
 						}
@@ -174,7 +189,7 @@ void Explode(CBlob@ this, f32 radius, f32 damage)
 
 						if (dist < map_damage_radius)
 						{
-							//do we need to raycast?
+							// do we need to raycast?
 							bool canHit = !map_damage_raycast || (dist < 0.1f);
 
 							if (!canHit)
@@ -195,7 +210,7 @@ void Explode(CBlob@ this, f32 radius, f32 damage)
 									if (!map.isTileBedrock(tile))
 									{
 										if (dist >= rad_thresh ||
-										        !canExplosionDestroy(map, tpos, tile))
+											!canExplosionDestroy(map, tpos, tile))
 										{
 											map.server_DestroyTile(tpos, 1.0f, this);
 										}
@@ -211,26 +226,25 @@ void Explode(CBlob@ this, f32 radius, f32 damage)
 				}
 			}
 
-			//end loops
+			// end loops
 		}
 
-		//hit blobs
-		CBlob@[] blobs;
+		// hit blobs
+		CBlob @[] blobs;
 		map.getBlobsInRadius(pos, radius, @blobs);
 
 		for (uint i = 0; i < blobs.length; i++)
 		{
-			CBlob@ hit_blob = blobs[i];
+			CBlob @hit_blob = blobs[i];
 			if (hit_blob is this)
 				continue;
 
 			HitBlob(this, hit_blob, radius, damage, hitter, true, should_teamkill);
 		}
 	}
-
 }
 
-void onHitBlob(CBlob@ this, Vec2f worldPoint, Vec2f velocity, f32 damage, CBlob@ hitBlob, u8 customData)
+void onHitBlob(CBlob @ this, Vec2f worldPoint, Vec2f velocity, f32 damage, CBlob @hitBlob, u8 customData)
 {
 	if (customData == Hitters::bomb || customData == Hitters::water)
 	{
@@ -242,12 +256,12 @@ void onHitBlob(CBlob@ this, Vec2f worldPoint, Vec2f velocity, f32 damage, CBlob@
  * Perform a linear explosion (a-la bomberman if in the cardinal directions)
  */
 
-void LinearExplosion(CBlob@ this, Vec2f _direction, f32 length, const f32 width,
-                     const int max_depth, f32 damage, const u8 hitter, CBlob@[]@ blobs = null,
-                     bool should_teamkill = false)
+void LinearExplosion(CBlob @ this, Vec2f _direction, f32 length, const f32 width,
+					 const int max_depth, f32 damage, const u8 hitter, CBlob @[] @blobs = null,
+					 bool should_teamkill = false)
 {
 	Vec2f pos = this.getPosition();
-	CMap@ map = this.getMap();
+	CMap @map = this.getMap();
 
 	f32 tilesize = map.tilesize;
 
@@ -260,7 +274,7 @@ void LinearExplosion(CBlob@ this, Vec2f _direction, f32 length, const f32 width,
 
 	Vec2f normal = direction;
 	normal.RotateBy(90.0f, Vec2f());
-	if (normal.y > 0) //so its the same normal for right and left
+	if (normal.y > 0) // so its the same normal for right and left
 		normal.RotateBy(180.0f, Vec2f());
 
 	pos += normal * -(halfwidth / tilesize + 1.0f);
@@ -282,17 +296,18 @@ void LinearExplosion(CBlob@ this, Vec2f _direction, f32 length, const f32 width,
 			bool justhurt = laststep || (width_step == 0 || width_step == width_steps + 1);
 			tpos += normal;
 
-			if (!justhurt && (((step + width_step) % 3 == 0) || XORRandom(3) == 0)) makeSmallExplosionParticle(tpos);
+			if (!justhurt && (((step + width_step) % 3 == 0) || XORRandom(3) == 0))
+				makeSmallExplosionParticle(tpos);
 
 			if (isserver)
 			{
 				TileType t = map.getTile(tpos).type;
 				if (t == CMap::tile_bedrock)
 				{
-					if (!justhurt && width_step == width_steps / 2 + 1) //central bedrock only
+					if (!justhurt && width_step == width_steps / 2 + 1) // central bedrock only
 					{
 						steps = step;
-						damagedsteps = max_depth; //blocked!
+						damagedsteps = max_depth;						// blocked!
 						break;
 					}
 				}
@@ -333,9 +348,10 @@ void LinearExplosion(CBlob@ this, Vec2f _direction, f32 length, const f32 width,
 		pos += direction;
 	}
 
-	if (!isserver) return; //EARLY OUT ---------------------------------------- SERVER ONLY BELOW HERE
+	if (!isserver)
+		return; // EARLY OUT ---------------------------------------- SERVER ONLY BELOW HERE
 
-	//prevent hitting through walls
+	// prevent hitting through walls
 	length = steps * tilesize;
 
 	// hit blobs
@@ -348,14 +364,14 @@ void LinearExplosion(CBlob@ this, Vec2f _direction, f32 length, const f32 width,
 	{
 		Vec2f tolerance(tilesize * 2, tilesize * 2);
 
-		CBlob@[] tempblobs;
+		CBlob @[] tempblobs;
 		@blobs = tempblobs;
 		map.getBlobsInBox(pos - tolerance, pos + (direction * length) + tolerance, @blobs);
 	}
 
 	for (uint i = 0; i < blobs.length; i++)
 	{
-		CBlob@ hit_blob = blobs[i];
+		CBlob @hit_blob = blobs[i];
 		if (hit_blob is this)
 			continue;
 
@@ -363,12 +379,14 @@ void LinearExplosion(CBlob@ this, Vec2f _direction, f32 length, const f32 width,
 		Vec2f hit_blob_pos = hit_blob.getPosition();
 		Vec2f v = hit_blob_pos - pos;
 
-		//lengthwise overlap
+		// lengthwise overlap
 		float p = (v * direction);
-		if (p > rad) p -= rad;
-		if (p > tilesize) p -= tilesize;
+		if (p > rad)
+			p -= rad;
+		if (p > tilesize)
+			p -= tilesize;
 
-		//widthwise overlap
+		// widthwise overlap
 		float q = Maths::Abs(v * normal) - rad - tilesize;
 
 		if (p > 0.0f && p < length && q < halfwidth)
@@ -378,15 +396,15 @@ void LinearExplosion(CBlob@ this, Vec2f _direction, f32 length, const f32 width,
 	}
 }
 
-void BombermanExplosion(CBlob@ this, f32 radius, f32 damage, f32 map_damage_radius,
-                        f32 map_damage_ratio, bool map_damage_raycast, const u8 hitter,
-                        const bool should_teamkill = false)
+void BombermanExplosion(CBlob @ this, f32 radius, f32 damage, f32 map_damage_radius,
+						f32 map_damage_ratio, bool map_damage_raycast, const u8 hitter,
+						const bool should_teamkill = false)
 {
 	Vec2f pos = this.getPosition();
-	CMap@ map = this.getMap();
+	CMap @map = this.getMap();
 	const f32 interval = map.tilesize;
 
-	const int steps = 4; //HACK - todo property
+	const int steps = 4; // HACK - todo property
 
 	f32 ray_width = 16.0f;
 	if (this.exists("map_bomberman_width"))
@@ -394,36 +412,35 @@ void BombermanExplosion(CBlob@ this, f32 radius, f32 damage, f32 map_damage_radi
 		ray_width = this.get_f32("map_bomberman_width");
 	}
 
-	//get blobs
-	CBlob@[] blobs;
+	// get blobs
+	CBlob @[] blobs;
 	map.getBlobsInRadius(pos, radius, @blobs);
 
-	//up
+	// up
 	LinearExplosion(this, Vec2f(0, -1), radius, ray_width, steps, damage, hitter, blobs, should_teamkill);
-	//down
+	// down
 	LinearExplosion(this, Vec2f(0, 1), radius, ray_width, steps, damage, hitter, blobs, should_teamkill);
-	//left and right
+	// left and right
 	LinearExplosion(this, Vec2f(-1, 0), radius, ray_width, steps, damage, hitter, blobs, should_teamkill);
 	LinearExplosion(this, Vec2f(1, 0), radius, ray_width, steps, damage, hitter, blobs, should_teamkill);
-
 }
 
-bool canExplosionDamage(CMap@ map, Vec2f tpos, TileType t)
+bool canExplosionDamage(CMap @map, Vec2f tpos, TileType t)
 {
 	return map.getSectorAtPosition(tpos, "no build") is null &&
-	       (t != CMap::tile_ground_d0 && t != CMap::tile_stone_d0); //don't _destroy_ ground, hit until its almost dead tho
+		   (t != CMap::tile_ground_d0 && t != CMap::tile_stone_d0); // don't _destroy_ ground, hit until its almost dead tho
 }
 
-bool canExplosionDestroy(CMap@ map, Vec2f tpos, TileType t)
+bool canExplosionDestroy(CMap @map, Vec2f tpos, TileType t)
 {
 	return !(map.isTileGroundStuff(t));
 }
 
-bool HitBlob(CBlob@ this, CBlob@ hit_blob, f32 radius, f32 damage, const u8 hitter,
-             const bool bother_raycasting = true, const bool should_teamkill = false)
+bool HitBlob(CBlob @ this, CBlob @hit_blob, f32 radius, f32 damage, const u8 hitter,
+			 const bool bother_raycasting = true, const bool should_teamkill = false)
 {
 	Vec2f pos = this.getPosition();
-	CMap@ map = this.getMap();
+	CMap @map = this.getMap();
 	Vec2f hit_blob_pos = hit_blob.getPosition();
 	Vec2f wall_hit;
 	Vec2f hitvec = hit_blob_pos - pos;
@@ -432,17 +449,20 @@ bool HitBlob(CBlob@ this, CBlob@ hit_blob, f32 radius, f32 damage, const u8 hitt
 	{
 		// no wall in front
 
-		if (map.rayCastSolidNoBlobs(pos, hit_blob_pos, wall_hit)) { return false; }
+		if (map.rayCastSolidNoBlobs(pos, hit_blob_pos, wall_hit))
+		{
+			return false;
+		}
 
 		// no blobs in front
 
-		HitInfo@[] hitInfos;
+		HitInfo @[] hitInfos;
 		if (map.getHitInfosFromRay(pos, -hitvec.getAngle(), hitvec.getLength(), this, @hitInfos))
 		{
 			bool blocked = false;
 			for (uint i = 0; i < hitInfos.length; i++)
 			{
-				HitInfo@ hi = hitInfos[i];
+				HitInfo @hi = hitInfos[i];
 
 				if (hi.blob !is null) // blob
 				{
@@ -453,8 +473,8 @@ bool HitBlob(CBlob@ this, CBlob@ hit_blob, f32 radius, f32 damage, const u8 hitt
 
 					// only shield and heavy things block explosions
 					if (hi.blob.hasTag("heavy weight") ||
-					        hi.blob.getMass() > 500 || hi.blob.getShape().isStatic() ||
-					        (hi.blob.hasTag("shielded") && blockAttack(hi.blob, hitvec, 0.0f)))
+						hi.blob.getMass() > 500 || hi.blob.getShape().isStatic() ||
+						(hi.blob.hasTag("shielded") && blockAttack(hi.blob, hitvec, 0.0f)))
 					{
 						return false;
 					}
@@ -467,14 +487,12 @@ bool HitBlob(CBlob@ this, CBlob@ hit_blob, f32 radius, f32 damage, const u8 hitt
 	Vec2f bombforce = getBombForce(this, radius, hit_blob_pos, pos, hit_blob.getMass(), scale);
 	f32 dam = damage * scale;
 
-	//explosion particle
+	// explosion particle
 	makeSmallExplosionParticle(hit_blob_pos);
 
-	//hit the object
-	this.server_Hit(hit_blob, hit_blob_pos,
-	                bombforce, dam,
-	                hitter, hitter == Hitters::water || //hit with water
-	                should_teamkill || hit_blob.hasTag("dead")			//hit all corpses
-	               );
+	// hit the object
+	this.server_Hit(hit_blob, hit_blob_pos, bombforce, dam, hitter, hitter == Hitters::water ||					   // hit with water
+																		should_teamkill || hit_blob.hasTag("dead") // hit all corpses
+	);
 	return true;
 }

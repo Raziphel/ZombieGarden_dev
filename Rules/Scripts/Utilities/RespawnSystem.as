@@ -1,6 +1,6 @@
 
-//the respawn system interface, provides some sane default functions
-//  but doesn't spawn players on its own (so you can plug your own implementation)
+// the respawn system interface, provides some sane default functions
+//   but doesn't spawn players on its own (so you can plug your own implementation)
 
 // designed to work in tandem with a rulescore
 //  to get playerinfos and whatnot from usernames reliably and to hold team info
@@ -11,50 +11,62 @@
 shared class RespawnSystem
 {
 
-	private RulesCore@ core;
+	private RulesCore @core;
 
-	RespawnSystem() { @core = null; }
-
-	void Update() { /* OVERRIDE ME */ }
-
-	void AddPlayerToSpawn(CPlayer@ player)  { /* OVERRIDE ME */ }
-
-	void RemovePlayerFromSpawn(CPlayer@ player) { /* OVERRIDE ME */ }
-
-	void SetCore(RulesCore@ _core) { @core = _core; }
-
-	//the actual spawn functions
-	CBlob@ SpawnPlayerIntoWorld(Vec2f at, PlayerInfo@ p_info)
+	RespawnSystem()
 	{
-		CPlayer@ player = getPlayerByUsername(p_info.username);
+		@core = null;
+	}
+
+	void Update()
+	{ /* OVERRIDE ME */
+	}
+
+	void AddPlayerToSpawn(CPlayer @player)
+	{ /* OVERRIDE ME */
+	}
+
+	void RemovePlayerFromSpawn(CPlayer @player)
+	{ /* OVERRIDE ME */
+	}
+
+	void SetCore(RulesCore @_core)
+	{
+		@core = _core;
+	}
+
+	// the actual spawn functions
+	CBlob @SpawnPlayerIntoWorld(Vec2f at, PlayerInfo @p_info)
+	{
+		CPlayer @player = getPlayerByUsername(p_info.username);
 
 		if (player !is null)
 		{
 			CBlob @newBlob = server_CreateBlob(p_info.blob_name, p_info.team, at);
 			newBlob.server_SetPlayer(player);
-			u8 refix = player.getTeamNum(); //hacky solution for player spawning
-			
+			u8 refix = player.getTeamNum(); // hacky solution for player spawning
+
 			if (refix == 0)
 			{
-				player.server_setTeamNum (0);
+				player.server_setTeamNum(0);
 			}
 			else if (refix == 1)
 			{
-				player.server_setTeamNum (1);
+				player.server_setTeamNum(1);
 			}
-			//player.server_setTeamNum(p_info.team); //this line forced players on the blue team.
+			// player.server_setTeamNum(p_info.team); //this line forced players on the blue team.
 			return newBlob;
 		}
 
 		return null;
 	}
 
-	//suggested implementation, doesn't have to be used of course
-	void DoSpawnPlayer(PlayerInfo@ p_info)
+	// suggested implementation, doesn't have to be used of course
+	void DoSpawnPlayer(PlayerInfo @p_info)
 	{
 		if (canSpawnPlayer(p_info))
 		{
-			CPlayer@ player = getPlayerByUsername(p_info.username); // is still connected?
+			CPlayer @player = getPlayerByUsername(p_info.username); // is still connected?
 
 			if (player is null)
 			{
@@ -66,13 +78,13 @@ shared class RespawnSystem
 		}
 	}
 
-	bool canSpawnPlayer(PlayerInfo@ p_info)
+	bool canSpawnPlayer(PlayerInfo @p_info)
 	{
 		/* OVERRIDE ME */
 		return true;
 	}
 
-	Vec2f getSpawnLocation(PlayerInfo@ p_info)
+	Vec2f getSpawnLocation(PlayerInfo @p_info)
 	{
 		/* OVERRIDE ME */
 		return Vec2f();
@@ -81,10 +93,8 @@ shared class RespawnSystem
 	/*
 	 * Override so rulescore can re-add when appropriate
 	 */
-	bool isSpawning(CPlayer@ player)
+	bool isSpawning(CPlayer @player)
 	{
 		return false;
 	}
-
-
 };

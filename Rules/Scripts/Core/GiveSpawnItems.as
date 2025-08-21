@@ -1,28 +1,32 @@
 // spawn resources
 
-#include "RulesCore.as";
 #include "Core/Structs.as";
+#include "RulesCore.as";
 
-const u32 materials_wait = 20; //seconds between free mats
-const u32 materials_wait_warmup = 40; //seconds between free mats
 
-//property
+const u32 materials_wait = 20;		  // seconds between free mats
+const u32 materials_wait_warmup = 40; // seconds between free mats
+
+// property
 const string SPAWN_ITEMS_TIMER = "SpawnItems:";
 
-string base_name() { return "tent"; }
-
-bool SetMaterials(CBlob@ blob,  const string &in name, const int quantity)
+string base_name()
 {
-	CInventory@ inv = blob.getInventory();
+	return "tent";
+}
 
-	//already got them?
+bool SetMaterials(CBlob @blob, const string&in name, const int quantity)
+{
+	CInventory @inv = blob.getInventory();
+
+	// already got them?
 	if (inv.isInInventory(name, quantity))
 		return false;
 
-	//otherwise...
-	inv.server_RemoveItems(name, quantity); //shred any old ones
+	// otherwise...
+	inv.server_RemoveItems(name, quantity); // shred any old ones
 
-	CBlob@ mat = server_CreateBlob(name);
+	CBlob @mat = server_CreateBlob(name);
 	if (mat !is null)
 	{
 		mat.Tag("do not set materials");
@@ -36,7 +40,7 @@ bool SetMaterials(CBlob@ blob,  const string &in name, const int quantity)
 	return true;
 }
 
-bool GiveSpawnResources(CRules@ this, CBlob@ blob, CPlayer@ player, CTFPlayerInfo@ info)
+bool GiveSpawnResources(CRules @ this, CBlob @blob, CPlayer @player, CTFPlayerInfo @info)
 {
 	bool ret = false;
 
@@ -46,7 +50,6 @@ bool GiveSpawnResources(CRules@ this, CBlob@ blob, CPlayer@ player, CTFPlayerInf
 		{
 			ret = SetMaterials(blob, "mat_wood", 300) || ret;
 			ret = SetMaterials(blob, "mat_stone", 100) || ret;
-            
 		}
 		else
 		{
@@ -74,7 +77,7 @@ bool GiveSpawnResources(CRules@ this, CBlob@ blob, CPlayer@ player, CTFPlayerInf
 		{
 			info.items_collected |= ItemFlag::Knight;
 		}
-	}		
+	}
 	else if (blob.getName() == "priest" || blob.getName() == "undeadmystic")
 	{
 		ret = SetMaterials(blob, "mat_orbs", 30) || ret;
@@ -99,7 +102,7 @@ bool GiveSpawnResources(CRules@ this, CBlob@ blob, CPlayer@ player, CTFPlayerInf
 		ret = SetMaterials(blob, "mat_wood", 500) || ret;
 		ret = SetMaterials(blob, "mat_stone", 250) || ret;
 		ret = SetMaterials(blob, "mat_gold", 100) || ret;
-            ret = SetMaterials(blob, "scrollchicken", 1) || ret;
+		ret = SetMaterials(blob, "scrollchicken", 1) || ret;
 
 		if (ret)
 		{
@@ -114,20 +117,20 @@ bool GiveSpawnResources(CRules@ this, CBlob@ blob, CPlayer@ player, CTFPlayerInf
 		{
 			info.items_collected |= ItemFlag::Fighter;
 		}
-	}	
+	}
 
 	return ret;
 }
 
-//when the player is set, give materials if possible
-void onSetPlayer(CRules@ this, CBlob@ blob, CPlayer@ player)
+// when the player is set, give materials if possible
+void onSetPlayer(CRules @ this, CBlob @blob, CPlayer @player)
 {
 	if (!getNet().isServer())
 		return;
 
 	if (blob !is null && player !is null)
 	{
-		RulesCore@ core;
+		RulesCore @core;
 		this.get("core", @core);
 		if (core !is null)
 		{
@@ -136,17 +139,17 @@ void onSetPlayer(CRules@ this, CBlob@ blob, CPlayer@ player)
 	}
 }
 
-//when player dies, unset archer flag so he can get arrows if he really sucks :)
-//give a guy a break :)
-void onPlayerDie(CRules@ this, CPlayer@ victim, CPlayer@ attacker, u8 customData)
+// when player dies, unset archer flag so he can get arrows if he really sucks :)
+// give a guy a break :)
+void onPlayerDie(CRules @ this, CPlayer @victim, CPlayer @attacker, u8 customData)
 {
 	if (victim !is null)
 	{
-		RulesCore@ core;
+		RulesCore @core;
 		this.get("core", @core);
 		if (core !is null)
 		{
-			CTFPlayerInfo@ info = cast < CTFPlayerInfo@ > (core.getInfoFromPlayer(victim));
+			CTFPlayerInfo @info = cast<CTFPlayerInfo @>(core.getInfoFromPlayer(victim));
 			if (info !is null)
 			{
 				info.items_collected &= ~ItemFlag::Archer;
@@ -155,41 +158,41 @@ void onPlayerDie(CRules@ this, CPlayer@ victim, CPlayer@ attacker, u8 customData
 	}
 }
 
-bool canGetSpawnmats(CRules@ this, CPlayer@ p, RulesCore@ core)
+bool canGetSpawnmats(CRules @ this, CPlayer @p, RulesCore @core)
 {
 	s32 next_items = getSpawnTimer(this, p);
 	s32 gametime = getGameTime();
 
-	CTFPlayerInfo@ info = cast < CTFPlayerInfo@ > (core.getInfoFromPlayer(p));
+	CTFPlayerInfo @info = cast<CTFPlayerInfo @>(core.getInfoFromPlayer(p));
 
-	if (gametime > next_items ||		//timer expired
-	        gametime < next_items - materials_wait * getTicksASecond() * 4) //residual prop
+	if (gametime > next_items ||										// timer expired
+		gametime < next_items - materials_wait * getTicksASecond() * 4) // residual prop
 	{
-		info.items_collected = 0; //reset available class items
+		info.items_collected = 0;										// reset available class items
 		return true;
 	}
-	else //trying to get new class items, give a guy a break
+	else																// trying to get new class items, give a guy a break
 	{
 		u32 items = info.items_collected;
 		u32 flag = 0;
 
-		CBlob@ b = p.getBlob();
+		CBlob @b = p.getBlob();
 		string name = b.getName();
 		if (name == "builder")
 			flag = ItemFlag::Builder;
 		else if (name == "archer")
 			flag = ItemFlag::Archer;
 		else if (name == "knight")
-			flag = ItemFlag::Knight;		
+			flag = ItemFlag::Knight;
 		else if (name == "wizard")
 			flag = ItemFlag::Wiz;
 		else if (name == "undeadbuilder")
-			flag = ItemFlag::Nec;	
+			flag = ItemFlag::Nec;
 		else if (name == "burd")
 			flag = ItemFlag::Burd;
 		else if (name == "slayer")
-			flag = ItemFlag::Fighter;			
-			
+			flag = ItemFlag::Fighter;
+
 		if (info.items_collected & flag == 0)
 		{
 			return true;
@@ -197,15 +200,14 @@ bool canGetSpawnmats(CRules@ this, CPlayer@ p, RulesCore@ core)
 	}
 
 	return false;
-
 }
 
-string getSpawnTimerPropertyName(CPlayer@ p)
+string getSpawnTimerPropertyName(CPlayer @p)
 {
 	return SPAWN_ITEMS_TIMER + p.getUsername();
 }
 
-s32 getSpawnTimer(CRules@ this, CPlayer@ p)
+s32 getSpawnTimer(CRules @ this, CPlayer @p)
 {
 	string property = getSpawnTimerPropertyName(p);
 	if (this.exists(property))
@@ -214,51 +216,51 @@ s32 getSpawnTimer(CRules@ this, CPlayer@ p)
 		return 0;
 }
 
-void SetSpawnTimer(CRules@ this, CPlayer@ p, s32 time)
+void SetSpawnTimer(CRules @ this, CPlayer @p, s32 time)
 {
 	string property = getSpawnTimerPropertyName(p);
 	this.set_s32(property, time);
 	this.SyncToPlayer(property, p);
 }
 
-//takes into account and sets the limiting timer
-//prevents dying over and over, and allows getting more mats throughout the game
-void doGiveSpawnMats(CRules@ this, CPlayer@ p, CBlob@ b, RulesCore@ core)
+// takes into account and sets the limiting timer
+// prevents dying over and over, and allows getting more mats throughout the game
+void doGiveSpawnMats(CRules @ this, CPlayer @p, CBlob @b, RulesCore @core)
 {
 	if (canGetSpawnmats(this, p, core))
 	{
 		s32 gametime = getGameTime();
 
-		CTFPlayerInfo@ info = cast < CTFPlayerInfo@ > (core.getInfoFromPlayer(p));
+		CTFPlayerInfo @info = cast<CTFPlayerInfo @>(core.getInfoFromPlayer(p));
 
 		bool gotmats = GiveSpawnResources(this, b, p, info);
 		if (gotmats)
 		{
-			SetSpawnTimer(this, p, gametime + (this.isWarmup() ? materials_wait_warmup : materials_wait)*getTicksASecond());
+			SetSpawnTimer(this, p, gametime + (this.isWarmup() ? materials_wait_warmup : materials_wait) * getTicksASecond());
 		}
 	}
 }
 
 // normal hooks
 
-void Reset(CRules@ this)
+void Reset(CRules @ this)
 {
-	//restart everyone's timers
+	// restart everyone's timers
 	for (uint i = 0; i < getPlayersCount(); ++i)
-		SetSpawnTimer(this, getPlayer(i), materials_wait_warmup);//this used to be set to 0, but now its not
+		SetSpawnTimer(this, getPlayer(i), materials_wait_warmup); // this used to be set to 0, but now its not
 }
 
-void onRestart(CRules@ this)
+void onRestart(CRules @ this)
 {
 	Reset(this);
 }
 
-void onInit(CRules@ this)
+void onInit(CRules @ this)
 {
 	Reset(this);
 }
 
-void onTick(CRules@ this)
+void onTick(CRules @ this)
 {
 	if (!getNet().isServer())
 		return;
@@ -268,13 +270,12 @@ void onTick(CRules@ this)
 	if ((gametime % 31) != 5)
 		return;
 
-
-	RulesCore@ core;
+	RulesCore @core;
 	this.get("core", @core);
 	if (core !is null)
 	{
 
-		CBlob@[] spots;
+		CBlob @[] spots;
 		getBlobsByName(base_name(), @spots);
 		getBlobsByName("buildershop", @spots);
 		getBlobsByName("knightshop", @spots);
@@ -282,20 +283,20 @@ void onTick(CRules@ this)
 		getBlobsByName("wshop", @spots);
 		for (uint step = 0; step < spots.length; ++step)
 		{
-			CBlob@ spot = spots[step];
-			CBlob@[] overlapping;
+			CBlob @spot = spots[step];
+			CBlob @[] overlapping;
 			if (spot !is null && spot.getOverlapping(overlapping))
 			{
 				string name = spot.getName();
 				bool isShop = (name.find("shop") != -1);
 				for (uint o_step = 0; o_step < overlapping.length; ++o_step)
 				{
-					CBlob@ overlapped = overlapping[o_step];
+					CBlob @overlapped = overlapping[o_step];
 					if (overlapped !is null && overlapped.hasTag("player"))
 					{
 						if (!isShop || name.find(overlapped.getName()) != -1)
 						{
-							CPlayer@ p = overlapped.getPlayer();
+							CPlayer @p = overlapped.getPlayer();
 							if (p !is null)
 							{
 								doGiveSpawnMats(this, p, overlapped, core);
@@ -304,25 +305,27 @@ void onTick(CRules@ this)
 					}
 				}
 			}
-
 		}
 	}
 }
 
 // render gui for the player
-void onRender(CRules@ this)
+void onRender(CRules @ this)
 {
-	CPlayer@ p = getLocalPlayer();
-	if (p is null || !p.isMyPlayer()) { return; }
+	CPlayer @p = getLocalPlayer();
+	if (p is null || !p.isMyPlayer())
+	{
+		return;
+	}
 
 	string propname = getSpawnTimerPropertyName(p);
-	CBlob@ b = p.getBlob();
+	CBlob @b = p.getBlob();
 	if (b !is null && this.exists(propname))
 	{
 		s32 next_items = this.get_s32(propname);
 		if (getGameTime() < next_items - materials_wait * getTicksASecond() * 2)
 		{
-			this.set_s32(propname, 0); //clear residue
+			this.set_s32(propname, 0); // clear residue
 		}
 		else if (next_items > getGameTime())
 		{

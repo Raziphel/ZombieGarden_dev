@@ -1,19 +1,19 @@
 #include "CreatureDeath.as";
 
-const f32 probability = 0.25f; //between 0 and 1
+const f32 probability = 0.25f; // between 0 and 1
 
-void dropArm(CBlob@ this)
+void dropArm(CBlob @ this)
 {
 	if (!getNet().isServer())
 		return;
-	
-	if (!this.hasTag("dropped arm")) //double check
+
+	if (!this.hasTag("dropped arm")) // double check
 	{
 		this.Tag("dropped arm");
 
 		if ((XORRandom(1024) / 1024.0f) < probability)
 		{
-			CBlob@ zombiearm = server_CreateBlob("zombiearm", -1, this.getPosition());
+			CBlob @zombiearm = server_CreateBlob("zombiearm", -1, this.getPosition());
 
 			if (zombiearm !is null)
 			{
@@ -24,9 +24,9 @@ void dropArm(CBlob@ this)
 	}
 }
 
-void onDie(CBlob@ this)
+void onDie(CBlob @ this)
 {
-	if (this.get_u32( "death time" ) + VANISH_BODY_SECS * getTicksASecond() > getGameTime() ) //we want hands dropping only if the body is killed, not when it revives naturally
+	if (this.get_u32("death time") + VANISH_BODY_SECS * getTicksASecond() > getGameTime()) // we want hands dropping only if the body is killed, not when it revives naturally
 	{
 		dropArm(this);
 		this.getCurrentScript().runFlags |= Script::remove_after_this;

@@ -1,22 +1,25 @@
 #include "RunnerCommon.as"
 
-void onInit(CBlob@ this)
+void onInit(CBlob @ this)
 {
-	//this.getCurrentScript().runFlags |= Script::tick_overlapping;
+	// this.getCurrentScript().runFlags |= Script::tick_overlapping;
 	this.getCurrentScript().runFlags |= Script::tick_not_attached;
 	this.getCurrentScript().runFlags |= Script::tick_not_onladder;
 	this.getCurrentScript().runFlags |= Script::tick_not_onground;
 	this.getCurrentScript().removeIfTag = "dead";
 }
 
-void onTick(CBlob@ this)
+void onTick(CBlob @ this)
 {
-	if (!this.isKeyPressed(key_up)) { return; }
+	if (!this.isKeyPressed(key_up))
+	{
+		return;
+	}
 
-	CBlob@[] overlapping;
+	CBlob @[] overlapping;
 	if (this.getOverlapping(@overlapping))
 	{
-		RunnerMoveVars@ moveVars;
+		RunnerMoveVars @moveVars;
 		if (!this.get("moveVars", @moveVars))
 		{
 			return;
@@ -24,7 +27,7 @@ void onTick(CBlob@ this)
 
 		for (uint i = 0; i < overlapping.length; i++)
 		{
-			CBlob@ b = overlapping[i];
+			CBlob @b = overlapping[i];
 
 			if (b.getName() == "arrow" || b.getName() == "crossbolt")
 			{

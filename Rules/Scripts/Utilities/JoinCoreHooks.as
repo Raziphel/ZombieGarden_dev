@@ -1,11 +1,11 @@
-//Join and leave hooks for rulescore
+// Join and leave hooks for rulescore
 
 #include "RulesCore.as"
 #define SERVER_ONLY
 
-void onNewPlayerJoin(CRules@ this, CPlayer@ player)
+void onNewPlayerJoin(CRules @ this, CPlayer @player)
 {
-	RulesCore@ core;
+	RulesCore @core;
 	this.get("core", @core);
 
 	if (core !is null)
@@ -24,9 +24,9 @@ void onNewPlayerJoin(CRules@ this, CPlayer@ player)
 	}
 }
 
-void onPlayerLeave(CRules@ this, CPlayer@ player)
+void onPlayerLeave(CRules @ this, CPlayer @player)
 {
-	RulesCore@ core;
+	RulesCore @core;
 	this.get("core", @core);
 
 	if (core !is null)

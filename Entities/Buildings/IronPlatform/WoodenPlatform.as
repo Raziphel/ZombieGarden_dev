@@ -2,20 +2,20 @@
 
 #include "FireCommon.as"
 
-void onInit(CBlob@ this)
+void onInit(CBlob @ this)
 {
 	this.SetFacingLeft(XORRandom(128) > 64);
 
 	this.getShape().getConsts().waterPasses = true;
 
-	CShape@ shape = this.getShape();
+	CShape @shape = this.getShape();
 	shape.AddPlatformDirection(Vec2f(0, -1), 89, false);
 	shape.SetRotationsAllowed(true);
 
-	this.server_setTeamNum(-1); //allow anyone to break them
+	this.server_setTeamNum(-1); // allow anyone to break them
 	this.set_TileType("background tile", CMap::tile_wood_back);
-	this.set_s16(burn_duration , 300);
-	//transfer fire to underlying tiles
+	this.set_s16(burn_duration, 300);
+	// transfer fire to underlying tiles
 	this.Tag(spread_fire_tag);
 
 	if (this.getName() == "wooden_platform")
@@ -32,14 +32,14 @@ void onInit(CBlob@ this)
 	MakeDamageFrame(this);
 }
 
-void onHealthChange(CBlob@ this, f32 oldHealth)
+void onHealthChange(CBlob @ this, f32 oldHealth)
 {
 	f32 hp = this.getHealth();
 	bool repaired = (hp > oldHealth);
 	MakeDamageFrame(this, repaired);
 }
 
-void MakeDamageFrame(CBlob@ this, bool repaired = false)
+void MakeDamageFrame(CBlob @ this, bool repaired = false)
 {
 	f32 hp = this.getHealth();
 	f32 full_hp = this.getInitialHealth();
@@ -53,14 +53,15 @@ void MakeDamageFrame(CBlob@ this, bool repaired = false)
 	}
 }
 
-void onSetStatic(CBlob@ this, const bool isStatic)
+void onSetStatic(CBlob @ this, const bool isStatic)
 {
-	if (!isStatic) return;
+	if (!isStatic)
+		return;
 
 	this.getSprite().PlaySound("/build_wood.ogg");
 }
 
-bool canBePickedUp(CBlob@ this, CBlob@ byBlob)
+bool canBePickedUp(CBlob @ this, CBlob @byBlob)
 {
 	return false;
 }

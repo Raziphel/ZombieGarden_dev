@@ -2,16 +2,16 @@
 
 #include "KnockedCommon.as"
 
-void onInit( CBlob@ this )
+void onInit(CBlob @ this)
 {
-    this.getSprite().ReloadSprites(this.getTeamNum(), 1); 
-	InitKnockable( this );
+	this.getSprite().ReloadSprites(this.getTeamNum(), 1);
+	InitKnockable(this);
 }
 
-void onTick( CBlob@ this )
+void onTick(CBlob @ this)
 {
 	f32 x = this.getVelocity().x;
-	
+
 	if (Maths::Abs(x) > 1.0f)
 	{
 		this.SetFacingLeft(x < 0);
@@ -25,7 +25,7 @@ void onTick( CBlob@ this )
 	}
 }
 
-bool canBePickedUp(CBlob@ this, CBlob@ byBlob)
+bool canBePickedUp(CBlob @ this, CBlob @byBlob)
 {
-    return this.hasTag("dead");
+	return this.hasTag("dead");
 }

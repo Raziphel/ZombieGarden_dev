@@ -7,7 +7,7 @@ const f32 ATTACK_DAMAGE = 1.0f;
 
 const int COINS_ON_DEATH = 20;
 
-void onInit(CBlob@ this)
+void onInit(CBlob @ this)
 {
 	this.set_u8("attack frequency", ATTACK_FREQUENCY);
 	this.set_f32("attack damage", ATTACK_DAMAGE);
@@ -20,14 +20,14 @@ void onInit(CBlob@ this)
 	this.getBrain().server_SetActive(true);
 
 	this.set_f32("gib health", -3.5f);
-    this.Tag("flesh");
+	this.Tag("flesh");
 	this.Tag("bisons");
-	
-    this.getCurrentScript().runFlags |= Script::tick_not_attached;
-    this.getCurrentScript().removeIfTag = "dead";
+
+	this.getCurrentScript().runFlags |= Script::tick_not_attached;
+	this.getCurrentScript().removeIfTag = "dead";
 }
 
-void onTick( CBlob@ this )
+void onTick(CBlob @ this)
 {
 	if (getNet().isClient() && XORRandom(1024) == 0)
 	{
@@ -36,7 +36,7 @@ void onTick( CBlob@ this )
 
 	if (getNet().isServer() && getGameTime() % 10 == 0)
 	{
-		CBlob@ target = this.getBrain().getTarget();
+		CBlob @target = this.getBrain().getTarget();
 
 		if (target !is null && this.getDistanceTo(target) < 512.0f)
 		{
@@ -51,7 +51,7 @@ void onTick( CBlob@ this )
 	}
 }
 
-f32 onHit( CBlob@ this, Vec2f worldPoint, Vec2f velocity, f32 damage, CBlob@ hitterBlob, u8 customData )
+f32 onHit(CBlob @ this, Vec2f worldPoint, Vec2f velocity, f32 damage, CBlob @hitterBlob, u8 customData)
 {
 	if (damage >= 0.0f)
 	{

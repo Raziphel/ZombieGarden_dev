@@ -5,17 +5,16 @@
 
 int openRecursion = 0;
 
-void onInit(CBlob@ this)
+void onInit(CBlob @ this)
 {
 	this.getShape().SetRotationsAllowed(false);
-	this.SetLight( true );
-	this.SetLightRadius( 18.0f );
-	this.SetLightColor( SColor(255, 255, 240, 171 ) );
+	this.SetLight(true);
+	this.SetLightRadius(18.0f);
+	this.SetLightColor(SColor(255, 255, 240, 171));
 	this.set_bool("open", false);
 	this.Tag("place norotate");
-	
 
-	//block knight sword
+	// block knight sword
 	this.Tag("blocks sword");
 	this.Tag("blocks water");
 
@@ -25,25 +24,27 @@ void onInit(CBlob@ this)
 	this.getCurrentScript().runFlags |= Script::tick_not_attached;
 }
 
-//TODO: fix flags sync and hitting
+// TODO: fix flags sync and hitting
 /*void onDie( CBlob@ this )
 {
 	SetSolidFlag(this, false);
 }*/
 
-void onSetStatic(CBlob@ this, const bool isStatic)
+void onSetStatic(CBlob @ this, const bool isStatic)
 {
-	CSprite@ sprite = this.getSprite();
-	if (sprite is null) return;
+	CSprite @sprite = this.getSprite();
+	if (sprite is null)
+		return;
 
 	sprite.getConsts().accurateLighting = true;
 
-	if (!isStatic) return;
+	if (!isStatic)
+		return;
 
 	this.getSprite().PlaySound("/build_door.ogg");
 }
 
-void onHealthChange(CBlob@ this, f32 oldHealth)
+void onHealthChange(CBlob @ this, f32 oldHealth)
 {
 	if (!isOpen(this))
 	{
@@ -51,7 +52,7 @@ void onHealthChange(CBlob@ this, f32 oldHealth)
 	}
 }
 
-void MakeDamageFrame(CBlob@ this)
+void MakeDamageFrame(CBlob @ this)
 {
 	f32 hp = this.getHealth();
 	f32 full_hp = this.getInitialHealth();
@@ -59,14 +60,14 @@ void MakeDamageFrame(CBlob@ this)
 	this.getSprite().animation.frame = frame;
 }
 
-bool isOpen(CBlob@ this)
+bool isOpen(CBlob @ this)
 {
 	return !this.getShape().getConsts().collidable;
 }
 
-void setOpen(CBlob@ this, bool open)
+void setOpen(CBlob @ this, bool open)
 {
-	CSprite@ sprite = this.getSprite();
+	CSprite @sprite = this.getSprite();
 
 	if (open)
 	{
@@ -77,8 +78,9 @@ void setOpen(CBlob@ this, bool open)
 		const uint touching = this.getTouchingCount();
 		for (uint i = 0; i < touching; i++)
 		{
-			CBlob@ t = this.getTouchingByIndex(i);
-			if (t is null) continue;
+			CBlob @t = this.getTouchingByIndex(i);
+			if (t is null)
+				continue;
 
 			t.AddForce(Vec2f_zero); // forces collision checks again
 		}
@@ -90,8 +92,8 @@ void setOpen(CBlob@ this, bool open)
 		this.getShape().getConsts().collidable = true;
 	}
 
-	//TODO: fix flags sync and hitting
-	//SetSolidFlag(this, !open);
+	// TODO: fix flags sync and hitting
+	// SetSolidFlag(this, !open);
 
 	if (this.getTouchingCount() <= 1 && openRecursion < 5)
 	{
@@ -100,7 +102,7 @@ void setOpen(CBlob@ this, bool open)
 	}
 }
 
-bool doesCollideWithBlob(CBlob@ this, CBlob@ blob)
+bool doesCollideWithBlob(CBlob @ this, CBlob @blob)
 {
 	if (blob.getTeamNum() == this.getTeamNum())
 	{
@@ -112,21 +114,21 @@ bool doesCollideWithBlob(CBlob@ this, CBlob@ blob)
 	}
 }
 
-bool opensThis(CBlob@ this, CBlob@ blob)
+bool opensThis(CBlob @ this, CBlob @blob)
 {
 	return (blob.getTeamNum() != this.getTeamNum() &&
-	        !isOpen(this) && blob.isCollidable() &&
-	        (blob.hasTag("player") || blob.hasTag("vehicle")));
+			!isOpen(this) && blob.isCollidable() &&
+			(blob.hasTag("player") || blob.hasTag("vehicle")));
 }
 
-void onCollision( CBlob@ this, CBlob@ blob, bool solid, Vec2f normal, Vec2f point1 )
+void onCollision(CBlob @ this, CBlob @blob, bool solid, Vec2f normal, Vec2f point1)
 {
-	CMap@ map = getMap();
-	if(map !is null)	
+	CMap @map = getMap();
+	if (map !is null)
 	{
-		if(blob !is null && blob.hasTag("zombie") || blob !is null && this.getTeamNum() != blob.getTeamNum() && blob.hasTag("flesh") && this.isInWater() != true)
-		{	
-			for(int doFire = 0; doFire <= 16; doFire = doFire + 8)
+		if (blob !is null && blob.hasTag("zombie") || blob !is null && this.getTeamNum() != blob.getTeamNum() && blob.hasTag("flesh") && this.isInWater() != true)
+		{
+			for (int doFire = 0; doFire <= 16; doFire = doFire + 8)
 			{
 				map.server_setFireWorldspace(Vec2f(blob.getPosition().x, blob.getPosition().y + doFire), true);
 				map.server_setFireWorldspace(Vec2f(blob.getPosition().x, blob.getPosition().y - doFire), true);
@@ -138,19 +140,19 @@ void onCollision( CBlob@ this, CBlob@ blob, bool solid, Vec2f normal, Vec2f poin
 				map.server_setFireWorldspace(Vec2f(blob.getPosition().x - doFire, blob.getPosition().y + doFire), true);
 			}
 		}
-			
 	}
 }
 
-void onEndCollision(CBlob@ this, CBlob@ blob)
+void onEndCollision(CBlob @ this, CBlob @blob)
 {
-	if (blob is null) return;
+	if (blob is null)
+		return;
 
 	bool touching = false;
 	const uint count = this.getTouchingCount();
 	for (uint step = 0; step < count; ++step)
 	{
-		CBlob@ blob = this.getTouchingByIndex(step);
+		CBlob @blob = this.getTouchingByIndex(step);
 		if (blob.isCollidable())
 		{
 			touching = true;
@@ -164,15 +166,16 @@ void onEndCollision(CBlob@ this, CBlob@ blob)
 	}
 }
 
-bool canBePickedUp(CBlob@ this, CBlob@ byBlob)
+bool canBePickedUp(CBlob @ this, CBlob @byBlob)
 {
 	return false;
 }
 
-void SetBlockAbove(CBlob@ this, const bool open)
+void SetBlockAbove(CBlob @ this, const bool open)
 {
-	CBlob@ blobAbove = getMap().getBlobAtPosition(this.getPosition() + Vec2f(0, -8));
-	if (blobAbove is null || blobAbove.getName() != "trap_block") return;
+	CBlob @blobAbove = getMap().getBlobAtPosition(this.getPosition() + Vec2f(0, -8));
+	if (blobAbove is null || blobAbove.getName() != "trap_block")
+		return;
 
 	setOpen(blobAbove, open);
 }

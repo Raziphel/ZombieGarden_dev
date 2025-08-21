@@ -1,6 +1,6 @@
-//common knight header
-const int TELEPORT_FREQUENCY = 15 * 30; //15 secs
-const int TELEPORT_DISTANCE = 90;//getMap().tilesize;
+// common knight header
+const int TELEPORT_FREQUENCY = 15 * 30; // 15 secs
+const int TELEPORT_DISTANCE = 90;		// getMap().tilesize;
 
 namespace KnightStates
 {
@@ -47,7 +47,7 @@ shared class AssassinInfo
 	u8 state;
 	Vec2f slash_direction;
 	s32 shield_down;
-	
+
 	bool grappling;
 	u16 grapple_id;
 	f32 grapple_ratio;
@@ -79,20 +79,16 @@ namespace BombType
 	};
 }
 
-const string[] bombNames = { "Bomb",
-                             "Water Bomb"
-                           };
+const string[] bombNames = {"Bomb",
+							"Water Bomb"};
 
-const string[] bombIcons = { "$Bomb$",
-                             "$WaterBomb$"
-                           };
+const string[] bombIcons = {"$Bomb$",
+							"$WaterBomb$"};
 
-const string[] bombTypeNames = { "mat_bombs",
-                                 "mat_waterbombs"
-                               };
+const string[] bombTypeNames = {"mat_bombs",
+								"mat_waterbombs"};
 
-
-//checking state stuff
+// checking state stuff
 
 bool isShieldState(u8 state)
 {
@@ -114,9 +110,9 @@ bool inMiddleOfAttack(u8 state)
 	return ((state > KnightStates::sword_drawn && state <= KnightStates::sword_power_super));
 }
 
-//checking angle stuff
+// checking angle stuff
 
-f32 getCutAngle(CBlob@ this, u8 state)
+f32 getCutAngle(CBlob @ this, u8 state)
 {
 	f32 attackAngle = (this.isFacingLeft() ? 180.0f : 0.0f);
 
@@ -140,7 +136,7 @@ f32 getCutAngle(CBlob@ this, u8 state)
 	return attackAngle;
 }
 
-f32 getCutAngle(CBlob@ this)
+f32 getCutAngle(CBlob @ this)
 {
 	Vec2f aimpos = this.getMovement().getVars().aimpos;
 	int tempState;
@@ -170,7 +166,7 @@ f32 getCutAngle(CBlob@ this)
 	return getCutAngle(this, tempState);
 }
 
-//shared attacking/bashing constants (should be in KnightVars but used all over)
+// shared attacking/bashing constants (should be in KnightVars but used all over)
 
 const int DELTA_BEGIN_ATTACK = 2;
 const int DELTA_END_ATTACK = 5;
@@ -184,10 +180,13 @@ const f32 SHIELD_BLOCK_ANGLE_SLIDING = 160.0f;
 
 const string grapple_sync_cmd = "grapple sync";
 
-void SyncGrapple(CBlob@ this)
+void SyncGrapple(CBlob @ this)
 {
-	AssassinInfo@ knight;
-	if (!this.get("knightInfo", @knight)) { return; }
+	AssassinInfo @knight;
+	if (!this.get("knightInfo", @knight))
+	{
+		return;
+	}
 
 	CBitStream bt;
 	bt.write_bool(knight.grappling);
@@ -203,11 +202,14 @@ void SyncGrapple(CBlob@ this)
 	this.SendCommand(this.getCommandID(grapple_sync_cmd), bt);
 }
 
-//TODO: saferead
-void HandleGrapple(CBlob@ this, CBitStream@ bt, bool apply)
+// TODO: saferead
+void HandleGrapple(CBlob @ this, CBitStream @bt, bool apply)
 {
-	AssassinInfo@ knight;
-	if (!this.get("knightInfo", @knight)) { return; }
+	AssassinInfo @knight;
+	if (!this.get("knightInfo", @knight))
+	{
+		return;
+	}
 
 	bool grappling;
 	u16 grapple_id;

@@ -6,13 +6,13 @@
 
 // To add a new page;
 
-// 1) initialize a new BuildBlock array, 
+// 1) initialize a new BuildBlock array,
 // example:
 // BuildBlock[] my_page;
 // blocks.push_back(my_page);
 
-// 2) 
-// Add a new string to PAGE_NAME in 
+// 2)
+// Add a new string to PAGE_NAME in
 // BuilderInventory.as
 // this will be what you see in the caption
 // box below the menu
@@ -34,9 +34,9 @@
 const string blocks_property = "blocks";
 const string inventory_offset = "inventory offset";
 
-void addCommonBuilderBlocks(BuildBlock[][]@ blocks)
+void addCommonBuilderBlocks(BuildBlock[][] @blocks)
 {
-	CRules@ rules = getRules();
+	CRules @rules = getRules();
 	const bool CTF = rules.gamemode_name == "CTF";
 	const bool TTH = rules.gamemode_name == "TTH";
 	const bool SBX = rules.gamemode_name == "Sandbox";
@@ -45,15 +45,15 @@ void addCommonBuilderBlocks(BuildBlock[][]@ blocks)
 	blocks.push_back(page_0);
 	{
 		AddIconToken("$stone_moss_block$", "Sprites/World.png", Vec2f(8, 8), CMap::tile_castle_moss);
-		BuildBlock b( CMap::tile_castle_moss, "stone_moss_block", "$stone_moss_block$", "Mossy Stone Block" );
-		AddRequirement( b.reqs, "blob", "mat_stone", "Stone", 10 );
-		blocks[0].push_back( b );
+		BuildBlock b(CMap::tile_castle_moss, "stone_moss_block", "$stone_moss_block$", "Mossy Stone Block");
+		AddRequirement(b.reqs, "blob", "mat_stone", "Stone", 10);
+		blocks[0].push_back(b);
 	}
 	{
 		AddIconToken("$back_stone_moss_block$", "Sprites/World.png", Vec2f(8, 8), CMap::tile_castle_back_moss);
-		BuildBlock b( CMap::tile_castle_back_moss, "back_stone_moss_block", "$back_stone_moss_block$", "Mossy Back Stone Wall" );
-		AddRequirement( b.reqs, "blob", "mat_stone", "Stone", 2 );
-		blocks[0].push_back( b );
+		BuildBlock b(CMap::tile_castle_back_moss, "back_stone_moss_block", "$back_stone_moss_block$", "Mossy Back Stone Wall");
+		AddRequirement(b.reqs, "blob", "mat_stone", "Stone", 2);
+		blocks[0].push_back(b);
 	}
 	{
 		BuildBlock b(CMap::tile_wood, "wood_block", "$wood_block$", "Wood Block\nCheap block\nwatch out for fire!");
@@ -64,12 +64,12 @@ void addCommonBuilderBlocks(BuildBlock[][]@ blocks)
 		BuildBlock b(CMap::tile_wood_back, "back_wood_block", "$back_wood_block$", "Back Wood Wall\nCheap extra support");
 		AddRequirement(b.reqs, "blob", "mat_wood", "Wood", 1);
 		blocks[0].push_back(b);
-	}	
+	}
 	{
 		BuildBlock b(0, "undead_door", "$stone_door$", "Stone Door\nPlace next to walls");
 		AddRequirement(b.reqs, "blob", "mat_stone", "Stone", 40);
 		blocks[0].push_back(b);
-	}	
+	}
 	{
 		BuildBlock b(0, "ladder", "$ladder$", "Ladder\nAnyone can climb it");
 		AddRequirement(b.reqs, "blob", "mat_wood", "Wood", 10);
@@ -79,7 +79,7 @@ void addCommonBuilderBlocks(BuildBlock[][]@ blocks)
 		BuildBlock b(0, "trap_block", "$trap_block$", "Trap Block\nOnly enemies can pass. Also good for wheeled vehicles.");
 		AddRequirement(b.reqs, "blob", "mat_stone", "Stone", 20);
 		blocks[0].push_back(b);
-	}	
+	}
 	{
 		BuildBlock b(0, "team_bridge", "$team_bridge$", "Trap Bridge\nEnemies fall through this.");
 		AddRequirement(b.reqs, "blob", "mat_wood", "Wood", 15);
@@ -89,7 +89,7 @@ void addCommonBuilderBlocks(BuildBlock[][]@ blocks)
 		BuildBlock b(0, "spikes", "$spikes$", "Spikes\nPlace on Stone Block\nfor Retracting Trap");
 		AddRequirement(b.reqs, "blob", "mat_stone", "Stone", 40);
 		blocks[0].push_back(b);
-	}	
+	}
 	{
 		BuildBlock b(0, "woodenspikes", "$woodenspikes$", "Wooden Spikes\nPlace on Wood Block\nfor Retracting Trap");
 		AddRequirement(b.reqs, "blob", "mat_wood", "Wood", 10);
@@ -104,7 +104,7 @@ void addCommonBuilderBlocks(BuildBlock[][]@ blocks)
 		BuildBlock b(0, "wooden_platform", "$wooden_platform$", "Wooden Platform\nOne way platform");
 		AddRequirement(b.reqs, "blob", "mat_wood", "Wood", 15);
 		blocks[0].push_back(b);
-	}	
+	}
 	{
 		BuildBlock b(0, "undeadbuilding", "$building$", "Workshop\nStand in an open space\nand tap this button.");
 		AddRequirement(b.reqs, "blob", "mat_stone", "Stone", 50);
@@ -120,7 +120,7 @@ void addCommonBuilderBlocks(BuildBlock[][]@ blocks)
 		b.buildOnGround = true;
 		b.size.Set(64, 64);
 		blocks[0].push_back(b);
-	}		
+	}
 
 	/*BuildBlock[] page_1;
 	blocks.push_back(page_1);
@@ -144,7 +144,7 @@ void addCommonBuilderBlocks(BuildBlock[][]@ blocks)
 		AddRequirement(b.reqs, "blob", "mat_stone", "Stone", 5);
 		AddRequirement(b.reqs, "blob", "mat_gold", "Gold", 1);
 		blocks[1].push_back(b);
-	}		
+	}
 	{
 		BuildBlock b(0, "junction", "$junction$", "Junction");
 		AddRequirement(b.reqs, "blob", "mat_stone", "Stone", 30);
@@ -314,5 +314,5 @@ void addCommonBuilderBlocks(BuildBlock[][]@ blocks)
 		AddRequirement(b.reqs, "blob", "mat_stone", "Stone", 10);
 		AddRequirement(b.reqs, "blob", "mat_gold", "Gold", 2);
 		blocks[3].push_back(b);
-	}*/		
+	}*/
 }

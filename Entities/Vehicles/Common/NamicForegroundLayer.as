@@ -1,26 +1,26 @@
-void onInit( CSprite@ this )
+void onInit(CSprite @ this)
 {
 	this.getCurrentScript().tickFrequency = 10;
 }
 
-void onTick(CSprite@ this)
+void onTick(CSprite @ this)
 {
-	CSpriteLayer@ front = this.getSpriteLayer( "front layer" );
+	CSpriteLayer @front = this.getSpriteLayer("front layer");
 	if (front !is null)
-	{	
+	{
 		front.SetVisible(false);
-		
+
 		bool visible = front.isVisible();
 		int frame = front.getFrameIndex();
-		
-		CBlob@ blob = this.getBlob();
-		
+
+		CBlob @blob = this.getBlob();
+
 		bool anim = blob.hasTag("animated front");
-		
-		CPlayer@ p = getLocalPlayer();
+
+		CPlayer @p = getLocalPlayer();
 		if (p !is null)
 		{
-			CBlob@ local = p.getBlob();
+			CBlob @local = p.getBlob();
 			if (local !is null)
 			{
 				f32 length = (local.getPosition() - blob.getPosition()).Length();
@@ -29,7 +29,7 @@ void onTick(CSprite@ this)
 				{
 					if (length < popdistance)
 					{
-						if(anim)
+						if (anim)
 							frame = 1;
 						else
 							visible = false;
@@ -39,7 +39,7 @@ void onTick(CSprite@ this)
 				{
 					if (length > popdistance)
 					{
-						if(anim)
+						if (anim)
 							frame = 0;
 						else
 							visible = true;
@@ -48,19 +48,19 @@ void onTick(CSprite@ this)
 			}
 			else
 			{
-				visible	= true;
+				visible = true;
 			}
 		}
 		else
 		{
-			visible	= true;
+			visible = true;
 		}
-	
+
 		front.SetVisible(visible);
-		
-		if(anim)
+
+		if (anim)
 			front.SetFrameIndex(frame);
 		else
-			front.animation.setFrameFromRatio(1.0f - (blob.getHealth()/blob.getInitialHealth()));	
+			front.animation.setFrameFromRatio(1.0f - (blob.getHealth() / blob.getInitialHealth()));
 	}
 }

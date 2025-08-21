@@ -1,25 +1,25 @@
 
-//script for a scary shark
+// script for a scary shark
 
 #include "AnimalConsts.as";
 
-//sprite
+// sprite
 
-void onInit(CSprite@ this)
+void onInit(CSprite @ this)
 {
-	this.ReloadSprites(0, 0); //always blue
+	this.ReloadSprites(0, 0); // always blue
 }
 
 const string angle_prop = "shark angle";
 const string chomp_tag = "chomping";
 
-void onTick(CSprite@ this)
+void onTick(CSprite @ this)
 {
-	CBlob@ blob = this.getBlob();
+	CBlob @blob = this.getBlob();
 
 	if (!blob.hasTag("dead"))
 	{
-		//scary chomping
+		// scary chomping
 		if (blob.hasTag(chomp_tag))
 		{
 			if (this.animation.name != "chomp")
@@ -46,17 +46,17 @@ void onTick(CSprite@ this)
 	}
 }
 
-//blob
+// blob
 
-void onInit(CBlob@ this)
+void onInit(CBlob @ this)
 {
-	//for EatOthers
-	string[] tags = {"survivorplayer","ally"};
+	// for EatOthers
+	string[] tags = {"survivorplayer", "ally"};
 	this.set("tags to eat", tags);
 
 	this.set_f32("bite damage", 1.0f);
 
-	//for aquatic animal
+	// for aquatic animal
 	this.set_f32(terr_rad_property, 64.0f);
 	this.set_f32(target_searchrad_property, 96.0f);
 
@@ -66,13 +66,13 @@ void onInit(CBlob@ this)
 
 	this.set_u8(target_lose_random, 8);
 
-	//for steaks
+	// for steaks
 	this.set_u8("number of steaks", 5);
 
-	//for shape
+	// for shape
 	this.getShape().SetRotationsAllowed(false);
 
-	//for flesh hit
+	// for flesh hit
 	this.set_f32("gib health", -0.0f);
 
 	this.Tag("flesh");
@@ -85,35 +85,35 @@ void onInit(CBlob@ this)
 	this.getCurrentScript().runProximityRadius = 320.0f;
 	this.getCurrentScript().runFlags |= Script::tick_not_attached;
 
-	AttachmentPoint@[] aps;
+	AttachmentPoint @[] aps;
 	if (this.getAttachmentPoints(@aps))
 	{
 		for (uint i = 0; i < aps.length; i++)
 		{
-			AttachmentPoint@ ap = aps[i];
+			AttachmentPoint @ap = aps[i];
 			ap.offsetZ = 10.0f;
 		}
 	}
 }
 
-bool canBePickedUp(CBlob@ this, CBlob@ byBlob)
+bool canBePickedUp(CBlob @ this, CBlob @byBlob)
 {
-	return false; //maybe make a knocked out state? for loading to cata?
+	return false; // maybe make a knocked out state? for loading to cata?
 }
 
-void onTick(CBlob@ this)
+void onTick(CBlob @ this)
 {
 	Vec2f vel = this.getVelocity();
 
 	if (getNet().isServer() && getGameTime() % 10 == 0)
 	{
-		//player compatible
-		CPlayer@ myplayer = this.getPlayer();
+		// player compatible
+		CPlayer @myplayer = this.getPlayer();
 		this.getBrain().server_SetActive(myplayer is null || myplayer.isBot());
 
 		if (this.get_u8(state_property) == MODE_TARGET)
 		{
-			CBlob@ b = getBlobByNetworkID(this.get_netid(target_property));
+			CBlob @b = getBlobByNetworkID(this.get_netid(target_property));
 			if (b !is null && this.getDistanceTo(b) < 56.0f)
 			{
 				this.Tag(chomp_tag);
@@ -137,8 +137,8 @@ void onTick(CBlob@ this)
 		this.SetFacingLeft(vel.x < 0);
 	}
 
-	//TODO: make this work nicely :P
-	//rotate based on velocity
+	// TODO: make this work nicely :P
+	// rotate based on velocity
 
 	/*bool left = this.isFacingLeft();
 
@@ -167,7 +167,4 @@ void onTick(CBlob@ this)
 		oldangle -= dif;
 
 	this.setAngleDegrees(-oldangle);*/
-
 }
-
-

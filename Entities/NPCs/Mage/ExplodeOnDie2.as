@@ -1,9 +1,9 @@
-//pretty straightforward, set properties for larger explosives
-// wont work without "exploding"  tag
+// pretty straightforward, set properties for larger explosives
+//  wont work without "exploding"  tag
 
-#include "Explosion2.as";  // <---- onHit()
+#include "Explosion2.as"; // <---- onHit()
 
-void onDie(CBlob@ this)
+void onDie(CBlob @ this)
 {
 	if (this.hasTag("exploding"))
 	{
@@ -11,7 +11,7 @@ void onDie(CBlob@ this)
 		{
 			Explode(this, this.get_f32("explosive_radius"), this.get_f32("explosive_damage"));
 		}
-		else //default "bomb" explosion
+		else // default "bomb" explosion
 		{
 			Explode(this, 64.0f, 3.0f);
 		}

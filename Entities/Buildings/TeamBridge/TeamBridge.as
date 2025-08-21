@@ -1,32 +1,33 @@
+#include "FireCommon.as"
 #include "Hitters.as";
 #include "MapFlags.as";
-#include "FireCommon.as"
+
 
 int openRecursion = 0;
 
-void onInit(CBlob@ this)
+void onInit(CBlob @ this)
 {
-	CShape@ shape = this.getShape();
+	CShape @shape = this.getShape();
 	shape.AddPlatformDirection(Vec2f(0, -1), 70, false);
 	shape.SetRotationsAllowed(false);
 
 	this.set_bool("open", false);
 	this.Tag("place norotate");
 
-	//block knight sword
+	// block knight sword
 	this.Tag("blocks sword");
 
 	this.set_TileType("background tile", CMap::tile_wood_back);
 
-	this.set_s16(burn_duration , 300);
-	//transfer fire to underlying tiles
+	this.set_s16(burn_duration, 300);
+	// transfer fire to underlying tiles
 	this.Tag(spread_fire_tag);
 
 	MakeDamageFrame(this);
 	this.getCurrentScript().runFlags |= Script::tick_not_attached;
 }
 
-void MakeDamageFrame(CBlob@ this)
+void MakeDamageFrame(CBlob @ this)
 {
 	f32 hp = this.getHealth();
 	f32 full_hp = this.getInitialHealth();
@@ -34,30 +35,33 @@ void MakeDamageFrame(CBlob@ this)
 	this.getSprite().animation.frame = frame;
 }
 
-void onSetStatic(CBlob@ this, const bool isStatic)
+void onSetStatic(CBlob @ this, const bool isStatic)
 {
-	CSprite@ sprite = this.getSprite();
-	if (sprite is null) return;
+	CSprite @sprite = this.getSprite();
+	if (sprite is null)
+		return;
 
 	sprite.getConsts().accurateLighting = true;
 
-	if (!isStatic) return;
+	if (!isStatic)
+		return;
 
 	this.getSprite().PlaySound("/build_wood.ogg");
 }
 
-bool canBePickedUp(CBlob@ this, CBlob@ byBlob)
+bool canBePickedUp(CBlob @ this, CBlob @byBlob)
 {
 	return false;
 }
 
-void onTick(CBlob@ this)
+void onTick(CBlob @ this)
 {
 	const uint count = this.getTouchingCount();
 	for (uint step = 0; step < count; ++step)
 	{
-		CBlob@ blob = this.getTouchingByIndex(step);
-		if (blob is null) continue;
+		CBlob @blob = this.getTouchingByIndex(step);
+		if (blob is null)
+			continue;
 
 		if (canOpenDoor(this, blob) && !isOpen(this))
 		{
@@ -70,14 +74,14 @@ void onTick(CBlob@ this)
 	}
 }
 
-bool isOpen(CBlob@ this)
+bool isOpen(CBlob @ this)
 {
 	return !this.getShape().getConsts().collidable;
 }
 
-void setOpen(CBlob@ this, bool open)
+void setOpen(CBlob @ this, bool open)
 {
-	CSprite@ sprite = this.getSprite();
+	CSprite @sprite = this.getSprite();
 
 	if (open)
 	{
@@ -88,8 +92,9 @@ void setOpen(CBlob@ this, bool open)
 		const uint touching = this.getTouchingCount();
 		for (uint i = 0; i < touching; i++)
 		{
-			CBlob@ t = this.getTouchingByIndex(i);
-			if (t is null) continue;
+			CBlob @t = this.getTouchingByIndex(i);
+			if (t is null)
+				continue;
 
 			t.AddForce(Vec2f_zero); // forces collision checks again
 		}
@@ -102,8 +107,8 @@ void setOpen(CBlob@ this, bool open)
 		this.getShape().getConsts().collidable = true;
 	}
 
-	//TODO: fix flags sync and hitting
-	//SetSolidFlag(this, !open);
+	// TODO: fix flags sync and hitting
+	// SetSolidFlag(this, !open);
 
 	if (this.getTouchingCount() <= 1 && openRecursion < 5)
 	{
@@ -112,7 +117,7 @@ void setOpen(CBlob@ this, bool open)
 	}
 }
 
-bool doesCollideWithBlob(CBlob@ this, CBlob@ blob)
+bool doesCollideWithBlob(CBlob @ this, CBlob @blob)
 {
 	if (blob.getTeamNum() == this.getTeamNum())
 	{
@@ -124,16 +129,17 @@ bool doesCollideWithBlob(CBlob@ this, CBlob@ blob)
 	}
 }
 
-bool opensThis(CBlob@ this, CBlob@ blob)
+bool opensThis(CBlob @ this, CBlob @blob)
 {
 	return (blob.getTeamNum() != this.getTeamNum() &&
-	        !isOpen(this) && blob.isCollidable() &&
-	        (blob.hasTag("zombie") || blob.hasTag("player") || blob.hasTag("vehicle")));
+			!isOpen(this) && blob.isCollidable() &&
+			(blob.hasTag("zombie") || blob.hasTag("player") || blob.hasTag("vehicle")));
 }
 
-void onCollision(CBlob@ this, CBlob@ blob, bool solid)
+void onCollision(CBlob @ this, CBlob @blob, bool solid)
 {
-	if (blob is null) return;
+	if (blob is null)
+		return;
 
 	if (opensThis(this, blob))
 	{
@@ -142,15 +148,16 @@ void onCollision(CBlob@ this, CBlob@ blob, bool solid)
 	}
 }
 
-void onEndCollision(CBlob@ this, CBlob@ blob)
+void onEndCollision(CBlob @ this, CBlob @blob)
 {
-	if (blob is null) return;
+	if (blob is null)
+		return;
 
 	bool touching = false;
 	const uint count = this.getTouchingCount();
 	for (uint step = 0; step < count; ++step)
 	{
-		CBlob@ blob = this.getTouchingByIndex(step);
+		CBlob @blob = this.getTouchingByIndex(step);
 		if (blob.isCollidable())
 		{
 			touching = true;
@@ -164,20 +171,21 @@ void onEndCollision(CBlob@ this, CBlob@ blob)
 	}
 }
 
-void SetBlockAbove(CBlob@ this, const bool open)
+void SetBlockAbove(CBlob @ this, const bool open)
 {
-	CBlob@ blobAbove = getMap().getBlobAtPosition(this.getPosition() + Vec2f(0, -8));
-	if (blobAbove is null || blobAbove.getName() != "trap_block") return;
+	CBlob @blobAbove = getMap().getBlobAtPosition(this.getPosition() + Vec2f(0, -8));
+	if (blobAbove is null || blobAbove.getName() != "trap_block")
+		return;
 
 	setOpen(blobAbove, open);
 }
 
-bool canOpenDoor(CBlob@ this, CBlob@ blob)
+bool canOpenDoor(CBlob @ this, CBlob @blob)
 {
-	if ((blob.getShape().getConsts().collidable) && //solid              // vvv lets see
-	        (blob.getRadius() > 2.0f) && //large
-	        this.getTeamNum() == blob.getTeamNum() &&
-	        (blob.hasTag("player") || blob.hasTag("vehicle") || blob.hasTag("migrant"))) //tags that can open doors
+	if ((blob.getShape().getConsts().collidable) &&									 // solid              // vvv lets see
+		(blob.getRadius() > 2.0f) &&												 // large
+		this.getTeamNum() == blob.getTeamNum() &&
+		(blob.hasTag("player") || blob.hasTag("vehicle") || blob.hasTag("migrant"))) // tags that can open doors
 	{
 		Vec2f direction = Vec2f(0, -1);
 		direction.RotateBy(this.getAngleDegrees());
@@ -185,11 +193,11 @@ bool canOpenDoor(CBlob@ this, CBlob@ blob)
 		Vec2f doorpos = this.getPosition();
 		Vec2f playerpos = blob.getPosition();
 
-		//if (blob.isKeyPressed(key_left) && playerpos.x > doorpos.x && Maths::Abs(playerpos.y - doorpos.y) < 11) return true;
-		//if (blob.isKeyPressed(key_right) && playerpos.x < doorpos.x && Maths::Abs(playerpos.y - doorpos.y) < 11) return true;
-		//if (blob.isKeyPressed(key_up) && playerpos.y > doorpos.y && Maths::Abs(playerpos.x - doorpos.x) < 11) return true;
-		if (blob.isKeyPressed(key_down) && playerpos.y < doorpos.y && Maths::Abs(playerpos.x - doorpos.x) < 11) return true;
+		// if (blob.isKeyPressed(key_left) && playerpos.x > doorpos.x && Maths::Abs(playerpos.y - doorpos.y) < 11) return true;
+		// if (blob.isKeyPressed(key_right) && playerpos.x < doorpos.x && Maths::Abs(playerpos.y - doorpos.y) < 11) return true;
+		// if (blob.isKeyPressed(key_up) && playerpos.y > doorpos.y && Maths::Abs(playerpos.x - doorpos.x) < 11) return true;
+		if (blob.isKeyPressed(key_down) && playerpos.y < doorpos.y && Maths::Abs(playerpos.x - doorpos.x) < 11)
+			return true;
 	}
 	return false;
-
 }

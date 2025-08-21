@@ -1,9 +1,10 @@
 // Obstructor.as
 
-#include "MechanismsCommon.as";
+#include "DoorCommon.as";
 #include "DummyCommon.as";
 #include "Hitters.as";
-#include "DoorCommon.as";
+#include "MechanismsCommon.as";
+
 
 const u8 BURNOUT_COUNTER_MAX = 32;
 const u8 BURNOUT_TIME_STEP = 8;
@@ -20,12 +21,12 @@ class Obstructor : Component
 		id = _id;
 	}
 
-	void Activate(CBlob@ this)
+	void Activate(CBlob @ this)
 	{
 		this.getShape().getConsts().collidable = true;
-		if(!isObstructed(this))
+		if (!isObstructed(this))
 		{
-			if(getNet().isServer())
+			if (getNet().isServer())
 			{
 				getMap().server_SetTile(this.getPosition(), Dummy::OBSTRUCTOR);
 			}
@@ -39,8 +40,8 @@ class Obstructor : Component
 			this.set_u32("burnout_time", getGameTime() + BURNOUT_TIME_STEP);
 			this.set_u8("burnout_counter", 0);
 
-			CSprite@ sprite = this.getSprite();
-			if(sprite !is null)
+			CSprite @sprite = this.getSprite();
+			if (sprite !is null)
 			{
 				sprite.RewindEmitSound();
 				sprite.SetEmitSoundPaused(false);
@@ -48,22 +49,22 @@ class Obstructor : Component
 		}
 	}
 
-	void Deactivate(CBlob@ this)
+	void Deactivate(CBlob @ this)
 	{
 		this.Untag("obstructed");
 		this.getShape().getConsts().collidable = false;
 
-		CMap@ map = getMap();
-		if(map !is null)
+		CMap @map = getMap();
+		if (map !is null)
 		{
 			this.getSprite().SetEmitSoundPaused(true);
 
-			if(map.getTile(this.getPosition()).type == Dummy::OBSTRUCTOR)
+			if (map.getTile(this.getPosition()).type == Dummy::OBSTRUCTOR)
 			{
 				this.getSprite().PlaySound("door_close.ogg");
 			}
 
-			if(getNet().isServer())
+			if (getNet().isServer())
 			{
 				map.server_SetTile(this.getPosition(), Dummy::OBSTRUCTOR_BACKGROUND);
 			}
@@ -71,7 +72,7 @@ class Obstructor : Component
 	}
 }
 
-void onInit(CBlob@ this)
+void onInit(CBlob @ this)
 {
 	// used by BuilderHittable.as
 	this.Tag("builder always hit");
@@ -81,7 +82,7 @@ void onInit(CBlob@ this)
 
 	// used by KnightLogic.as
 	this.Tag("ignore sword");
-	
+
 	this.Tag("survivormechanism");
 
 	// used by DummyOnStatic.as
@@ -90,32 +91,34 @@ void onInit(CBlob@ this)
 	this.getCurrentScript().tickIfTag = "obstructed";
 }
 
-void onSetStatic(CBlob@ this, const bool isStatic)
+void onSetStatic(CBlob @ this, const bool isStatic)
 {
-	if(!isStatic || this.exists("component")) return;
+	if (!isStatic || this.exists("component"))
+		return;
 
 	const Vec2f POSITION = this.getPosition() / 8;
 
 	Obstructor component(POSITION, this.getNetworkID());
 	this.set("component", component);
 
-	if(getNet().isServer())
+	if (getNet().isServer())
 	{
-		MapPowerGrid@ grid;
-		if(!getRules().get("power grid", @grid)) return;
+		MapPowerGrid @grid;
+		if (!getRules().get("power grid", @grid))
+			return;
 
 		grid.setAll(
-		component.x,                        // x
-		component.y,                        // y
-		TOPO_CARDINAL,                      // input topology
-		TOPO_CARDINAL,                      // output topology
-		INFO_LOAD,                          // information
-		0,                                  // power
-		component.id);                      // id
+			component.x,   // x
+			component.y,   // y
+			TOPO_CARDINAL, // input topology
+			TOPO_CARDINAL, // output topology
+			INFO_LOAD,	   // information
+			0,			   // power
+			component.id); // id
 	}
 
-	CSprite@ sprite = this.getSprite();
-	if(sprite !is null)
+	CSprite @sprite = this.getSprite();
+	if (sprite !is null)
 	{
 		sprite.SetZ(-50);
 		sprite.SetFacingLeft(false);
@@ -123,23 +126,23 @@ void onSetStatic(CBlob@ this, const bool isStatic)
 	}
 }
 
-void onTick(CBlob@ this)
+void onTick(CBlob @ this)
 {
 	const u32 TIME = getGameTime();
-	if(this.get_u32("burnout_time") + BURNOUT_TIME_STEP > TIME)
+	if (this.get_u32("burnout_time") + BURNOUT_TIME_STEP > TIME)
 	{
-		if(!isObstructed(this))
+		if (!isObstructed(this))
 		{
 			this.Untag("obstructed");
 
-			if(getNet().isServer())
+			if (getNet().isServer())
 			{
 				getMap().server_SetTile(this.getPosition(), Dummy::OBSTRUCTOR);
 				this.getShape().getConsts().collidable = true;
 			}
 
-			CSprite@ sprite = this.getSprite();
-			if(sprite !is null)
+			CSprite @sprite = this.getSprite();
+			if (sprite !is null)
 			{
 				sprite.SetEmitSoundPaused(true);
 				sprite.PlaySound("door_close.ogg");
@@ -148,7 +151,7 @@ void onTick(CBlob@ this)
 		else
 		{
 			const u8 BURNOUT_COUNTER = this.get_u8("burnout_counter") + 1;
-			if(BURNOUT_COUNTER < BURNOUT_COUNTER_MAX)
+			if (BURNOUT_COUNTER < BURNOUT_COUNTER_MAX)
 			{
 				this.set_u32("burnout_time", TIME + BURNOUT_TIME_STEP);
 				this.set_u8("burnout_counter", BURNOUT_COUNTER);
@@ -163,17 +166,17 @@ void onTick(CBlob@ this)
 	}
 }
 
-bool isObstructed(CBlob@ this)
+bool isObstructed(CBlob @ this)
 {
 	const Vec2f POSITION = this.getPosition();
 
-	CBlob@[] blobs;
-	if(getMap().getBlobsAtPosition(POSITION, @blobs))
+	CBlob @[] blobs;
+	if (getMap().getBlobsAtPosition(POSITION, @blobs))
 	{
-		for(u32 i = 0; i < blobs.length; i++)
+		for (u32 i = 0; i < blobs.length; i++)
 		{
-			CBlob@ blob = blobs[i];
-			if(blob !is this)
+			CBlob @blob = blobs[i];
+			if (blob !is this)
 			{
 				return true;
 			}
@@ -182,7 +185,7 @@ bool isObstructed(CBlob@ this)
 	return false;
 }
 
-bool canBePickedUp(CBlob@ this, CBlob@ byBlob)
+bool canBePickedUp(CBlob @ this, CBlob @byBlob)
 {
 	return false;
 }

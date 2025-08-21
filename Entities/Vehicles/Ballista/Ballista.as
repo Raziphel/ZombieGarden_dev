@@ -1,17 +1,18 @@
-#include "VehicleCommon2.as"
 #include "ClassSelectMenu.as";
-#include "StandardRespawnCommand.as";
 #include "Requirements_Tech.as";
+#include "StandardRespawnCommand.as";
+#include "VehicleCommon2.as"
 
-//todo: move to include
-bool hasTech(CBlob@ this, const string &in name)
+
+// todo: move to include
+bool hasTech(CBlob @ this, const string&in name)
 {
 	CBitStream reqs, missing;
 	AddRequirement(reqs, "tech", "bomb ammo", "Bomb Ammo");
 
 	int thisteam = this.getTeamNum();
 
-	CPlayer@ player;
+	CPlayer @player;
 	for (int i = 0; i < getPlayersCount(); i++)
 	{
 		@player = getPlayer(i);
@@ -30,11 +31,11 @@ bool hasTech(CBlob@ this, const string &in name)
 
 const u8 cooldown_time = 90;
 
-//naming here is kinda counter intuitive, but 0 == up, 90 == sideways
+// naming here is kinda counter intuitive, but 0 == up, 90 == sideways
 const f32 high_angle = 20.0f;
 const f32 low_angle = 60.0f;
 
-void onInit(CBlob@ this)
+void onInit(CBlob @ this)
 {
 	this.Tag("respawn");
 
@@ -43,12 +44,12 @@ void onInit(CBlob@ this)
 	this.Tag("change class drop inventory");
 
 	Vehicle_Setup(this,
-	              30.0f, // move speed
-	              0.31f,  // turn speed
-	              Vec2f(0.0f, 0.0f), // jump out velocity
-	              false  // inventory access
-	             );
-	VehicleInfo@ v;
+				  30.0f,			 // move speed
+				  0.31f,			 // turn speed
+				  Vec2f(0.0f, 0.0f), // jump out velocity
+				  false				 // inventory access
+	);
+	VehicleInfo @v;
 	if (!this.get("VehicleInfo", @v))
 	{
 		return;
@@ -56,34 +57,44 @@ void onInit(CBlob@ this)
 
 	v.max_charge_time = 80;
 
-	//tech - bomb bolts
+	// tech - bomb bolts
 	bool hasBomb = hasTech(this, "bomb ammo");
 	this.set_bool("bomb ammo", hasBomb);
 
 	Vehicle_SetupWeapon(this, v,
-	                    cooldown_time, // fire delay (ticks)
-	                    1, // fire bullets amount
-	                    Vec2f(-6.0f, -8.0f), // fire position ffset
-	                    "mat_bolts", // bullet ammo config name
-	                    "ballista_bolt", // bullet config name
-	                    "CatapultFire", // fire sound
-	                    "EmptyFire", // empty fire sound
-	                    Vehicle_Fire_Style::custom
-	                   );
+						cooldown_time,		 // fire delay (ticks)
+						1,					 // fire bullets amount
+						Vec2f(-6.0f, -8.0f), // fire position ffset
+						"mat_bolts",		 // bullet ammo config name
+						"ballista_bolt",	 // bullet config name
+						"CatapultFire",		 // fire sound
+						"EmptyFire",		 // empty fire sound
+						Vehicle_Fire_Style::custom);
 
 	v.fire_cost_per_amount = hasBomb ? 2 : 1;
 
-	Vehicle_SetupGroundSound(this, v, "WoodenWheelsRolling",  // movement sound
-	                         1.0f, // movement sound volume modifier   0.0f = no manipulation
-	                         1.0f // movement sound pitch modifier     0.0f = no manipulation
-	                        );
+	Vehicle_SetupGroundSound(this, v, "WoodenWheelsRolling", // movement sound
+							 1.0f,							 // movement sound volume modifier   0.0f = no manipulation
+							 1.0f							 // movement sound pitch modifier     0.0f = no manipulation
+	);
 
-	{ CSpriteLayer@ w = Vehicle_addWoodenWheel(this, v, 0, Vec2f(10.0f, 18.0f)); if (w !is null) w.SetRelativeZ(10.0f); }
-	{ CSpriteLayer@ w = Vehicle_addWoodenWheel(this, v, 0, Vec2f(-1.0f, 18.0f)); if (w !is null) w.SetRelativeZ(10.0f); }
-	{ CSpriteLayer@ w = Vehicle_addWoodenWheel(this, v, 0, Vec2f(-11.0f, 18.0f)); if (w !is null) w.SetRelativeZ(10.0f); }
+	{
+		CSpriteLayer @w = Vehicle_addWoodenWheel(this, v, 0, Vec2f(10.0f, 18.0f));
+		if (w !is null)
+			w.SetRelativeZ(10.0f);
+	}
+	{
+		CSpriteLayer @w = Vehicle_addWoodenWheel(this, v, 0, Vec2f(-1.0f, 18.0f));
+		if (w !is null)
+			w.SetRelativeZ(10.0f);
+	}
+	{
+		CSpriteLayer @w = Vehicle_addWoodenWheel(this, v, 0, Vec2f(-11.0f, 18.0f));
+		if (w !is null)
+			w.SetRelativeZ(10.0f);
+	}
 
 	this.getShape().SetOffset(Vec2f(0, 8));
-
 
 	Vehicle_SetWeaponAngle(this, low_angle, v);
 	this.set_string("autograb blob", "mat_bolts");
@@ -91,26 +102,26 @@ void onInit(CBlob@ this)
 	// auto-load on creation
 	if (getNet().isServer())
 	{
-		CBlob@ ammo = server_CreateBlob("mat_bolts");
+		CBlob @ammo = server_CreateBlob("mat_bolts");
 		if (ammo !is null)
 		{
 			if (!this.server_PutInInventory(ammo))
 				ammo.server_Die();
 		}
 	}
-	
+
 	// init arm sprites
-	CSprite@ sprite = this.getSprite();
-	CSpriteLayer@ arm = sprite.addSpriteLayer("arm", sprite.getConsts().filename, 24, 40);
+	CSprite @sprite = this.getSprite();
+	CSpriteLayer @arm = sprite.addSpriteLayer("arm", sprite.getConsts().filename, 24, 40);
 
 	if (arm !is null)
 	{
 		f32 angle = low_angle;
 
-		Animation@ anim = arm.addAnimation("default", 0, false);
+		Animation @anim = arm.addAnimation("default", 0, false);
 		anim.AddFrame(10);
 
-		CSpriteLayer@ arm = this.getSprite().getSpriteLayer("arm");
+		CSpriteLayer @arm = this.getSprite().getSpriteLayer("arm");
 		if (arm !is null)
 		{
 			arm.SetRelativeZ(0.5f);
@@ -120,37 +131,36 @@ void onInit(CBlob@ this)
 	}
 
 	sprite.SetZ(-50.0f);
-	CSpriteLayer@ front = sprite.addSpriteLayer("front layer", sprite.getConsts().filename, 40, 40);
+	CSpriteLayer @front = sprite.addSpriteLayer("front layer", sprite.getConsts().filename, 40, 40);
 	if (front !is null)
 	{
 		front.addAnimation("default", 0, false);
-		int[] frames = { 0, 1, 2 };
+		int[] frames = {0, 1, 2};
 		front.animation.AddFrames(frames);
 		front.SetRelativeZ(0.8f);
 	}
 
-	CSpriteLayer@ flag = sprite.addSpriteLayer("flag layer", sprite.getConsts().filename, 32, 32);
+	CSpriteLayer @flag = sprite.addSpriteLayer("flag layer", sprite.getConsts().filename, 32, 32);
 	if (flag !is null)
 	{
 		flag.addAnimation("default", 3, true);
-		int[] frames = { 15, 14, 13 };
+		int[] frames = {15, 14, 13};
 		flag.animation.AddFrames(frames);
 		flag.SetRelativeZ(-0.8f);
 		flag.SetOffset(Vec2f(20.0f, -2.0f));
 	}
 
-	//set custom minimap icon
+	// set custom minimap icon
 	this.SetMinimapOutsideBehaviour(CBlob::minimap_snap);
-	this.SetMinimapVars("GUI/MiniIcons.png", 5, Vec2f(16,16));
-	this.SetMinimapRenderAlways(true);		
-	
+	this.SetMinimapVars("GUI/MiniIcons.png", 5, Vec2f(16, 16));
+	this.SetMinimapRenderAlways(true);
 }
 
-f32 getAngle(CBlob@ this, const u8 charge, VehicleInfo@ v)
+f32 getAngle(CBlob @ this, const u8 charge, VehicleInfo @v)
 {
-	f32 angle = 180.0f; //we'll know if this goes wrong :)
+	f32 angle = 180.0f; // we'll know if this goes wrong :)
 	bool facing_left = this.isFacingLeft();
-	AttachmentPoint@ gunner = this.getAttachments().getAttachmentPointByName("GUNNER");
+	AttachmentPoint @gunner = this.getAttachments().getAttachmentPointByName("GUNNER");
 
 	bool not_found = true;
 
@@ -159,14 +169,17 @@ f32 getAngle(CBlob@ this, const u8 charge, VehicleInfo@ v)
 		Vec2f aim_vec = gunner.getPosition() - gunner.getAimPos();
 
 		if ((!facing_left && aim_vec.x < 0) ||
-		        (facing_left && aim_vec.x > 0))
+			(facing_left && aim_vec.x > 0))
 		{
-			if (aim_vec.x > 0) { aim_vec.x = -aim_vec.x; }
+			if (aim_vec.x > 0)
+			{
+				aim_vec.x = -aim_vec.x;
+			}
 			aim_vec.RotateBy((facing_left ? 1 : -1) * this.getAngleDegrees());
 
 			angle = (-(aim_vec).getAngle() + 270.0f);
-			angle = Maths::Max(high_angle , Maths::Min(angle , low_angle));
-			//printf("angle " + angle );
+			angle = Maths::Max(high_angle, Maths::Min(angle, low_angle));
+			// printf("angle " + angle );
 			not_found = false;
 		}
 	}
@@ -177,16 +190,19 @@ f32 getAngle(CBlob@ this, const u8 charge, VehicleInfo@ v)
 		return (facing_left ? -angle : angle);
 	}
 
-	if (facing_left) { angle *= -1; }
+	if (facing_left)
+	{
+		angle *= -1;
+	}
 
 	return angle;
 }
 
-void onTick(CBlob@ this)
+void onTick(CBlob @ this)
 {
 	if (this.hasAttached() || this.getTickSinceCreated() < 30)
 	{
-		VehicleInfo@ v;
+		VehicleInfo @v;
 		if (!this.get("VehicleInfo", @v))
 		{
 			return;
@@ -201,9 +217,9 @@ void onTick(CBlob@ this)
 		f32 angle = getAngle(this, v.charge, v);
 		Vehicle_SetWeaponAngle(this, angle, v);
 
-		CSprite@ sprite = this.getSprite();
+		CSprite @sprite = this.getSprite();
 
-		CSpriteLayer@ arm = sprite.getSpriteLayer("arm");
+		CSpriteLayer @arm = sprite.getSpriteLayer("arm");
 		if (arm !is null)
 		{
 			arm.ResetTransform();
@@ -221,13 +237,13 @@ void onTick(CBlob@ this)
 
 		if (getNet().isClient())
 		{
-			CPlayer@ p = getLocalPlayer();
+			CPlayer @p = getLocalPlayer();
 			if (p !is null)
 			{
-				CBlob@ local = p.getBlob();
+				CBlob @local = p.getBlob();
 				if (local !is null)
 				{
-					CSpriteLayer@ front = sprite.getSpriteLayer("front layer");
+					CSpriteLayer @front = sprite.getSpriteLayer("front layer");
 					if (front !is null)
 					{
 						front.SetVisible(!local.isAttachedTo(this));
@@ -236,10 +252,9 @@ void onTick(CBlob@ this)
 			}
 		}
 	}
-
 }
 
-void GetButtonsFor(CBlob@ this, CBlob@ caller)
+void GetButtonsFor(CBlob @ this, CBlob @caller)
 {
 	if (caller.getTeamNum() == this.getTeamNum() && isOverlapping(this, caller) && !caller.isAttached())
 	{
@@ -247,7 +262,7 @@ void GetButtonsFor(CBlob@ this, CBlob@ caller)
 		{
 			CBitStream params;
 			params.write_u16(caller.getNetworkID());
-			CButton@ button = caller.CreateGenericButton("$change_class$", Vec2f(0, -4), this, buildSpawnMenu, "Change class");
+			CButton @button = caller.CreateGenericButton("$change_class$", Vec2f(0, -4), this, buildSpawnMenu, "Change class");
 		}
 
 		if (!Vehicle_AddFlipButton(this, caller))
@@ -257,7 +272,7 @@ void GetButtonsFor(CBlob@ this, CBlob@ caller)
 	}
 }
 
-void onCommand(CBlob@ this, u8 cmd, CBitStream @params)
+void onCommand(CBlob @ this, u8 cmd, CBitStream @params)
 {
 	if (cmd == this.getCommandID("class menu") || cmd == this.getCommandID("change class"))
 	{
@@ -265,9 +280,9 @@ void onCommand(CBlob@ this, u8 cmd, CBitStream @params)
 	}
 	else if (cmd == this.getCommandID("fire blob"))
 	{
-		CBlob@ blob = getBlobByNetworkID(params.read_netid());
+		CBlob @blob = getBlobByNetworkID(params.read_netid());
 		const u8 charge = params.read_u8();
-		VehicleInfo@ v;
+		VehicleInfo @v;
 		if (!this.get("VehicleInfo", @v))
 		{
 			return;
@@ -276,7 +291,7 @@ void onCommand(CBlob@ this, u8 cmd, CBitStream @params)
 	}
 }
 
-bool Vehicle_canFire(CBlob@ this, VehicleInfo@ v, bool isActionPressed, bool wasActionPressed, u8 &out chargeValue)
+bool Vehicle_canFire(CBlob @ this, VehicleInfo @v, bool isActionPressed, bool wasActionPressed, u8&out chargeValue)
 {
 	v.firing = v.firing || isActionPressed;
 
@@ -304,7 +319,7 @@ bool Vehicle_canFire(CBlob@ this, VehicleInfo@ v, bool isActionPressed, bool was
 	return false;
 }
 
-void Vehicle_onFire(CBlob@ this, VehicleInfo@ v, CBlob@ bullet, const u8 _charge)
+void Vehicle_onFire(CBlob @ this, VehicleInfo @v, CBlob @bullet, const u8 _charge)
 {
 	if (bullet !is null)
 	{
@@ -329,13 +344,12 @@ void Vehicle_onFire(CBlob@ this, VehicleInfo@ v, CBlob@ bullet, const u8 _charge
 	v.cooldown_time = cooldown_time;
 }
 
-bool doesCollideWithBlob(CBlob@ this, CBlob@ blob)
+bool doesCollideWithBlob(CBlob @ this, CBlob @blob)
 {
 	return Vehicle_doesCollideWithBlob_boat(this, blob);
 }
 
-
-void onCollision(CBlob@ this, CBlob@ blob, bool solid)
+void onCollision(CBlob @ this, CBlob @blob, bool solid)
 {
 	if (blob !is null)
 	{
@@ -343,9 +357,9 @@ void onCollision(CBlob@ this, CBlob@ blob, bool solid)
 	}
 }
 
-void onAttach(CBlob@ this, CBlob@ attached, AttachmentPoint @attachedPoint)
+void onAttach(CBlob @ this, CBlob @attached, AttachmentPoint @attachedPoint)
 {
-	VehicleInfo@ v;
+	VehicleInfo @v;
 	if (!this.get("VehicleInfo", @v))
 	{
 		return;
@@ -354,9 +368,9 @@ void onAttach(CBlob@ this, CBlob@ attached, AttachmentPoint @attachedPoint)
 	Vehicle_onAttach(this, v, attached, attachedPoint);
 }
 
-void onDetach(CBlob@ this, CBlob@ detached, AttachmentPoint@ attachedPoint)
+void onDetach(CBlob @ this, CBlob @detached, AttachmentPoint @attachedPoint)
 {
-	VehicleInfo@ v;
+	VehicleInfo @v;
 	if (!this.get("VehicleInfo", @v))
 	{
 		return;
@@ -364,9 +378,9 @@ void onDetach(CBlob@ this, CBlob@ detached, AttachmentPoint@ attachedPoint)
 	Vehicle_onDetach(this, v, detached, attachedPoint);
 }
 
-bool isAnotherRespawnClose(CBlob@ this)
+bool isAnotherRespawnClose(CBlob @ this)
 {
-	CBlob@[] blobsInRadius;
+	CBlob @[] blobsInRadius;
 	if (this.getMap().getBlobsInRadius(this.getPosition(), this.getRadius() * 1.5f, @blobsInRadius))
 	{
 		for (uint i = 0; i < blobsInRadius.length; i++)
@@ -382,15 +396,11 @@ bool isAnotherRespawnClose(CBlob@ this)
 }
 
 // Blame Fuzzle.
-bool isOverlapping(CBlob@ this, CBlob@ blob)
+bool isOverlapping(CBlob @ this, CBlob @blob)
 {
 
 	Vec2f tl, br, _tl, _br;
 	this.getShape().getBoundingRect(tl, br);
 	blob.getShape().getBoundingRect(_tl, _br);
-	return br.x > _tl.x
-	       && br.y > _tl.y
-	       && _br.x > tl.x
-	       && _br.y > tl.y;
-
+	return br.x > _tl.x && br.y > _tl.y && _br.x > tl.x && _br.y > tl.y;
 }

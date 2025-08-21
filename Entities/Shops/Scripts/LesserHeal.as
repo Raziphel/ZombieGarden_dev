@@ -1,11 +1,11 @@
-void onInit(CBlob@ this)
+void onInit(CBlob @ this)
 {
 	this.getCurrentScript().tickFrequency = 45;
 }
 
-void onTick(CBlob@ this)
+void onTick(CBlob @ this)
 {
-	CBlob@[] blobsInRadius;
+	CBlob @[] blobsInRadius;
 	if (getMap().getBlobsInRadius(this.getPosition(), this.getRadius(), @blobsInRadius))
 	{
 		const u8 teamNum = this.getTeamNum();

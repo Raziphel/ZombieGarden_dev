@@ -1,4 +1,4 @@
-//Crossbow Include
+// Crossbow Include
 
 namespace CrossbowParams
 {
@@ -65,22 +65,21 @@ shared class CrossbowInfo
 	}
 };
 
-const string[] arrowTypeNames = { "mat_arrows"
+const string[] arrowTypeNames = {"mat_arrows"
 
-                                };
+};
 
-const string[] arrowNames = { "Regular arrows"
+const string[] arrowNames = {"Regular arrows"
 
-                            };
+};
 
-const string[] arrowIcons = { "$Arrow$"
+const string[] arrowIcons = {"$Arrow$"
 
-                            };
+};
 
-
-bool hasArrows(CBlob@ this)
+bool hasArrows(CBlob @ this)
 {
-	CrossbowInfo@ crossbow;
+	CrossbowInfo @crossbow;
 	if (!this.get("crossbowInfo", @crossbow))
 	{
 		return false;
@@ -92,14 +91,14 @@ bool hasArrows(CBlob@ this)
 	return false;
 }
 
-bool hasArrows(CBlob@ this, u8 arrowType)
+bool hasArrows(CBlob @ this, u8 arrowType)
 {
 	return this.getBlobCount(arrowTypeNames[arrowType]) > 0;
 }
 
-void SetArrowType(CBlob@ this, const u8 type)
+void SetArrowType(CBlob @ this, const u8 type)
 {
-	CrossbowInfo@ crossbow;
+	CrossbowInfo @crossbow;
 	if (!this.get("crossbowInfo", @crossbow))
 	{
 		return;
@@ -107,9 +106,9 @@ void SetArrowType(CBlob@ this, const u8 type)
 	crossbow.arrow_type = type;
 }
 
-u8 getArrowType(CBlob@ this)
+u8 getArrowType(CBlob @ this)
 {
-	CrossbowInfo@ crossbow;
+	CrossbowInfo @crossbow;
 	if (!this.get("crossbowInfo", @crossbow))
 	{
 		return 0;

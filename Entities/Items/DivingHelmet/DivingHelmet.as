@@ -1,6 +1,6 @@
 #define SERVER_ONLY
 
-void onAttach(CBlob@ this, CBlob@ attached, AttachmentPoint@ attachedPoint)
+void onAttach(CBlob @ this, CBlob @attached, AttachmentPoint @attachedPoint)
 {
 	if (this.getName() == "crate" && !this.exists("packed"))
 	{
@@ -9,7 +9,7 @@ void onAttach(CBlob@ this, CBlob@ attached, AttachmentPoint@ attachedPoint)
 	attached.AddScript("DisableDrown.as");
 }
 
-void onDetach(CBlob@ this, CBlob@ detached, AttachmentPoint@ attachedPoint)
+void onDetach(CBlob @ this, CBlob @detached, AttachmentPoint @attachedPoint)
 {
 	detached.RemoveScript("DisableDrown.as");
 }

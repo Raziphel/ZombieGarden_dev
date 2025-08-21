@@ -4,7 +4,7 @@
 
 const int COINS_ON_DEATH = 25;
 
-void onInit(CBlob@ this)
+void onInit(CBlob @ this)
 {
 	TargetInfo[] infos;
 	addTargetInfo(infos, "survivorplayer", 1.0f, true, true);
@@ -27,26 +27,28 @@ void onInit(CBlob@ this)
 	this.Tag("flesh");
 	this.Tag("zombie");
 	this.Tag("enemy");
-	
+
 	this.getCurrentScript().runFlags |= Script::tick_not_attached;
 	this.getCurrentScript().removeIfTag = "dead";
 }
 
-void onCollision(CBlob@ this, CBlob@ blob, bool solid, Vec2f normal, Vec2f point1)
+void onCollision(CBlob @ this, CBlob @blob, bool solid, Vec2f normal, Vec2f point1)
 {
-	if (blob is null) return;
+	if (blob is null)
+		return;
 
 	// Ignore torches completely (and clear target if it was the torch)
 	if (blob.getName() == "ruinstorch")
 	{
-		CBrain@ brain = this.getBrain();
+		CBrain @brain = this.getBrain();
 		if (brain !is null && brain.getTarget() is blob)
 			brain.SetTarget(null);
 		return;
 	}
 
-	CBrain@ brain = this.getBrain();
-	if (brain is null) return;
+	CBrain @brain = this.getBrain();
+	if (brain is null)
+		return;
 
 	if (blob is brain.getTarget())
 	{
@@ -54,17 +56,16 @@ void onCollision(CBlob@ this, CBlob@ blob, bool solid, Vec2f normal, Vec2f point
 	}
 }
 
-
-f32 onHit( CBlob@ this, Vec2f worldPoint, Vec2f velocity, f32 damage, CBlob@ hitterBlob, u8 customData )
+f32 onHit(CBlob @ this, Vec2f worldPoint, Vec2f velocity, f32 damage, CBlob @hitterBlob, u8 customData)
 {
 	if (damage >= 0.0f)
 	{
-	    this.getSprite().PlaySound( "/ZombieHit" );
-    }
+		this.getSprite().PlaySound("/ZombieHit");
+	}
 	return damage;
 }
 
-void onDie( CBlob@ this )
+void onDie(CBlob @ this)
 {
-	this.getSprite().PlaySound("/GargRoar");	
+	this.getSprite().PlaySound("/GargRoar");
 }

@@ -1,11 +1,12 @@
 #include "MakeMat.as";
 #include "ParticleSparks.as";
 
-void onHitMap(CBlob@ this, Vec2f worldPoint, Vec2f velocity, f32 damage, u8 customData)
+void onHitMap(CBlob @ this, Vec2f worldPoint, Vec2f velocity, f32 damage, u8 customData)
 {
-	if (damage <= 0.0f) return;
+	if (damage <= 0.0f)
+		return;
 
-	CMap@ map = getMap();
+	CMap @map = getMap();
 
 	if (getNet().isClient())
 	{
@@ -23,7 +24,6 @@ void onHitMap(CBlob@ this, Vec2f worldPoint, Vec2f velocity, f32 damage, u8 cust
 		TileType tile = map.getTile(worldPoint).type;
 
 		map.server_DestroyTile(worldPoint, damage, this);
-
 
 		// spawn materials
 		if (map.isTileStone(tile))

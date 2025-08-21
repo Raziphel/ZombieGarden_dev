@@ -2,15 +2,16 @@
 
 #include "BurdCommon.as"
 #include "FireCommon.as"
+#include "KnockedCommon.as";
 #include "Requirements.as"
 #include "RunnerAnimCommon.as";
 #include "RunnerCommon.as";
-#include "KnockedCommon.as";
 
-void onTick(CSprite@ this)
+
+void onTick(CSprite @ this)
 {
 	// store some vars for ease and speed
-	CBlob@ blob = this.getBlob();
+	CBlob @blob = this.getBlob();
 
 	if (blob.hasTag("dead"))
 	{
@@ -38,7 +39,7 @@ void onTick(CSprite@ this)
 	const bool action2 = blob.isKeyPressed(key_action2);
 	const bool action1 = blob.isKeyPressed(key_action1);
 
-	if (!blob.hasTag(burning_tag)) //give way to burning anim
+	if (!blob.hasTag(burning_tag)) // give way to burning anim
 	{
 		const bool left = blob.isKeyPressed(key_left);
 		const bool right = blob.isKeyPressed(key_right);
@@ -47,7 +48,7 @@ void onTick(CSprite@ this)
 		const bool inair = (!blob.isOnGround() && !blob.isOnLadder());
 		Vec2f pos = blob.getPosition();
 
-		RunnerMoveVars@ moveVars;
+		RunnerMoveVars @moveVars;
 		if (!blob.get("moveVars", @moveVars))
 		{
 			return;
@@ -72,13 +73,13 @@ void onTick(CSprite@ this)
 		{
 			this.SetAnimation("strike");
 		}
-		else if (action1  || (this.isAnimation("build") && !this.isAnimationEnded()))
+		else if (action1 || (this.isAnimation("build") && !this.isAnimationEnded()))
 		{
 			this.SetAnimation("build");
 		}
 		else if (inair)
 		{
-			RunnerMoveVars@ moveVars;
+			RunnerMoveVars @moveVars;
 			if (!blob.get("moveVars", @moveVars))
 			{
 				return;
@@ -109,7 +110,7 @@ void onTick(CSprite@ this)
 			}
 		}
 		else if ((left || right) ||
-		         (blob.isOnLadder() && (up || down)))
+				 (blob.isOnLadder() && (up || down)))
 		{
 			this.SetAnimation("run");
 		}
@@ -122,7 +123,7 @@ void onTick(CSprite@ this)
 			int direction;
 
 			if ((angle > 330 && angle < 361) || (angle > -1 && angle < 30) ||
-			        (angle > 150 && angle < 210))
+				(angle > 150 && angle < 210))
 			{
 				direction = 0;
 			}
@@ -139,7 +140,7 @@ void onTick(CSprite@ this)
 		}
 	}
 
-	//set the attack head
+	// set the attack head
 
 	if (knocked)
 	{
@@ -160,7 +161,8 @@ void onTick(CSprite@ this)
 void DrawCursorAt(Vec2f position, string& in filename)
 {
 	position = getMap().getAlignedWorldPos(position);
-	if (position == Vec2f_zero) return;
+	if (position == Vec2f_zero)
+		return;
 	position = getDriver().getScreenPosFromWorldPos(position - Vec2f(1, 1));
 	GUI::DrawIcon(filename, position, getCamera().targetDistance * getDriver().getResolutionScaleFactor());
 }
@@ -169,9 +171,9 @@ void DrawCursorAt(Vec2f position, string& in filename)
 
 const string cursorTexture = "Entities/Classes/Sprites/TileCursor.png";
 
-void onRender(CSprite@ this)
+void onRender(CSprite @ this)
 {
-	CBlob@ blob = this.getBlob();
+	CBlob @blob = this.getBlob();
 	if (!blob.isMyPlayer())
 	{
 		return;
@@ -186,9 +188,9 @@ void onRender(CSprite@ this)
 	if (blob.isKeyPressed(key_action1) || this.isAnimation("strike"))
 	{
 
-		HitData@ hitdata;
+		HitData @hitdata;
 		blob.get("hitdata", @hitdata);
-		CBlob@ hitBlob = hitdata.blobID > 0 ? getBlobByNetworkID(hitdata.blobID) : null;
+		CBlob @hitBlob = hitdata.blobID > 0 ? getBlobByNetworkID(hitdata.blobID) : null;
 
 		if (hitBlob !is null) // blob hit
 		{
@@ -197,29 +199,29 @@ void onRender(CSprite@ this)
 				hitBlob.RenderForHUD(RenderStyle::outline);
 			}
 		}
-		else// map hit
+		else // map hit
 		{
 			DrawCursorAt(hitdata.tilepos, cursorTexture);
 		}
 	}
 }
 
-void onGib(CSprite@ this)
+void onGib(CSprite @ this)
 {
 	if (g_kidssafe)
 	{
 		return;
 	}
 
-	CBlob@ blob = this.getBlob();
+	CBlob @blob = this.getBlob();
 	Vec2f pos = blob.getPosition();
 	Vec2f vel = blob.getVelocity();
 	vel.y -= 3.0f;
 	f32 hp = Maths::Min(Maths::Abs(blob.getHealth()), 2.0f) + 1.0;
 	const u8 team = blob.getTeamNum();
-	CParticle@ Body     = makeGibParticle("../BurdGibs.png", pos, vel + getRandomVelocity(90, hp , 80), 0, 0, Vec2f(16, 16), 2.0f, 20, "/BodyGibFall", team);
-	CParticle@ Arm1     = makeGibParticle("../BurdGibs.png", pos, vel + getRandomVelocity(90, hp - 0.2 , 80), 1, 0, Vec2f(16, 16), 2.0f, 20, "/BodyGibFall", team);
-	CParticle@ Arm2     = makeGibParticle("../BurdGibs.png", pos, vel + getRandomVelocity(90, hp - 0.2 , 80), 1, 0, Vec2f(16, 16), 2.0f, 20, "/BodyGibFall", team);
-	CParticle@ Shield   = makeGibParticle("../BurdGibs.png", pos, vel + getRandomVelocity(90, hp , 80), 2, 0, Vec2f(16, 16), 2.0f, 0, "Sounds/material_drop.ogg", team);
-	CParticle@ Sword    = makeGibParticle("../BurdGibs.png", pos, vel + getRandomVelocity(90, hp + 1 , 80), 3, 0, Vec2f(16, 16), 2.0f, 0, "Sounds/material_drop.ogg", team);
+	CParticle @Body = makeGibParticle("../BurdGibs.png", pos, vel + getRandomVelocity(90, hp, 80), 0, 0, Vec2f(16, 16), 2.0f, 20, "/BodyGibFall", team);
+	CParticle @Arm1 = makeGibParticle("../BurdGibs.png", pos, vel + getRandomVelocity(90, hp - 0.2, 80), 1, 0, Vec2f(16, 16), 2.0f, 20, "/BodyGibFall", team);
+	CParticle @Arm2 = makeGibParticle("../BurdGibs.png", pos, vel + getRandomVelocity(90, hp - 0.2, 80), 1, 0, Vec2f(16, 16), 2.0f, 20, "/BodyGibFall", team);
+	CParticle @Shield = makeGibParticle("../BurdGibs.png", pos, vel + getRandomVelocity(90, hp, 80), 2, 0, Vec2f(16, 16), 2.0f, 0, "Sounds/material_drop.ogg", team);
+	CParticle @Sword = makeGibParticle("../BurdGibs.png", pos, vel + getRandomVelocity(90, hp + 1, 80), 3, 0, Vec2f(16, 16), 2.0f, 0, "Sounds/material_drop.ogg", team);
 }

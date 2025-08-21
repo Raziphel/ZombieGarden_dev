@@ -1,25 +1,25 @@
 ﻿// Knight Workshop
 
+#include "CTFShopCommon.as";
+#include "CheckSpam.as";
+#include "Descriptions.as";
 #include "Requirements.as"
 #include "ShopCommon.as";
-#include "Descriptions.as";
 #include "WARCosts.as";
-#include "CheckSpam.as";
-#include "CTFShopCommon.as";
 
-void onInit(CBlob@ this)
+
+void onInit(CBlob @ this)
 {
 	this.set_TileType("background tile", CMap::tile_wood_back);
 
-	this.getSprite().SetZ(-50); //background
+	this.getSprite().SetZ(-50); // background
 	this.getShape().getConsts().mapCollisions = false;
 
-	//load config
+	// load config
 	if (getRules().exists("ctf_costs_config"))
 	{
 		cost_config_file = getRules().get_string("ctf_costs_config");
 	}
-
 
 	// SHOP
 	this.set_Vec2f("shop offset", Vec2f_zero);
@@ -32,25 +32,25 @@ void onInit(CBlob@ this)
 	this.set_string("required class", "dragoon");
 
 	{
-		ShopItem@ s = addShopItem(this, "Bomb Satchel", "$bomb_satchel$", "bomb_satchel", "Bombs that stick to they're targets.", true);
+		ShopItem @s = addShopItem(this, "Bomb Satchel", "$bomb_satchel$", "bomb_satchel", "Bombs that stick to they're targets.", true);
 		AddRequirement(s.requirements, "coin", "", "Coins", 50);
 	}
 	{
-		ShopItem@ s = addShopItem(this, "Mine", "$mine$", "mine", descriptions[20], false);
+		ShopItem @s = addShopItem(this, "Mine", "$mine$", "mine", descriptions[20], false);
 		AddRequirement(s.requirements, "coin", "", "Coins", 75);
 	}
 	{
-		ShopItem@ s = addShopItem(this, "Keg", "$keg$", "keg", descriptions[4], false);
+		ShopItem @s = addShopItem(this, "Keg", "$keg$", "keg", descriptions[4], false);
 		AddRequirement(s.requirements, "coin", "", "Coins", 200);
 	}
 }
 
-void GetButtonsFor(CBlob@ this, CBlob@ caller)
+void GetButtonsFor(CBlob @ this, CBlob @caller)
 {
-	u8 kek = caller.getTeamNum();	
+	u8 kek = caller.getTeamNum();
 	if (kek == 0)
 	{
-		if(caller.getConfig() == this.get_string("required class"))
+		if (caller.getConfig() == this.get_string("required class"))
 		{
 			this.set_Vec2f("shop offset", Vec2f_zero);
 		}
@@ -62,7 +62,7 @@ void GetButtonsFor(CBlob@ this, CBlob@ caller)
 	}
 }
 
-void onCommand(CBlob@ this, u8 cmd, CBitStream @params)
+void onCommand(CBlob @ this, u8 cmd, CBitStream @params)
 {
 	if (cmd == this.getCommandID("shop made item"))
 	{

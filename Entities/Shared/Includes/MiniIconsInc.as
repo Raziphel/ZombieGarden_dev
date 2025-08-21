@@ -1,5 +1,5 @@
-//ss
-//the frames for the factory/crate icons
+// ss
+// the frames for the factory/crate icons
 
 namespace FactoryFrame
 {
@@ -38,11 +38,11 @@ namespace FactoryFrame
 		tunnel = 28,
 		storage = 29,
 
-		//end of actual factory/crate icons
+		// end of actual factory/crate icons
 		count,
 
-		//hack: these share above icons
-		//but are used for scroll frame instead.
+		// hack: these share above icons
+		// but are used for scroll frame instead.
 		magic_gib = 24,
 		magic_midas,
 		magic_drought,

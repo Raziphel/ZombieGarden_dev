@@ -11,31 +11,31 @@ const f32 DIG_DAMAGE = 2.5f;
 
 const int COINS_ON_DEATH = 200;
 
-void onInit(CBlob@ this)
+void onInit(CBlob @ this)
 {
 	this.set_u8("attack frequency", ATTACK_FREQUENCY);
 	this.set_f32("attack damage", ATTACK_DAMAGE);
 	this.set_f32("attack distance", ATTACK_DISTANCE);
 	this.set_u8("attack hitter", Hitters::bite);
 	this.set_f32("dig radius", DIG_RADIUS);
-	this.set_f32("dig damage", DIG_DAMAGE);		
+	this.set_f32("dig damage", DIG_DAMAGE);
 	this.set_string("attack sound", "BossAttack");
 	this.set_u16("coins on death", COINS_ON_DEATH);
 	this.set_f32(target_searchrad_property, 512.0f);
 
-    this.getSprite().PlayRandomSound("/BossSpawn");
+	this.getSprite().PlayRandomSound("/BossSpawn");
 	this.getShape().SetRotationsAllowed(false);
 
 	this.getBrain().server_SetActive(true);
 
 	this.set_f32("gib health", 0.0f);
-    this.Tag("flesh");
-	
+	this.Tag("flesh");
+
 	this.getCurrentScript().runFlags |= Script::tick_not_attached;
 	this.getCurrentScript().removeIfTag = "dead";
 }
 
-void onTick(CBlob@ this)
+void onTick(CBlob @ this)
 {
 	if (getNet().isClient() && XORRandom(768) == 0)
 	{
@@ -44,7 +44,7 @@ void onTick(CBlob@ this)
 
 	if (getNet().isServer() && getGameTime() % 10 == 0)
 	{
-		CBlob@ target = this.getBrain().getTarget();
+		CBlob @target = this.getBrain().getTarget();
 
 		if (target !is null && this.getDistanceTo(target) < 72.0f)
 		{
@@ -59,9 +59,7 @@ void onTick(CBlob@ this)
 	}
 }
 
-
-
-f32 onHit( CBlob@ this, Vec2f worldPoint, Vec2f velocity, f32 damage, CBlob@ hitterBlob, u8 customData )
+f32 onHit(CBlob @ this, Vec2f worldPoint, Vec2f velocity, f32 damage, CBlob @hitterBlob, u8 customData)
 {
 	if (damage >= 0.0f)
 	{
@@ -71,7 +69,7 @@ f32 onHit( CBlob@ this, Vec2f worldPoint, Vec2f velocity, f32 damage, CBlob@ hit
 	return damage;
 }
 
-void onHitBlob(CBlob@ this, Vec2f worldPoint, Vec2f velocity, f32 damage, CBlob@ hitBlob, u8 customData)
+void onHitBlob(CBlob @ this, Vec2f worldPoint, Vec2f velocity, f32 damage, CBlob @hitBlob, u8 customData)
 {
 	if (hitBlob !is null)
 	{
@@ -86,7 +84,7 @@ void onHitBlob(CBlob@ this, Vec2f worldPoint, Vec2f velocity, f32 damage, CBlob@
 		else
 			forcePowY = 1;
 
-		Vec2f forcePow = Vec2f (forcePowX, forcePowY);
+		Vec2f forcePow = Vec2f(forcePowX, forcePowY);
 		Vec2f force = forcePow * 260.0 * damage * 5.0f * 0.5;
 
 		if (force.x < 0)
@@ -106,13 +104,14 @@ void onHitBlob(CBlob@ this, Vec2f worldPoint, Vec2f velocity, f32 damage, CBlob@
 		else
 			force.y = XORRandom(force.y);
 
-                hitBlob.AddForce(force);
-        }
+		hitBlob.AddForce(force);
+	}
 }
 
-void onDie(CBlob@ this)
+void onDie(CBlob @ this)
 {
-        if (!getNet().isServer()) return;
+	if (!getNet().isServer())
+		return;
 
-        server_CreateBlob("soulshard", -1, this.getPosition());
+	server_CreateBlob("soulshard", -1, this.getPosition());
 }

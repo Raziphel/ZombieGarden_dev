@@ -1,6 +1,6 @@
-//UndeadArsonist Include
-const int TELEPORT_FREQUENCY = 12 * 30; //12 secs
-const int TELEPORT_DISTANCE = 90;//getMap().tilesize;
+// UndeadArsonist Include
+const int TELEPORT_FREQUENCY = 12 * 30; // 12 secs
+const int TELEPORT_DISTANCE = 90;		// getMap().tilesize;
 
 namespace PyromancerParams
 {
@@ -34,7 +34,7 @@ namespace PyromancerParams
 	const ::s32 legolas_time = 60;
 }
 
-//TODO: move vars into pyromancer params namespace
+// TODO: move vars into pyromancer params namespace
 const f32 pyromancer_grapple_length = 72.0f;
 const f32 pyromancer_grapple_slack = 16.0f;
 const f32 pyromancer_grapple_throw_speed = 20.0f;
@@ -89,10 +89,13 @@ shared class PyromancerInfo
 
 const string grapple_sync_cmd = "grapple sync";
 
-void SyncGrapple(CBlob@ this)
+void SyncGrapple(CBlob @ this)
 {
-	PyromancerInfo@ pyromancer;
-	if (!this.get("pyromancerInfo", @pyromancer)) { return; }
+	PyromancerInfo @pyromancer;
+	if (!this.get("pyromancerInfo", @pyromancer))
+	{
+		return;
+	}
 
 	CBitStream bt;
 	bt.write_bool(pyromancer.grappling);
@@ -108,11 +111,14 @@ void SyncGrapple(CBlob@ this)
 	this.SendCommand(this.getCommandID(grapple_sync_cmd), bt);
 }
 
-//TODO: saferead
-void HandleGrapple(CBlob@ this, CBitStream@ bt, bool apply)
+// TODO: saferead
+void HandleGrapple(CBlob @ this, CBitStream @bt, bool apply)
 {
-	PyromancerInfo@ pyromancer;
-	if (!this.get("pyromancerInfo", @pyromancer)) { return; }
+	PyromancerInfo @pyromancer;
+	if (!this.get("pyromancerInfo", @pyromancer))
+	{
+		return;
+	}
 
 	bool grappling;
 	u16 grapple_id;
@@ -144,28 +150,24 @@ void HandleGrapple(CBlob@ this, CBitStream@ bt, bool apply)
 	}
 }
 
-const string[] arrowTypeNames = { "mat_arrows",
-                                  "mat_waterarrows",
-                                  "mat_firearrows",
-                                  "mat_bombarrows"
-                                };
+const string[] arrowTypeNames = {"mat_arrows",
+								 "mat_waterarrows",
+								 "mat_firearrows",
+								 "mat_bombarrows"};
 
-const string[] arrowNames = { "Regular arrows",
-                              "Water arrows",
-                              "Fire arrows",
-                              "Bomb arrow"
-                            };
+const string[] arrowNames = {"Regular arrows",
+							 "Water arrows",
+							 "Fire arrows",
+							 "Bomb arrow"};
 
-const string[] arrowIcons = { "$Arrow$",
-                              "$WaterArrow$",
-                              "$FireArrow$",
-                              "$BombArrow$"
-                            };
+const string[] arrowIcons = {"$Arrow$",
+							 "$WaterArrow$",
+							 "$FireArrow$",
+							 "$BombArrow$"};
 
-
-bool hasArrows(CBlob@ this)
+bool hasArrows(CBlob @ this)
 {
-	PyromancerInfo@ pyromancer;
+	PyromancerInfo @pyromancer;
 	if (!this.get("pyromancerInfo", @pyromancer))
 	{
 		return false;
@@ -177,14 +179,14 @@ bool hasArrows(CBlob@ this)
 	return false;
 }
 
-bool hasArrows(CBlob@ this, u8 arrowType)
+bool hasArrows(CBlob @ this, u8 arrowType)
 {
 	return this.getBlobCount(arrowTypeNames[arrowType]) > 0;
 }
 
-void SetArrowType(CBlob@ this, const u8 type)
+void SetArrowType(CBlob @ this, const u8 type)
 {
-	PyromancerInfo@ pyromancer;
+	PyromancerInfo @pyromancer;
 	if (!this.get("pyromancerInfo", @pyromancer))
 	{
 		return;
@@ -192,9 +194,9 @@ void SetArrowType(CBlob@ this, const u8 type)
 	pyromancer.arrow_type = type;
 }
 
-u8 getArrowType(CBlob@ this)
+u8 getArrowType(CBlob @ this)
 {
-	PyromancerInfo@ pyromancer;
+	PyromancerInfo @pyromancer;
 	if (!this.get("pyromancerInfo", @pyromancer))
 	{
 		return 0;

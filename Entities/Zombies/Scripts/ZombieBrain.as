@@ -3,35 +3,37 @@
 
 #define SERVER_ONLY
 
+#include "BrainCommon.as";
 #include "CreatureCommon.as";
 #include "CreatureTargeting.as";
-#include "BrainCommon.as";
 #include "PressOldKeys.as";
 
+
 const string VAR_TARGET_SEARCH = "next_target_time";
-const string VAR_SEARCH_TIME   = "next_search_time";
-const string VAR_RNG_SEARCH    = "rng_search_time";   // used as u32 timer
-const string VAR_RNG_COUNT     = "rng_path_count";    // u16 counter
-const string VAR_LAST_POS      = "last_known_pos";
+const string VAR_SEARCH_TIME = "next_search_time";
+const string VAR_RNG_SEARCH = "rng_search_time"; // used as u32 timer
+const string VAR_RNG_COUNT = "rng_path_count";	 // u16 counter
+const string VAR_LAST_POS = "last_known_pos";
 
 // NEW: wide awareness ping timer
 const string VAR_LONGSCAN_TIME = "30";
 
-const u32 FIND_COOLDOWN_TICKS  = 10;    // small throttle for target scans
-const u32 PATH_COOLDOWN_TICKS  = 60;    // debounce path requests
-const f32 LASTPOS_REACH_DIST   = 12.0f; // distance considered "arrived"
-const u16 STUCK_PUNISH_LIMIT   = 50;    // how many rng steps before damage
+const u32 FIND_COOLDOWN_TICKS = 10;	  // small throttle for target scans
+const u32 PATH_COOLDOWN_TICKS = 60;	  // debounce path requests
+const f32 LASTPOS_REACH_DIST = 12.0f; // distance considered "arrived"
+const u16 STUCK_PUNISH_LIMIT = 50;	  // how many rng steps before damage
 
 // NEW: awareness tuning (can be overridden per-blob if you want)
-const f32 DEFAULT_AWARENESS_MULT = 2.5f;  // how far “scent” reaches vs normal
-const u32 LONGSCAN_COOLDOWN_TICKS = 45;   // ~1.5s at 30 tps
+const f32 DEFAULT_AWARENESS_MULT = 2.5f; // how far “scent” reaches vs normal
+const u32 LONGSCAN_COOLDOWN_TICKS = 45;	 // ~1.5s at 30 tps
 
-void onInit(CBrain@ this)
+void onInit(CBrain @ this)
 {
 	InitBrain(this);
 
-	CBlob@ blob = this.getBlob();
-	if (blob is null) return;
+	CBlob @blob = this.getBlob();
+	if (blob is null)
+		return;
 
 	if (!blob.exists(target_searchrad_property))
 		blob.set_f32(target_searchrad_property, 1024.0f);
@@ -43,21 +45,22 @@ void onInit(CBrain@ this)
 	this.getCurrentScript().runFlags |= Script::tick_not_attached;
 
 	blob.set_Vec2f("destination_property", blob.getPosition());
-	blob.set_u32(VAR_SEARCH_TIME,  getGameTime());
-	blob.set_Vec2f(VAR_LAST_POS,   Vec2f_zero);
-	blob.set_u16(VAR_RNG_COUNT,    0);
-	blob.set_u32(VAR_RNG_SEARCH,   getGameTime());     // initialize timer
-	blob.set_u32(VAR_LONGSCAN_TIME, getGameTime());    // initialize timer
+	blob.set_u32(VAR_SEARCH_TIME, getGameTime());
+	blob.set_Vec2f(VAR_LAST_POS, Vec2f_zero);
+	blob.set_u16(VAR_RNG_COUNT, 0);
+	blob.set_u32(VAR_RNG_SEARCH, getGameTime());	// initialize timer
+	blob.set_u32(VAR_LONGSCAN_TIME, getGameTime()); // initialize timer
 
 	this.failtime_end = 99999;
 }
 
-void onTick(CBrain@ this)
+void onTick(CBrain @ this)
 {
-	CBlob@ blob = this.getBlob();
-	if (blob is null) return;
+	CBlob @blob = this.getBlob();
+	if (blob is null)
+		return;
 
-	CBlob@ target = this.getTarget();
+	CBlob @target = this.getTarget();
 
 	// Only count rng search steps when brain reports "searching" and not opted out
 	if (this.getState() == 4 && !blob.hasTag(VAR_OPT_OUT_STUCK))
@@ -98,7 +101,7 @@ void onTick(CBrain@ this)
 	}
 }
 
-void ChaseTarget(CBrain@ brain, CBlob@ blob, CBlob@ target)
+void ChaseTarget(CBrain @brain, CBlob @blob, CBlob @target)
 {
 	blob.set_u16(VAR_RNG_COUNT, 0);
 
@@ -147,30 +150,32 @@ void ChaseTarget(CBrain@ brain, CBlob@ blob, CBlob@ target)
 	blob.set_Vec2f(VAR_LAST_POS, target.getPosition());
 }
 
-void PathFindToTarget(CBrain@ brain, CBlob@ blob, CBlob@ target)
+void PathFindToTarget(CBrain @brain, CBlob @blob, CBlob @target)
 {
-	if (target is null) return;
+	if (target is null)
+		return;
 
 	brain.SetPathTo(target.getPosition(), false);
 	blob.set_u32(VAR_SEARCH_TIME, getGameTime() + PATH_COOLDOWN_TICKS);
 }
 
-bool isTargetTooFar(CBlob@ blob, CBlob@ target)
+bool isTargetTooFar(CBlob @blob, CBlob @target)
 {
 	return getDistanceBetween(target.getPosition(), blob.getPosition()) > blob.get_f32(target_searchrad_property);
 }
 
-bool isTargetDead(CBlob@ target)
+bool isTargetDead(CBlob @target)
 {
 	return target.hasTag("dead");
 }
 
-void FollowEnginePath(CBrain@ brain)
+void FollowEnginePath(CBrain @brain)
 {
-	CBlob@ blob = brain.getBlob();
-	if (blob is null) return;
+	CBlob @blob = brain.getBlob();
+	if (blob is null)
+		return;
 
-	CBlob@ target = brain.getTarget();
+	CBlob @target = brain.getTarget();
 	if (target !is null && isTargetVisible(blob, target))
 	{
 		WalkTowards(blob, target.getPosition());
@@ -202,7 +207,7 @@ void FollowEnginePath(CBrain@ brain)
 	WalkTowards(blob, direction);
 }
 
-void WalkTowards(CBlob@ blob, Vec2f pos)
+void WalkTowards(CBlob @blob, Vec2f pos)
 {
 	if (blob is null || pos == Vec2f_zero)
 	{
@@ -213,15 +218,15 @@ void WalkTowards(CBlob@ blob, Vec2f pos)
 	blob.setAimPos(pos);
 
 	Vec2f dir = pos - blob.getPosition();
-	blob.setKeyPressed(key_left,  dir.x <  0.0f);
-	blob.setKeyPressed(key_right, dir.x >  0.0f);
-	blob.setKeyPressed(key_up,    dir.y <  0.0f);
-	blob.setKeyPressed(key_down,  dir.y >  0.0f);
+	blob.setKeyPressed(key_left, dir.x < 0.0f);
+	blob.setKeyPressed(key_right, dir.x > 0.0f);
+	blob.setKeyPressed(key_up, dir.y < 0.0f);
+	blob.setKeyPressed(key_down, dir.y > 0.0f);
 }
 
 // Go to the last known position our target was at.
 // Returns true if we have no last-pos or we've arrived; false if we're en route.
-bool goToLastKnownPos(CBrain@ brain, CBlob@ blob)
+bool goToLastKnownPos(CBrain @brain, CBlob @blob)
 {
 	Vec2f lastKnownPos = blob.get_Vec2f(VAR_LAST_POS);
 	const int pSize = brain.getPathSize();
@@ -248,7 +253,7 @@ bool goToLastKnownPos(CBrain@ brain, CBlob@ blob)
 	return false;
 }
 
-bool FindTarget(CBrain@ this, CBlob@ blob, f32 radius)
+bool FindTarget(CBrain @ this, CBlob @blob, f32 radius)
 {
 	this.SetTarget(GetBestTarget(this, blob, radius));
 	return this.getTarget() !is null;
@@ -258,20 +263,22 @@ bool FindTarget(CBrain@ this, CBlob@ blob, f32 radius)
 
 // Occasionally do a much wider scan to get a "hint" direction.
 // Doesn’t set a hard target; just updates VAR_LAST_POS and nudges pathing.
-void doLongRangeAwarenessScan(CBrain@ brain, CBlob@ blob)
+void doLongRangeAwarenessScan(CBrain @brain, CBlob @blob)
 {
 	const u32 now = getGameTime();
-	if (blob.get_u32(VAR_LONGSCAN_TIME) > now) return;
+	if (blob.get_u32(VAR_LONGSCAN_TIME) > now)
+		return;
 
 	blob.set_u32(VAR_LONGSCAN_TIME, now + LONGSCAN_COOLDOWN_TICKS);
 
 	const f32 baseR = blob.get_f32(target_searchrad_property);
-	const f32 mult  = blob.get_f32("awareness_mult"); // can override per-blob
+	const f32 mult = blob.get_f32("awareness_mult"); // can override per-blob
 	const f32 wideR = baseR * (mult > 0.1f ? mult : DEFAULT_AWARENESS_MULT);
 
 	// Use the same “best target” logic, just with a bigger circle.
-	CBlob@ distant = GetBestTarget(brain, blob, wideR);
-	if (distant is null) return;
+	CBlob @distant = GetBestTarget(brain, blob, wideR);
+	if (distant is null)
+		return;
 
 	// Store hint and request a short path burst in that general direction
 	blob.set_Vec2f(VAR_LAST_POS, distant.getPosition());
@@ -281,7 +288,7 @@ void doLongRangeAwarenessScan(CBrain@ brain, CBlob@ blob)
 }
 
 // Wander, but gently bias toward our last-known/hint when we have one.
-void WalkAnywhereAndEverywhere(CBrain@ brain, CBlob@ blob)
+void WalkAnywhereAndEverywhere(CBrain @brain, CBlob @blob)
 {
 	Vec2f dir = blob.get_Vec2f(destination_property);
 	const f32 dist = (blob.getPosition() - dir).Length();
@@ -318,7 +325,7 @@ void WalkAnywhereAndEverywhere(CBrain@ brain, CBlob@ blob)
 
 		Vec2f goal = pos + rnd;
 
-		CMap@ map = getMap();
+		CMap @map = getMap();
 		if (map !is null)
 		{
 			map.rayCastSolidNoBlobs(pos, goal, goal);

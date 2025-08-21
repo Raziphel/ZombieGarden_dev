@@ -1,84 +1,93 @@
-//FireBall
-//based on Goo Ball
+// FireBall
+// based on Goo Ball
 
-#include "Hitters.as";
 #include "FireParticle.as";
+#include "Hitters.as";
+
 
 const f32 DAMAGE = 1.0f;
 const f32 HITDAMAGE = 0.5f;
-const f32 AOE = 10.0f;//radius
+const f32 AOE = 10.0f; // radius
 
-void onInit( CBlob@ this )
+void onInit(CBlob @ this)
 {
 	this.SetLight(true);
 	this.SetLightRadius(48.0f);
 	this.SetLightColor(SColor(255, 255, 240, 171));
 
-	CShape@ shape = this.getShape();
+	CShape @shape = this.getShape();
 	shape.SetGravityScale(0.0f);
-	ShapeConsts@ consts = shape.getConsts();
-    consts.mapCollisions = true;
+	ShapeConsts @consts = shape.getConsts();
+	consts.mapCollisions = true;
 	consts.bullet = false;
 	consts.net_threshold_multiplier = 4.0f;
-	
+
 	this.getCurrentScript().tickFrequency = 15;
 	this.server_SetTimeToDie(5);
-	
-	//rotating magicks
+
+	// rotating magicks
 	this.getShape().SetRotationsAllowed(true);
 	this.getShape().SetAngularVelocity(15.0f);
 }
 
-void onTick( CBlob@ this )
+void onTick(CBlob @ this)
 {
 	makeFireParticle(this.getPosition(), 1);
-	
-	//through ground server check
-	if ( getNet().isServer() && getMap().rayCastSolidNoBlobs( this.getShape().getVars().oldpos, this.getPosition() ) )
+
+	// through ground server check
+	if (getNet().isServer() && getMap().rayCastSolidNoBlobs(this.getShape().getVars().oldpos, this.getPosition()))
 		this.server_Die();
 }
 
-void onCollision( CBlob@ this, CBlob@ blob, bool solid, Vec2f normal, Vec2f worldPoint )
+void onCollision(CBlob @ this, CBlob @blob, bool solid, Vec2f normal, Vec2f worldPoint)
 {
 	Vec2f pos = this.getPosition();
-	
+
 	if (blob !is null && doesCollideWithBlob(this, blob))
 	{
-		this.server_Hit( blob, pos, Vec2f_zero, HITDAMAGE, Hitters::fire);
+		this.server_Hit(blob, pos, Vec2f_zero, HITDAMAGE, Hitters::fire);
 		this.server_Die();
-	}	
+	}
 }
 
-bool doesCollideWithBlob( CBlob@ this, CBlob@ blob )
+bool doesCollideWithBlob(CBlob @ this, CBlob @blob)
 {
-return (this.getTeamNum() != blob.getTeamNum() && blob.hasTag("flesh")) || blob.hasTag("ZP") || blob.hasTag("dead") || blob.hasTag("enemy");
+	return (this.getTeamNum() != blob.getTeamNum() && blob.hasTag("flesh")) || blob.hasTag("ZP") || blob.hasTag("dead") || blob.hasTag("enemy");
 }
 
-void onDie( CBlob@ this )
+void onDie(CBlob @ this)
 {
 	Vec2f pos = this.getPosition();
-	CBlob@[] aoeBlobs;
-	CMap@ map = getMap();
-	
-	if ( getNet().isServer() )
+	CBlob @[] aoeBlobs;
+	CMap @map = getMap();
+
+	if (getNet().isServer())
 	{
 		server_CreateBlob("fireblob", this.getTeamNum(), this.getPosition());
-		map.getBlobsInRadius( pos, AOE, @aoeBlobs );
-		for ( u8 i = 0; i < aoeBlobs.length(); i++ )
+		map.getBlobsInRadius(pos, AOE, @aoeBlobs);
+		for (u8 i = 0; i < aoeBlobs.length(); i++)
 		{
-			CBlob@ blob = aoeBlobs[i];
-			if ( !getMap().rayCastSolidNoBlobs( pos, blob.getPosition() ) )
-				this.server_Hit( blob, pos, Vec2f_zero, DAMAGE, Hitters::fire);
+			CBlob @blob = aoeBlobs[i];
+			if (!getMap().rayCastSolidNoBlobs(pos, blob.getPosition()))
+				this.server_Hit(blob, pos, Vec2f_zero, DAMAGE, Hitters::fire);
 		}
 	}
-	
-	this.getSprite().PlaySound( "Bomb.ogg" );
-	ParticleAnimated( "/LargeSmoke.png",
-				  this.getPosition(), Vec2f(0,0), 0.0f, 1.0f,
-				  3,
-				  -0.1f, false );
-	ParticleAnimated( "/FireFlash.png",
-				  this.getPosition(), Vec2f(0,0), 0.0f, 1.0f,
-				  3,
-				  -0.1f, false );			  
+
+	this.getSprite().PlaySound("Bomb.ogg");
+	ParticleAnimated("/LargeSmoke.png",
+					 this.getPosition(),
+					 Vec2f(0, 0),
+					 0.0f,
+					 1.0f,
+					 3,
+					 -0.1f,
+					 false);
+	ParticleAnimated("/FireFlash.png",
+					 this.getPosition(),
+					 Vec2f(0, 0),
+					 0.0f,
+					 1.0f,
+					 3,
+					 -0.1f,
+					 false);
 }

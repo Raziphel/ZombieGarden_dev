@@ -1,39 +1,38 @@
 // Archer animations
 
+#include "Accolades.as"
 #include "ArcherCommon.as"
 #include "FireParticle.as"
-#include "RunnerAnimCommon.as";
-#include "RunnerCommon.as";
 #include "KnockedCommon.as";
 #include "PixelOffsets.as"
+#include "RunnerAnimCommon.as";
+#include "RunnerCommon.as";
 #include "RunnerTextures.as"
-#include "Accolades.as"
-
 
 const f32 config_offset = -4.0f;
 const string shiny_layer = "shiny bit";
 
-void onInit(CSprite@ this)
+void onInit(CSprite @ this)
 {
 	LoadSprites(this);
 }
 
-void onPlayerInfoChanged(CSprite@ this)
+void onPlayerInfoChanged(CSprite @ this)
 {
 	LoadSprites(this);
 }
 
-void LoadSprites(CSprite@ this)
+void LoadSprites(CSprite @ this)
 {
 	int armour = PLAYER_ARMOUR_STANDARD;
 
-	CPlayer@ p = this.getBlob().getPlayer();
+	CPlayer @p = this.getBlob().getPlayer();
 	if (p !is null)
 	{
 		armour = p.getArmourSet();
 		if (armour == PLAYER_ARMOUR_STANDARD)
 		{
-			Accolades@ acc = getPlayerAccolades(p.getUsername());
+			Accolades @acc = getPlayerAccolades(p.getUsername());
 			if (acc.hasCape())
 			{
 				armour = PLAYER_ARMOUR_CAPE;
@@ -43,32 +42,31 @@ void LoadSprites(CSprite@ this)
 
 	switch (armour)
 	{
-	case PLAYER_ARMOUR_STANDARD:
-		ensureCorrectRunnerTexture(this, "archer", "Archer");
-		break;
-	case PLAYER_ARMOUR_CAPE:
-		ensureCorrectRunnerTexture(this, "archer_cape", "ArcherCape");
-		break;
-	case PLAYER_ARMOUR_GOLD:
-		ensureCorrectRunnerTexture(this, "archer_gold",  "ArcherGold");
-		break;
+		case PLAYER_ARMOUR_STANDARD:
+			ensureCorrectRunnerTexture(this, "archer", "Archer");
+			break;
+		case PLAYER_ARMOUR_CAPE:
+			ensureCorrectRunnerTexture(this, "archer_cape", "ArcherCape");
+			break;
+		case PLAYER_ARMOUR_GOLD:
+			ensureCorrectRunnerTexture(this, "archer_gold", "ArcherGold");
+			break;
 	}
-
 
 	string texname = getRunnerTextureName(this);
 
 	this.RemoveSpriteLayer("frontarm");
-	CSpriteLayer@ frontarm = this.addTexturedSpriteLayer("frontarm", texname , 32, 16);
+	CSpriteLayer @frontarm = this.addTexturedSpriteLayer("frontarm", texname, 32, 16);
 
 	if (frontarm !is null)
 	{
-		Animation@ animcharge = frontarm.addAnimation("charge", 0, false);
+		Animation @animcharge = frontarm.addAnimation("charge", 0, false);
 		animcharge.AddFrame(16);
 		animcharge.AddFrame(24);
 		animcharge.AddFrame(32);
-		Animation@ animshoot = frontarm.addAnimation("fired", 0, false);
+		Animation @animshoot = frontarm.addAnimation("fired", 0, false);
 		animshoot.AddFrame(40);
-		Animation@ animnoarrow = frontarm.addAnimation("no_arrow", 0, false);
+		Animation @animnoarrow = frontarm.addAnimation("no_arrow", 0, false);
 		animnoarrow.AddFrame(25);
 		frontarm.SetOffset(Vec2f(-1.0f, 5.0f + config_offset));
 		frontarm.SetAnimation("fired");
@@ -76,11 +74,11 @@ void LoadSprites(CSprite@ this)
 	}
 
 	this.RemoveSpriteLayer("backarm");
-	CSpriteLayer@ backarm = this.addTexturedSpriteLayer("backarm", texname , 32, 16);
+	CSpriteLayer @backarm = this.addTexturedSpriteLayer("backarm", texname, 32, 16);
 
 	if (backarm !is null)
 	{
-		Animation@ anim = backarm.addAnimation("default", 0, false);
+		Animation @anim = backarm.addAnimation("default", 0, false);
 		anim.AddFrame(17);
 		backarm.SetOffset(Vec2f(-1.0f, 5.0f + config_offset));
 		backarm.SetAnimation("default");
@@ -88,51 +86,51 @@ void LoadSprites(CSprite@ this)
 	}
 
 	this.RemoveSpriteLayer("held arrow");
-	CSpriteLayer@ arrow = this.addSpriteLayer("held arrow", "Arrow.png" , 16, 8, this.getBlob().getTeamNum(), 0);
+	CSpriteLayer @arrow = this.addSpriteLayer("held arrow", "Arrow.png", 16, 8, this.getBlob().getTeamNum(), 0);
 
 	if (arrow !is null)
 	{
-		Animation@ anim = arrow.addAnimation("default", 0, false);
-		anim.AddFrame(1); //normal
-		anim.AddFrame(9); //water
-		anim.AddFrame(8); //fire
-		anim.AddFrame(14); //bomb
+		Animation @anim = arrow.addAnimation("default", 0, false);
+		anim.AddFrame(1);  // normal
+		anim.AddFrame(9);  // water
+		anim.AddFrame(8);  // fire
+		anim.AddFrame(14); // bomb
 		arrow.SetOffset(Vec2f(-1.0f, 5.0f + config_offset));
 		arrow.SetAnimation("default");
 		arrow.SetVisible(false);
 	}
 
-	//quiver
+	// quiver
 	this.RemoveSpriteLayer("quiver");
-	CSpriteLayer@ quiver = this.addTexturedSpriteLayer("quiver", texname , 16, 16);
+	CSpriteLayer @quiver = this.addTexturedSpriteLayer("quiver", texname, 16, 16);
 
 	if (quiver !is null)
 	{
-		Animation@ anim = quiver.addAnimation("default", 0, false);
+		Animation @anim = quiver.addAnimation("default", 0, false);
 		anim.AddFrame(67);
 		anim.AddFrame(66);
 		quiver.SetOffset(Vec2f(-10.0f, 2.0f + config_offset));
 		quiver.SetRelativeZ(-0.1f);
 	}
 
-	//grapple
+	// grapple
 	this.RemoveSpriteLayer("hook");
-	CSpriteLayer@ hook = this.addTexturedSpriteLayer("hook", texname , 16, 8);
+	CSpriteLayer @hook = this.addTexturedSpriteLayer("hook", texname, 16, 8);
 
 	if (hook !is null)
 	{
-		Animation@ anim = hook.addAnimation("default", 0, false);
+		Animation @anim = hook.addAnimation("default", 0, false);
 		anim.AddFrame(178);
 		hook.SetRelativeZ(2.0f);
 		hook.SetVisible(false);
 	}
 
 	this.RemoveSpriteLayer("rope");
-	CSpriteLayer@ rope = this.addTexturedSpriteLayer("rope", texname , 32, 8);
+	CSpriteLayer @rope = this.addTexturedSpriteLayer("rope", texname, 32, 8);
 
 	if (rope !is null)
 	{
-		Animation@ anim = rope.addAnimation("default", 0, false);
+		Animation @anim = rope.addAnimation("default", 0, false);
 		anim.AddFrame(81);
 		rope.SetRelativeZ(-1.5f);
 		rope.SetVisible(false);
@@ -140,11 +138,11 @@ void LoadSprites(CSprite@ this)
 
 	// add shiny
 	this.RemoveSpriteLayer(shiny_layer);
-	CSpriteLayer@ shiny = this.addSpriteLayer(shiny_layer, "AnimeShiny.png", 16, 16, this.getBlob().getTeamNum(), 0);
+	CSpriteLayer @shiny = this.addSpriteLayer(shiny_layer, "AnimeShiny.png", 16, 16, this.getBlob().getTeamNum(), 0);
 
 	if (shiny !is null)
 	{
-		Animation@ anim = shiny.addAnimation("default", 2, true);
+		Animation @anim = shiny.addAnimation("default", 2, true);
 		int[] frames = {0, 1, 2, 3};
 		anim.AddFrames(frames);
 		shiny.SetVisible(false);
@@ -152,7 +150,7 @@ void LoadSprites(CSprite@ this)
 	}
 }
 
-void setArmValues(CSpriteLayer@ arm, bool visible, f32 angle, f32 relativeZ, string anim, Vec2f around, Vec2f offset)
+void setArmValues(CSpriteLayer @arm, bool visible, f32 angle, f32 relativeZ, string anim, Vec2f around, Vec2f offset)
 {
 	if (arm !is null)
 	{
@@ -178,10 +176,10 @@ bool needs_shiny = false;
 Vec2f shiny_offset;
 f32 shiny_angle = 0.0f;
 
-void onTick(CSprite@ this)
+void onTick(CSprite @ this)
 {
 	// store some vars for ease and speed
-	CBlob@ blob = this.getBlob();
+	CBlob @blob = this.getBlob();
 
 	if (blob.hasTag("dead"))
 	{
@@ -215,7 +213,7 @@ void onTick(CSprite@ this)
 		return;
 	}
 
-	ArcherInfo@ archer;
+	ArcherInfo @archer;
 	if (!blob.get("archerInfo", @archer))
 	{
 		return;
@@ -263,7 +261,7 @@ void onTick(CSprite@ this)
 			this.SetAnimation("shoot_jump");
 		}
 		else if ((left || right) ||
-		         (blob.isOnLadder() && (up || down)))
+				 (blob.isOnLadder() && (up || down)))
 		{
 			this.SetAnimation("shoot_run");
 		}
@@ -274,7 +272,7 @@ void onTick(CSprite@ this)
 	}
 	else if (inair)
 	{
-		RunnerMoveVars@ moveVars;
+		RunnerMoveVars @moveVars;
 		if (!blob.get("moveVars", @moveVars))
 		{
 			return;
@@ -305,7 +303,7 @@ void onTick(CSprite@ this)
 		}
 	}
 	else if ((left || right) ||
-	         (blob.isOnLadder() && (up || down)))
+			 (blob.isOnLadder() && (up || down)))
 	{
 		this.SetAnimation("run");
 	}
@@ -317,7 +315,7 @@ void onTick(CSprite@ this)
 		int direction;
 
 		if ((angle > 330 && angle < 361) || (angle > -1 && angle < 30) ||
-		        (angle > 150 && angle < 210))
+			(angle > 150 && angle < 210))
 		{
 			direction = 0;
 		}
@@ -333,7 +331,7 @@ void onTick(CSprite@ this)
 		defaultIdleAnim(this, blob, direction);
 	}
 
-	//arm anims
+	// arm anims
 	Vec2f armOffset = Vec2f(-1.0f, 4.0f + config_offset);
 	const u8 arrowType = getArrowType(blob);
 
@@ -365,9 +363,9 @@ void onTick(CSprite@ this)
 		setArmValues(this.getSpriteLayer("held arrow"), false, 0.0f, 0.5f, "default", Vec2f(0, 0), armOffset);
 	}
 
-	//set the shiny dot on the arrow
+	// set the shiny dot on the arrow
 
-	CSpriteLayer@ shiny = this.getSpriteLayer(shiny_layer);
+	CSpriteLayer @shiny = this.getSpriteLayer(shiny_layer);
 	if (shiny !is null)
 	{
 		shiny.SetVisible(needs_shiny);
@@ -375,14 +373,14 @@ void onTick(CSprite@ this)
 		{
 			shiny.RotateBy(10, Vec2f());
 
-			shiny_offset.RotateBy(this.isFacingLeft() ?  shiny_angle : -shiny_angle);
+			shiny_offset.RotateBy(this.isFacingLeft() ? shiny_angle : -shiny_angle);
 			shiny.SetOffset(shiny_offset);
 		}
 	}
 
 	DrawBowEffects(this, blob, archer, arrowType);
 
-	//set the head anim
+	// set the head anim
 	if (knocked || crouch)
 	{
 		blob.Tag("dead head");
@@ -397,15 +395,13 @@ void onTick(CSprite@ this)
 		blob.Untag("attack head");
 		blob.Untag("dead head");
 	}
-
-
 }
 
-void DrawBow(CSprite@ this, CBlob@ blob, ArcherInfo@ archer, f32 armangle, const u8 arrowType, Vec2f armOffset)
+void DrawBow(CSprite @ this, CBlob @blob, ArcherInfo @archer, f32 armangle, const u8 arrowType, Vec2f armOffset)
 {
 	f32 sign = (this.isFacingLeft() ? 1.0f : -1.0f);
-	CSpriteLayer@ frontarm = this.getSpriteLayer("frontarm");
-	CSpriteLayer@ arrow = this.getSpriteLayer("held arrow");
+	CSpriteLayer @frontarm = this.getSpriteLayer("frontarm");
+	CSpriteLayer @arrow = this.getSpriteLayer("held arrow");
 
 	if (!archer.has_arrow || archer.charge_state == ArcherParams::no_arrows || archer.charge_state == ArcherParams::legolas_charging)
 	{
@@ -437,7 +433,7 @@ void DrawBow(CSprite@ this, CBlob@ blob, ArcherInfo@ archer, f32 armangle, const
 		frontarm.animation.frame = frontframe;
 		f32 offsetChange = -5 + ready_tween * 5;
 
-		setArmValues(arrow, true, armangle, 0.05f, "default", Vec2f((-12.0f)*sign, 0), armOffset + Vec2f(-8 + offsetChange, 0));
+		setArmValues(arrow, true, armangle, 0.05f, "default", Vec2f((-12.0f) * sign, 0), armOffset + Vec2f(-8 + offsetChange, 0));
 		arrow.animation.frame = arrowType;
 	}
 	else if (archer.charge_state != ArcherParams::fired || archer.charge_state == ArcherParams::legolas_ready)
@@ -449,13 +445,13 @@ void DrawBow(CSprite@ this, CBlob@ blob, ArcherInfo@ archer, f32 armangle, const
 		const f32 arrowangle = (archer.charge_time > ArcherParams::shoot_period_2) ? armangle + -2.5f + float(XORRandom(500)) / 100.0f : armangle; // shiver arrow when fully charged
 		const f32 frameOffset = 1.5f * float(frontframe);
 
-		setArmValues(arrow, true, arrowangle, 0.05f, "default", Vec2f(-(12.0f - frameOffset)*sign, 0.0f), armOffset + Vec2f(-8 + frameOffset, 0));
+		setArmValues(arrow, true, arrowangle, 0.05f, "default", Vec2f(-(12.0f - frameOffset) * sign, 0.0f), armOffset + Vec2f(-8 + frameOffset, 0));
 		arrow.animation.frame = arrowType;
 
 		if (archer.charge_state == ArcherParams::legolas_ready)
 		{
 			needs_shiny = true;
-			shiny_offset = Vec2f(-12.0f, 0.0f);   //TODO:
+			shiny_offset = Vec2f(-12.0f, 0.0f); // TODO:
 			shiny_angle = armangle;
 		}
 	}
@@ -484,7 +480,7 @@ void DrawBow(CSprite@ this, CBlob@ blob, ArcherInfo@ archer, f32 armangle, const
 	}
 }
 
-void DrawBowEffects(CSprite@ this, CBlob@ blob, ArcherInfo@ archer, const u8 arrowType)
+void DrawBowEffects(CSprite @ this, CBlob @blob, ArcherInfo @archer, const u8 arrowType)
 {
 	// set fire light
 
@@ -501,20 +497,20 @@ void DrawBowEffects(CSprite@ this, CBlob@ blob, ArcherInfo@ archer, const u8 arr
 		}
 	}
 
-	//quiver
+	// quiver
 	bool has_arrows = hasAnyArrows(blob);
 	doQuiverUpdate(this, has_arrows, true);
 }
 
-bool IsFiring(CBlob@ blob)
+bool IsFiring(CBlob @blob)
 {
 	return blob.isKeyPressed(key_action1);
 }
 
-void doRopeUpdate(CSprite@ this, CBlob@ blob, ArcherInfo@ archer)
+void doRopeUpdate(CSprite @ this, CBlob @blob, ArcherInfo @archer)
 {
-	CSpriteLayer@ rope = this.getSpriteLayer("rope");
-	CSpriteLayer@ hook = this.getSpriteLayer("hook");
+	CSpriteLayer @rope = this.getSpriteLayer("rope");
+	CSpriteLayer @hook = this.getSpriteLayer("hook");
 
 	bool visible = archer !is null && archer.grappling;
 
@@ -541,30 +537,31 @@ void doRopeUpdate(CSprite@ this, CBlob@ blob, ArcherInfo@ archer)
 
 	rope.TranslateBy(Vec2f(ropelen * 16.0f, 0.0f));
 
-	rope.RotateBy(-off.Angle() , Vec2f());
+	rope.RotateBy(-off.Angle(), Vec2f());
 
 	hook.ResetTransform();
-	if (archer.grapple_id == 0xffff) //still in air
+	if (archer.grapple_id == 0xffff) // still in air
 	{
 		archer.cache_angle = -archer.grapple_vel.Angle();
 	}
-	hook.RotateBy(archer.cache_angle , Vec2f());
+	hook.RotateBy(archer.cache_angle, Vec2f());
 
 	hook.TranslateBy(off);
 	hook.SetIgnoreParentFacing(true);
 	hook.SetFacingLeft(false);
 
-	//GUI::DrawLine(blob.getPosition(), archer.grapple_pos, SColor(255,255,255,255));
+	// GUI::DrawLine(blob.getPosition(), archer.grapple_pos, SColor(255,255,255,255));
 }
 
-void doQuiverUpdate(CSprite@ this, bool has_arrows, bool quiver)
+void doQuiverUpdate(CSprite @ this, bool has_arrows, bool quiver)
 {
-	CSpriteLayer@ quiverLayer = this.getSpriteLayer("quiver");
-	CBlob@ blob = this.getBlob();
+	CSpriteLayer @quiverLayer = this.getSpriteLayer("quiver");
+	CBlob @blob = this.getBlob();
 
 	if (quiverLayer !is null)
 	{
-		if (not this.isVisible()) {
+		if (not this.isVisible())
+		{
 			quiverLayer.SetVisible(false);
 			return;
 		}
@@ -580,7 +577,7 @@ void doQuiverUpdate(CSprite@ this, bool has_arrows, bool quiver)
 				quiverangle *= -1.0f;
 			}
 
-			//face the same way (force)
+			// face the same way (force)
 			quiverLayer.SetIgnoreParentFacing(true);
 			quiverLayer.SetFacingLeft(this.isFacingLeft());
 
@@ -596,7 +593,6 @@ void doQuiverUpdate(CSprite@ this, bool has_arrows, bool quiver)
 				off.Set(this.getFrameWidth() / 2, -this.getFrameHeight() / 2);
 				off += this.getOffset();
 				off += Vec2f(-head_offset.x, head_offset.y);
-
 
 				f32 y = (down ? 3.0f : 7.0f);
 				f32 x = (down ? 5.0f : 4.0f);
@@ -627,21 +623,21 @@ void doQuiverUpdate(CSprite@ this, bool has_arrows, bool quiver)
 	}
 }
 
-void onGib(CSprite@ this)
+void onGib(CSprite @ this)
 {
 	if (g_kidssafe)
 	{
 		return;
 	}
 
-	CBlob@ blob = this.getBlob();
+	CBlob @blob = this.getBlob();
 	Vec2f pos = blob.getPosition();
 	Vec2f vel = blob.getVelocity();
 	vel.y -= 3.0f;
 	f32 hp = Maths::Min(Maths::Abs(blob.getHealth()), 2.0f) + 1.0f;
 	const u8 team = blob.getTeamNum();
-	CParticle@ Body     = makeGibParticle("Entities/Classes/Archer/ArcherGibs.png", pos, vel + getRandomVelocity(90, hp , 80), 0, 0, Vec2f(16, 16), 2.0f, 20, "/BodyGibFall", team);
-	CParticle@ Arm      = makeGibParticle("Entities/Classes/Archer/ArcherGibs.png", pos, vel + getRandomVelocity(90, hp - 0.2 , 80), 1, 0, Vec2f(16, 16), 2.0f, 20, "/BodyGibFall", team);
-	CParticle@ Shield   = makeGibParticle("Entities/Classes/Archer/ArcherGibs.png", pos, vel + getRandomVelocity(90, hp , 80), 2, 0, Vec2f(16, 16), 2.0f, 0, "Sounds/material_drop.ogg", team);
-	CParticle@ Sword    = makeGibParticle("Entities/Classes/Archer/ArcherGibs.png", pos, vel + getRandomVelocity(90, hp + 1 , 80), 3, 0, Vec2f(16, 16), 2.0f, 0, "Sounds/material_drop.ogg", team);
+	CParticle @Body = makeGibParticle("Entities/Classes/Archer/ArcherGibs.png", pos, vel + getRandomVelocity(90, hp, 80), 0, 0, Vec2f(16, 16), 2.0f, 20, "/BodyGibFall", team);
+	CParticle @Arm = makeGibParticle("Entities/Classes/Archer/ArcherGibs.png", pos, vel + getRandomVelocity(90, hp - 0.2, 80), 1, 0, Vec2f(16, 16), 2.0f, 20, "/BodyGibFall", team);
+	CParticle @Shield = makeGibParticle("Entities/Classes/Archer/ArcherGibs.png", pos, vel + getRandomVelocity(90, hp, 80), 2, 0, Vec2f(16, 16), 2.0f, 0, "Sounds/material_drop.ogg", team);
+	CParticle @Sword = makeGibParticle("Entities/Classes/Archer/ArcherGibs.png", pos, vel + getRandomVelocity(90, hp + 1, 80), 3, 0, Vec2f(16, 16), 2.0f, 0, "Sounds/material_drop.ogg", team);
 }

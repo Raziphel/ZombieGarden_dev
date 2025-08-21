@@ -1,71 +1,72 @@
 // Pyromancer logic (based on Waterman)
 
-#include "PyromancerCommon.as";
-#include "ThrowCommon.as";
-#include "KnockedCommon.as";
+#include "BombCommon.as";
+#include "Help.as";
 #include "Hitters.as";
+#include "KnockedCommon.as";
+#include "PyromancerCommon.as";
 #include "RunnerCommon.as";
 #include "ShieldCommon.as";
-#include "Help.as";
-#include "BombCommon.as";
+#include "ThrowCommon.as";
+
 
 const int FLETCH_COOLDOWN = 45;
 const int PICKUP_COOLDOWN = 15;
 const int fletch_num_arrows = 1;
 const int STAB_DELAY = 10;
 const int STAB_TIME = 22;
-//const int RUNE_COOLDOWN = 2500; //handled on PyromancerCreateRune.as
-//const int RUNE_RANGE = 50.0f;
+// const int RUNE_COOLDOWN = 2500; //handled on PyromancerCreateRune.as
+// const int RUNE_RANGE = 50.0f;
 
-void onInit(CBlob@ this)
+void onInit(CBlob @ this)
 {
 	PyromancerInfo pyromancer;
 	this.set("pyromancerInfo", @pyromancer);
 
 	this.set_s8("charge_time", 0);
-	this.set_bool("playedfire",false);
+	this.set_bool("playedfire", false);
 	this.set_u8("charge_state", PyromancerParams::not_aiming);
 	this.set_bool("has_arrow", false);
 	this.set_f32("gib health", -3.0f);
 	this.Tag("player");
 	this.Tag("flesh");
 
-	//centered on arrows
-	//this.set_Vec2f("inventory offset", Vec2f(0.0f, 122.0f));
-	//centered on items
+	// centered on arrows
+	// this.set_Vec2f("inventory offset", Vec2f(0.0f, 122.0f));
+	// centered on items
 	this.set_Vec2f("inventory offset", Vec2f(0.0f, 0.0f));
 
-	//no spinning
+	// no spinning
 	this.getShape().SetRotationsAllowed(false);
 	this.getSprite().SetEmitSound("../FireRoarQuiet.ogg");
 	this.addCommandID("shoot firebolt");
 	this.getShape().getConsts().net_threshold_multiplier = 0.5f;
-	//this.addCommandID("shoot firerune"); //handled on PyromancerCreateRune.as
+	// this.addCommandID("shoot firerune"); //handled on PyromancerCreateRune.as
 
-	//add a command ID for each arrow type
-	AddIconToken( "$Firewalk$", "pSpellIcons.png", Vec2f(16,16), 0 );
-	AddIconToken( "$Firebolt$", "pSpellIcons.png", Vec2f(16,16), 1 );
-	AddIconToken( "$Flaming$", "pSpellIcons.png", Vec2f(16,16), 2 );
-	  
-	SetHelp( this, "help self action", "pyromancer", "$Firebolt$ Shoot firebolts    $LMB$", "", 5 );
-	SetHelp( this, "help self action2", "pyromancer", "$Flaming$ Flame Rune    $RMB$", "" );
-	//SetHelp( this, "help show", "pyromancer", "$Firewalk$ Blink using V", "" );
-	
+	// add a command ID for each arrow type
+	AddIconToken("$Firewalk$", "pSpellIcons.png", Vec2f(16, 16), 0);
+	AddIconToken("$Firebolt$", "pSpellIcons.png", Vec2f(16, 16), 1);
+	AddIconToken("$Flaming$", "pSpellIcons.png", Vec2f(16, 16), 2);
+
+	SetHelp(this, "help self action", "pyromancer", "$Firebolt$ Shoot firebolts    $LMB$", "", 5);
+	SetHelp(this, "help self action2", "pyromancer", "$Flaming$ Flame Rune    $RMB$", "");
+	// SetHelp( this, "help show", "pyromancer", "$Firewalk$ Blink using V", "" );
+
 	this.getCurrentScript().runFlags |= Script::tick_not_attached;
 	this.getCurrentScript().removeIfTag = "dead";
 }
 
-void onSetPlayer(CBlob@ this, CPlayer@ player)
+void onSetPlayer(CBlob @ this, CPlayer @player)
 {
 	if (player !is null)
 	{
-		player.SetScoreboardVars("ScoreboardIcons.png", 10, Vec2f(16,16));
+		player.SetScoreboardVars("ScoreboardIcons.png", 10, Vec2f(16, 16));
 	}
 }
 
-void ManageBow(CBlob@ this, PyromancerInfo@ pyromancer, RunnerMoveVars@ moveVars)
+void ManageBow(CBlob @ this, PyromancerInfo @pyromancer, RunnerMoveVars @moveVars)
 {
-	CSprite@ sprite = this.getSprite();
+	CSprite @sprite = this.getSprite();
 	bool ismyplayer = this.isMyPlayer();
 	bool hasarrow = true;
 	s8 charge_time = pyromancer.charge_time;
@@ -77,7 +78,7 @@ void ManageBow(CBlob@ this, PyromancerInfo@ pyromancer, RunnerMoveVars@ moveVars
 	{
 		charge_state = PyromancerParams::legolas_ready;
 	}
-	//charged - no else (we want to check the very same tick)
+	// charged - no else (we want to check the very same tick)
 	if (charge_state == PyromancerParams::legolas_ready) // fast arrows
 	{
 		moveVars.walkFactor *= 0.75f;
@@ -88,7 +89,7 @@ void ManageBow(CBlob@ this, PyromancerInfo@ pyromancer, RunnerMoveVars@ moveVars
 			bool pressed = this.isKeyPressed(key_action1);
 			charge_state = pressed ? PyromancerParams::readying : PyromancerParams::not_aiming;
 			charge_time = 0;
-			//didn't fire
+			// didn't fire
 			if (pyromancer.legolas_arrows == PyromancerParams::legolas_arrows_count)
 			{
 				Sound::Play("/Stun", pos, 1.0f, this.getSexNum() == 0 ? 1.0f : 2.0f);
@@ -101,9 +102,9 @@ void ManageBow(CBlob@ this, PyromancerInfo@ pyromancer, RunnerMoveVars@ moveVars
 			}
 		}
 		else if (this.isKeyJustPressed(key_action1) ||
-		         (pyromancer.legolas_arrows == PyromancerParams::legolas_arrows_count &&
-		          !this.isKeyPressed(key_action1) &&
-		          this.wasKeyPressed(key_action1)))
+				 (pyromancer.legolas_arrows == PyromancerParams::legolas_arrows_count &&
+				  !this.isKeyPressed(key_action1) &&
+				  this.wasKeyPressed(key_action1)))
 		{
 			ClientFire(this, charge_time, hasarrow, pyromancer.arrow_type, true);
 			charge_state = PyromancerParams::legolas_charging;
@@ -120,7 +121,6 @@ void ManageBow(CBlob@ this, PyromancerInfo@ pyromancer, RunnerMoveVars@ moveVars
 				sprite.SetEmitSoundPaused(false);
 			}
 		}
-
 	}
 	else if (this.isKeyPressed(key_action1))
 	{
@@ -130,7 +130,7 @@ void ManageBow(CBlob@ this, PyromancerInfo@ pyromancer, RunnerMoveVars@ moveVars
 		//	printf("charge_state " + charge_state );
 
 		if ((just_action1 || this.wasKeyPressed(key_action2) && !pressed_action2) &&
-		        (charge_state == PyromancerParams::not_aiming || charge_state == PyromancerParams::fired))
+			(charge_state == PyromancerParams::not_aiming || charge_state == PyromancerParams::fired))
 		{
 			charge_state = PyromancerParams::readying;
 			pyromancer.arrow_type = ArrowType::normal;
@@ -142,7 +142,7 @@ void ManageBow(CBlob@ this, PyromancerInfo@ pyromancer, RunnerMoveVars@ moveVars
 			sprite.RewindEmitSound();
 			sprite.SetEmitSoundPaused(false);
 
-			if (!ismyplayer)   // lower the volume of other players charging  - ooo good idea
+			if (!ismyplayer) // lower the volume of other players charging  - ooo good idea
 			{
 				sprite.SetEmitSoundVolume(0.5f);
 			}
@@ -190,12 +190,13 @@ void ManageBow(CBlob@ this, PyromancerInfo@ pyromancer, RunnerMoveVars@ moveVars
 		{
 			if (charge_state < PyromancerParams::fired)
 			{
-				if (pyromancer.charge_time >= PyromancerParams::shoot_period-10)ClientFire(this, charge_time, hasarrow, pyromancer.arrow_type, false);
+				if (pyromancer.charge_time >= PyromancerParams::shoot_period - 10)
+					ClientFire(this, charge_time, hasarrow, pyromancer.arrow_type, false);
 
 				charge_time = PyromancerParams::fired_time;
 				charge_state = PyromancerParams::fired;
 			}
-			else //fired..
+			else // fired..
 			{
 				charge_time--;
 
@@ -208,7 +209,7 @@ void ManageBow(CBlob@ this, PyromancerInfo@ pyromancer, RunnerMoveVars@ moveVars
 		}
 		else
 		{
-			charge_state = PyromancerParams::not_aiming;    //set to not aiming either way
+			charge_state = PyromancerParams::not_aiming; // set to not aiming either way
 			charge_time = 0;
 		}
 
@@ -267,12 +268,11 @@ void ManageBow(CBlob@ this, PyromancerInfo@ pyromancer, RunnerMoveVars@ moveVars
 	pyromancer.charge_time = charge_time;
 	pyromancer.charge_state = charge_state;
 	pyromancer.has_arrow = hasarrow;
-
 }
 
-void onTick(CBlob@ this)
+void onTick(CBlob @ this)
 {
-	PyromancerInfo@ pyromancer;
+	PyromancerInfo @pyromancer;
 	if (!this.get("pyromancerInfo", @pyromancer))
 	{
 		return;
@@ -285,40 +285,42 @@ void onTick(CBlob@ this)
 		pyromancer.charge_time = 0;
 		return;
 	}
-	
+
 	/* //handled on PyromancerCreateRune.as
-	if (pyromancer.secondary_cooldown > 0) 
+	if (pyromancer.secondary_cooldown > 0)
 	{
 		pyromancer.secondary_cooldown--;
 	}
-	
+
 	if (getKnocked(this) <= 0)
-	
+
 	if (this.isKeyPressed(key_action2) && !this.isKeyPressed(key_action1))
 	{
-		if (pyromancer.secondary_cooldown <= 0) 
+		if (pyromancer.secondary_cooldown <= 0)
 		{
-			if (ShootFireRune(this)) 
+			if (ShootFireRune(this))
 			{
 				pyromancer.secondary_cooldown = RUNE_COOLDOWN;
 			}
 		}
 	}
 	*/
-	
+
 	else
 	{
 		this.Untag("flaming");
 		this.SetLight(false);
 	}
-	
+
 	// vvvvvvvvvvvvvv CLIENT-SIDE ONLY vvvvvvvvvvvvvvvvvvv
 
-	if (!getNet().isClient()) return;
+	if (!getNet().isClient())
+		return;
 
-	if (this.isInInventory()) return;
+	if (this.isInInventory())
+		return;
 
-	RunnerMoveVars@ moveVars;
+	RunnerMoveVars @moveVars;
 	if (!this.get("moveVars", @moveVars))
 	{
 		return;
@@ -327,15 +329,15 @@ void onTick(CBlob@ this)
 	ManageBow(this, pyromancer, moveVars);
 }
 
-bool canSend(CBlob@ this)
+bool canSend(CBlob @ this)
 {
 	return (this.isMyPlayer() || this.getPlayer() is null || this.getPlayer().isBot());
 }
 
-void ClientFire(CBlob@ this, const s8 charge_time, const bool hasarrow, const u8 arrow_type, const bool legolas)
+void ClientFire(CBlob @ this, const s8 charge_time, const bool hasarrow, const u8 arrow_type, const bool legolas)
 {
-	//time to fire!
-	if (canSend(this))  // client-logic
+	// time to fire!
+	if (canSend(this)) // client-logic
 	{
 		f32 arrowspeed;
 
@@ -356,7 +358,7 @@ void ClientFire(CBlob@ this, const s8 charge_time, const bool hasarrow, const u8
 	}
 }
 
-void ShootFirebolt(CBlob @this, Vec2f arrowPos, Vec2f aimpos, f32 arrowspeed, const u8 arrow_type, const bool legolas = true)
+void ShootFirebolt(CBlob @ this, Vec2f arrowPos, Vec2f aimpos, f32 arrowspeed, const u8 arrow_type, const bool legolas = true)
 {
 	if (canSend(this))
 	{
@@ -364,7 +366,7 @@ void ShootFirebolt(CBlob @this, Vec2f arrowPos, Vec2f aimpos, f32 arrowspeed, co
 		Vec2f arrowVel = (aimpos - arrowPos);
 		arrowVel.Normalize();
 		arrowVel *= arrowspeed;
-		//print("arrowspeed " + arrowspeed);
+		// print("arrowspeed " + arrowspeed);
 		CBitStream params;
 		params.write_Vec2f(arrowPos);
 		params.write_Vec2f(arrowVel);
@@ -375,7 +377,7 @@ void ShootFirebolt(CBlob @this, Vec2f arrowPos, Vec2f aimpos, f32 arrowspeed, co
 	}
 }
 
- //handled on PyromancerCreateRune.as
+// handled on PyromancerCreateRune.as
 /*
 bool ShootFireRune(CBlob @this)
 {
@@ -398,9 +400,9 @@ bool ShootFireRune(CBlob @this)
 }
 */
 
-CBlob@ CreateFireBolt(CBlob@ this, Vec2f arrowPos, Vec2f arrowVel, u8 arrowType)
+CBlob @CreateFireBolt(CBlob @ this, Vec2f arrowPos, Vec2f arrowVel, u8 arrowType)
 {
-	
+
 	CBlob @blob = server_CreateBlob("firebolt", this.getTeamNum(), this.getPosition());
 	this.getSprite().PlaySound("FireBolt.ogg");
 	if (blob !is null)
@@ -410,9 +412,9 @@ CBlob@ CreateFireBolt(CBlob@ this, Vec2f arrowPos, Vec2f arrowVel, u8 arrowType)
 	return blob;
 }
 
-CBlob@ CreateFireBall(CBlob@ this, Vec2f arrowPos, Vec2f arrowVel, u8 arrowType)
+CBlob @CreateFireBall(CBlob @ this, Vec2f arrowPos, Vec2f arrowVel, u8 arrowType)
 {
-	
+
 	CBlob @blob = server_CreateBlob("fireball", this.getTeamNum(), this.getPosition());
 	this.getSprite().PlaySound("FireBall.ogg");
 	if (blob !is null)
@@ -422,7 +424,7 @@ CBlob@ CreateFireBall(CBlob@ this, Vec2f arrowPos, Vec2f arrowVel, u8 arrowType)
 	return blob;
 }
 
- //handled on PyromancerCreateRune.as
+// handled on PyromancerCreateRune.as
 /*
 CBlob@ CreateFireRune(CBlob@ this, Vec2f pos)
 {
@@ -432,7 +434,7 @@ CBlob@ CreateFireRune(CBlob@ this, Vec2f pos)
 }
 */
 
-void onCommand(CBlob@ this, u8 cmd, CBitStream @params)
+void onCommand(CBlob @ this, u8 cmd, CBitStream @params)
 {
 	if (cmd == this.getCommandID("shoot firebolt"))
 	{
@@ -441,7 +443,7 @@ void onCommand(CBlob@ this, u8 cmd, CBitStream @params)
 		u8 arrowType = params.read_u8();
 		bool legolas = params.read_bool();
 
-		PyromancerInfo@ pyromancer;
+		PyromancerInfo @pyromancer;
 		if (!this.get("pyromancerInfo", @pyromancer))
 		{
 			return;
@@ -453,7 +455,7 @@ void onCommand(CBlob@ this, u8 cmd, CBitStream @params)
 		{
 			if (getNet().isServer())
 			{
-				CBlob@ arrow = CreateFireBall(this, arrowPos, arrowVel*1.2, arrowType);
+				CBlob @arrow = CreateFireBall(this, arrowPos, arrowVel * 1.2, arrowType);
 			}
 			this.getSprite().PlaySound("FireBolt.ogg");
 		}
@@ -466,13 +468,13 @@ void onCommand(CBlob@ this, u8 cmd, CBitStream @params)
 		}
 		this.getSprite().PlaySound("FireBolt.ogg");
 	}
-	
-	//handled on PyromancerCreateRune.as
+
+	// handled on PyromancerCreateRune.as
 	/*
-	else if (cmd == this.getCommandID("shoot firerune")) 
+	else if (cmd == this.getCommandID("shoot firerune"))
 	{
 		Vec2f pos = params.read_Vec2f();
-		if (getNet().isServer()) 
+		if (getNet().isServer())
 		{
 			CreateFireRune(this, pos);
 		}
@@ -480,11 +482,11 @@ void onCommand(CBlob@ this, u8 cmd, CBitStream @params)
 	*/
 }
 
-void onCreateInventoryMenu(CBlob@ this, CBlob@ forBlob, CGridMenu @gridmenu)
+void onCreateInventoryMenu(CBlob @ this, CBlob @forBlob, CGridMenu @gridmenu)
 {
 }
 
 // auto-switch to appropriate arrow when picked up
-void onAddToInventory(CBlob@ this, CBlob@ blob)
+void onAddToInventory(CBlob @ this, CBlob @blob)
 {
 }

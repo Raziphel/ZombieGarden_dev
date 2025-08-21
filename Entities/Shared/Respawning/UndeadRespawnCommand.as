@@ -12,52 +12,47 @@
 #include "ClassSelectMenu.as"
 #include "KnockedCommon.as"
 
-
-void InitRespawnCommand(CBlob@ this)
+void InitRespawnCommand(CBlob @ this)
 {
 	this.addCommandID("class menu");
 }
 
-bool isInRadius(CBlob@ this, CBlob @caller)
+bool isInRadius(CBlob @ this, CBlob @caller)
 {
 	return ((this.getPosition() - caller.getPosition()).Length() < this.getRadius() * 2.0f + caller.getRadius());
 }
 
-bool canChangeClass(CBlob@ this, CBlob@ blob)
+bool canChangeClass(CBlob @ this, CBlob @blob)
 {
 
 	Vec2f tl, br, _tl, _br;
 	this.getShape().getBoundingRect(tl, br);
 	blob.getShape().getBoundingRect(_tl, _br);
-	return br.x > _tl.x
-	       && br.y > _tl.y
-	       && _br.x > tl.x
-	       && _br.y > tl.y;
-
+	return br.x > _tl.x && br.y > _tl.y && _br.x > tl.x && _br.y > tl.y;
 }
 
 // default classes
-void InitClasses(CBlob@ this)
+void InitClasses(CBlob @ this)
 {
 	AddIconToken("$undead_builder_class_icon$", "GUI/ExtraMenuItems.png", Vec2f(32, 32), 0);
 	AddIconToken("$undead_knight_class_icon$", "GUI/ExtraMenuItems.png", Vec2f(32, 32), 1);
 	AddIconToken("$undead_archer_class_icon$", "GUI/ExtraMenuItems.png", Vec2f(32, 32), 2);
-	AddIconToken("$undead_mystic_class_icon$", "GUI/ExtraMenuItems.png", Vec2f(32, 32), 3);	
+	AddIconToken("$undead_mystic_class_icon$", "GUI/ExtraMenuItems.png", Vec2f(32, 32), 3);
 	AddIconToken("$change_class$", "/GUI/InteractionIcons.png", Vec2f(32, 32), 12, 2);
 	addPlayerClass(this, "Undead Builder", "$undead_builder_class_icon$", "undeadbuilder", "Destroy ALL the towers.");
 	addPlayerClass(this, "Undead Knight", "$undead_knight_class_icon$", "undeadknight", "Rip and Tear.");
 	addPlayerClass(this, "Undead Archer", "$undead_archer_class_icon$", "undeadarcher", "The Sneaky Advantage.");
-	addPlayerClass(this, "Undead Mystic", "$undead_mystic_class_icon$", "undeadmystic", "Mr. Magic Zombie.");	
+	addPlayerClass(this, "Undead Mystic", "$undead_mystic_class_icon$", "undeadmystic", "Mr. Magic Zombie.");
 }
 
-void BuildRespawnMenuFor(CBlob@ this, CBlob @caller)
+void BuildRespawnMenuFor(CBlob @ this, CBlob @caller)
 {
-	PlayerClass[]@ classes;
+	PlayerClass[] @classes;
 	this.get("playerclasses", @classes);
 
 	if (caller !is null && caller.isMyPlayer() && classes !is null)
 	{
-		CGridMenu@ menu = CreateGridMenu(caller.getScreenPos() + Vec2f(24.0f, caller.getRadius() * 1.0f + 48.0f), this, Vec2f(classes.length * CLASS_BUTTON_SIZE, CLASS_BUTTON_SIZE), "Swap class");
+		CGridMenu @menu = CreateGridMenu(caller.getScreenPos() + Vec2f(24.0f, caller.getRadius() * 1.0f + 48.0f), this, Vec2f(classes.length * CLASS_BUTTON_SIZE, CLASS_BUTTON_SIZE), "Swap class");
 		if (menu !is null)
 		{
 			addClassesToMenu(this, menu, caller.getNetworkID());
@@ -66,24 +61,28 @@ void BuildRespawnMenuFor(CBlob@ this, CBlob @caller)
 }
 
 // copy and pasted from vanilla KAG
-void onRespawnCommand(CBlob@ this, u8 cmd, CBitStream @params)
+void onRespawnCommand(CBlob @ this, u8 cmd, CBitStream @params)
 {
 	if (cmd == this.getCommandID("change class") && isServer())
 	{
-		CPlayer@ callerp = getNet().getActiveCommandPlayer();
-		if (callerp is null) return;
+		CPlayer @callerp = getNet().getActiveCommandPlayer();
+		if (callerp is null)
+			return;
 
-		CBlob@ caller = callerp.getBlob();
-		if (caller is null) return;
+		CBlob @caller = callerp.getBlob();
+		if (caller is null)
+			return;
 
-		if (!canChangeClass(this, caller)) return;
+		if (!canChangeClass(this, caller))
+			return;
 
 		u8 id;
-		if (!params.saferead_u8(id)) return;
+		if (!params.saferead_u8(id))
+			return;
 
 		string classconfig = "knight";
 
-		PlayerClass[]@ classes;
+		PlayerClass[] @classes;
 		if (this.get("playerclasses", @classes)) // Multiple classes available?
 		{
 			if (id >= classes.size())
@@ -109,10 +108,12 @@ void onRespawnCommand(CBlob@ this, u8 cmd, CBitStream @params)
 		}
 
 		// Caller overlapping?
-		if (!caller.isOverlapping(this)) return;
+		if (!caller.isOverlapping(this))
+			return;
 
 		// Don't spam the server with class change
-		if (caller.getTickSinceCreated() < 10) return;
+		if (caller.getTickSinceCreated() < 10)
+			return;
 
 		CBlob @newBlob = server_CreateBlob(classconfig, caller.getTeamNum(), this.getRespawnPosition());
 
@@ -154,14 +155,14 @@ void onRespawnCommand(CBlob@ this, u8 cmd, CBitStream @params)
 			float healthratio = caller.getHealth() / caller.getInitialHealth();
 			newBlob.server_SetHealth(newBlob.getInitialHealth() * healthratio);
 
-			//copy air
+			// copy air
 			if (caller.exists("air_count"))
 			{
 				newBlob.set_u8("air_count", caller.get_u8("air_count"));
 				newBlob.Sync("air_count", true);
 			}
 
-			//copy stun
+			// copy stun
 			if (isKnockable(caller))
 			{
 				setKnocked(newBlob, getKnockedRemaining(caller));
@@ -185,13 +186,13 @@ void onRespawnCommand(CBlob@ this, u8 cmd, CBitStream @params)
 	}
 }
 
-void PutInvInStorage(CBlob@ blob)
+void PutInvInStorage(CBlob @blob)
 {
-	CBlob@[] storages;
+	CBlob @[] storages;
 	if (getBlobsByTag("storage", @storages))
 		for (uint step = 0; step < storages.length; ++step)
 		{
-			CBlob@ storage = storages[step];
+			CBlob @storage = storages[step];
 			if (storage.getTeamNum() == blob.getTeamNum())
 			{
 				blob.MoveInventoryTo(storage);

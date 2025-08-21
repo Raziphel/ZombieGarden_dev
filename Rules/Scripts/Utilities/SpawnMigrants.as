@@ -2,28 +2,31 @@
 
 const string migrant_name = "migrantbot";
 
-void onTick(CRules@ this)
+void onTick(CRules @ this)
 {
 	// run ~every half second
-	if (getGameTime() % 29 != 0) return;
+	if (getGameTime() % 29 != 0)
+		return;
 
-	CMap@ map = getMap();
-	if (map is null || map.tilemapwidth < 2) return;
+	CMap @map = getMap();
+	if (map is null || map.tilemapwidth < 2)
+		return;
 
 	// how many are allowed at once (fallback to 3 if unset)
 	const int max_migrantbots = Maths::Max(1, this.get_s32("max_migrantbots"));
 
 	// count current migrants
-	CBlob@[] migrants;
+	CBlob @[] migrants;
 	getBlobsByTag(migrant_name, @migrants);
 
 	// only spawn around midday window
 	const f32 t = map.getDayTime(); // 0.0..1.0
-	if (migrants.length >= max_migrantbots || t <= 0.40f || t >= 0.60f) return;
+	if (migrants.length >= max_migrantbots || t <= 0.40f || t >= 0.60f)
+		return;
 
 	// pick a base spot: prefer a zombieruins, otherwise map center
 	Vec2f basePos;
-	CBlob@[] ruins;
+	CBlob @[] ruins;
 	getBlobsByName("zombieruins", @ruins);
 	if (ruins.length > 0)
 	{

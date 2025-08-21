@@ -1,17 +1,18 @@
 /* Targeting */
 
-CBlob@ GetClosestVisibleTarget( CBrain@ this, CBlob@ blob, f32 radius )
+CBlob @GetClosestVisibleTarget(CBrain @ this, CBlob @blob, f32 radius)
 {
-	CBlob@[] nearBlobs;
-	blob.getMap().getBlobsInRadius( blob.getPosition(), radius, @nearBlobs );
+	CBlob @[] nearBlobs;
+	blob.getMap().getBlobsInRadius(blob.getPosition(), radius, @nearBlobs);
 
-	CBlob@ best_candidate;
+	CBlob @best_candidate;
 	f32 closest_dist = 999999.9f;
 	bool visible = false;
-	for(int step = 0; step < nearBlobs.length; ++step)
+	for (int step = 0; step < nearBlobs.length; ++step)
 	{
-		CBlob@ candidate = nearBlobs[step];
-		if    (candidate is null) break;
+		CBlob @candidate = nearBlobs[step];
+		if (candidate is null)
+			break;
 
 		if (!candidate.hasTag("dead"))
 		{
@@ -24,12 +25,12 @@ CBlob@ GetClosestVisibleTarget( CBrain@ this, CBlob@ blob, f32 radius )
 				if (dist < closest_dist && visible ? is_visible : (seeThroughWalls ? true : is_visible))
 				{
 					// if(!is_visible && XORRandom(30) > 3)
-					    // continue;
+					// continue;
 
 					@best_candidate = candidate;
 					closest_dist = dist;
 					visible = is_visible;
-					//break;
+					// break;
 				}
 			}
 		}
@@ -38,26 +39,27 @@ CBlob@ GetClosestVisibleTarget( CBrain@ this, CBlob@ blob, f32 radius )
 	return best_candidate;
 }
 
-CBlob@ GetBestTarget( CBrain@ this, CBlob@ blob, f32 radius )
+CBlob @GetBestTarget(CBrain @ this, CBlob @blob, f32 radius)
 {
 	// if (blob.hasTag("is_stuck"))
-		// return GetClosestVisibleTarget(this, blob, radius);
+	// return GetClosestVisibleTarget(this, blob, radius);
 
-	CBlob@[] nearBlobs;
-	blob.getMap().getBlobsInRadius( blob.getPosition(), radius, @nearBlobs );
+	CBlob @[] nearBlobs;
+	blob.getMap().getBlobsInRadius(blob.getPosition(), radius, @nearBlobs);
 
-	CBlob@ best_candidate;
+	CBlob @best_candidate;
 	f32 highest_priority = 0.0f;
 	f32 closest_dist = 999999.9f;
 
-	for(int step = 0; step < nearBlobs.length; ++step)
+	for (int step = 0; step < nearBlobs.length; ++step)
 	{
-		CBlob@ candidate = nearBlobs[step];
-		if (candidate is null || candidate is blob) continue;
+		CBlob @candidate = nearBlobs[step];
+		if (candidate is null || candidate is blob)
+			continue;
 
 		if (candidate.getBrain() !is null)
 		{
-			CBlob@ otherTarget = candidate.getBrain().getTarget();
+			CBlob @otherTarget = candidate.getBrain().getTarget();
 			if (otherTarget !is null && otherTarget.getPlayer() !is null)
 			{
 				this.SetTarget(otherTarget);
@@ -65,7 +67,7 @@ CBlob@ GetBestTarget( CBrain@ this, CBlob@ blob, f32 radius )
 			}
 		}
 
-	    f32 priority = getTargetPriority(blob, candidate);
+		f32 priority = getTargetPriority(blob, candidate);
 		if (priority >= highest_priority && !candidate.hasTag("dead"))
 		{
 			if (isTarget(blob, candidate))
@@ -80,7 +82,7 @@ CBlob@ GetBestTarget( CBrain@ this, CBlob@ blob, f32 radius )
 					// High enough lets chase!
 					if (highest_priority > 0.55)
 						break;
-					//break;
+					// break;
 				}
 			}
 		}

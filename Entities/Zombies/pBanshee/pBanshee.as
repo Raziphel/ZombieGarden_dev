@@ -8,7 +8,7 @@ const s32 TIME_TO_EXPLODE = 5 * 30;
 
 const int COINS_ON_DEATH = 50;
 
-void onInit(CBlob@ this)
+void onInit(CBlob @ this)
 {
 	TargetInfo[] infos;
 	addTargetInfo(infos, "survivorplayer", 1.0f, true, true);
@@ -45,42 +45,42 @@ void onInit(CBlob@ this)
 	this.getCurrentScript().removeIfTag = "dead";
 }
 
-void onTick(CBlob@ this)
+void onTick(CBlob @ this)
 {
 	if (this.hasTag("enraged"))
 	{
-		if(!this.exists("exploding"))
+		if (!this.exists("exploding"))
 		{
 			this.Tag("exploding");
-		    this.set_s32("explosion_timer", getGameTime() + TIME_TO_EXPLODE);
+			this.set_s32("explosion_timer", getGameTime() + TIME_TO_EXPLODE);
 
-            Screech(this);
+			Screech(this);
 		}
 
 		if (getNet().isServer())
 		{
-        	s32 timer = this.get_s32("explosion_timer") - getGameTime();
-       	 	if (timer <= 0)
-        	{
-            	// boom
+			s32 timer = this.get_s32("explosion_timer") - getGameTime();
+			if (timer <= 0)
+			{
+				// boom
 				this.server_SetHealth(-1.0f);
 				Vec2f sp = this.getPosition();
 				server_CreateBlob("rotcloud", -1, sp);
 				server_CreateBlob("rotcloud", -1, sp);
 				server_CreateBlob("rotcloud", -1, sp);
 				this.server_Die();
-            }
+			}
 		}
 		else
 		{
-			this.SetLight( true );
+			this.SetLight(true);
 			this.SetLightRadius(this.get_f32("explosive_radius") * 0.5f);
-			this.SetLightColor( SColor(255, 211, 121, 224) );
+			this.SetLightColor(SColor(255, 211, 121, 224));
 
-            if (XORRandom(128) == 0)
-            {
-            	Screech(this);
-            }
+			if (XORRandom(128) == 0)
+			{
+				Screech(this);
+			}
 		}
 	}
 	else if (getGameTime() % SCREECH_INTERVAL == 0) // banshee screeching
@@ -89,12 +89,12 @@ void onTick(CBlob@ this)
 	}
 }
 
-f32 onHit( CBlob@ this, Vec2f worldPoint, Vec2f velocity, f32 damage, CBlob@ hitterBlob, u8 customData )
+f32 onHit(CBlob @ this, Vec2f worldPoint, Vec2f velocity, f32 damage, CBlob @hitterBlob, u8 customData)
 {
 	if (damage >= 0.0f)
 	{
-	    this.getSprite().PlaySound( "/ZombieHit" );
-    }
+		this.getSprite().PlaySound("/ZombieHit");
+	}
 
 	return damage;
 }

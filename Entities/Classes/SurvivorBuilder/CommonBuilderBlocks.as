@@ -6,13 +6,13 @@
 
 // To add a new page;
 
-// 1) initialize a new BuildBlock array, 
+// 1) initialize a new BuildBlock array,
 // example:
 // BuildBlock[] my_page;
 // blocks.push_back(my_page);
 
-// 2) 
-// Add a new string to PAGE_NAME in 
+// 2)
+// Add a new string to PAGE_NAME in
 // BuilderInventory.as
 // this will be what you see in the caption
 // box below the menu
@@ -29,21 +29,20 @@
 // blocks[3].push_back(b);
 
 #include "BuildBlock.as";
-#include "Requirements.as";
 #include "CustomBlocks.as";
-
+#include "Requirements.as";
 
 const string blocks_property = "blocks";
 const string inventory_offset = "inventory offset";
 
-void addCommonBuilderBlocks(BuildBlock[][]@ blocks)
+void addCommonBuilderBlocks(BuildBlock[][] @blocks)
 {
-	CRules@ rules = getRules();
+	CRules @rules = getRules();
 	const bool CTF = rules.gamemode_name == "CTF";
 	const bool TTH = rules.gamemode_name == "TTH";
 	const bool SBX = rules.gamemode_name == "Sandbox";
 
-	//main blocks
+	// main blocks
 	BuildBlock[] page_0;
 	blocks.push_back(page_0);
 	{
@@ -85,17 +84,17 @@ void addCommonBuilderBlocks(BuildBlock[][]@ blocks)
 		BuildBlock b(0, "team_bridge", "$team_bridge$", "Trap Bridge\nEnemies fall through this.");
 		AddRequirement(b.reqs, "blob", "mat_wood", "Wood", 20);
 		blocks[0].push_back(b);
-	}	
+	}
 	{
 		BuildBlock b(0, "wooden_platform", "$wooden_platform$", "Wooden Platform\nOne way platform");
 		AddRequirement(b.reqs, "blob", "mat_wood", "Wood", 10);
 		blocks[0].push_back(b);
-	}	
+	}
 	{
 		BuildBlock b(0, "iron_platform", "$iron_platform$", "Iron Platform\nStronger one way platform");
 		AddRequirement(b.reqs, "blob", "mat_ironingot", "Iron Ingot", 10);
 		blocks[0].push_back(b);
-	}	
+	}
 	{
 		BuildBlock b(0, "ladder", "$ladder$", "Ladder\nAnyone can climb it");
 		AddRequirement(b.reqs, "blob", "mat_wood", "Wood", 5);
@@ -118,27 +117,27 @@ void addCommonBuilderBlocks(BuildBlock[][]@ blocks)
 		blocks[0].push_back(b);
 	}
 	{
-		BuildBlock b( 0, "woodtriangle", "$woodtriangle$", "Wooden Triangle" );
-		AddRequirement( b.reqs, "blob", "mat_wood", "Wood", 30 );
+		BuildBlock b(0, "woodtriangle", "$woodtriangle$", "Wooden Triangle");
+		AddRequirement(b.reqs, "blob", "mat_wood", "Wood", 30);
 		blocks[0].push_back(b);
 	}
 	{
-		BuildBlock b( 0, "stonetriangle", "$stonetriangle$", "Stone Triangle" );
-		AddRequirement( b.reqs, "blob", "mat_stone", "Stone", 20 );
+		BuildBlock b(0, "stonetriangle", "$stonetriangle$", "Stone Triangle");
+		AddRequirement(b.reqs, "blob", "mat_stone", "Stone", 20);
 		blocks[0].push_back(b);
 	}
 	{
-		BuildBlock b( 0, "goldtriangle", "$goldtriangle$", "Gold Triangle" );
-		AddRequirement( b.reqs, "blob", "mat_gold", "Gold", 25 );
+		BuildBlock b(0, "goldtriangle", "$goldtriangle$", "Gold Triangle");
+		AddRequirement(b.reqs, "blob", "mat_gold", "Gold", 25);
 		blocks[0].push_back(b);
 	}
 	{
-		BuildBlock b( 0, "irontriangle", "$irontriangle$", "Iron Triangle" );
-		AddRequirement( b.reqs, "blob", "mat_ironingot", "Iron Ingots", 25 );
+		BuildBlock b(0, "irontriangle", "$irontriangle$", "Iron Triangle");
+		AddRequirement(b.reqs, "blob", "mat_ironingot", "Iron Ingots", 25);
 		blocks[0].push_back(b);
 	}
 	{
-		AddIconToken( "$IronBrick$", "Sprites/World.png", Vec2f(8,8), CMap::tile_ironbrick);
+		AddIconToken("$IronBrick$", "Sprites/World.png", Vec2f(8, 8), CMap::tile_ironbrick);
 		BuildBlock b(CMap::tile_ironbrick, "IronBrick", "$IronBrick$", "Iron Block\nStrong Building Block");
 		AddRequirement(b.reqs, "blob", "mat_ironingot", "Iron Ingots", 20);
 		blocks[0].push_back(b);
@@ -149,7 +148,7 @@ void addCommonBuilderBlocks(BuildBlock[][]@ blocks)
 		blocks[0].push_back(b);
 	}
 	{
-		AddIconToken( "$GoldBrick$", "Sprites/World.png", Vec2f(8,8), CMap::tile_goldenbrick);
+		AddIconToken("$GoldBrick$", "Sprites/World.png", Vec2f(8, 8), CMap::tile_goldenbrick);
 		BuildBlock b(CMap::tile_goldenbrick, "GoldBrick", "$GoldBrick$", "Gold Block\nRich Building Block\nNot Stronger Than Iron");
 		AddRequirement(b.reqs, "blob", "mat_gold", "Gold", 20);
 		blocks[0].push_back(b);
@@ -182,80 +181,80 @@ void addCommonBuilderBlocks(BuildBlock[][]@ blocks)
 		b.buildOnGround = true;
 		blocks[0].push_back(b);
 	}
-		
+
 	// devices
 	BuildBlock[] page_1;
 	blocks.push_back(page_1);
 	{
 		BuildBlock b(0, "wire", "$wire$", "Wire");
-		AddRequirement(b.reqs, "blob", "mat_wood",      "Wood", 10);
-		AddRequirement(b.reqs, "blob", "mat_stone",     "Stone", 5);
+		AddRequirement(b.reqs, "blob", "mat_wood", "Wood", 10);
+		AddRequirement(b.reqs, "blob", "mat_stone", "Stone", 5);
 		AddRequirement(b.reqs, "blob", "mat_copperingot", "Copper Ingot", 2);
 		blocks[1].push_back(b);
 	}
 	{
 		BuildBlock b(0, "tee", "$tee$", "Tee");
-		AddRequirement(b.reqs, "blob", "mat_wood",      "Wood", 12);
-		AddRequirement(b.reqs, "blob", "mat_stone",     "Stone", 8);
+		AddRequirement(b.reqs, "blob", "mat_wood", "Wood", 12);
+		AddRequirement(b.reqs, "blob", "mat_stone", "Stone", 8);
 		AddRequirement(b.reqs, "blob", "mat_copperingot", "Copper Ingot", 3);
 		blocks[1].push_back(b);
 	}
 	{
 		BuildBlock b(0, "elbow", "$elbow$", "Elbow");
-		AddRequirement(b.reqs, "blob", "mat_wood",      "Wood", 12);
-		AddRequirement(b.reqs, "blob", "mat_stone",     "Stone", 8);
+		AddRequirement(b.reqs, "blob", "mat_wood", "Wood", 12);
+		AddRequirement(b.reqs, "blob", "mat_stone", "Stone", 8);
 		AddRequirement(b.reqs, "blob", "mat_copperingot", "Copper Ingot", 3);
 		blocks[1].push_back(b);
 	}
 	{
 		BuildBlock b(0, "junction", "$junction$", "Junction");
-		AddRequirement(b.reqs, "blob", "mat_stone",     "Stone", 30);
+		AddRequirement(b.reqs, "blob", "mat_stone", "Stone", 30);
 		AddRequirement(b.reqs, "blob", "mat_copperingot", "Copper Ingot", 4);
-		AddRequirement(b.reqs, "blob", "mat_ironingot",   "Iron Ingot", 1);
+		AddRequirement(b.reqs, "blob", "mat_ironingot", "Iron Ingot", 1);
 		blocks[1].push_back(b);
 	}
 	{
 		BuildBlock b(0, "diode", "$diode$", "Diode");
-		AddRequirement(b.reqs, "blob", "mat_stone",     "Stone", 15);
+		AddRequirement(b.reqs, "blob", "mat_stone", "Stone", 15);
 		AddRequirement(b.reqs, "blob", "mat_copperingot", "Copper Ingot", 3);
 		blocks[1].push_back(b);
 	}
 	{
 		BuildBlock b(0, "resistor", "$resistor$", "Resistor");
-		AddRequirement(b.reqs, "blob", "mat_stone",     "Stone", 15);
+		AddRequirement(b.reqs, "blob", "mat_stone", "Stone", 15);
 		AddRequirement(b.reqs, "blob", "mat_copperingot", "Copper Ingot", 2);
 		blocks[1].push_back(b);
 	}
 	{
 		BuildBlock b(0, "inverter", "$inverter$", "Inverter");
-		AddRequirement(b.reqs, "blob", "mat_stone",     "Stone", 20);
+		AddRequirement(b.reqs, "blob", "mat_stone", "Stone", 20);
 		AddRequirement(b.reqs, "blob", "mat_copperingot", "Copper Ingot", 4);
 		blocks[1].push_back(b);
 	}
 	{
 		BuildBlock b(0, "oscillator", "$oscillator$", "Oscillator");
-		AddRequirement(b.reqs, "blob", "mat_stone",     "Stone", 35);
+		AddRequirement(b.reqs, "blob", "mat_stone", "Stone", 35);
 		AddRequirement(b.reqs, "blob", "mat_copperingot", "Copper Ingot", 6);
-		AddRequirement(b.reqs, "blob", "mat_ironingot",   "Iron Ingot", 2);
+		AddRequirement(b.reqs, "blob", "mat_ironingot", "Iron Ingot", 2);
 		blocks[1].push_back(b);
 	}
 	{
 		BuildBlock b(0, "transistor", "$transistor$", "Transistor");
-		AddRequirement(b.reqs, "blob", "mat_wood",      "Wood", 15);
-		AddRequirement(b.reqs, "blob", "mat_stone",     "Stone", 10);
+		AddRequirement(b.reqs, "blob", "mat_wood", "Wood", 15);
+		AddRequirement(b.reqs, "blob", "mat_stone", "Stone", 10);
 		AddRequirement(b.reqs, "blob", "mat_copperingot", "Copper Ingot", 3);
-		AddRequirement(b.reqs, "blob", "mat_ironingot",   "Iron Ingot", 1);
+		AddRequirement(b.reqs, "blob", "mat_ironingot", "Iron Ingot", 1);
 		blocks[1].push_back(b);
 	}
 	{
 		BuildBlock b(0, "toggle", "$toggle$", "Toggle");
-		AddRequirement(b.reqs, "blob", "mat_stone",     "Stone", 30);
+		AddRequirement(b.reqs, "blob", "mat_stone", "Stone", 30);
 		AddRequirement(b.reqs, "blob", "mat_copperingot", "Copper Ingot", 4);
 		blocks[1].push_back(b);
 	}
 	{
 		BuildBlock b(0, "randomizer", "$randomizer$", "Randomizer");
-		AddRequirement(b.reqs, "blob", "mat_stone",     "Stone", 30);
+		AddRequirement(b.reqs, "blob", "mat_stone", "Stone", 30);
 		AddRequirement(b.reqs, "blob", "mat_copperingot", "Copper Ingot", 5);
 		blocks[1].push_back(b);
 	}
@@ -264,37 +263,37 @@ void addCommonBuilderBlocks(BuildBlock[][]@ blocks)
 	blocks.push_back(page_2);
 	{
 		BuildBlock b(0, "lever", "$lever$", "Lever");
-		AddRequirement(b.reqs, "blob", "mat_wood",    "Wood", 20);
-		AddRequirement(b.reqs, "blob", "mat_stone",   "Stone", 30);
+		AddRequirement(b.reqs, "blob", "mat_wood", "Wood", 20);
+		AddRequirement(b.reqs, "blob", "mat_stone", "Stone", 30);
 		AddRequirement(b.reqs, "blob", "mat_ironingot", "Iron Ingot", 2);
 		blocks[2].push_back(b);
 	}
 	{
 		BuildBlock b(0, "push_button", "$push_button$", "Button");
-		AddRequirement(b.reqs, "blob", "mat_wood",      "Wood", 12);
-		AddRequirement(b.reqs, "blob", "mat_stone",     "Stone", 20);
+		AddRequirement(b.reqs, "blob", "mat_wood", "Wood", 12);
+		AddRequirement(b.reqs, "blob", "mat_stone", "Stone", 20);
 		AddRequirement(b.reqs, "blob", "mat_copperingot", "Copper Ingot", 2);
 		blocks[2].push_back(b);
 	}
 	{
 		BuildBlock b(0, "coin_slot", "$coin_slot$", "Coin Slot");
-		AddRequirement(b.reqs, "blob", "mat_wood",      "Wood", 12);
-		AddRequirement(b.reqs, "blob", "mat_stone",     "Stone", 25);
+		AddRequirement(b.reqs, "blob", "mat_wood", "Wood", 12);
+		AddRequirement(b.reqs, "blob", "mat_stone", "Stone", 25);
 		AddRequirement(b.reqs, "blob", "mat_copperingot", "Copper Ingot", 2);
-		AddRequirement(b.reqs, "blob", "mat_ironingot",   "Iron Ingot", 1);
+		AddRequirement(b.reqs, "blob", "mat_ironingot", "Iron Ingot", 1);
 		blocks[2].push_back(b);
 	}
 	{
 		BuildBlock b(0, "pressure_plate", "$pressure_plate$", "Pressure Plate");
-		AddRequirement(b.reqs, "blob", "mat_wood",    "Wood", 10);
-		AddRequirement(b.reqs, "blob", "mat_stone",   "Stone", 20);
+		AddRequirement(b.reqs, "blob", "mat_wood", "Wood", 10);
+		AddRequirement(b.reqs, "blob", "mat_stone", "Stone", 20);
 		AddRequirement(b.reqs, "blob", "mat_ironingot", "Iron Ingot", 2);
 		blocks[2].push_back(b);
 	}
 	{
 		BuildBlock b(0, "sensor", "$sensor$", "Motion Sensor");
-		AddRequirement(b.reqs, "blob", "mat_wood",      "Wood", 15);
-		AddRequirement(b.reqs, "blob", "mat_stone",     "Stone", 30);
+		AddRequirement(b.reqs, "blob", "mat_wood", "Wood", 15);
+		AddRequirement(b.reqs, "blob", "mat_stone", "Stone", 30);
 		AddRequirement(b.reqs, "blob", "mat_copperingot", "Copper Ingot", 4);
 		blocks[2].push_back(b);
 	}
@@ -303,86 +302,86 @@ void addCommonBuilderBlocks(BuildBlock[][]@ blocks)
 	blocks.push_back(page_3);
 	{
 		BuildBlock b(0, "lamp", "$lamp$", "Lamp");
-		AddRequirement(b.reqs, "blob", "mat_wood",      "Wood", 10);
-		AddRequirement(b.reqs, "blob", "mat_stone",     "Stone", 15);
+		AddRequirement(b.reqs, "blob", "mat_wood", "Wood", 10);
+		AddRequirement(b.reqs, "blob", "mat_stone", "Stone", 15);
 		AddRequirement(b.reqs, "blob", "mat_copperingot", "Copper Ingot", 1);
 		blocks[3].push_back(b);
 	}
 	{
 		BuildBlock b(0, "emitter", "$emitter$", "Emitter");
-		AddRequirement(b.reqs, "blob", "mat_stone",     "Stone", 35);
+		AddRequirement(b.reqs, "blob", "mat_stone", "Stone", 35);
 		AddRequirement(b.reqs, "blob", "mat_copperingot", "Copper Ingot", 6);
-		AddRequirement(b.reqs, "blob", "mat_ironingot",   "Iron Ingot", 2);
+		AddRequirement(b.reqs, "blob", "mat_ironingot", "Iron Ingot", 2);
 		blocks[3].push_back(b);
 	}
 	{
 		BuildBlock b(0, "receiver", "$receiver$", "Receiver");
-		AddRequirement(b.reqs, "blob", "mat_stone",     "Stone", 35);
+		AddRequirement(b.reqs, "blob", "mat_stone", "Stone", 35);
 		AddRequirement(b.reqs, "blob", "mat_copperingot", "Copper Ingot", 6);
-		AddRequirement(b.reqs, "blob", "mat_ironingot",   "Iron Ingot", 2);
+		AddRequirement(b.reqs, "blob", "mat_ironingot", "Iron Ingot", 2);
 		blocks[3].push_back(b);
 	}
 	{
 		BuildBlock b(0, "magazine", "$magazine$", "Magazine");
-		AddRequirement(b.reqs, "blob", "mat_wood",    "Wood", 30);
+		AddRequirement(b.reqs, "blob", "mat_wood", "Wood", 30);
 		AddRequirement(b.reqs, "blob", "mat_ironingot", "Iron Ingot", 4);
 		blocks[3].push_back(b);
 	}
 	{
 		BuildBlock b(0, "bolter", "$bolter$", "Bolter");
-		AddRequirement(b.reqs, "blob", "mat_wood",    "Wood", 20);
-		AddRequirement(b.reqs, "blob", "mat_stone",   "Stone", 30);
+		AddRequirement(b.reqs, "blob", "mat_wood", "Wood", 20);
+		AddRequirement(b.reqs, "blob", "mat_stone", "Stone", 30);
 		AddRequirement(b.reqs, "blob", "mat_ironingot", "Iron Ingot", 6);
-		AddRequirement(b.reqs, "blob", "mat_copperingot","Copper Ingot", 2);
+		AddRequirement(b.reqs, "blob", "mat_copperingot", "Copper Ingot", 2);
 		blocks[3].push_back(b);
 	}
 	{
 		BuildBlock b(0, "dispenser", "$dispenser$", "Dispenser");
-		AddRequirement(b.reqs, "blob", "mat_wood",     "Wood", 20);
-		AddRequirement(b.reqs, "blob", "mat_stone",    "Stone", 30);
-		AddRequirement(b.reqs, "blob", "mat_ironingot",  "Iron Ingot", 4);
-		AddRequirement(b.reqs, "blob", "mat_copperingot","Copper Ingot", 3);
+		AddRequirement(b.reqs, "blob", "mat_wood", "Wood", 20);
+		AddRequirement(b.reqs, "blob", "mat_stone", "Stone", 30);
+		AddRequirement(b.reqs, "blob", "mat_ironingot", "Iron Ingot", 4);
+		AddRequirement(b.reqs, "blob", "mat_copperingot", "Copper Ingot", 3);
 		blocks[3].push_back(b);
 	}
 	{
 		BuildBlock b(0, "obstructor", "$obstructor$", "Obstructor");
-		AddRequirement(b.reqs, "blob", "mat_stone",   "Stone", 50);
+		AddRequirement(b.reqs, "blob", "mat_stone", "Stone", 50);
 		AddRequirement(b.reqs, "blob", "mat_ironingot", "Iron Ingot", 8);
 		blocks[3].push_back(b);
 	}
 	{
 		BuildBlock b(0, "spiker", "$spiker$", "Spiker");
-		AddRequirement(b.reqs, "blob", "mat_wood",    "Wood", 25);
-		AddRequirement(b.reqs, "blob", "mat_stone",   "Stone", 40);
+		AddRequirement(b.reqs, "blob", "mat_wood", "Wood", 25);
+		AddRequirement(b.reqs, "blob", "mat_stone", "Stone", 40);
 		AddRequirement(b.reqs, "blob", "mat_ironingot", "Iron Ingot", 6);
 		blocks[3].push_back(b);
 	}
 	{
 		BuildBlock b(0, "flamer", "$flamer$", "Flamer");
-		AddRequirement(b.reqs, "blob", "mat_wood",     "Wood", 20);
-		AddRequirement(b.reqs, "blob", "mat_stone",    "Stone", 35);
-		AddRequirement(b.reqs, "blob", "mat_ironingot",  "Iron Ingot", 6);
-		AddRequirement(b.reqs, "blob", "mat_copperingot","Copper Ingot", 4);
+		AddRequirement(b.reqs, "blob", "mat_wood", "Wood", 20);
+		AddRequirement(b.reqs, "blob", "mat_stone", "Stone", 35);
+		AddRequirement(b.reqs, "blob", "mat_ironingot", "Iron Ingot", 6);
+		AddRequirement(b.reqs, "blob", "mat_copperingot", "Copper Ingot", 4);
 		blocks[3].push_back(b);
 	}
 	{
 		BuildBlock b(0, "booster", "$booster$", "Bouncer");
-		AddRequirement(b.reqs, "blob", "mat_wood",     "Wood", 10);
-		AddRequirement(b.reqs, "blob", "mat_stone",    "Stone", 20);
-		AddRequirement(b.reqs, "blob", "mat_copperingot","Copper Ingot", 3);
+		AddRequirement(b.reqs, "blob", "mat_wood", "Wood", 10);
+		AddRequirement(b.reqs, "blob", "mat_stone", "Stone", 20);
+		AddRequirement(b.reqs, "blob", "mat_copperingot", "Copper Ingot", 3);
 		blocks[3].push_back(b);
 	}
 	{
 		BuildBlock b(0, "conveyor", "$conveyor$", "Conveyor");
-		AddRequirement(b.reqs, "blob", "mat_wood",    "Wood", 12);
-		AddRequirement(b.reqs, "blob", "mat_stone",   "Stone", 20);
+		AddRequirement(b.reqs, "blob", "mat_wood", "Wood", 12);
+		AddRequirement(b.reqs, "blob", "mat_stone", "Stone", 20);
 		AddRequirement(b.reqs, "blob", "mat_ironingot", "Iron Ingot", 5);
 		blocks[3].push_back(b);
 	}
 	{
 		BuildBlock b(0, "conveyortriangle", "$conveyortriangle$", "Conveyor Triangle");
-		AddRequirement(b.reqs, "blob", "mat_wood",    "Wood", 6);
-		AddRequirement(b.reqs, "blob", "mat_stone",   "Stone", 12);
+		AddRequirement(b.reqs, "blob", "mat_wood", "Wood", 6);
+		AddRequirement(b.reqs, "blob", "mat_stone", "Stone", 12);
 		AddRequirement(b.reqs, "blob", "mat_ironingot", "Iron Ingot", 2);
 		blocks[3].push_back(b);
 	}

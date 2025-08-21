@@ -1,58 +1,60 @@
+#include "KnockedCommon.as";
 #include "RunnerAnimCommon.as";
 #include "RunnerCommon.as";
-#include "KnockedCommon.as";
 
-
-void onInit( CSprite@ this )
+void onInit(CSprite @ this)
 {
 	this.getCurrentScript().runFlags |= Script::tick_not_infire;
 }
 
-void onTick( CSprite@ this )
+void onTick(CSprite @ this)
 {
-	CBlob@ blob = this.getBlob();
-	u8 gooTimer = blob.get_u8( "goo timer" );
+	CBlob @blob = this.getBlob();
+	u8 gooTimer = blob.get_u8("goo timer");
 
 	if (blob.hasTag("dead"))
-    {
-        this.SetAnimation("dead");
+	{
+		this.SetAnimation("dead");
 		Vec2f vel = blob.getVelocity();
 
-        if (vel.y < -1.0f) {
-            this.SetFrameIndex( 0 );
-        }
-        else {
-            this.SetFrameIndex( 1 );
-        }		 
-        return;
-    }
-	
+		if (vel.y < -1.0f)
+		{
+			this.SetFrameIndex(0);
+		}
+		else
+		{
+			this.SetFrameIndex(1);
+		}
+		return;
+	}
+
 	const bool knocked = isKnocked(blob);
 	const bool action2 = blob.isKeyPressed(key_action2);
 	const bool action1 = blob.isKeyPressed(key_action1);
 
-	
-	const bool left = blob.isKeyPressed( key_left );
-	const bool right = blob.isKeyPressed( key_right );
-	const bool up = blob.isKeyPressed( key_up );
-	const bool down = blob.isKeyPressed( key_down );
-	const bool inair = ( !blob.isOnGround() && !blob.isOnLadder() );
+	const bool left = blob.isKeyPressed(key_left);
+	const bool right = blob.isKeyPressed(key_right);
+	const bool up = blob.isKeyPressed(key_up);
+	const bool down = blob.isKeyPressed(key_down);
+	const bool inair = (!blob.isOnGround() && !blob.isOnLadder());
 	Vec2f pos = blob.getPosition();
 	Vec2f vec;
-	const int direction = blob.getAimDirection( vec );
+	const int direction = blob.getAimDirection(vec);
 
-
-	RunnerMoveVars@ moveVars;
-	if (!blob.get( "moveVars", @moveVars )) {
-		return;	
+	RunnerMoveVars @moveVars;
+	if (!blob.get("moveVars", @moveVars))
+	{
+		return;
 	}
 
 	if (knocked)
 	{
-		if (inair) {
+		if (inair)
+		{
 			this.SetAnimation("knocked_air");
 		}
-		else {
+		else
+		{
 			this.SetAnimation("knocked");
 		}
 	}
@@ -60,23 +62,24 @@ void onTick( CSprite@ this )
 	{
 		return;
 	}
-	else if ( gooTimer > 64 && action2  || (this.isAnimation("retch") && !this.isAnimationEnded()))
+	else if (gooTimer > 64 && action2 || (this.isAnimation("retch") && !this.isAnimationEnded()))
 	{
 		this.SetAnimation("retch");
 	}
-	else if ( action1 || ( this.isAnimation( "strike" ) || this.isAnimation( "strike_mid_up" ) || this.isAnimation( "strike_mid_down" ) ) && !this.isAnimationEnded() )
+	else if (action1 || (this.isAnimation("strike") || this.isAnimation("strike_mid_up") || this.isAnimation("strike_mid_down")) && !this.isAnimationEnded())
 	{
-		if ( direction == -1 )
+		if (direction == -1)
 			this.SetAnimation("strike_mid_up");
-		else if ( direction == 1 )
-			this.SetAnimation("strike_mid_down");	
+		else if (direction == 1)
+			this.SetAnimation("strike_mid_down");
 		else
-				this.SetAnimation("strike");			
+			this.SetAnimation("strike");
 	}
 	else if (inair)
 	{
-		RunnerMoveVars@ moveVars;
-		if (!blob.get( "moveVars", @moveVars )) {
+		RunnerMoveVars @moveVars;
+		if (!blob.get("moveVars", @moveVars))
+		{
 			return;
 		}
 		Vec2f vel = blob.getVelocity();
@@ -90,30 +93,33 @@ void onTick( CSprite@ this )
 			this.SetAnimation("fall");
 			this.animation.timer = 0;
 
-			if (vy < -1.5 ) {
+			if (vy < -1.5)
+			{
 				this.animation.frame = 0;
 			}
-			else if (vy > 1.5 ) {
+			else if (vy > 1.5)
+			{
 				this.animation.frame = 2;
 			}
-			else {
+			else
+			{
 				this.animation.frame = 1;
 			}
 		}
 	}
-	else if ( blob.hasTag( "crawling" ) )
+	else if (blob.hasTag("crawling"))
 	{
-		if ( (left || right) )
-			this.SetAnimation( "crawl" );
+		if ((left || right))
+			this.SetAnimation("crawl");
 		else
-			this.SetAnimation( "crouch" );
+			this.SetAnimation("crouch");
 	}
 	else if ((left || right) ||
-			 (blob.isOnLadder() && (up || down) ) )
+			 (blob.isOnLadder() && (up || down)))
 	{
 		this.SetAnimation("run");
 	}
-	else if ( down )
+	else if (down)
 	{
 		this.SetAnimation("crouch");
 	}
@@ -135,29 +141,29 @@ void onTick( CSprite@ this )
 			direction = -1;
 		}
 		else {
-			direction = 1;			
+			direction = 1;
 		}
-		
+
 		defaultIdleAnim(this, blob, direction);*/
 	}
 }
 
-
-void onGib(CSprite@ this)
+void onGib(CSprite @ this)
 {
-    if (g_kidssafe) {
-        return;
-    }
+	if (g_kidssafe)
+	{
+		return;
+	}
 
-    CBlob@ blob = this.getBlob();
-    Vec2f pos = blob.getPosition();
-    Vec2f vel = blob.getVelocity();
+	CBlob @blob = this.getBlob();
+	Vec2f pos = blob.getPosition();
+	Vec2f vel = blob.getVelocity();
 	vel.y -= 3.0f;
-    f32 hp = Maths::Min(Maths::Abs(blob.getHealth()), 2.0f) + 1.0;
+	f32 hp = Maths::Min(Maths::Abs(blob.getHealth()), 2.0f) + 1.0;
 	const u8 team = blob.getTeamNum();
-    CParticle@ Arm1     = makeGibParticle( "/UndeadBunnyGibs.png", pos, vel + getRandomVelocity( 90, hp - 0.2 , 80 ), 0, 0, Vec2f (16,16), 2.0f, 20, "/BodyGibFall", team );
-    CParticle@ Body     = makeGibParticle( "/UndeadBunnyGibs.png", pos, vel + getRandomVelocity( 90, hp , 80 ), 1, 0, Vec2f (16,16), 2.0f, 20, "/BodyGibFall", team );
-    CParticle@ Arm2     = makeGibParticle( "/UndeadBunnyGibs.png", pos, vel + getRandomVelocity( 90, hp - 0.2 , 80 ), 2, 0, Vec2f (16,16), 2.0f, 20, "/BodyGibFall", team );
-    CParticle@ Shield   = makeGibParticle( "/UndeadBunnyGibs.png", pos, vel + getRandomVelocity( 90, hp - 0.2 , 80 ), 3, 0, Vec2f (16,16), 2.0f, 20, "/BodyGibFall", team );
-    CParticle@ Sword    = makeGibParticle( "/UndeadBunnyGibs.png", pos, vel + getRandomVelocity( 90, hp - 0.2 , 80 ), 4, 0, Vec2f (16,16), 2.0f, 20, "/BodyGibFall", team );
+	CParticle @Arm1 = makeGibParticle("/UndeadBunnyGibs.png", pos, vel + getRandomVelocity(90, hp - 0.2, 80), 0, 0, Vec2f(16, 16), 2.0f, 20, "/BodyGibFall", team);
+	CParticle @Body = makeGibParticle("/UndeadBunnyGibs.png", pos, vel + getRandomVelocity(90, hp, 80), 1, 0, Vec2f(16, 16), 2.0f, 20, "/BodyGibFall", team);
+	CParticle @Arm2 = makeGibParticle("/UndeadBunnyGibs.png", pos, vel + getRandomVelocity(90, hp - 0.2, 80), 2, 0, Vec2f(16, 16), 2.0f, 20, "/BodyGibFall", team);
+	CParticle @Shield = makeGibParticle("/UndeadBunnyGibs.png", pos, vel + getRandomVelocity(90, hp - 0.2, 80), 3, 0, Vec2f(16, 16), 2.0f, 20, "/BodyGibFall", team);
+	CParticle @Sword = makeGibParticle("/UndeadBunnyGibs.png", pos, vel + getRandomVelocity(90, hp - 0.2, 80), 4, 0, Vec2f(16, 16), 2.0f, 20, "/BodyGibFall", team);
 }

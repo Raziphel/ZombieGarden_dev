@@ -1,17 +1,18 @@
-#include "VehicleCommon2.as"
 #include "Hitters.as"
+#include "VehicleCommon2.as"
+
 
 // Boat logic
 
-void onInit(CBlob@ this)
+void onInit(CBlob @ this)
 {
 	Vehicle_Setup(this,
-	              60.0f, // move speed
-	              0.19f,  // turn speed
-	              Vec2f(0.0f, -5.0f), // jump out velocity
-	              true  // inventory access
-	             );
-	VehicleInfo@ v;
+				  60.0f,			  // move speed
+				  0.19f,			  // turn speed
+				  Vec2f(0.0f, -5.0f), // jump out velocity
+				  true				  // inventory access
+	);
+	VehicleInfo @v;
 	if (!this.get("VehicleInfo", @v))
 	{
 		return;
@@ -24,65 +25,65 @@ void onInit(CBlob@ this)
 
 	this.set_f32("map dmg modifier", 0.0f);
 
-	CSprite@ sprite = this.getSprite();
+	CSprite @sprite = this.getSprite();
 
 	// add balloon
 
-	CSpriteLayer@ balloon = sprite.addSpriteLayer("balloon", "Balloon.png", 48, 64);
+	CSpriteLayer @balloon = sprite.addSpriteLayer("balloon", "Balloon.png", 48, 64);
 	if (balloon !is null)
 	{
 		balloon.addAnimation("default", 0, false);
-		int[] frames = { 0, 2, 3 };
+		int[] frames = {0, 2, 3};
 		balloon.animation.AddFrames(frames);
 		balloon.SetRelativeZ(1.0f);
 		balloon.SetOffset(Vec2f(0.0f, -26.0f));
 	}
 
-	CSpriteLayer@ background = sprite.addSpriteLayer("background", "Balloon.png", 32, 16);
+	CSpriteLayer @background = sprite.addSpriteLayer("background", "Balloon.png", 32, 16);
 	if (background !is null)
 	{
 		background.addAnimation("default", 0, false);
-		int[] frames = { 3 };
+		int[] frames = {3};
 		background.animation.AddFrames(frames);
 		background.SetRelativeZ(-5.0f);
 		background.SetOffset(Vec2f(0.0f, -5.0f));
 	}
 
-	CSpriteLayer@ burner = sprite.addSpriteLayer("burner", "Balloon.png", 8, 16);
+	CSpriteLayer @burner = sprite.addSpriteLayer("burner", "Balloon.png", 8, 16);
 	if (burner !is null)
 	{
 		{
-			Animation@ a = burner.addAnimation("default", 3, true);
-			int[] frames = { 41, 42, 43 };
+			Animation @a = burner.addAnimation("default", 3, true);
+			int[] frames = {41, 42, 43};
 			a.AddFrames(frames);
 		}
 		{
-			Animation@ a = burner.addAnimation("up", 3, true);
-			int[] frames = { 38, 39, 40 };
+			Animation @a = burner.addAnimation("up", 3, true);
+			int[] frames = {38, 39, 40};
 			a.AddFrames(frames);
 		}
 		{
-			Animation@ a = burner.addAnimation("down", 3, true);
-			int[] frames = { 44, 45, 44, 46 };
+			Animation @a = burner.addAnimation("down", 3, true);
+			int[] frames = {44, 45, 44, 46};
 			a.AddFrames(frames);
 		}
 		burner.SetRelativeZ(1.5f);
 		burner.SetOffset(Vec2f(0.0f, -26.0f));
 	}
-	
-	//set custom minimap icon
+
+	// set custom minimap icon
 	this.SetMinimapOutsideBehaviour(CBlob::minimap_snap);
 	this.SetMinimapVars("GUI/MiniIcons.png", 7, Vec2f(16, 16));
 	this.SetMinimapRenderAlways(true);
-	
-	if (getNet().isServer())// && hasTech( this, "mounted bow"))
+
+	if (getNet().isServer()) // && hasTech( this, "mounted bow"))
 	{
-		CBlob@ bow = server_CreateBlob( "mounted_cannon" );	
+		CBlob @bow = server_CreateBlob("mounted_cannon");
 		if (bow !is null)
 		{
 			bow.server_setTeamNum(this.getTeamNum());
-			this.server_AttachTo( bow, "BOW" );
-			this.set_u16("bowid",bow.getNetworkID());
+			this.server_AttachTo(bow, "BOW");
+			this.set_u16("bowid", bow.getNetworkID());
 		}
 	}
 	this.getShape().SetRotationsAllowed(false);
@@ -90,20 +91,20 @@ void onInit(CBlob@ this)
 	}
 }
 
-void onTick(CBlob@ this)
+void onTick(CBlob @ this)
 {
 	if (this.hasAttached() || this.getTickSinceCreated() < 30)
 	{
 		if (this.getHealth() > 1.0f)
 		{
-			VehicleInfo@ v;
+			VehicleInfo @v;
 			if (!this.get("VehicleInfo", @v))
 			{
 				return;
 			}
 			Vehicle_StandardControls(this, v);
 
-			//TODO: move to atmosphere damage script
+			// TODO: move to atmosphere damage script
 			f32 y = this.getPosition().y;
 			if (y < 100)
 			{
@@ -124,22 +125,26 @@ void onTick(CBlob@ this)
 	}
 }
 
-void Vehicle_onFire(CBlob@ this, VehicleInfo@ v, CBlob@ bullet, const u8 charge) {}
-bool Vehicle_canFire(CBlob@ this, VehicleInfo@ v, bool isActionPressed, bool wasActionPressed, u8 &out chargeValue) {return false;}
-
-bool doesCollideWithBlob(CBlob@ this, CBlob@ blob)
-{
-	return Vehicle_doesCollideWithBlob_boat(this, blob);
-}
-
-bool canBePickedUp(CBlob@ this, CBlob@ byBlob)
+void Vehicle_onFire(CBlob @ this, VehicleInfo @v, CBlob @bullet, const u8 charge)
+{}
+bool Vehicle_canFire(CBlob @ this, VehicleInfo @v, bool isActionPressed, bool wasActionPressed, u8&out chargeValue)
 {
 	return false;
 }
 
-void onAttach(CBlob@ this, CBlob@ attached, AttachmentPoint @attachedPoint)
+bool doesCollideWithBlob(CBlob @ this, CBlob @blob)
 {
-	VehicleInfo@ v;
+	return Vehicle_doesCollideWithBlob_boat(this, blob);
+}
+
+bool canBePickedUp(CBlob @ this, CBlob @byBlob)
+{
+	return false;
+}
+
+void onAttach(CBlob @ this, CBlob @attached, AttachmentPoint @attachedPoint)
+{
+	VehicleInfo @v;
 	if (!this.get("VehicleInfo", @v))
 	{
 		return;
@@ -147,9 +152,9 @@ void onAttach(CBlob@ this, CBlob@ attached, AttachmentPoint @attachedPoint)
 	Vehicle_onAttach(this, v, attached, attachedPoint);
 }
 
-void onDetach(CBlob@ this, CBlob@ detached, AttachmentPoint@ attachedPoint)
+void onDetach(CBlob @ this, CBlob @detached, AttachmentPoint @attachedPoint)
 {
-	VehicleInfo@ v;
+	VehicleInfo @v;
 	if (!this.get("VehicleInfo", @v))
 	{
 		return;
@@ -157,22 +162,21 @@ void onDetach(CBlob@ this, CBlob@ detached, AttachmentPoint@ attachedPoint)
 	Vehicle_onDetach(this, v, detached, attachedPoint);
 }
 
-
 // SPRITE
 
-void onInit(CSprite@ this)
+void onInit(CSprite @ this)
 {
 	this.SetZ(-50.0f);
 	this.getCurrentScript().tickFrequency = 5;
 }
 
-void onTick(CSprite@ this)
+void onTick(CSprite @ this)
 {
-	CBlob@ blob = this.getBlob();
+	CBlob @blob = this.getBlob();
 	f32 ratio = 1.0f - (blob.getHealth() / blob.getInitialHealth());
 	this.animation.setFrameFromRatio(ratio);
 
-	CSpriteLayer@ balloon = this.getSpriteLayer("balloon");
+	CSpriteLayer @balloon = this.getSpriteLayer("balloon");
 	if (balloon !is null)
 	{
 		if (blob.getHealth() > 1.0f)
@@ -181,7 +185,7 @@ void onTick(CSprite@ this)
 			balloon.animation.frame = 2;
 	}
 
-	CSpriteLayer@ burner = this.getSpriteLayer("burner");
+	CSpriteLayer @burner = this.getSpriteLayer("burner");
 	if (burner !is null)
 	{
 		burner.SetOffset(Vec2f(0.0f, -14.0f));
@@ -204,12 +208,12 @@ void onTick(CSprite@ this)
 	}
 }
 
-void onDie(CBlob@ this)
+void onDie(CBlob @ this)
 {
-	if(this.exists("bowid"))
+	if (this.exists("bowid"))
 	{
-		CBlob@ bow = getBlobByNetworkID(this.get_u16("bowid"));
-		if(bow !is null)
+		CBlob @bow = getBlobByNetworkID(this.get_u16("bowid"));
+		if (bow !is null)
 		{
 			bow.server_Die();
 		}

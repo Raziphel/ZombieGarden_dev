@@ -1,4 +1,4 @@
-//spawning a generic fire particle
+// spawning a generic fire particle
 
 void makeFireParticle(Vec2f pos, int smokeRandom = 1)
 {
@@ -6,13 +6,21 @@ void makeFireParticle(Vec2f pos, int smokeRandom = 1)
 
 	switch (XORRandom(XORRandom(smokeRandom) == 0 ? 4 : 2))
 	{
-		case 0: texture = "../SmallBlackFire1.png"; break;
+		case 0:
+			texture = "../SmallBlackFire1.png";
+			break;
 
-		case 1: texture = "../SmallBlackFire2.png"; break;
+		case 1:
+			texture = "../SmallBlackFire2.png";
+			break;
 
-		case 2: texture = "Entities/Effects/Sprites/SmallSmoke1.png"; break;
+		case 2:
+			texture = "Entities/Effects/Sprites/SmallSmoke1.png";
+			break;
 
-		case 3: texture = "Entities/Effects/Sprites/SmallSmoke2.png"; break;
+		case 3:
+			texture = "Entities/Effects/Sprites/SmallSmoke2.png";
+			break;
 	}
 
 	ParticleAnimated(texture, pos, Vec2f(0, 0), 0.0f, 1.0f, 5, -0.1, true);
@@ -24,9 +32,13 @@ void makeSmokeParticle(Vec2f pos, f32 gravity = -0.06f)
 
 	switch (XORRandom(2))
 	{
-		case 0: texture = "Entities/Effects/Sprites/SmallSmoke1.png"; break;
+		case 0:
+			texture = "Entities/Effects/Sprites/SmallSmoke1.png";
+			break;
 
-		case 1: texture = "Entities/Effects/Sprites/SmallSmoke2.png"; break;
+		case 1:
+			texture = "Entities/Effects/Sprites/SmallSmoke2.png";
+			break;
 	}
 
 	ParticleAnimated(texture, pos, Vec2f(0, 0), 0.0f, 1.0f, 5, gravity, true);

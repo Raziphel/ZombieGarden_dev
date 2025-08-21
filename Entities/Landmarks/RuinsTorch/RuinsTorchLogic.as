@@ -4,7 +4,7 @@
 #include "StandardRespawnCommand.as"
 #include "TeamColour.as"
 
-void onInit(CBlob@ this)
+void onInit(CBlob @ this)
 {
 	this.getSprite().SetZ(-50.0f);
 
@@ -36,7 +36,7 @@ void onInit(CBlob@ this)
 	this.set_u16("renderID", cb_id);
 }
 
-f32 onHit(CBlob@ this, Vec2f worldPoint, Vec2f velocity, f32 damage, CBlob@ hitterBlob, u8 customData)
+f32 onHit(CBlob @ this, Vec2f worldPoint, Vec2f velocity, f32 damage, CBlob @hitterBlob, u8 customData)
 {
 	this.Tag("dmgmsg");
 
@@ -46,7 +46,7 @@ f32 onHit(CBlob@ this, Vec2f worldPoint, Vec2f velocity, f32 damage, CBlob@ hitt
 		for (int i = 0; i < sparkCount; ++i)
 		{
 			Vec2f vel = getRandomVelocity(0, 5 + XORRandom(6), 360);
-			CParticle@ p = ParticleSpark(worldPoint, vel, SColor(255, 252, 152, 3));
+			CParticle @p = ParticleSpark(worldPoint, vel, SColor(255, 252, 152, 3));
 			if (p !is null)
 			{
 				p.gravity = Vec2f(0, 0.5f);
@@ -58,7 +58,7 @@ f32 onHit(CBlob@ this, Vec2f worldPoint, Vec2f velocity, f32 damage, CBlob@ hitt
 	return damage;
 }
 
-void GetButtonsFor(CBlob@ this, CBlob@ caller)
+void GetButtonsFor(CBlob @ this, CBlob @caller)
 {
 	if (canChangeClass(this, caller) && caller.getTeamNum() == this.getTeamNum())
 	{
@@ -68,46 +68,43 @@ void GetButtonsFor(CBlob@ this, CBlob@ caller)
 	}
 }
 
-void onCommand(CBlob@ this, u8 cmd, CBitStream @params)
+void onCommand(CBlob @ this, u8 cmd, CBitStream @params)
 {
 	onRespawnCommand(this, cmd, params);
 }
 
-void onDie(CBlob@ this)
+void onDie(CBlob @ this)
 {
-    CRules@ rules = getRules();
+	CRules @rules = getRules();
 
-    // Count torches (includes the one that's dying)
-    CBlob@[] ruinstorch;
-    getBlobsByName("ruinstorch", @ruinstorch);
+	// Count remaining torches (the dying one is already gone from the list here)
+	CBlob @[] ruinstorch;
+	getBlobsByName("ruinstorch", @ruinstorch);
+	const int remaining = ruinstorch.length;
 
-    // Adjust for the one that just died
-    int remaining = ruinstorch.length;
-    if (this.getName() == "ruinstorch")
-        remaining -= 1;
+	// Trigger once when 3 or fewer remain
+	if (!rules.get_bool("ruins_portal_active") && remaining <= 3)
+	{
+		rules.set_bool("ruins_portal_active", true);
+		rules.Sync("ruins_portal_active", true);
 
-    // Only trigger once, when 3 or fewer remain
-    if (!rules.get_bool("ruins_portal_active") && remaining <= 3)
-    {
-        rules.set_bool("ruins_portal_active", true);
-        rules.Sync("ruins_portal_active", true);
+		if (getNet().isServer())
+		{
+			// Spawn portals at each remaining ruins
+			CBlob @[] ruins;
+			getBlobsByName("zombieruins", @ruins);
 
-        if (getNet().isServer())
-        {
-            // Spawn portals at each remaining ruins
-            CBlob@[] ruins;
-            getBlobsByName("zombieruins", @ruins);
+			for (uint i = 0; i < ruins.length; i++)
+			{
+				CBlob @ruin = ruins[i];
+				if (ruin is null)
+					continue;
 
-            for (uint i = 0; i < ruins.length; i++)
-            {
-                CBlob@ ruin = ruins[i];
-                if (ruin is null) continue;
-
-                Vec2f pos = ruin.getPosition();
-                pos.x += 1.0f;
-                pos.y += 16.0f;
-                server_CreateBlob("zombieportal", -1, pos);
-            }
-        }
-    }
+				Vec2f pos = ruin.getPosition();
+				pos.x += 1.0f;
+				pos.y += 16.0f;
+				server_CreateBlob("zombieportal", -1, pos);
+			}
+		}
+	}
 }

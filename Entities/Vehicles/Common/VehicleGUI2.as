@@ -1,31 +1,32 @@
 #include "VehicleCommon2.as";
 
-void onInit(CSprite@ this)
+void onInit(CSprite @ this)
 {
 	this.getCurrentScript().runFlags |= Script::tick_hasattached;
 }
 
-void onRender(CSprite@ this)
+void onRender(CSprite @ this)
 {
-	if (this is null) return; //can happen with bad reload
+	if (this is null)
+		return; // can happen with bad reload
 
 	// draw only for local player
-	CBlob@ localBlob = getLocalPlayerBlob();
-	CBlob@ blob = this.getBlob();
+	CBlob @localBlob = getLocalPlayerBlob();
+	CBlob @blob = this.getBlob();
 
 	if (localBlob is null)
 	{
 		return;
 	}
 
-	VehicleInfo@ v;
+	VehicleInfo @v;
 	if (!blob.get("VehicleInfo", @v))
 	{
 		return;
 	}
 
-	AttachmentPoint@ gunner = blob.getAttachments().getAttachmentPointByName("GUNNER");
-	if (gunner !is null	&& gunner.getOccupied() is localBlob)
+	AttachmentPoint @gunner = blob.getAttachments().getAttachmentPointByName("GUNNER");
+	if (gunner !is null && gunner.getOccupied() is localBlob)
 	{
 		if (!v.infinite_ammo)
 			drawAmmoCount(blob, v);
@@ -33,18 +34,18 @@ void onRender(CSprite@ this)
 		if (blob.getName() != "mounted_bow")
 		{
 		}
-		
+
 		else if (blob.getName() != "mounted_bazooka")
 		{
 		}
 
 		// no one feels the angle count is necessary, so im taking it out to reduce GUI clutter
-		//if(blob.getName() == "ballista")
-		//drawAngleCount(blob, v);
+		// if(blob.getName() == "ballista")
+		// drawAngleCount(blob, v);
 	}
 }
 
-void drawAmmoCount(CBlob@ blob, VehicleInfo@ v)
+void drawAmmoCount(CBlob @blob, VehicleInfo @v)
 {
 	// draw ammo count
 	Vec2f pos2d1 = blob.getScreenPos() - Vec2f(0, 10);
@@ -69,9 +70,9 @@ void drawAmmoCount(CBlob@ blob, VehicleInfo@ v)
 
 	f32 dist = lr.x - ul.x;
 	Vec2f upperleft((ul.x + (dist / 2.0f)) - 5.0f + 4.0f, pos2d1.y + blob.getHeight() + 30);
-	Vec2f lowerright((ul.x + (dist / 2.0f))  + 5.0f + 4.0f, upperleft.y + 20);
+	Vec2f lowerright((ul.x + (dist / 2.0f)) + 5.0f + 4.0f, upperleft.y + 20);
 
-	//GUI::DrawRectangle(upperleft - Vec2f(0,20), lowerright , SColor(255,0,0,255));
+	// GUI::DrawRectangle(upperleft - Vec2f(0,20), lowerright , SColor(255,0,0,255));
 
 	u16 ammo = v.ammo_stocked;
 
@@ -87,7 +88,7 @@ void drawAmmoCount(CBlob@ blob, VehicleInfo@ v)
 	GUI::DrawText(reqsText, upperleft + Vec2f(2, 1), color_white);
 }
 
-void drawChargeBar(CBlob@ blob, VehicleInfo@ v)
+void drawChargeBar(CBlob @blob, VehicleInfo @v)
 {
 	Vec2f pos2d = blob.getScreenPos() - Vec2f(0, 60);
 	Vec2f dim = Vec2f(20, 8);
@@ -119,7 +120,7 @@ void drawChargeBar(CBlob@ blob, VehicleInfo@ v)
 	GUI::DrawRectangle(ul + Vec2f(6, 6), lr + Vec2f(2, 2), SColor(0xff9BC92A));
 }
 
-void drawCooldownBar(CBlob@ blob, VehicleInfo@ v)
+void drawCooldownBar(CBlob @blob, VehicleInfo @v)
 {
 	if (v.cooldown_time > 0)
 	{
@@ -149,7 +150,7 @@ void drawCooldownBar(CBlob@ blob, VehicleInfo@ v)
 	}
 }
 
-void drawLastFireCharge(CBlob@ blob, VehicleInfo@ v)
+void drawLastFireCharge(CBlob @blob, VehicleInfo @v)
 {
 	Vec2f pos2d = blob.getScreenPos() - Vec2f(0, 60);
 	Vec2f dim = Vec2f(24, 8);
@@ -185,9 +186,9 @@ void drawLastFireCharge(CBlob@ blob, VehicleInfo@ v)
 		GUI::DrawIconByName("$red_last_charge_slider$", blob.isFacingLeft() ? (ul - Vec2f(0, 4)) : Vec2f(lr.x, ul.y - 4));
 }
 
-void drawAngleCount(CBlob@ blob, VehicleInfo@ v)
+void drawAngleCount(CBlob @blob, VehicleInfo @v)
 {
-	Vec2f pos2d = blob.getScreenPos() - Vec2f(-48 , 52);
+	Vec2f pos2d = blob.getScreenPos() - Vec2f(-48, 52);
 	Vec2f upperleft(pos2d.x - 18, pos2d.y + blob.getHeight() + 30);
 	Vec2f lowerright(pos2d.x + 18, upperleft.y + 20);
 
@@ -197,15 +198,15 @@ void drawAngleCount(CBlob@ blob, VehicleInfo@ v)
 	GUI::DrawText(reqsText, upperleft, lowerright, color_white, true, true, false);
 }
 
-//stolen from ballista.as and slightly modified
-u8 getAngle(CBlob@ this, const u8 charge, VehicleInfo@ v)
+// stolen from ballista.as and slightly modified
+u8 getAngle(CBlob @ this, const u8 charge, VehicleInfo @v)
 {
 	const f32 high_angle = 20.0f;
 	const f32 low_angle = 60.0f;
 
-	f32 angle = 180.0f; //we'll know if this goes wrong :)
+	f32 angle = 180.0f; // we'll know if this goes wrong :)
 	bool facing_left = this.isFacingLeft();
-	AttachmentPoint@ gunner = this.getAttachments().getAttachmentPointByName("GUNNER");
+	AttachmentPoint @gunner = this.getAttachments().getAttachmentPointByName("GUNNER");
 
 	bool not_found = true;
 
@@ -214,13 +215,16 @@ u8 getAngle(CBlob@ this, const u8 charge, VehicleInfo@ v)
 		Vec2f aim_vec = gunner.getPosition() - gunner.getAimPos();
 
 		if ((!facing_left && aim_vec.x < 0) ||
-		        (facing_left && aim_vec.x > 0))
+			(facing_left && aim_vec.x > 0))
 		{
-			if (aim_vec.x > 0) { aim_vec.x = -aim_vec.x; }
+			if (aim_vec.x > 0)
+			{
+				aim_vec.x = -aim_vec.x;
+			}
 
 			angle = (-(aim_vec).getAngle() + 270.0f);
-			angle = Maths::Max(high_angle , Maths::Min(angle , low_angle));
-			//printf("angle " + angle );
+			angle = Maths::Max(high_angle, Maths::Min(angle, low_angle));
+			// printf("angle " + angle );
 			not_found = false;
 		}
 	}
@@ -234,5 +238,9 @@ u8 getAngle(CBlob@ this, const u8 charge, VehicleInfo@ v)
 	return Maths::Abs(Maths::Round(angle));
 }
 
-void Vehicle_onFire(CBlob@ this, VehicleInfo@ v, CBlob@ bullet, const u8 charge) {}
-bool Vehicle_canFire(CBlob@ this, VehicleInfo@ v, bool isActionPressed, bool wasActionPressed, u8 &out chargeValue) {return false;}
+void Vehicle_onFire(CBlob @ this, VehicleInfo @v, CBlob @bullet, const u8 charge)
+{}
+bool Vehicle_canFire(CBlob @ this, VehicleInfo @v, bool isActionPressed, bool wasActionPressed, u8&out chargeValue)
+{
+	return false;
+}

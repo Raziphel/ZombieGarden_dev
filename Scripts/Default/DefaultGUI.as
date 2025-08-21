@@ -1,158 +1,157 @@
 
 void LoadDefaultGUI()
 {
-    if (v_driver > 0)
-    {
-        // load default skin
-        GUI::LoadSkin( "GUI/guiSkin.cfg" );
-        // add color tokens
-        AddColorToken( "$RED$", SColor(255, 105, 25, 5) );
-        AddColorToken( "$GREEN$", SColor(255, 5, 105, 25) );
-		AddColorToken( "$GREY$", SColor(255, 195, 195, 195) );
-        // add default icon tokens
-        AddIconToken( "$NONE$", "GUI/InteractionIcons.png", Vec2f(32,32), 9 );
-        AddIconToken( "$TIME$", "GUI/InteractionIcons.png", Vec2f(32,32), 0 );
-		AddIconToken( "$COIN$", "Sprites/coins.png", Vec2f(16, 16), 1);
-        AddIconToken( "$TEAMS$", "GUI/MenuItems.png", Vec2f(32,32), 1 );
-        AddIconToken( "$SPECTATOR$", "GUI/MenuItems.png", Vec2f(32,32), 19 );
-        AddIconToken( "$FLAG$", CFileMatcher("flag.png").getFirst(), Vec2f(32,16), 0 );
-        AddIconToken( "$DISABLED$", "GUI/InteractionIcons.png", Vec2f(32,32), 9, 1 );
-		AddIconToken( "$CANCEL$", "GUI/MenuItems.png", Vec2f(32,32), 29 );		
-		AddIconToken( "$RESEARCH$", "GUI/InteractionIcons.png", Vec2f(32,32), 27 );
-		AddIconToken( "$ALERT$", "GUI/InteractionIcons.png", Vec2f(32,32), 10 ); 
-		AddIconToken( "$down_arrow$", "GUI/ArrowDown.png", Vec2f(8,8), 0 );
-		AddIconToken( "$ATTACK_LEFT$", "GUI/InteractionIcons.png", Vec2f(32,32), 18, 1 );
-		AddIconToken( "$ATTACK_RIGHT$", "GUI/InteractionIcons.png", Vec2f(32,32), 17, 1 );
-		AddIconToken( "$ATTACK_THIS$", "GUI/InteractionIcons.png", Vec2f(32,32), 19, 1 );
-		AddIconToken( "$DEFEND_LEFT$", "GUI/InteractionIcons.png", Vec2f(32,32), 18, 2 );
-		AddIconToken( "$DEFEND_RIGHT$", "GUI/InteractionIcons.png", Vec2f(32,32), 17, 2 );
-		AddIconToken( "$DEFEND_THIS$", "GUI/InteractionIcons.png", Vec2f(32,32), 19, 2 );
-		AddIconToken( "$CLASSCHANGE$", "GUI/InteractionIcons.png", Vec2f(32,32), 12, 2 );
-		AddIconToken( "$BUILD$", "GUI/InteractionIcons.png", Vec2f(32,32), 15 );
-		AddIconToken( "$STONE$", "Sprites/World.png", Vec2f(8,8), 48 );
-                AddIconToken( "$!!!$", "Emoticons.png", Vec2f(22,22), 48 );
-		
-		//Mod Icons
-                AddIconToken( "$vehicleshop$", "Entities/Shops/VehicleShop/VehicleShopIcon.png", Vec2f(40,24), 0 );
-                AddIconToken( "$defenseshop$", "Entities/Shops/DefenseShop/DefenseShop.png", Vec2f(40,24), 0 );
-                AddIconToken( "$priestshop$", "Entities/Shops/PriestShop/PriestShop.png", Vec2f(40,24), 0 );
-                AddIconToken( "$undeadtunnel$", "Entities/Shops/UndeadTunnel/UndeadTunnel.png", Vec2f(40,24), 0 );
-                AddIconToken( "$undeadtradershop$", "Entities/Shops/UndeadTraderShop/UndeadTraderShop.png", Vec2f(40,24), 0 );
-                AddIconToken( "$horror$", "Entities/Shops/UndeadTraderShop/UndeadTraderIcons.png", Vec2f(16,16), 0 );
-                AddIconToken( "$abomination$", "Entities/Shops/UndeadTraderShop/UndeadTraderIcons.png", Vec2f(16,16), 1 );
-                AddIconToken( "$undeadbarracks$", "Entities/Shops/UndeadBarracks/UndeadBarracks.png", Vec2f(40,24), 0 );
-                AddIconToken( "$undeadbuilding$", "Entities/Shops/Building/UndeadBuilding.png", Vec2f(40,24), 0 );
-                AddIconToken( "$ZA$", "Entities/Landmarks/ZombieAlter/ZombieAlterIcon.png", Vec2f(16,16), 0 );
-                AddIconToken( "$tradershop$", "Entities/Shops/TraderShop/tradershopIcon.png", Vec2f(40,24), 0 );
-                AddIconToken( "$minibuilding$", "Entities/Shops/Building/MiniBuilding.png", Vec2f(16,16), 0 );
-                AddIconToken( "$minibuildershop$", "Entities/Shops/BuilderShop/MiniBuilderShop.png", Vec2f(16,16), 0 );
-                AddIconToken( "$minipriestshop$", "Entities/Shops/PriestShop/MiniPriestShop.png", Vec2f(16,16), 0 );
-                AddIconToken( "$woodenspikes$", "Entities/Buildings/WoodenSpikes/WoodenSpikes.png", Vec2f(8,8), 0 );
-                AddIconToken( "$miniknightshop$", "Entities/Shops/KnightShop/MiniKnightShop.png", Vec2f(16,16), 0 );
-                AddIconToken( "$miniarchershop$", "Entities/Shops/ArcherShop/MiniArcherShop.png", Vec2f(16,16), 0 );
-                AddIconToken( "$minidorm$", "Entities/Shops/Dorm/MiniDorm.png", Vec2f(16,16), 0 );
-                AddIconToken( "$minidefenseshop$", "Entities/Shops/DefenseShop/MiniDefenseShop.png", Vec2f(16,16), 0 );
-                AddIconToken( "$minitradershop$", "Entities/Shops/TraderShop/MiniTraderShop.png", Vec2f(16,16), 0 );
-                AddIconToken( "$minitunnel$", "Entities/Shops/Tunnel/MiniTunnel.png", Vec2f(16,16), 0 );
-                AddIconToken( "$minifarm$", "Entities/Shops/Storage/MiniFarm.png", Vec2f(16,16), 0 );
-                AddIconToken( "$minivehicleshop$", "Entities/Shops/VehicleShop/MiniVehicleShop.png", Vec2f(16,16), 0 );
-                AddIconToken( "$team_bridge$", "Entities/Buildings/TeamBridge/TeamBridge.png", Vec2f(8,8), 0 );
-                AddIconToken( "$chainsaw$", "Entities/Items/Chainsaw/ChainsawIcon.png", Vec2f(16,16), 0 );
-                AddIconToken( "$drill$", "Entities/Items/Drill/DrillIcon.png", Vec2f(16,16), 0 );
-                AddIconToken( "$golddrill$", "Entities/Items/Drill/GoldDrillIcon.png", Vec2f(16,16), 0 );
-                AddIconToken( "$bomb_satchel$", "Entities/Items/BombSatchel/BombSatchel.png", Vec2f(16,16), 0 );
-                AddIconToken( "$divinghelmet$", "Entities/Items/DivingHelmet/DivingHelmetIcon.png", Vec2f(16,16), 0 );
-                AddIconToken( "$bluelantern$", "Entities/Items/BlueLantern/BlueLantern.png", Vec2f(8,8), 0 );
-                AddIconToken( "$megasaw$", "Entities/Items/MegaSaw/MSIcon.png", Vec2f(16,16), 0 );
-                AddIconToken( "$saw$", "Entities/Items/Saw/SawIcon.png", Vec2f(16,16), 0 );
-                AddIconToken( "$trampoline$", "Entities/Items/Trampoline/TrampolineIcon.png", Vec2f(16,16), 0 );
-                AddIconToken( "$ballista$", "Entities/Vehicles/Ballista/BallistaIcon.png", Vec2f(16,16), 0 );
-                AddIconToken( "$dinghy$", "Entities/Vehicles/Boats/DinghyIcon.png", Vec2f(16,16), 0 );
-                AddIconToken( "$longboat$", "Entities/Vehicles/Boats/LongboatIcon.png", Vec2f(16,16), 0 );
-                AddIconToken( "$warboat$", "Entities/Vehicles/Boats/WarboatIcon.png", Vec2f(16,16), 0 );
-                AddIconToken( "$raft$", "Entities/Vehicles/Boats/RaftIcon.png", Vec2f(16,16), 0 );
-                AddIconToken( "$catapult$", "Entities/Vehicles/Catapult/CatapultIcon.png", Vec2f(16,16), 0 );
-                AddIconToken( "$glider$", "Entities/Vehicles/Glider/GliderIcon.png", Vec2f(16,16), 0 );
-                AddIconToken( "$balloon$", "Entities/Vehicles/Balloon/BalloonIcon.png", Vec2f(16,16), 0 );
-                AddIconToken( "$zeppelin$", "Entities/Vehicles/Zeppelin/ZeppelinIcon.png", Vec2f(16,16), 0 );
-                AddIconToken( "$tank$", "Entities/Vehicles/Tank/TankIcon.png", Vec2f(16,16), 0 );
-                AddIconToken( "$torch$", "Entities/Buildings/Torch/Torch.png", Vec2f(8, 8), 0);
-                AddIconToken( "$caravel$", "Entities/Vehicles/Caravel/CaravelIcon.png", Vec2f(16,16), 0 );
-                AddIconToken( "$mounted_bow$", "Entities/Items/MountedBow/MBIcon.png", Vec2f(16,16), 0 );
-                AddIconToken( "$mounted_crossbow$", "Entities/Items/MountedCrossbow/MCbIcon.png", Vec2f(16,16), 0 );
-                AddIconToken( "$mounted_bazooka$", "Entities/Items/MountedBazooka/MBzIcon.png", Vec2f(16,16), 0 );
-                AddIconToken( "$mounted_cannon$", "Entities/Items/MountedCannon/MCnIcon.png", Vec2f(16,16), 0 );
-                AddIconToken( "$mat_crossbolts$", "Entities/Resources/CrossboltIcon.png", Vec2f(16,16), 0 );
-                AddIconToken( "$mat_rarrows$", "Entities/Resources/rArrowIcon.png", Vec2f(16,16), 0 );
-                AddIconToken( "$mat_rockets$", "Entities/Resources/rocketicon.png", Vec2f(16,16), 0 );
-                AddIconToken( "$mat_cannonballs$", "Entities/Resources/cannonballicon.png", Vec2f(16,16), 0 );
-                AddIconToken( "$mat_orbs$", "Entities/Resources/Orbs_mat.png", Vec2f(16,16), 12 );
-                AddIconToken( "$mat_fireorbs$", "Entities/Resources/Orbs_mat.png", Vec2f(16,16), 13 );
-                AddIconToken( "$mat_bomborbs$", "Entities/Resources/Orbs_mat.png", Vec2f(16,16), 14 );
-                AddIconToken( "$mat_waterorbs$", "Entities/Resources/Orbs_mat.png", Vec2f(16,16), 15 );
-                AddIconToken( "$fire_trap_block$", "Entities/Buildings/Fire Trap/FireTrapBlockIcon.png", Vec2f(8,8), 0 );
-                AddIconToken( "$triangle$", "Entities/Buildings/Triangle/Triangle.png", Vec2f(8,8), 0 );
-                AddIconToken( "$scrollcarnage$", "Entities/Items/Scrolls/Carnage/ScrollCarnage.png", Vec2f(16,16), 0 );
-                AddIconToken( "$scrollmidas$", "Entities/Items/Scrolls/Midas/ScrollOfMidas.png", Vec2f(16,16), 0 );
-                AddIconToken( "$scrollreinforce$", "Entities/Items/Scrolls/Reinforce/ScrollReinforce.png", Vec2f(16,16), 0 );
-                AddIconToken( "$scrolldrought$", "Entities/Items/Scrolls/Drought/ScrollDrought.png", Vec2f(16,16), 0 );
-                AddIconToken( "$scrollreturn$", "Entities/Items/Scrolls/Return/ScrollReturn.png", Vec2f(16,16), 0 );
-                AddIconToken( "$scrollzombie$", "Entities/Items/Scrolls/Zombie/ScrollZombie.png", Vec2f(16,16), 0 );
-                AddIconToken( "$scrollskeleton$", "Entities/Items/Scrolls/Skeleton/ScrollSkeleton.png", Vec2f(16,16), 0 );
-                AddIconToken( "$scrollmeteor$", "Entities/Items/Scrolls/Meteor/ScrollMeteor.png", Vec2f(16,16), 0 );
-                AddIconToken( "$scrollchicken$", "Entities/Items/Scrolls/Chicken/ScrollChicken.png", Vec2f(16,16), 0 );
-                AddIconToken( "$booster$", "Entities/Buildings/Components/Load/Booster/Booster.png", Vec2f(8,8), 0 );
-                AddIconToken( "$flamer$", "Entities/Buildings/Components/Load/Flamer/Flamer.png", Vec2f(8,8), 0 );
-                AddIconToken( "$conveyor$", "Entities/Buildings/Components/Load/Conveyor/Conveyor.png", Vec2f(8,8), 0 );
-                AddIconToken( "$conveyortriangle$", "Entities/Buildings/Components/Load/ConveyorTriangle/ConveyorTriangle.png", Vec2f(8,8), 0 );
-                AddIconToken( "$nmigrant$", "Entities/Shops/PriestShop/SummonIcons.png", Vec2f(16,16), 0 );
-                AddIconToken( "$narsonist$", "Entities/Shops/PriestShop/SummonIcons.png", Vec2f(16,16), 1 );
-                AddIconToken( "$nwarrior$", "Entities/Shops/PriestShop/SummonIcons.png", Vec2f(16,16), 2 );
-                AddIconToken( "$ngarg$", "Entities/Shops/PriestShop/SummonIcons.png", Vec2f(16,16), 3 );
-                AddIconToken( "$mage$", "Entities/NPCs/Mage/MageIcon.png", Vec2f(16,16), 0 );
-                AddIconToken( "$piglet$", "Entities/Environment/Animals/Piglet/Piglet.png", Vec2f(16,16), 0 );
-                AddIconToken( "$birb$", "Entities/Environment/Animals/Birb/Birb.png", Vec2f(16,16), 0 );
-                AddIconToken( "$bunny$", "Entities/Environment/Animals/Bunny/Bunny.png", Vec2f(16,16), 0 );
-                AddIconToken( "$chicken$", "Entities/Environment/Animals/Chicken/Chicken.png", Vec2f(16,16), 0 );
-                AddIconToken( "$bison$", "Entities/Shared/Sprites/MiniIcons.png", Vec2f(16,16), 21 );
-                AddIconToken( "$shark$", "Entities/Shared/Sprites/MiniIcons.png", Vec2f(16,16), 22 );
-                AddIconToken( "$seedicon$", "Entities/Environment/Trees/SeedIcon.png", Vec2f(16,16), 0 );
-				
-		
+	if (v_driver > 0)
+	{
+		// load default skin
+		GUI::LoadSkin("GUI/guiSkin.cfg");
+		// add color tokens
+		AddColorToken("$RED$", SColor(255, 105, 25, 5));
+		AddColorToken("$GREEN$", SColor(255, 5, 105, 25));
+		AddColorToken("$GREY$", SColor(255, 195, 195, 195));
+		// add default icon tokens
+		AddIconToken("$NONE$", "GUI/InteractionIcons.png", Vec2f(32, 32), 9);
+		AddIconToken("$TIME$", "GUI/InteractionIcons.png", Vec2f(32, 32), 0);
+		AddIconToken("$COIN$", "Sprites/coins.png", Vec2f(16, 16), 1);
+		AddIconToken("$TEAMS$", "GUI/MenuItems.png", Vec2f(32, 32), 1);
+		AddIconToken("$SPECTATOR$", "GUI/MenuItems.png", Vec2f(32, 32), 19);
+		AddIconToken("$FLAG$", CFileMatcher("flag.png").getFirst(), Vec2f(32, 16), 0);
+		AddIconToken("$DISABLED$", "GUI/InteractionIcons.png", Vec2f(32, 32), 9, 1);
+		AddIconToken("$CANCEL$", "GUI/MenuItems.png", Vec2f(32, 32), 29);
+		AddIconToken("$RESEARCH$", "GUI/InteractionIcons.png", Vec2f(32, 32), 27);
+		AddIconToken("$ALERT$", "GUI/InteractionIcons.png", Vec2f(32, 32), 10);
+		AddIconToken("$down_arrow$", "GUI/ArrowDown.png", Vec2f(8, 8), 0);
+		AddIconToken("$ATTACK_LEFT$", "GUI/InteractionIcons.png", Vec2f(32, 32), 18, 1);
+		AddIconToken("$ATTACK_RIGHT$", "GUI/InteractionIcons.png", Vec2f(32, 32), 17, 1);
+		AddIconToken("$ATTACK_THIS$", "GUI/InteractionIcons.png", Vec2f(32, 32), 19, 1);
+		AddIconToken("$DEFEND_LEFT$", "GUI/InteractionIcons.png", Vec2f(32, 32), 18, 2);
+		AddIconToken("$DEFEND_RIGHT$", "GUI/InteractionIcons.png", Vec2f(32, 32), 17, 2);
+		AddIconToken("$DEFEND_THIS$", "GUI/InteractionIcons.png", Vec2f(32, 32), 19, 2);
+		AddIconToken("$CLASSCHANGE$", "GUI/InteractionIcons.png", Vec2f(32, 32), 12, 2);
+		AddIconToken("$BUILD$", "GUI/InteractionIcons.png", Vec2f(32, 32), 15);
+		AddIconToken("$STONE$", "Sprites/World.png", Vec2f(8, 8), 48);
+		AddIconToken("$!!!$", "Emoticons.png", Vec2f(22, 22), 48);
+
+		// Mod Icons
+		AddIconToken("$vehicleshop$", "Entities/Shops/VehicleShop/VehicleShopIcon.png", Vec2f(40, 24), 0);
+		AddIconToken("$defenseshop$", "Entities/Shops/DefenseShop/DefenseShop.png", Vec2f(40, 24), 0);
+		AddIconToken("$priestshop$", "Entities/Shops/PriestShop/PriestShop.png", Vec2f(40, 24), 0);
+		AddIconToken("$undeadtunnel$", "Entities/Shops/UndeadTunnel/UndeadTunnel.png", Vec2f(40, 24), 0);
+		AddIconToken("$undeadtradershop$", "Entities/Shops/UndeadTraderShop/UndeadTraderShop.png", Vec2f(40, 24), 0);
+		AddIconToken("$horror$", "Entities/Shops/UndeadTraderShop/UndeadTraderIcons.png", Vec2f(16, 16), 0);
+		AddIconToken("$abomination$", "Entities/Shops/UndeadTraderShop/UndeadTraderIcons.png", Vec2f(16, 16), 1);
+		AddIconToken("$undeadbarracks$", "Entities/Shops/UndeadBarracks/UndeadBarracks.png", Vec2f(40, 24), 0);
+		AddIconToken("$undeadbuilding$", "Entities/Shops/Building/UndeadBuilding.png", Vec2f(40, 24), 0);
+		AddIconToken("$ZA$", "Entities/Landmarks/ZombieAlter/ZombieAlterIcon.png", Vec2f(16, 16), 0);
+		AddIconToken("$tradershop$", "Entities/Shops/TraderShop/tradershopIcon.png", Vec2f(40, 24), 0);
+		AddIconToken("$minibuilding$", "Entities/Shops/Building/MiniBuilding.png", Vec2f(16, 16), 0);
+		AddIconToken("$minibuildershop$", "Entities/Shops/BuilderShop/MiniBuilderShop.png", Vec2f(16, 16), 0);
+		AddIconToken("$minipriestshop$", "Entities/Shops/PriestShop/MiniPriestShop.png", Vec2f(16, 16), 0);
+		AddIconToken("$woodenspikes$", "Entities/Buildings/WoodenSpikes/WoodenSpikes.png", Vec2f(8, 8), 0);
+		AddIconToken("$miniknightshop$", "Entities/Shops/KnightShop/MiniKnightShop.png", Vec2f(16, 16), 0);
+		AddIconToken("$miniarchershop$", "Entities/Shops/ArcherShop/MiniArcherShop.png", Vec2f(16, 16), 0);
+		AddIconToken("$minidorm$", "Entities/Shops/Dorm/MiniDorm.png", Vec2f(16, 16), 0);
+		AddIconToken("$minidefenseshop$", "Entities/Shops/DefenseShop/MiniDefenseShop.png", Vec2f(16, 16), 0);
+		AddIconToken("$minitradershop$", "Entities/Shops/TraderShop/MiniTraderShop.png", Vec2f(16, 16), 0);
+		AddIconToken("$minitunnel$", "Entities/Shops/Tunnel/MiniTunnel.png", Vec2f(16, 16), 0);
+		AddIconToken("$minifarm$", "Entities/Shops/Storage/MiniFarm.png", Vec2f(16, 16), 0);
+		AddIconToken("$minivehicleshop$", "Entities/Shops/VehicleShop/MiniVehicleShop.png", Vec2f(16, 16), 0);
+		AddIconToken("$team_bridge$", "Entities/Buildings/TeamBridge/TeamBridge.png", Vec2f(8, 8), 0);
+		AddIconToken("$chainsaw$", "Entities/Items/Chainsaw/ChainsawIcon.png", Vec2f(16, 16), 0);
+		AddIconToken("$drill$", "Entities/Items/Drill/DrillIcon.png", Vec2f(16, 16), 0);
+		AddIconToken("$golddrill$", "Entities/Items/Drill/GoldDrillIcon.png", Vec2f(16, 16), 0);
+		AddIconToken("$bomb_satchel$", "Entities/Items/BombSatchel/BombSatchel.png", Vec2f(16, 16), 0);
+		AddIconToken("$divinghelmet$", "Entities/Items/DivingHelmet/DivingHelmetIcon.png", Vec2f(16, 16), 0);
+		AddIconToken("$bluelantern$", "Entities/Items/BlueLantern/BlueLantern.png", Vec2f(8, 8), 0);
+		AddIconToken("$megasaw$", "Entities/Items/MegaSaw/MSIcon.png", Vec2f(16, 16), 0);
+		AddIconToken("$saw$", "Entities/Items/Saw/SawIcon.png", Vec2f(16, 16), 0);
+		AddIconToken("$trampoline$", "Entities/Items/Trampoline/TrampolineIcon.png", Vec2f(16, 16), 0);
+		AddIconToken("$ballista$", "Entities/Vehicles/Ballista/BallistaIcon.png", Vec2f(16, 16), 0);
+		AddIconToken("$dinghy$", "Entities/Vehicles/Boats/DinghyIcon.png", Vec2f(16, 16), 0);
+		AddIconToken("$longboat$", "Entities/Vehicles/Boats/LongboatIcon.png", Vec2f(16, 16), 0);
+		AddIconToken("$warboat$", "Entities/Vehicles/Boats/WarboatIcon.png", Vec2f(16, 16), 0);
+		AddIconToken("$raft$", "Entities/Vehicles/Boats/RaftIcon.png", Vec2f(16, 16), 0);
+		AddIconToken("$catapult$", "Entities/Vehicles/Catapult/CatapultIcon.png", Vec2f(16, 16), 0);
+		AddIconToken("$glider$", "Entities/Vehicles/Glider/GliderIcon.png", Vec2f(16, 16), 0);
+		AddIconToken("$balloon$", "Entities/Vehicles/Balloon/BalloonIcon.png", Vec2f(16, 16), 0);
+		AddIconToken("$zeppelin$", "Entities/Vehicles/Zeppelin/ZeppelinIcon.png", Vec2f(16, 16), 0);
+		AddIconToken("$tank$", "Entities/Vehicles/Tank/TankIcon.png", Vec2f(16, 16), 0);
+		AddIconToken("$torch$", "Entities/Buildings/Torch/Torch.png", Vec2f(8, 8), 0);
+		AddIconToken("$caravel$", "Entities/Vehicles/Caravel/CaravelIcon.png", Vec2f(16, 16), 0);
+		AddIconToken("$mounted_bow$", "Entities/Items/MountedBow/MBIcon.png", Vec2f(16, 16), 0);
+		AddIconToken("$mounted_crossbow$", "Entities/Items/MountedCrossbow/MCbIcon.png", Vec2f(16, 16), 0);
+		AddIconToken("$mounted_bazooka$", "Entities/Items/MountedBazooka/MBzIcon.png", Vec2f(16, 16), 0);
+		AddIconToken("$mounted_cannon$", "Entities/Items/MountedCannon/MCnIcon.png", Vec2f(16, 16), 0);
+		AddIconToken("$mat_crossbolts$", "Entities/Resources/CrossboltIcon.png", Vec2f(16, 16), 0);
+		AddIconToken("$mat_rarrows$", "Entities/Resources/rArrowIcon.png", Vec2f(16, 16), 0);
+		AddIconToken("$mat_rockets$", "Entities/Resources/rocketicon.png", Vec2f(16, 16), 0);
+		AddIconToken("$mat_cannonballs$", "Entities/Resources/cannonballicon.png", Vec2f(16, 16), 0);
+		AddIconToken("$mat_orbs$", "Entities/Resources/Orbs_mat.png", Vec2f(16, 16), 12);
+		AddIconToken("$mat_fireorbs$", "Entities/Resources/Orbs_mat.png", Vec2f(16, 16), 13);
+		AddIconToken("$mat_bomborbs$", "Entities/Resources/Orbs_mat.png", Vec2f(16, 16), 14);
+		AddIconToken("$mat_waterorbs$", "Entities/Resources/Orbs_mat.png", Vec2f(16, 16), 15);
+		AddIconToken("$fire_trap_block$", "Entities/Buildings/Fire Trap/FireTrapBlockIcon.png", Vec2f(8, 8), 0);
+		AddIconToken("$triangle$", "Entities/Buildings/Triangle/Triangle.png", Vec2f(8, 8), 0);
+		AddIconToken("$scrollcarnage$", "Entities/Items/Scrolls/Carnage/ScrollCarnage.png", Vec2f(16, 16), 0);
+		AddIconToken("$scrollmidas$", "Entities/Items/Scrolls/Midas/ScrollOfMidas.png", Vec2f(16, 16), 0);
+		AddIconToken("$scrollreinforce$", "Entities/Items/Scrolls/Reinforce/ScrollReinforce.png", Vec2f(16, 16), 0);
+		AddIconToken("$scrolldrought$", "Entities/Items/Scrolls/Drought/ScrollDrought.png", Vec2f(16, 16), 0);
+		AddIconToken("$scrollreturn$", "Entities/Items/Scrolls/Return/ScrollReturn.png", Vec2f(16, 16), 0);
+		AddIconToken("$scrollzombie$", "Entities/Items/Scrolls/Zombie/ScrollZombie.png", Vec2f(16, 16), 0);
+		AddIconToken("$scrollskeleton$", "Entities/Items/Scrolls/Skeleton/ScrollSkeleton.png", Vec2f(16, 16), 0);
+		AddIconToken("$scrollmeteor$", "Entities/Items/Scrolls/Meteor/ScrollMeteor.png", Vec2f(16, 16), 0);
+		AddIconToken("$scrollchicken$", "Entities/Items/Scrolls/Chicken/ScrollChicken.png", Vec2f(16, 16), 0);
+		AddIconToken("$booster$", "Entities/Buildings/Components/Load/Booster/Booster.png", Vec2f(8, 8), 0);
+		AddIconToken("$flamer$", "Entities/Buildings/Components/Load/Flamer/Flamer.png", Vec2f(8, 8), 0);
+		AddIconToken("$conveyor$", "Entities/Buildings/Components/Load/Conveyor/Conveyor.png", Vec2f(8, 8), 0);
+		AddIconToken("$conveyortriangle$", "Entities/Buildings/Components/Load/ConveyorTriangle/ConveyorTriangle.png", Vec2f(8, 8), 0);
+		AddIconToken("$nmigrant$", "Entities/Shops/PriestShop/SummonIcons.png", Vec2f(16, 16), 0);
+		AddIconToken("$narsonist$", "Entities/Shops/PriestShop/SummonIcons.png", Vec2f(16, 16), 1);
+		AddIconToken("$nwarrior$", "Entities/Shops/PriestShop/SummonIcons.png", Vec2f(16, 16), 2);
+		AddIconToken("$ngarg$", "Entities/Shops/PriestShop/SummonIcons.png", Vec2f(16, 16), 3);
+		AddIconToken("$mage$", "Entities/NPCs/Mage/MageIcon.png", Vec2f(16, 16), 0);
+		AddIconToken("$piglet$", "Entities/Environment/Animals/Piglet/Piglet.png", Vec2f(16, 16), 0);
+		AddIconToken("$birb$", "Entities/Environment/Animals/Birb/Birb.png", Vec2f(16, 16), 0);
+		AddIconToken("$bunny$", "Entities/Environment/Animals/Bunny/Bunny.png", Vec2f(16, 16), 0);
+		AddIconToken("$chicken$", "Entities/Environment/Animals/Chicken/Chicken.png", Vec2f(16, 16), 0);
+		AddIconToken("$bison$", "Entities/Shared/Sprites/MiniIcons.png", Vec2f(16, 16), 21);
+		AddIconToken("$shark$", "Entities/Shared/Sprites/MiniIcons.png", Vec2f(16, 16), 22);
+		AddIconToken("$seedicon$", "Entities/Environment/Trees/SeedIcon.png", Vec2f(16, 16), 0);
+
 		// classes
 
-		AddIconToken( "$ARCHER$", "ClassIcons.png", Vec2f(16,16), 2 );
-		AddIconToken( "$KNIGHT$", "ClassIcons.png", Vec2f(16,16), 1 );
-		AddIconToken( "$BUILDER$", "ClassIcons.png", Vec2f(16,16), 0 );
+		AddIconToken("$ARCHER$", "ClassIcons.png", Vec2f(16, 16), 2);
+		AddIconToken("$KNIGHT$", "ClassIcons.png", Vec2f(16, 16), 1);
+		AddIconToken("$BUILDER$", "ClassIcons.png", Vec2f(16, 16), 0);
 
 		// blocks
 
-		AddIconToken( "$stone_block$", "Sprites/World.png", Vec2f(8,8), CMap::tile_castle );
-		AddIconToken( "$moss_block$", "Sprites/World.png", Vec2f(8,8), CMap::tile_castle_moss );
-		AddIconToken( "$back_stone_block$", "Sprites/World.png", Vec2f(8,8), CMap::tile_castle_back );
-		AddIconToken( "$wood_block$", "Sprites/World.png", Vec2f(8,8), CMap::tile_wood );
-		AddIconToken( "$back_wood_block$", "Sprites/World.png", Vec2f(8,8), CMap::tile_wood_back );
-		AddIconToken( "$dirt_block$", "Sprites/World.png", Vec2f(8,8), CMap::tile_ground );
+		AddIconToken("$stone_block$", "Sprites/World.png", Vec2f(8, 8), CMap::tile_castle);
+		AddIconToken("$moss_block$", "Sprites/World.png", Vec2f(8, 8), CMap::tile_castle_moss);
+		AddIconToken("$back_stone_block$", "Sprites/World.png", Vec2f(8, 8), CMap::tile_castle_back);
+		AddIconToken("$wood_block$", "Sprites/World.png", Vec2f(8, 8), CMap::tile_wood);
+		AddIconToken("$back_wood_block$", "Sprites/World.png", Vec2f(8, 8), CMap::tile_wood_back);
+		AddIconToken("$dirt_block$", "Sprites/World.png", Vec2f(8, 8), CMap::tile_ground);
 
 		// techs
 
-		AddIconToken( "$tech_stone$", "GUI/TechnologyIcons.png", Vec2f(16,16), 16 );
+		AddIconToken("$tech_stone$", "GUI/TechnologyIcons.png", Vec2f(16, 16), 16);
 
 		// keys
-		const Vec2f keyIconSize(16,16);
-		AddIconToken( "$KEY_W$", "GUI/Keys.png", keyIconSize, 6 );
-		AddIconToken( "$KEY_A$", "GUI/Keys.png", keyIconSize, 0 );
-		AddIconToken( "$KEY_S$", "GUI/Keys.png", keyIconSize, 1 );
-		AddIconToken( "$KEY_D$", "GUI/Keys.png", keyIconSize, 2 );
-		AddIconToken( "$KEY_E$", "GUI/Keys.png", keyIconSize, 3 );
-		AddIconToken( "$KEY_F$", "GUI/Keys.png", keyIconSize, 4 );
-		AddIconToken( "$KEY_C$", "GUI/Keys.png", keyIconSize, 5 );
-		AddIconToken( "$LMB$", "GUI/Keys.png", keyIconSize, 8 );
-		AddIconToken( "$RMB$", "GUI/Keys.png", keyIconSize, 9 );
-		AddIconToken( "$KEY_SPACE$", "GUI/Keys.png", Vec2f(24,16), 8 );
-		AddIconToken( "$KEY_HOLD$", "GUI/Keys.png", Vec2f(24,16), 9 );
-		AddIconToken( "$KEY_TAP$", "GUI/Keys.png", Vec2f(24,16), 10 );
-		AddIconToken( "$KEY_F1$", "GUI/Keys.png", Vec2f(24,16), 12 );
-		AddIconToken( "$KEY_ESC$", "GUI/Keys.png", Vec2f(24,16), 13 );
-    }
+		const Vec2f keyIconSize(16, 16);
+		AddIconToken("$KEY_W$", "GUI/Keys.png", keyIconSize, 6);
+		AddIconToken("$KEY_A$", "GUI/Keys.png", keyIconSize, 0);
+		AddIconToken("$KEY_S$", "GUI/Keys.png", keyIconSize, 1);
+		AddIconToken("$KEY_D$", "GUI/Keys.png", keyIconSize, 2);
+		AddIconToken("$KEY_E$", "GUI/Keys.png", keyIconSize, 3);
+		AddIconToken("$KEY_F$", "GUI/Keys.png", keyIconSize, 4);
+		AddIconToken("$KEY_C$", "GUI/Keys.png", keyIconSize, 5);
+		AddIconToken("$LMB$", "GUI/Keys.png", keyIconSize, 8);
+		AddIconToken("$RMB$", "GUI/Keys.png", keyIconSize, 9);
+		AddIconToken("$KEY_SPACE$", "GUI/Keys.png", Vec2f(24, 16), 8);
+		AddIconToken("$KEY_HOLD$", "GUI/Keys.png", Vec2f(24, 16), 9);
+		AddIconToken("$KEY_TAP$", "GUI/Keys.png", Vec2f(24, 16), 10);
+		AddIconToken("$KEY_F1$", "GUI/Keys.png", Vec2f(24, 16), 12);
+		AddIconToken("$KEY_ESC$", "GUI/Keys.png", Vec2f(24, 16), 13);
+	}
 }

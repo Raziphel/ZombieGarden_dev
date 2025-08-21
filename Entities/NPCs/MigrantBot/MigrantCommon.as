@@ -14,7 +14,7 @@ namespace Strategy
 const f32 SEEK_RANGE = 500.0f;
 const f32 ENEMY_RANGE = 25.0f;
 
-shared void SetMigrant(CBlob@ blob, bool isMigrant)
+shared void SetMigrant(CBlob @blob, bool isMigrant)
 {
 	if (blob is null)
 		return;
@@ -31,12 +31,12 @@ shared void SetMigrant(CBlob@ blob, bool isMigrant)
 	}
 }
 
-shared CBlob@ CreateMigant(Vec2f pos, int team)
+shared CBlob @CreateMigant(Vec2f pos, int team)
 {
-	CBlob@ blob = server_CreateBlobNoInit("migrantbot");
+	CBlob @blob = server_CreateBlobNoInit("migrantbot");
 	if (blob !is null)
 	{
-		//setup ready for init
+		// setup ready for init
 		blob.setSexNum(XORRandom(2));
 		blob.server_setTeamNum(team);
 		blob.setPosition(pos);
@@ -45,27 +45,27 @@ shared CBlob@ CreateMigant(Vec2f pos, int team)
 
 		blob.SetFacingLeft(XORRandom(2) == 0);
 
-		SetMigrant(blob, true);   //requires brain -> after init
+		SetMigrant(blob, true); // requires brain -> after init
 	}
 	return blob;
 }
 
-bool isRoomFullOfMigrants(CBlob@ this)
+bool isRoomFullOfMigrants(CBlob @ this)
 {
 	return this.get_u8("migrants count") >= this.get_u8("migrants max");
 }
 
-bool needsReplenishMigrant(CBlob@ this)
+bool needsReplenishMigrant(CBlob @ this)
 {
 	return this.get_u8("migrants count") < this.get_u8("migrants max");
 }
 
-void AddMigrantCount(CBlob@ this, int add = 1)
+void AddMigrantCount(CBlob @ this, int add = 1)
 {
 	this.set_u8("migrants count", this.get_u8("migrants count") + add);
 }
 
-void DecMigrantCount(CBlob@ this, int dec = 1)
+void DecMigrantCount(CBlob @ this, int dec = 1)
 {
 	this.set_u8("migrants count", this.get_u8("migrants count") - dec);
 }

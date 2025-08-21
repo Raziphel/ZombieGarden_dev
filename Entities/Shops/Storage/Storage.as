@@ -1,17 +1,17 @@
 ﻿// Storage.as
 
-void onInit(CSprite@ this)
+void onInit(CSprite @ this)
 {
 	// Building
 	this.SetZ(-60); //-60 instead of -50 so sprite layers are behind ladders
 
 	// Stone
-	CSpriteLayer@ stone = this.addSpriteLayer("mat_stone", "StorageLayers.png", 24, 16);
+	CSpriteLayer @stone = this.addSpriteLayer("mat_stone", "StorageLayers.png", 24, 16);
 	if (stone !is null)
 	{
 		{
 			stone.addAnimation("default", 0, false);
-			int[] frames = { 0, 5, 10 };
+			int[] frames = {0, 5, 10};
 			stone.animation.AddFrames(frames);
 		}
 		stone.SetOffset(Vec2f(10.0f, -3.0f));
@@ -20,12 +20,12 @@ void onInit(CSprite@ this)
 	}
 
 	// Wood
-	CSpriteLayer@ wood = this.addSpriteLayer("mat_wood", "StorageLayers.png", 24, 16);
+	CSpriteLayer @wood = this.addSpriteLayer("mat_wood", "StorageLayers.png", 24, 16);
 	if (wood !is null)
 	{
 		{
 			wood.addAnimation("default", 0, false);
-			int[] frames = { 1, 6, 11 };
+			int[] frames = {1, 6, 11};
 			wood.animation.AddFrames(frames);
 		}
 		wood.SetOffset(Vec2f(-7.0f, -2.0f));
@@ -34,12 +34,12 @@ void onInit(CSprite@ this)
 	}
 
 	// Gold
-	CSpriteLayer@ gold = this.addSpriteLayer("mat_gold", "StorageLayers.png", 24, 16);
+	CSpriteLayer @gold = this.addSpriteLayer("mat_gold", "StorageLayers.png", 24, 16);
 	if (gold !is null)
 	{
 		{
 			gold.addAnimation("default", 0, false);
-			int[] frames = { 2, 7, 12 };
+			int[] frames = {2, 7, 12};
 			gold.animation.AddFrames(frames);
 		}
 		gold.SetOffset(Vec2f(-7.0f, -10.0f));
@@ -48,12 +48,12 @@ void onInit(CSprite@ this)
 	}
 
 	// Bombs
-	CSpriteLayer@ bombs = this.addSpriteLayer("mat_bombs", "StorageLayers.png", 24, 16);
+	CSpriteLayer @bombs = this.addSpriteLayer("mat_bombs", "StorageLayers.png", 24, 16);
 	if (bombs !is null)
 	{
 		{
 			bombs.addAnimation("default", 0, false);
-			int[] frames = { 3, 8 };
+			int[] frames = {3, 8};
 			bombs.animation.AddFrames(frames);
 		}
 		bombs.SetOffset(Vec2f(-7.0f, 5.0f));
@@ -62,12 +62,12 @@ void onInit(CSprite@ this)
 	}
 
 	// Rope
-	CSpriteLayer@ rope = this.addSpriteLayer("rope", "StorageLayers.png", 24, 16);
+	CSpriteLayer @rope = this.addSpriteLayer("rope", "StorageLayers.png", 24, 16);
 	if (rope !is null)
 	{
 		{
 			rope.addAnimation("default", 0, false);
-			int[] frames = { 4 };
+			int[] frames = {4};
 			rope.animation.AddFrames(frames);
 		}
 		rope.SetOffset(Vec2f(5.0f, -8.0f));
@@ -75,7 +75,7 @@ void onInit(CSprite@ this)
 	}
 }
 
-void onInit(CBlob@ this)
+void onInit(CBlob @ this)
 {
 	this.set_TileType("background tile", CMap::tile_castle_back);
 	this.getShape().getConsts().mapCollisions = false;
@@ -85,22 +85,22 @@ void onInit(CBlob@ this)
 	this.getCurrentScript().tickFrequency = 60;
 }
 
-void onTick(CBlob@ this)
+void onTick(CBlob @ this)
 {
 	PickupOverlap(this);
 }
 
-void PickupOverlap(CBlob@ this)
+void PickupOverlap(CBlob @ this)
 {
 	if (getNet().isServer())
 	{
 		Vec2f tl, br;
 		this.getShape().getBoundingRect(tl, br);
-		CBlob@[] blobs;
+		CBlob @[] blobs;
 		this.getMap().getBlobsInBox(tl, br, @blobs);
 		for (uint i = 0; i < blobs.length; i++)
 		{
-			CBlob@ blob = blobs[i];
+			CBlob @blob = blobs[i];
 			if (!blob.isAttached() && blob.isOnGround() && blob.hasTag("material") && blob.getName() != "mat_arrows")
 			{
 				this.server_PutInInventory(blob);
@@ -109,39 +109,40 @@ void PickupOverlap(CBlob@ this)
 	}
 }
 
-void GetButtonsFor(CBlob@ this, CBlob@ caller)
+void GetButtonsFor(CBlob @ this, CBlob @caller)
 {
-	u8 kek = caller.getTeamNum();	
+	u8 kek = caller.getTeamNum();
 	if (kek == 0)
 	{
-		if(caller.getTeamNum() == this.getTeamNum() && caller.isOverlapping(this))
+		if (caller.getTeamNum() == this.getTeamNum() && caller.isOverlapping(this))
 		{
 			CInventory @inv = caller.getInventory();
-			if(inv is null) return;
+			if (inv is null)
+				return;
 
-			if(inv.getItemsCount() > 0)
+			if (inv.getItemsCount() > 0)
 			{
 				CBitStream params;
 				params.write_u16(caller.getNetworkID());
 				caller.CreateGenericButton("$store_inventory$", Vec2f(-6, 0), this, this.getCommandID("store inventory"), "Store", params);
 			}
 		}
-	}	
+	}
 }
 
-void onCommand(CBlob@ this, u8 cmd, CBitStream @params)
+void onCommand(CBlob @ this, u8 cmd, CBitStream @params)
 {
 	if (getNet().isServer())
 	{
 		if (cmd == this.getCommandID("store inventory"))
 		{
-			CBlob@ caller = getBlobByNetworkID(params.read_u16());
+			CBlob @caller = getBlobByNetworkID(params.read_u16());
 			if (caller !is null)
 			{
 				CInventory @inv = caller.getInventory();
 				if (caller.getConfig() == "builder")
 				{
-					CBlob@ carried = caller.getCarriedBlob();
+					CBlob @carried = caller.getCarriedBlob();
 					if (carried !is null)
 					{
 						// TODO: find a better way to check and clear blocks + blob blocks || fix the fundamental problem, blob blocks not double checking requirement prior to placement.
@@ -165,29 +166,29 @@ void onCommand(CBlob@ this, u8 cmd, CBitStream @params)
 	}
 }
 
-void onAddToInventory(CBlob@ this, CBlob@ blob)
+void onAddToInventory(CBlob @ this, CBlob @blob)
 {
 	updateLayers(this, blob);
 }
 
-void onRemoveFromInventory(CBlob@ this, CBlob@ blob)
+void onRemoveFromInventory(CBlob @ this, CBlob @blob)
 {
 	updateLayers(this, blob);
 }
 
-void updateLayers(CBlob@ this, CBlob@ blob)
+void updateLayers(CBlob @ this, CBlob @blob)
 {
 	const string blobName = blob.getName();
 	if (!checkName(blobName))
 	{
 		return;
 	}
-	CSprite@ sprite = this.getSprite();
-	CInventory@ inv = this.getInventory();
+	CSprite @sprite = this.getSprite();
+	CInventory @inv = this.getInventory();
 	int blobCount = inv.getCount(blobName);
 	if (blobName == "mat_stone")
 	{
-		CSpriteLayer@ stone = sprite.getSpriteLayer("mat_stone");
+		CSpriteLayer @stone = sprite.getSpriteLayer("mat_stone");
 		if (blobCount > 0)
 		{
 			if (blobCount >= 200)
@@ -211,7 +212,7 @@ void updateLayers(CBlob@ this, CBlob@ blob)
 	}
 	else if (blobName == "mat_wood")
 	{
-		CSpriteLayer@ wood = sprite.getSpriteLayer("mat_wood");
+		CSpriteLayer @wood = sprite.getSpriteLayer("mat_wood");
 		if (blobCount > 0)
 		{
 			if (blobCount >= 200)
@@ -235,7 +236,7 @@ void updateLayers(CBlob@ this, CBlob@ blob)
 	}
 	else if (blobName == "mat_gold")
 	{
-		CSpriteLayer@ gold = sprite.getSpriteLayer("mat_gold");
+		CSpriteLayer @gold = sprite.getSpriteLayer("mat_gold");
 		if (blobCount > 0)
 		{
 			if (blobCount >= 200)
@@ -259,7 +260,7 @@ void updateLayers(CBlob@ this, CBlob@ blob)
 	}
 	else if (blobName == "mat_bombs")
 	{
-		CSpriteLayer@ bombs = sprite.getSpriteLayer("mat_bombs");
+		CSpriteLayer @bombs = sprite.getSpriteLayer("mat_bombs");
 		if (blobCount > 0)
 		{
 			if (blobCount >= 2)
@@ -281,10 +282,10 @@ void updateLayers(CBlob@ this, CBlob@ blob)
 	{
 		if (blobCount > 0)
 		{
-			AttachmentPoint@ point = this.getAttachments().getAttachmentPointByName("LANTERN");
+			AttachmentPoint @point = this.getAttachments().getAttachmentPointByName("LANTERN");
 			if (getNet().isServer() && point.getOccupied() is null)
 			{
-				CBlob@ lantern = server_CreateBlob("lantern");
+				CBlob @lantern = server_CreateBlob("lantern");
 				if (lantern !is null)
 				{
 					lantern.server_setTeamNum(this.getTeamNum());
@@ -299,7 +300,7 @@ void updateLayers(CBlob@ this, CBlob@ blob)
 		{
 			if (blob.exists("lantern id"))
 			{
-				CBlob@ lantern = getBlobByNetworkID(blob.get_u16("lantern id"));
+				CBlob @lantern = getBlobByNetworkID(blob.get_u16("lantern id"));
 				if (lantern !is null)
 				{
 					lantern.server_Die();
@@ -311,10 +312,10 @@ void updateLayers(CBlob@ this, CBlob@ blob)
 	{
 		if (blobCount > 0)
 		{
-			AttachmentPoint@ point = this.getAttachments().getAttachmentPointByName("LANTERN");
+			AttachmentPoint @point = this.getAttachments().getAttachmentPointByName("LANTERN");
 			if (getNet().isServer() && point.getOccupied() is null)
 			{
-				CBlob@ lantern = server_CreateBlob("bluelantern");
+				CBlob @lantern = server_CreateBlob("bluelantern");
 				if (lantern !is null)
 				{
 					lantern.server_setTeamNum(this.getTeamNum());
@@ -329,7 +330,7 @@ void updateLayers(CBlob@ this, CBlob@ blob)
 		{
 			if (blob.exists("lantern id2"))
 			{
-				CBlob@ lantern = getBlobByNetworkID(blob.get_u16("lantern id2"));
+				CBlob @lantern = getBlobByNetworkID(blob.get_u16("lantern id2"));
 				if (lantern !is null)
 				{
 					lantern.server_Die();
@@ -339,11 +340,11 @@ void updateLayers(CBlob@ this, CBlob@ blob)
 	}
 }
 
-void onDie(CBlob@ this)
+void onDie(CBlob @ this)
 {
 	if (this.exists("lantern id"))
 	{
-		CBlob@ lantern = getBlobByNetworkID(this.get_u16("lantern id"));
+		CBlob @lantern = getBlobByNetworkID(this.get_u16("lantern id"));
 		if (lantern !is null)
 		{
 			lantern.server_Die();
@@ -351,12 +352,12 @@ void onDie(CBlob@ this)
 	}
 	if (this.exists("lantern id2"))
 	{
-		CBlob@ lantern = getBlobByNetworkID(this.get_u16("lantern id2"));
+		CBlob @lantern = getBlobByNetworkID(this.get_u16("lantern id2"));
 		if (lantern !is null)
 		{
 			lantern.server_Die();
 		}
-	}	
+	}
 }
 
 bool checkName(string blobName)
@@ -364,7 +365,7 @@ bool checkName(string blobName)
 	return (blobName == "mat_stone" || blobName == "mat_wood" || blobName == "mat_gold" || blobName == "mat_bombs" || blobName == "lantern" || blobName == "bluelantern");
 }
 
-bool isInventoryAccessible(CBlob@ this, CBlob@ forBlob)
+bool isInventoryAccessible(CBlob @ this, CBlob @forBlob)
 {
 	return (forBlob.getTeamNum() == this.getTeamNum() && forBlob.isOverlapping(this));
 }

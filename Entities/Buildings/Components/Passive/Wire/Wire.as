@@ -21,7 +21,7 @@ class Wire : Component
 	}
 };
 
-void onInit(CBlob@ this)
+void onInit(CBlob @ this)
 {
 	// used by BuilderHittable.as
 	this.Tag("builder always hit");
@@ -39,23 +39,24 @@ void onInit(CBlob@ this)
 	this.getShape().getConsts().waterPasses = true;
 
 	const string NAME = this.getName();
-	if(NAME == "coupling")
+	if (NAME == "coupling")
 	{
 		this.set_u8("type", COUPLING);
 	}
-	else if(NAME == "elbow")
+	else if (NAME == "elbow")
 	{
 		this.set_u8("type", ELBOW);
 	}
-	else if(NAME == "tee")
+	else if (NAME == "tee")
 	{
 		this.set_u8("type", TEE);
 	}
 }
 
-void onSetStatic(CBlob@ this, const bool isStatic)
+void onSetStatic(CBlob @ this, const bool isStatic)
 {
-	if(!isStatic || this.exists("component")) return;
+	if (!isStatic || this.exists("component"))
+		return;
 
 	const Vec2f POSITION = this.getPosition() / 8;
 	const u16 ANGLE = this.getAngleDegrees();
@@ -63,13 +64,14 @@ void onSetStatic(CBlob@ this, const bool isStatic)
 	Wire component(POSITION);
 	this.set("component", component);
 
-	if(getNet().isServer())
+	if (getNet().isServer())
 	{
-		MapPowerGrid@ grid;
-		if(!getRules().get("power grid", @grid)) return;
+		MapPowerGrid @grid;
+		if (!getRules().get("power grid", @grid))
+			return;
 
 		u8 io;
-		switch(this.get_u8("type"))
+		switch (this.get_u8("type"))
 		{
 			case COUPLING:
 				io = rotateTopology(ANGLE, TOPO_VERT);
@@ -83,17 +85,17 @@ void onSetStatic(CBlob@ this, const bool isStatic)
 		}
 
 		grid.setAll(
-		component.x,                        // x
-		component.y,                        // y
-		io,                                 // input topology
-		io,                                 // output topology
-		INFO_NONE,                          // information
-		0,                                  // power
-		0);                                 // id
+			component.x, // x
+			component.y, // y
+			io,			 // input topology
+			io,			 // output topology
+			INFO_NONE,	 // information
+			0,			 // power
+			0);			 // id
 	}
 
-	CSprite@ sprite = this.getSprite();
-	if(sprite !is null)
+	CSprite @sprite = this.getSprite();
+	if (sprite !is null)
 	{
 		const u8 TYPE = this.get_u8("type");
 
@@ -102,7 +104,7 @@ void onSetStatic(CBlob@ this, const bool isStatic)
 		// set default background frame
 		u8 background_frame = 2;
 
-		if(TYPE == COUPLING)
+		if (TYPE == COUPLING)
 		{
 			// change default background frame
 			background_frame = 5;
@@ -110,16 +112,17 @@ void onSetStatic(CBlob@ this, const bool isStatic)
 			sprite.SetFrameIndex(WEIGHT[XORRandom(WEIGHT.length)]);
 		}
 
-		SpriteConsts@ consts = sprite.getConsts();
-		if(consts is null) return;
+		SpriteConsts @consts = sprite.getConsts();
+		if (consts is null)
+			return;
 
-		CSpriteLayer@ layer = sprite.addSpriteLayer("background", consts.filename, consts.frameWidth, 16);
+		CSpriteLayer @layer = sprite.addSpriteLayer("background", consts.filename, consts.frameWidth, 16);
 		layer.addAnimation("default", 0, false);
 		layer.animation.AddFrame(background_frame);
 		layer.SetRelativeZ(-1);
 
 		Vec2f offset = Vec2f_zero;
-		switch(ANGLE)
+		switch (ANGLE)
 		{
 			case 90:
 				offset = Vec2f(0, 1);
@@ -136,7 +139,7 @@ void onSetStatic(CBlob@ this, const bool isStatic)
 	}
 }
 
-bool canBePickedUp(CBlob@ this, CBlob@ byBlob)
+bool canBePickedUp(CBlob @ this, CBlob @byBlob)
 {
 	return false;
 }

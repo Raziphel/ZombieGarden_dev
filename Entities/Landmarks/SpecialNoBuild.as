@@ -5,21 +5,21 @@
 
 // set this.set_TileType("background tile", CMap::tile_castle_back);
 
-//use back flag to indicate no background
+// use back flag to indicate no background
 
 const string counter = "nobuild counter";
 const string back = "background tile";
 const string nobuild_extend = "nobuild extend";
 const int CHECK_FREQ = 35;
 
-void onInit(CBlob@ this)
+void onInit(CBlob @ this)
 {
 	this.set_u8(counter, 1);
 	this.getCurrentScript().tickFrequency = 5;
 	this.getCurrentScript().runFlags |= Script::tick_not_attached;
 }
 
-void onTick(CBlob@ this)
+void onTick(CBlob @ this)
 {
 	if (this.getCurrentScript().tickFrequency != CHECK_FREQ)
 	{
@@ -58,4 +58,3 @@ void onTick(CBlob@ this)
 		this.getCurrentScript().tickFrequency = CHECK_FREQ;
 	}
 }
-

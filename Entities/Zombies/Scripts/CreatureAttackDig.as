@@ -1,28 +1,28 @@
-//original script by XeonFaux
+// original script by XeonFaux
 
 #include "Hitters.as";
 
-void onInit(CBlob@ this)
+void onInit(CBlob @ this)
 {
 	if (!this.exists("attack frequency"))
-		 this.set_u8("attack frequency", 30);
-	
-	if (!this.exists("attack distance"))
-	     this.set_f32("attack distance", 0.5f);
-	     
-	if (!this.exists("attack damage"))
-		 this.set_f32("attack damage", 1.0f);
-		
-	if (!this.exists("attack hitter"))
-		 this.set_u8("attack hitter", Hitters::bite);
-	
-	if (!this.exists("attack sound"))
-		 this.set_string("attack sound", "ZombieBite");
+		this.set_u8("attack frequency", 30);
 
-	this.getCurrentScript().removeIfTag	= "dead";
+	if (!this.exists("attack distance"))
+		this.set_f32("attack distance", 0.5f);
+
+	if (!this.exists("attack damage"))
+		this.set_f32("attack damage", 1.0f);
+
+	if (!this.exists("attack hitter"))
+		this.set_u8("attack hitter", Hitters::bite);
+
+	if (!this.exists("attack sound"))
+		this.set_string("attack sound", "ZombieBite");
+
+	this.getCurrentScript().removeIfTag = "dead";
 }
 
-void onTick(CBlob@ this)
+void onTick(CBlob @ this)
 {
 	if (!getNet().isServer())
 		return;
@@ -34,24 +34,24 @@ void onTick(CBlob@ this)
 		f32 radius = this.getRadius();
 		f32 attack_distance = radius + this.get_f32("attack distance");
 
-		CMap@ map = this.getMap();
+		CMap @map = this.getMap();
 
 		f32 aimangle = (this.getAimPos() - pos).Angle();
 
 		if (getGameTime() >= this.get_u32("next_attack"))
 		{
-			HitInfo@[] hitInfos;
+			HitInfo @[] hitInfos;
 
 			if (map.getHitInfosFromArc(pos, aimangle, 90.0f, radius + attack_distance, this, @hitInfos))
 			{
 				for (uint i = 0; i < hitInfos.length; i++)
 				{
-					HitInfo@ hi = hitInfos[i];
-					CBlob@ blob = hi.blob;
+					HitInfo @hi = hitInfos[i];
+					CBlob @blob = hi.blob;
 					if (blob !is null && blob.getTeamNum() != this.getTeamNum())
 					{
 						Vec2f hitvel = Vec2f(this.isFacingLeft() ? -1.0 : 1.0, 0.0f);
-						
+
 						this.server_Hit(blob, blob.getPosition(), hitvel, this.get_f32("attack damage"), this.get_u8("attack hitter"), true);
 					}
 					else
@@ -75,10 +75,10 @@ void onTick(CBlob@ this)
 								int check_x = -(offset.x > 0 ? -1 : 1);
 								int check_y = -(offset.y > 0 ? -1 : 1);
 								if (map.isTileSolid(hi.hitpos - Vec2f(map.tilesize * check_x, 0)) &&
-										map.isTileSolid(hi.hitpos - Vec2f(0, map.tilesize * check_y)))
+									map.isTileSolid(hi.hitpos - Vec2f(0, map.tilesize * check_y)))
 									continue;
 
-								map.server_DestroyTile(hi.hitpos, this.get_f32("attack damage") * 3.0, this); //default 0.1
+								map.server_DestroyTile(hi.hitpos, this.get_f32("attack damage") * 3.0, this); // default 0.1
 							}
 						}
 					}
@@ -100,7 +100,7 @@ void onTick(CBlob@ this)
 
 						if (map.isTileStone(tile) || map.isTileThickStone(tile) || map.isTileGold(tile) || map.isTileGrass(tile) || map.isTileSand(tile) || map.isTileGroundStuff(tile))
 						{
-							map.server_DestroyTile(tilepos, this.get_f32("attack damage") * 0.3, this); //default 0.3
+							map.server_DestroyTile(tilepos, this.get_f32("attack damage") * 0.3, this); // default 0.3
 						}
 					}
 				}
@@ -111,8 +111,8 @@ void onTick(CBlob@ this)
 	}
 }
 
-void onHitBlob(CBlob@ this, Vec2f worldPoint, Vec2f velocity, f32 damage, CBlob@ hitBlob, u8 customData)
-{		 
+void onHitBlob(CBlob @ this, Vec2f worldPoint, Vec2f velocity, f32 damage, CBlob @hitBlob, u8 customData)
+{
 	if (damage > 0.0f)
 	{
 		this.getSprite().PlayRandomSound(this.get_string("attack sound"));

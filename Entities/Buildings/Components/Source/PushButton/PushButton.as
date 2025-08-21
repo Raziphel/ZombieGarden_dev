@@ -11,7 +11,7 @@ class PushButton : Component
 	}
 };
 
-void onInit(CBlob@ this)
+void onInit(CBlob @ this)
 {
 	// used by BuilderHittable.as
 	this.Tag("builder always hit");
@@ -32,9 +32,10 @@ void onInit(CBlob@ this)
 	this.getCurrentScript().tickIfTag = "active";
 }
 
-void onSetStatic(CBlob@ this, const bool isStatic)
+void onSetStatic(CBlob @ this, const bool isStatic)
 {
-	if(!isStatic || this.exists("component")) return;
+	if (!isStatic || this.exists("component"))
+		return;
 
 	const Vec2f position = this.getPosition() / 8;
 
@@ -43,52 +44,58 @@ void onSetStatic(CBlob@ this, const bool isStatic)
 
 	this.set_u8("state", 0);
 
-	if(getNet().isServer())
+	if (getNet().isServer())
 	{
-		MapPowerGrid@ grid;
-		if(!getRules().get("power grid", @grid)) return;
+		MapPowerGrid @grid;
+		if (!getRules().get("power grid", @grid))
+			return;
 
 		grid.setAll(
-		component.x,                        // x
-		component.y,                        // y
-		TOPO_NONE,                          // input topology
-		TOPO_CARDINAL,                      // output topology
-		INFO_SOURCE,                        // information
-		0,                                  // power
-		0);                                 // id
+			component.x,   // x
+			component.y,   // y
+			TOPO_NONE,	   // input topology
+			TOPO_CARDINAL, // output topology
+			INFO_SOURCE,   // information
+			0,			   // power
+			0);			   // id
 	}
 
-	CSprite@ sprite = this.getSprite();
-	if(sprite is null) return;
+	CSprite @sprite = this.getSprite();
+	if (sprite is null)
+		return;
 
 	sprite.SetFacingLeft(false);
 	sprite.SetZ(-50);
 }
 
-void GetButtonsFor(CBlob@ this, CBlob@ caller)
+void GetButtonsFor(CBlob @ this, CBlob @caller)
 {
-	if(!this.isOverlapping(caller) || !this.getShape().isStatic() || this.get_u8("state") != 0) return;
+	if (!this.isOverlapping(caller) || !this.getShape().isStatic() || this.get_u8("state") != 0)
+		return;
 
-	CButton@ button = caller.CreateGenericButton(
-	"$pushbutton_1$",                           // icon token
-	Vec2f_zero,                                 // button offset
-	this,                                       // button attachment
-	this.getCommandID("activate"),              // command id
-	"Activate");                                // description
+	CButton @button = caller.CreateGenericButton(
+		"$pushbutton_1$",			   // icon token
+		Vec2f_zero,					   // button offset
+		this,						   // button attachment
+		this.getCommandID("activate"), // command id
+		"Activate");				   // description
 
 	button.radius = 8.0f;
 	button.enableRadius = 20.0f;
 }
 
-void onTick(CBlob@ this)
+void onTick(CBlob @ this)
 {
-	if(getGameTime() < this.get_u32("duration")) return;
+	if (getGameTime() < this.get_u32("duration"))
+		return;
 
-	Component@ component = null;
-	if(!this.get("component", @component)) return;
+	Component @component = null;
+	if (!this.get("component", @component))
+		return;
 
-	MapPowerGrid@ grid;
-	if(!getRules().get("power grid", @grid)) return;
+	MapPowerGrid @grid;
+	if (!getRules().get("power grid", @grid))
+		return;
 
 	// set state on server, sync to clients
 	this.set_u8("state", 0);
@@ -97,25 +104,28 @@ void onTick(CBlob@ this)
 	this.Untag("active");
 
 	grid.setInfo(
-	component.x,                        // x
-	component.y,                        // y
-	INFO_SOURCE);                       // information
+		component.x,  // x
+		component.y,  // y
+		INFO_SOURCE); // information
 }
 
-void onCommand(CBlob@ this, u8 cmd, CBitStream @params)
+void onCommand(CBlob @ this, u8 cmd, CBitStream @params)
 {
-	if(cmd == this.getCommandID("activate"))
+	if (cmd == this.getCommandID("activate"))
 	{
-		if(getNet().isServer())
+		if (getNet().isServer())
 		{
 			// double check state, if state != 0, return
-			if(this.get_u8("state") != 0) return;
+			if (this.get_u8("state") != 0)
+				return;
 
-			Component@ component = null;
-			if(!this.get("component", @component)) return;
+			Component @component = null;
+			if (!this.get("component", @component))
+				return;
 
-			MapPowerGrid@ grid;
-			if(!getRules().get("power grid", @grid)) return;
+			MapPowerGrid @grid;
+			if (!getRules().get("power grid", @grid))
+				return;
 
 			// only set tag on server, so only the server ticks
 			this.Tag("active");
@@ -127,13 +137,14 @@ void onCommand(CBlob@ this, u8 cmd, CBitStream @params)
 			this.Sync("state", true);
 
 			grid.setInfo(
-			component.x,                        // x
-			component.y,                        // y
-			INFO_SOURCE | INFO_ACTIVE);         // information
+				component.x,				// x
+				component.y,				// y
+				INFO_SOURCE | INFO_ACTIVE); // information
 		}
 
-		CSprite@ sprite = this.getSprite();
-		if(sprite is null) return;
+		CSprite @sprite = this.getSprite();
+		if (sprite is null)
+			return;
 
 		sprite.SetAnimation("default");
 		sprite.SetAnimation("activate");
@@ -141,7 +152,7 @@ void onCommand(CBlob@ this, u8 cmd, CBitStream @params)
 	}
 }
 
-bool canBePickedUp(CBlob@ this, CBlob@ byBlob)
+bool canBePickedUp(CBlob @ this, CBlob @byBlob)
 {
 	return false;
 }

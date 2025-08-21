@@ -4,27 +4,27 @@ const int grow_time = 50 * getTicksASecond();
 const int MAX_CHICKENS_TO_HATCH = 5;
 const f32 CHICKEN_LIMIT_RADIUS = 120.0f;
 
-void onInit(CBlob@ this)
+void onInit(CBlob @ this)
 {
 	this.getCurrentScript().tickFrequency = 120;
 	this.addCommandID("hatch");
 }
 
-bool canBePickedUp(CBlob@ this, CBlob@ byBlob)
+bool canBePickedUp(CBlob @ this, CBlob @byBlob)
 {
 	return true;
 }
 
-void onTick(CBlob@ this)
+void onTick(CBlob @ this)
 {
 	if (getNet().isServer() && this.getTickSinceCreated() > grow_time)
 	{
 		int chickenCount = 0;
-		CBlob@[] blobs;
+		CBlob @[] blobs;
 		this.getMap().getBlobsInRadius(this.getPosition(), CHICKEN_LIMIT_RADIUS, @blobs);
 		for (uint step = 0; step < blobs.length; ++step)
 		{
-			CBlob@ other = blobs[step];
+			CBlob @other = blobs[step];
 			if (other.getName() == "chicken")
 			{
 				chickenCount++;
@@ -38,12 +38,11 @@ void onTick(CBlob@ this)
 	}
 }
 
-
-void onCommand(CBlob@ this, u8 cmd, CBitStream @params)
+void onCommand(CBlob @ this, u8 cmd, CBitStream @params)
 {
 	if (cmd == this.getCommandID("hatch"))
 	{
-		CSprite@ s = this.getSprite();
+		CSprite @s = this.getSprite();
 		if (s !is null)
 		{
 			s.Gib();

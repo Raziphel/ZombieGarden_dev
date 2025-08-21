@@ -1,17 +1,17 @@
-void MakeMat(CBlob@ this, Vec2f worldPoint, const string& in name, int quantity)
+void MakeMat(CBlob @ this, Vec2f worldPoint, const string& in name, int quantity)
 {
 	// decide whether to fly it or put directly in inv
 	bool putInInv = true;
 	int added = 0;
 
-	CInventory@ inv = this.getInventory();
-	if (inv is null) //we dont have an inventory to put it into
+	CInventory @inv = this.getInventory();
+	if (inv is null)		   // we dont have an inventory to put it into
 	{
 		putInInv = false;
-		if (this.isAttached()) //do we have a holder?
+		if (this.isAttached()) // do we have a holder?
 		{
-			AttachmentPoint@ point = this.getAttachments().getAttachmentPointByName("PICKUP");
-			CBlob@ holder = point.getOccupied();
+			AttachmentPoint @point = this.getAttachments().getAttachmentPointByName("PICKUP");
+			CBlob @holder = point.getOccupied();
 
 			if (holder !is null) // we have something holding us, make the mat for it instead
 			{
@@ -59,10 +59,10 @@ void MakeMat(CBlob@ this, Vec2f worldPoint, const string& in name, int quantity)
 		f32 dir = this.isFacingLeft() ? 1.0f : -1.0f;
 		worldPoint.x -= getMap().tilesize / 2.0f;
 		mat.server_SetQuantity(quantity);
-		Vec2f newpos =  this.getPosition();
+		Vec2f newpos = this.getPosition();
 
 		if (putInInv)
-			putInInv = this.server_PutInInventory(mat);	// it might not fit
+			putInInv = this.server_PutInInventory(mat); // it might not fit
 
 		if (!putInInv)
 		{

@@ -1,7 +1,8 @@
-#include "VehicleCommon2.as"
 #include "KnockedCommon.as"
 #include "MakeCrate.as";
 #include "MiniIconsInc.as";
+#include "VehicleCommon2.as"
+
 
 // Catapult logic
 
@@ -12,15 +13,15 @@ const u8 charge_contrib = 35;
 const u8 cooldown_time = 45;
 const u8 startStone = 100;
 
-void onInit(CBlob@ this)
+void onInit(CBlob @ this)
 {
 	Vehicle_Setup(this,
-	              30.0f, // move speed
-	              0.31f,  // turn speed
-	              Vec2f(0.0f, 0.0f), // jump out velocity
-	              false  // inventory access
-	             );
-	VehicleInfo@ v;
+				  30.0f,			 // move speed
+				  0.31f,			 // turn speed
+				  Vec2f(0.0f, 0.0f), // jump out velocity
+				  false				 // inventory access
+	);
+	VehicleInfo @v;
 	if (!this.get("VehicleInfo", @v))
 	{
 		return;
@@ -29,21 +30,20 @@ void onInit(CBlob@ this)
 	v.max_charge_time = 90;
 
 	Vehicle_SetupWeapon(this, v,
-	                    cooldown_time, // fire delay (ticks)
-	                    5, // fire bullets amount
-	                    getMagAttachmentPoint(this).offset, // fire position offset
-	                    "mat_stone", // bullet ammo config name
-	                    "cata_rock", // bullet config name
-	                    "CatapultFire", // fire sound
-	                    "CatapultFire", // empty fire sound
-	                    Vehicle_Fire_Style::custom
-	                   );
+						cooldown_time,						// fire delay (ticks)
+						5,									// fire bullets amount
+						getMagAttachmentPoint(this).offset, // fire position offset
+						"mat_stone",						// bullet ammo config name
+						"cata_rock",						// bullet config name
+						"CatapultFire",						// fire sound
+						"CatapultFire",						// empty fire sound
+						Vehicle_Fire_Style::custom);
 	v.fire_cost_per_amount = 2;
 
-	Vehicle_SetupGroundSound(this, v, "WoodenWheelsRolling",  // movement sound
-	                         1.0f, // movement sound volume modifier   0.0f = no manipulation
-	                         1.0f // movement sound pitch modifier     0.0f = no manipulation
-	                        );
+	Vehicle_SetupGroundSound(this, v, "WoodenWheelsRolling", // movement sound
+							 1.0f,							 // movement sound volume modifier   0.0f = no manipulation
+							 1.0f							 // movement sound pitch modifier     0.0f = no manipulation
+	);
 	Vehicle_addWheel(this, v, "WoodenWheels.png", 16, 16, 1, Vec2f(-10.0f, 11.0f));
 	Vehicle_addWheel(this, v, "WoodenWheels.png", 16, 16, 0, Vec2f(8.0f, 10.0f));
 
@@ -54,7 +54,7 @@ void onInit(CBlob@ this)
 	// auto-load on creation
 	if (getNet().isServer())
 	{
-		CBlob@ ammo = server_CreateBlob("mat_stone");
+		CBlob @ammo = server_CreateBlob("mat_stone");
 		if (ammo !is null)
 		{
 			ammo.server_SetQuantity(startStone);
@@ -63,38 +63,37 @@ void onInit(CBlob@ this)
 		}
 	}
 
-	//fix
+	// fix
 	v.fire_time;
-	
-	//set custom minimap icon
+
+	// set custom minimap icon
 	this.SetMinimapOutsideBehaviour(CBlob::minimap_snap);
-	this.SetMinimapVars("GUI/MiniIcons.png", 4, Vec2f(16,16));
-	this.SetMinimapRenderAlways(true);	
-	
+	this.SetMinimapVars("GUI/MiniIcons.png", 4, Vec2f(16, 16));
+	this.SetMinimapRenderAlways(true);
 }
 
-void onTick(CBlob@ this)
+void onTick(CBlob @ this)
 {
 	const int time = this.getTickSinceCreated();
 
-	VehicleInfo@ v;
+	VehicleInfo @v;
 	if (!this.get("VehicleInfo", @v))
 		return;
 
 	const u16 delay = float(v.fire_delay);
 	const f32 time_til_fire = Maths::Max(0, Maths::Min(v.fire_time - getGameTime(), delay));
 
-	if (this.hasAttached() || time < 30 || time_til_fire > 0) //driver, seat or gunner, or just created
+	if (this.hasAttached() || time < 30 || time_til_fire > 0) // driver, seat or gunner, or just created
 	{
 		// load new item if present in inventory
 		Vehicle_StandardControls(this, v);
 
-		if (getNet().isClient() && delay != 0) //only matters visually on client
+		if (getNet().isClient() && delay != 0) // only matters visually on client
 		{
-			//set the arm angle based on how long ago we fired
+			// set the arm angle based on how long ago we fired
 			f32 rechargeRatio = (time_til_fire / delay);
 			f32 angle = 360.0f * (1.0f - rechargeRatio);
-			CSpriteLayer@ arm = this.getSprite().getSpriteLayer("arm");
+			CSpriteLayer @arm = this.getSprite().getSpriteLayer("arm");
 
 			if (arm !is null)
 			{
@@ -129,10 +128,10 @@ void onTick(CBlob@ this)
 		}
 	}
 	else if (time % 30 == 0)
-		Vehicle_StandardControls(this, v); //just make sure it's updated
+		Vehicle_StandardControls(this, v); // just make sure it's updated
 }
 
-void GetButtonsFor(CBlob@ this, CBlob@ caller)
+void GetButtonsFor(CBlob @ this, CBlob @caller)
 {
 	if (this.getTeamNum() == caller.getTeamNum() && !Vehicle_AddFlipButton(this, caller) && isOverlapping(this, caller) && !caller.isAttached())
 	{
@@ -140,7 +139,7 @@ void GetButtonsFor(CBlob@ this, CBlob@ caller)
 	}
 }
 
-bool Vehicle_canFire(CBlob@ this, VehicleInfo@ v, bool isActionPressed, bool wasActionPressed, u8 &out chargeValue)
+bool Vehicle_canFire(CBlob @ this, VehicleInfo @v, bool isActionPressed, bool wasActionPressed, u8&out chargeValue)
 {
 	u8 charge = v.charge;
 
@@ -173,11 +172,11 @@ bool Vehicle_canFire(CBlob@ this, VehicleInfo@ v, bool isActionPressed, bool was
 	return false;
 }
 
-void onCommand(CBlob@ this, u8 cmd, CBitStream @params)
+void onCommand(CBlob @ this, u8 cmd, CBitStream @params)
 {
 	if (cmd == this.getCommandID("fire"))
 	{
-		VehicleInfo@ v;
+		VehicleInfo @v;
 		if (!this.get("VehicleInfo", @v))
 		{
 			return;
@@ -187,9 +186,9 @@ void onCommand(CBlob@ this, u8 cmd, CBitStream @params)
 	}
 	else if (cmd == this.getCommandID("fire blob"))
 	{
-		CBlob@ blob = getBlobByNetworkID(params.read_netid());
+		CBlob @blob = getBlobByNetworkID(params.read_netid());
 		const u8 charge = params.read_u8();
-		VehicleInfo@ v;
+		VehicleInfo @v;
 		if (!this.get("VehicleInfo", @v))
 		{
 			return;
@@ -200,7 +199,7 @@ void onCommand(CBlob@ this, u8 cmd, CBitStream @params)
 
 Random _r(0xca7a);
 
-void Vehicle_onFire(CBlob@ this, VehicleInfo@ v, CBlob@ bullet, const u8 _charge)
+void Vehicle_onFire(CBlob @ this, VehicleInfo @v, CBlob @bullet, const u8 _charge)
 {
 	f32 charge = baseline_charge + (float(_charge) / float(v.max_charge_time)) * charge_contrib;
 
@@ -230,13 +229,12 @@ void Vehicle_onFire(CBlob@ this, VehicleInfo@ v, CBlob@ bullet, const u8 _charge
 	v.charge = 0;
 }
 
-bool doesCollideWithBlob(CBlob@ this, CBlob@ blob)
+bool doesCollideWithBlob(CBlob @ this, CBlob @blob)
 {
 	return Vehicle_doesCollideWithBlob_boat(this, blob);
 }
 
-
-void onCollision(CBlob@ this, CBlob@ blob, bool solid)
+void onCollision(CBlob @ this, CBlob @blob, bool solid)
 {
 	if (blob !is null)
 	{
@@ -244,9 +242,9 @@ void onCollision(CBlob@ this, CBlob@ blob, bool solid)
 	}
 }
 
-void onAttach(CBlob@ this, CBlob@ attached, AttachmentPoint @attachedPoint)
+void onAttach(CBlob @ this, CBlob @attached, AttachmentPoint @attachedPoint)
 {
-	VehicleInfo@ v;
+	VehicleInfo @v;
 	if (!this.get("VehicleInfo", @v))
 	{
 		return;
@@ -254,9 +252,9 @@ void onAttach(CBlob@ this, CBlob@ attached, AttachmentPoint @attachedPoint)
 	Vehicle_onAttach(this, v, attached, attachedPoint);
 }
 
-void onDetach(CBlob@ this, CBlob@ detached, AttachmentPoint@ attachedPoint)
+void onDetach(CBlob @ this, CBlob @detached, AttachmentPoint @attachedPoint)
 {
-	VehicleInfo@ v;
+	VehicleInfo @v;
 	if (!this.get("VehicleInfo", @v))
 	{
 		return;
@@ -265,15 +263,11 @@ void onDetach(CBlob@ this, CBlob@ detached, AttachmentPoint@ attachedPoint)
 }
 
 // Blame Fuzzle.
-bool isOverlapping(CBlob@ this, CBlob@ blob)
+bool isOverlapping(CBlob @ this, CBlob @blob)
 {
 
 	Vec2f tl, br, _tl, _br;
 	this.getShape().getBoundingRect(tl, br);
 	blob.getShape().getBoundingRect(_tl, _br);
-	return br.x > _tl.x
-	       && br.y > _tl.y
-	       && _br.x > tl.x
-	       && _br.y > tl.y;
-
+	return br.x > _tl.x && br.y > _tl.y && _br.x > tl.x && _br.y > tl.y;
 }

@@ -7,18 +7,18 @@ enum GameMusicTags
 	background_jam,
 };
 
-void onInit(CBlob@ this)
+void onInit(CBlob @ this)
 {
-	CMixer@ mixer = getMixer();
+	CMixer @mixer = getMixer();
 	if (mixer is null)
 		return;
 
 	this.set_bool("initialized game", false);
 }
 
-void onTick(CBlob@ this)
+void onTick(CBlob @ this)
 {
-	CMixer@ mixer = getMixer();
+	CMixer @mixer = getMixer();
 	if (mixer is null)
 		return;
 
@@ -36,8 +36,8 @@ void onTick(CBlob@ this)
 	}
 }
 
-//sound references with tag
-void AddGameMusic(CBlob@ this, CMixer@ mixer)
+// sound references with tag
+void AddGameMusic(CBlob @ this, CMixer @mixer)
 {
 	if (mixer is null)
 		return;
@@ -55,15 +55,16 @@ void AddGameMusic(CBlob@ this, CMixer@ mixer)
 
 uint timer = 0;
 
-void GameMusicLogic(CBlob@ this, CMixer@ mixer)
+void GameMusicLogic(CBlob @ this, CMixer @mixer)
 {
 	if (mixer is null)
 		return;
 
-	//warmup
+	// warmup
 	CRules @rules = getRules();
 
-	if(mixer.getPlayingCount()==0) {
-		mixer.FadeInRandom(background_jam , 0.0f);
+	if (mixer.getPlayingCount() == 0)
+	{
+		mixer.FadeInRandom(background_jam, 0.0f);
 	}
 }

@@ -1,17 +1,18 @@
 
-#include "Hitters.as"
 #include "CustomBlocks.as";
+#include "Hitters.as"
 
-f32 onHit(CBlob@ this, Vec2f worldPoint, Vec2f velocity, f32 damage, CBlob@ hitterBlob, u8 customData)
+
+f32 onHit(CBlob @ this, Vec2f worldPoint, Vec2f velocity, f32 damage, CBlob @hitterBlob, u8 customData)
 {
-	if (damage > 0.1f && (hitterBlob !is this || customData == Hitters::crush))  //sound for anything actually painful
+	if (damage > 0.1f && (hitterBlob !is this || customData == Hitters::crush)) // sound for anything actually painful
 	{
 		f32 capped_damage = Maths::Min(damage, 2.0f);
 
-		//set this false if we whouldn't show blood effects for this hit
+		// set this false if we whouldn't show blood effects for this hit
 		bool showblood = true;
 
-		//read customdata for hitter
+		// read customdata for hitter
 		switch (customData)
 		{
 			case Hitters::drown:
@@ -38,12 +39,12 @@ f32 onHit(CBlob@ this, Vec2f worldPoint, Vec2f velocity, f32 damage, CBlob@ hitt
 		}
 
 		worldPoint.y -= this.getRadius() * 0.5f;
-	    //if(!CustomEmitEffectExists("Bloodcollide"))
-	    //{ 
-	    //    SetupCustomEmitEffect( "Bloodcollide", "FleshHitEffects.as", "BloodTiles", 10, 0, 120);
-	    //    //SetupCustomEmitEffect( name, scriptfile, scriptfunction, u8 hard_freq, u8 chance_freq, u16 timeout )
-	    //}
-	    u8 emiteffect = GetCustomEmitEffectID("Bloodcollide");
+		// if(!CustomEmitEffectExists("Bloodcollide"))
+		//{
+		//     SetupCustomEmitEffect( "Bloodcollide", "FleshHitEffects.as", "BloodTiles", 10, 0, 120);
+		//     //SetupCustomEmitEffect( name, scriptfile, scriptfunction, u8 hard_freq, u8 chance_freq, u16 timeout )
+		// }
+		u8 emiteffect = GetCustomEmitEffectID("Bloodcollide");
 		{
 			if (capped_damage > 1.0f)
 			{
@@ -52,7 +53,7 @@ f32 onHit(CBlob@ this, Vec2f worldPoint, Vec2f velocity, f32 damage, CBlob@ hitt
 
 			if (capped_damage > 0.25f)
 			{
-				for (f32 count = 0.0f ; count < capped_damage; count += 0.5f)
+				for (f32 count = 0.0f; count < capped_damage; count += 0.5f)
 				{
 					ParticleBloodSplat(worldPoint + getRandomVelocity(0, 0.75f + capped_damage * 2.0f * XORRandom(2), 360.0f), false);
 				}
@@ -62,30 +63,28 @@ f32 onHit(CBlob@ this, Vec2f worldPoint, Vec2f velocity, f32 damage, CBlob@ hitt
 			{
 				f32 angle = (velocity).Angle();
 
-				for (f32 count = 0.0f ; count < capped_damage + 0.6f; count += 0.1f)
+				for (f32 count = 0.0f; count < capped_damage + 0.6f; count += 0.1f)
 				{
 					Vec2f vel = getRandomVelocity(angle, 1.0f + 0.3f * capped_damage * 0.1f * XORRandom(40), 60.0f);
 					vel.y -= 1.5f * capped_damage;
- 
-					
-					CParticle@ b1     = ParticleBlood(worldPoint, vel * 1.7f, SColor(255, 126, 0, 0));
 
-				    if(b1 !is null)
-				    {
-				    	b1.diesoncollide = true;
-				    	if (XORRandom(3)==0)
-				    	b1.AddDieFunction("BloodyTileSetter.as", "BloodTiles");
+					CParticle @b1 = ParticleBlood(worldPoint, vel * 1.7f, SColor(255, 126, 0, 0));
 
-				    }
+					if (b1 !is null)
+					{
+						b1.diesoncollide = true;
+						if (XORRandom(3) == 0)
+							b1.AddDieFunction("BloodyTileSetter.as", "BloodTiles");
+					}
 
-				    CParticle@ b2     = ParticleBlood(worldPoint, vel * -1.0f, SColor(255, 126, 0, 0));
+					CParticle @b2 = ParticleBlood(worldPoint, vel * -1.0f, SColor(255, 126, 0, 0));
 
-				    if(b2 !is null)
-				    {
-				    	b2.diesoncollide = true;
-				    	if (XORRandom(3)==0)
-				    	b2.AddDieFunction("BloodyTileSetter.as", "BloodTiles");
-				    }
+					if (b2 !is null)
+					{
+						b2.diesoncollide = true;
+						if (XORRandom(3) == 0)
+							b2.AddDieFunction("BloodyTileSetter.as", "BloodTiles");
+					}
 				}
 			}
 		}
@@ -93,4 +92,3 @@ f32 onHit(CBlob@ this, Vec2f worldPoint, Vec2f velocity, f32 damage, CBlob@ hitt
 
 	return damage;
 }
-

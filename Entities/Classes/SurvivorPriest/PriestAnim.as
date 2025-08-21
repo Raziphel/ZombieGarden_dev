@@ -1,51 +1,55 @@
 // Priest animations
 #include "EmotesCommon.as";
+#include "KnockedCommon.as";
 #include "RunnerAnimCommon.as";
 #include "RunnerCommon.as";
-#include "KnockedCommon.as";
 #include "RunnerTextures.as";
 
-void onInit(CSprite@ this)
+
+void onInit(CSprite @ this)
 {
 	LoadSprites(this);
 }
 
-void onPlayerInfoChanged(CSprite@ this)
+void onPlayerInfoChanged(CSprite @ this)
 {
 	LoadSprites(this);
 }
 
-void LoadSprites(CSprite@ this)
+void LoadSprites(CSprite @ this)
 {
 	ensureCorrectRunnerTexture(this, "priest", "Priest");
 }
 
-void onTick( CSprite@ this )
+void onTick(CSprite @ this)
 {
-    // store some vars for ease and speed
-    CBlob@ blob = this.getBlob();
+	// store some vars for ease and speed
+	CBlob @blob = this.getBlob();
 
 	if (blob.hasTag("dead"))
-    {
+	{
 		if (this.animation.name != "dead")
 		{
 			this.SetAnimation("dead");
 		}
-        
-        Vec2f vel = blob.getVelocity();
 
-        if (vel.y < -1.0f) {
-            this.SetFrameIndex( 0 );
-        }
-		else if (vel.y > 1.0f) {
-			this.SetFrameIndex( 1 );
+		Vec2f vel = blob.getVelocity();
+
+		if (vel.y < -1.0f)
+		{
+			this.SetFrameIndex(0);
 		}
-		else {
-			this.SetFrameIndex( 2 );
+		else if (vel.y > 1.0f)
+		{
+			this.SetFrameIndex(1);
+		}
+		else
+		{
+			this.SetFrameIndex(2);
 		}
 
-        return;
-    }
+		return;
+	}
 
 	// animations
 	const bool firing = blob.isKeyPressed(key_action1) || blob.isKeyPressed(key_action2);
@@ -65,14 +69,16 @@ void onTick( CSprite@ this )
 
 	if (knocked)
 	{
-		if (inair) {
+		if (inair)
+		{
 			this.SetAnimation("knocked_air");
 		}
-		else {
+		else
+		{
 			this.SetAnimation("knocked");
 		}
 	}
-	else if (blob.hasTag( "seated" ))
+	else if (blob.hasTag("seated"))
 	{
 		this.SetAnimation("default");
 	}
@@ -83,19 +89,21 @@ void onTick( CSprite@ this )
 			this.SetAnimation("shoot_jump");
 		}
 		else if ((left || right) ||
-             (blob.isOnLadder() && (up || down) ) ) {
+				 (blob.isOnLadder() && (up || down)))
+		{
 			this.SetAnimation("shoot_run");
 		}
 		else
 		{
 			this.SetAnimation("shoot");
-				this.SetFrameIndex(1);
+			this.SetFrameIndex(1);
 		}
-    }
-    else if (inair)
-    {
-		RunnerMoveVars@ moveVars;
-		if (!blob.get( "moveVars", @moveVars )) {
+	}
+	else if (inair)
+	{
+		RunnerMoveVars @moveVars;
+		if (!blob.get("moveVars", @moveVars))
+		{
 			return;
 		}
 		Vec2f vel = blob.getVelocity();
@@ -105,78 +113,86 @@ void onTick( CSprite@ this )
 			this.SetAnimation("run");
 		}
 		else
-		{	
+		{
 			this.SetAnimation("fall");
 			this.animation.timer = 0;
 
-			if (vy < -1.5 ) {
+			if (vy < -1.5)
+			{
 				this.animation.frame = 0;
 			}
-			else if (vy > 1.5 ) {
+			else if (vy > 1.5)
+			{
 				this.animation.frame = 2;
 			}
-			else {
+			else
+			{
 				this.animation.frame = 1;
 			}
 		}
-    }
-    else if ((left || right) ||
-             (blob.isOnLadder() && (up || down) ) ) {
-        this.SetAnimation("run");
-    }
-    else
-    {
-		if(down && this.isAnimationEnded())
+	}
+	else if ((left || right) ||
+			 (blob.isOnLadder() && (up || down)))
+	{
+		this.SetAnimation("run");
+	}
+	else
+	{
+		if (down && this.isAnimationEnded())
 			crouch = true;
 
 		int direction;
 
 		if ((angle > 330 && angle < 361) || (angle > -1 && angle < 30) ||
-			(angle > 150 && angle < 210)) {
-				direction = 0;
+			(angle > 150 && angle < 210))
+		{
+			direction = 0;
 		}
-		else if (aimpos.y < pos.y) {
+		else if (aimpos.y < pos.y)
+		{
 			direction = -1;
 		}
-		else {
+		else
+		{
 			direction = 1;
 		}
 
-        defaultIdleAnim(this, blob, direction);
-    }
+		defaultIdleAnim(this, blob, direction);
+	}
 
-	//set the head anim
-    if (knocked || crouch)
-    {
+	// set the head anim
+	if (knocked || crouch)
+	{
 		blob.Tag("dead head");
 	}
-    else if (blob.isKeyPressed(key_action1))
-    {
-        blob.Tag("attack head");
-        blob.Untag("dead head");
-    }
-    else
-    {
-        blob.Untag("attack head");
-        blob.Untag("dead head");
-    }
+	else if (blob.isKeyPressed(key_action1))
+	{
+		blob.Tag("attack head");
+		blob.Untag("dead head");
+	}
+	else
+	{
+		blob.Untag("attack head");
+		blob.Untag("dead head");
+	}
 }
 
-void onGib(CSprite@ this)
+void onGib(CSprite @ this)
 {
-    if (g_kidssafe) {
-        return;
-    }
+	if (g_kidssafe)
+	{
+		return;
+	}
 
-    CBlob@ blob = this.getBlob();
-    Vec2f pos = blob.getPosition();
-    Vec2f vel = blob.getVelocity();
+	CBlob @blob = this.getBlob();
+	Vec2f pos = blob.getPosition();
+	Vec2f vel = blob.getVelocity();
 	vel.y -= 3.0f;
-    f32 hp = Maths::Min(Maths::Abs(blob.getHealth()), 2.0f) + 1.0;
+	f32 hp = Maths::Min(Maths::Abs(blob.getHealth()), 2.0f) + 1.0;
 	const u8 team = blob.getTeamNum();
-    CParticle@ Body     = makeGibParticle( "../PriestGibs.png", pos, vel + getRandomVelocity( 90, hp , 80 ), 0, 0, Vec2f (16,16), 2.0f, 20, "/BodyGibFall", team );
-    CParticle@ Arm1     = makeGibParticle( "../PriestGibs.png", pos, vel + getRandomVelocity( 90, hp - 0.2 , 80 ), 1, 0, Vec2f (16,16), 2.0f, 20, "/BodyGibFall", team );
-    CParticle@ Arm2     = makeGibParticle( "../PriestGibs.png", pos, vel + getRandomVelocity( 90, hp - 0.2 , 80 ), 1, 0, Vec2f (16,16), 2.0f, 20, "/BodyGibFall", team );
-    // CParticle@ Shield   = makeGibParticle( "Entities/Classes/Builder/BuilderGibs.png", pos, vel + getRandomVelocity( 90, hp , 80 ), 2, 0, Vec2f (16,16), 2.0f, 0, "Sounds/material_drop.ogg", team );
-    // CParticle@ Sword    = makeGibParticle( "Entities/Classes/Builder/BuilderGibs.png", pos, vel + getRandomVelocity( 90, hp + 1 , 80 ), 3, 0, Vec2f (16,16), 2.0f, 0, "Sounds/material_drop.ogg", team );
+	CParticle @Body = makeGibParticle("../PriestGibs.png", pos, vel + getRandomVelocity(90, hp, 80), 0, 0, Vec2f(16, 16), 2.0f, 20, "/BodyGibFall", team);
+	CParticle @Arm1 = makeGibParticle("../PriestGibs.png", pos, vel + getRandomVelocity(90, hp - 0.2, 80), 1, 0, Vec2f(16, 16), 2.0f, 20, "/BodyGibFall", team);
+	CParticle @Arm2 = makeGibParticle("../PriestGibs.png", pos, vel + getRandomVelocity(90, hp - 0.2, 80), 1, 0, Vec2f(16, 16), 2.0f, 20, "/BodyGibFall", team);
+	// CParticle@ Shield   = makeGibParticle( "Entities/Classes/Builder/BuilderGibs.png", pos, vel + getRandomVelocity( 90, hp , 80 ), 2, 0, Vec2f (16,16), 2.0f, 0, "Sounds/material_drop.ogg", team );
+	// CParticle@ Sword    = makeGibParticle( "Entities/Classes/Builder/BuilderGibs.png", pos, vel + getRandomVelocity( 90, hp + 1 , 80 ), 3, 0, Vec2f (16,16), 2.0f, 0, "Sounds/material_drop.ogg", team );
 }

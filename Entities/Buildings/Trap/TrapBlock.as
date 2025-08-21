@@ -1,56 +1,56 @@
-//trap block script for devious builders
+// trap block script for devious builders
 
 #include "Hitters.as"
 #include "MapFlags.as"
 int openRecursion = 0;
 
-void onInit(CBlob@ this)
+void onInit(CBlob @ this)
 {
-	this.getShape().SetRotationsAllowed( false );
-    this.getSprite().getConsts().accurateLighting = true;
-    this.set_bool("open", false);    
-    this.Tag("place norotate");
-    
-    //block knight sword
+	this.getShape().SetRotationsAllowed(false);
+	this.getSprite().getConsts().accurateLighting = true;
+	this.set_bool("open", false);
+	this.Tag("place norotate");
+
+	// block knight sword
 	this.Tag("blocks sword");
 
 	this.Tag("blocks water");
 	this.Tag("trapblock");
-	
-	MakeDamageFrame( this );
-	this.getCurrentScript().runFlags |= Script::tick_not_attached;		 
+
+	MakeDamageFrame(this);
+	this.getCurrentScript().runFlags |= Script::tick_not_attached;
 }
 
-//TODO: fix flags sync and hitting
+// TODO: fix flags sync and hitting
 /*void onDie( CBlob@ this )
 {
 	SetSolidFlag(this, false);
 }*/
 
-void onHealthChange( CBlob@ this, f32 oldHealth )
+void onHealthChange(CBlob @ this, f32 oldHealth)
 {
 	if (!isOpen(this))
 	{
-		MakeDamageFrame( this );
+		MakeDamageFrame(this);
 	}
 }
 
-void MakeDamageFrame( CBlob@ this )
+void MakeDamageFrame(CBlob @ this)
 {
 	f32 hp = this.getHealth();
 	f32 full_hp = this.getInitialHealth();
-	int frame = (hp > full_hp * 0.9f) ? 0 : ( (hp > full_hp * 0.4f) ? 1 : 2);
+	int frame = (hp > full_hp * 0.9f) ? 0 : ((hp > full_hp * 0.4f) ? 1 : 2);
 	this.getSprite().animation.frame = frame;
 }
 
-bool isOpen( CBlob@ this )
+bool isOpen(CBlob @ this)
 {
 	return !this.getShape().getConsts().collidable;
 }
 
-void setOpen( CBlob@ this, bool open )
+void setOpen(CBlob @ this, bool open)
 {
-	CSprite@ sprite = this.getSprite();
+	CSprite @sprite = this.getSprite();
 
 	if (open)
 	{
@@ -62,8 +62,8 @@ void setOpen( CBlob@ this, bool open )
 		const uint count = this.getTouchingCount();
 		for (uint step = 0; step < count; ++step)
 		{
-			CBlob@ blob = this.getTouchingByIndex(step);
-			blob.getShape().checkCollisionsAgain= true;
+			CBlob @blob = this.getTouchingByIndex(step);
+			blob.getShape().checkCollisionsAgain = true;
 		}
 	}
 	else
@@ -73,47 +73,48 @@ void setOpen( CBlob@ this, bool open )
 		this.getShape().getConsts().collidable = true;
 	}
 
-	//TODO: fix flags sync and hitting
-	//SetSolidFlag(this, !open);
+	// TODO: fix flags sync and hitting
+	// SetSolidFlag(this, !open);
 
-	if (this.getTouchingCount() <= 1 && openRecursion < 5) {
-		SetBlockAbove( this, open );
+	if (this.getTouchingCount() <= 1 && openRecursion < 5)
+	{
+		SetBlockAbove(this, open);
 		openRecursion++;
 	}
 }
 
-bool doesCollideWithBlob( CBlob@ this, CBlob@ blob )
+bool doesCollideWithBlob(CBlob @ this, CBlob @blob)
 {
 	if (blob.getTeamNum() == this.getTeamNum())
 	{
-		return !isOpen( this );
+		return !isOpen(this);
 	}
 	else
 	{
-		return !opensThis(this,blob) && !isOpen(this);
+		return !opensThis(this, blob) && !isOpen(this);
 	}
 }
 
-bool opensThis(CBlob@ this, CBlob@ blob)
+bool opensThis(CBlob @ this, CBlob @blob)
 {
-	return (blob.getTeamNum()!=this.getTeamNum() &&
+	return (blob.getTeamNum() != this.getTeamNum() &&
 			!isOpen(this) && blob.isCollidable() &&
 			(blob.hasTag("zombie") || blob.hasTag("player") || blob.hasTag("vehicle")));
 }
 
-void onCollision( CBlob@ this, CBlob@ blob, bool solid )
+void onCollision(CBlob @ this, CBlob @blob, bool solid)
 {
-    if (blob !is null)
-    {
-        if ( opensThis(this,blob) )
-        {
+	if (blob !is null)
+	{
+		if (opensThis(this, blob))
+		{
 			openRecursion = 0;
-            setOpen(this, true);			
-        }
-    }
+			setOpen(this, true);
+		}
+	}
 }
 
-void onEndCollision( CBlob@ this, CBlob@ blob )
+void onEndCollision(CBlob @ this, CBlob @blob)
 {
 	if (blob !is null)
 	{
@@ -121,8 +122,9 @@ void onEndCollision( CBlob@ this, CBlob@ blob )
 		const uint count = this.getTouchingCount();
 		for (uint step = 0; step < count; ++step)
 		{
-			CBlob@ blob = this.getTouchingByIndex(step);
-			if (blob.isCollidable()) {
+			CBlob @blob = this.getTouchingByIndex(step);
+			if (blob.isCollidable())
+			{
 				touching = true;
 				break;
 			}
@@ -135,16 +137,15 @@ void onEndCollision( CBlob@ this, CBlob@ blob )
 	}
 }
 
-
-bool canBePickedUp( CBlob@ this, CBlob@ byBlob )
+bool canBePickedUp(CBlob @ this, CBlob @byBlob)
 {
-    return false;
+	return false;
 }
 
-void SetBlockAbove( CBlob@ this, const bool open )
+void SetBlockAbove(CBlob @ this, const bool open)
 {
-	//block above
-	CBlob@ blobAbove = getMap().getBlobAtPosition( this.getPosition() + Vec2f(0.0f, -8.0f) ) ;
+	// block above
+	CBlob @blobAbove = getMap().getBlobAtPosition(this.getPosition() + Vec2f(0.0f, -8.0f));
 	if (blobAbove !is null && blobAbove.getName() == "trap_block")
 	{
 		setOpen(blobAbove, open);

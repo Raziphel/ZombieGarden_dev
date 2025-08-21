@@ -2,17 +2,18 @@
 // can hold items in inventory or unpacks to catapult/ship etc.
 
 #include "CrateCommon.as";
-#include "VehicleAttachmentCommon.as";
-#include "MiniIconsInc.as";
 #include "Help.as";
+#include "MiniIconsInc.as";
+#include "VehicleAttachmentCommon.as";
+
 
 const string required_space = "required space";
 
-void onInit(CBlob@ this)
+void onInit(CBlob @ this)
 {
 	this.addCommandID("unpack");
-	//this.addCommandID("getin");
-	//this.addCommandID("getout");
+	// this.addCommandID("getin");
+	// this.addCommandID("getout");
 	this.addCommandID("stop unpack");
 
 	u8 frame = 0;
@@ -22,12 +23,12 @@ void onInit(CBlob@ this)
 		string packed = this.get_string("packed");
 
 		// GIANT HACK!!!
-		if (packed == "catapult" || packed == "glider" || packed == "balloon" || packed == "ballista" || packed == "mounted_bow" || packed == "longboat")	 // HACK:
+		if (packed == "catapult" || packed == "glider" || packed == "balloon" || packed == "ballista" || packed == "mounted_bow" || packed == "longboat") // HACK:
 		{
-			CSpriteLayer@ icon = this.getSprite().addSpriteLayer("icon", "/MiniIcons.png" , 16, 16, this.getTeamNum(), -1);
+			CSpriteLayer @icon = this.getSprite().addSpriteLayer("icon", "/MiniIcons.png", 16, 16, this.getTeamNum(), -1);
 			if (icon !is null)
 			{
-				Animation@ anim = icon.addAnimation("display", 0, false);
+				Animation @anim = icon.addAnimation("display", 0, false);
 				anim.AddFrame(frame);
 
 				icon.SetOffset(Vec2f(-2, 1));
@@ -56,19 +57,18 @@ void onInit(CBlob@ this)
 				newFrame = FactoryFrame::factory;
 			if (packed == "storage")
 				newFrame = FactoryFrame::storage;
-		/* 	if (packed == "fighter")
-				newFrame = FactoryFrame::fighter;
-			if (packed == "bomber2")
-				newFrame = FactoryFrame::bomber2;
-			if (packed == "bison")
-				newFrame = FactoryFrame::bison;
-			if (packed == "shark")
-				newFrame = FactoryFrame::shark; */
-		
+			/* 	if (packed == "fighter")
+					newFrame = FactoryFrame::fighter;
+				if (packed == "bomber2")
+					newFrame = FactoryFrame::bomber2;
+				if (packed == "bison")
+					newFrame = FactoryFrame::bison;
+				if (packed == "shark")
+					newFrame = FactoryFrame::shark; */
 
 			if (newFrame > 0)
 			{
-				CSpriteLayer@ icon = this.getSprite().addSpriteLayer("icon", "/MiniIcons.png" , 16, 16, this.getTeamNum(), -1);
+				CSpriteLayer @icon = this.getSprite().addSpriteLayer("icon", "/MiniIcons.png", 16, 16, this.getTeamNum(), -1);
 				if (icon !is null)
 				{
 					icon.SetFrame(newFrame);
@@ -78,247 +78,216 @@ void onInit(CBlob@ this)
 				this.getSprite().SetAnimation("label");
 			}
 
-		}	 //END OF HACK
-		
-		if ( packed == "longboat")	 // HACK:
+		} // END OF HACK
+
+		if (packed == "longboat") // HACK:
 		{
-			CSpriteLayer@ icon = this.getSprite().addSpriteLayer("icon", "/MiniIcons.png" , 16, 16, this.getTeamNum(), -1);
+			CSpriteLayer @icon = this.getSprite().addSpriteLayer("icon", "/MiniIcons.png", 16, 16, this.getTeamNum(), -1);
 			if (icon !is null)
 			{
-				Animation@ anim = icon.addAnimation("display", 0, false);
+				Animation @anim = icon.addAnimation("display", 0, false);
 				anim.AddFrame(1);
 
 				icon.SetOffset(Vec2f(-2, 1));
 				icon.SetRelativeZ(1);
 			}
 			this.getSprite().SetAnimation("label");
-
-
 		}
 
-		if ( packed == "warboat")	 // HACK:
+		if (packed == "warboat") // HACK:
 		{
-			CSpriteLayer@ icon = this.getSprite().addSpriteLayer("icon", "/MiniIcons.png" , 16, 16, this.getTeamNum(), -1);
+			CSpriteLayer @icon = this.getSprite().addSpriteLayer("icon", "/MiniIcons.png", 16, 16, this.getTeamNum(), -1);
 			if (icon !is null)
 			{
-				Animation@ anim = icon.addAnimation("display", 0, false);
+				Animation @anim = icon.addAnimation("display", 0, false);
 				anim.AddFrame(2);
 
 				icon.SetOffset(Vec2f(-2, 1));
 				icon.SetRelativeZ(1);
 			}
 			this.getSprite().SetAnimation("label");
-
-
 		}
-		
-		if ( packed == "glider")	 // HACK:
+
+		if (packed == "glider") // HACK:
 		{
-			CSpriteLayer@ icon = this.getSprite().addSpriteLayer("icon", "/MiniIcons.png" , 16, 16, this.getTeamNum(), -1);
+			CSpriteLayer @icon = this.getSprite().addSpriteLayer("icon", "/MiniIcons.png", 16, 16, this.getTeamNum(), -1);
 			if (icon !is null)
 			{
-				Animation@ anim = icon.addAnimation("display", 0, false);
+				Animation @anim = icon.addAnimation("display", 0, false);
 				anim.AddFrame(3);
 
 				icon.SetOffset(Vec2f(-2, 1));
 				icon.SetRelativeZ(1);
 			}
 			this.getSprite().SetAnimation("label");
-
-
 		}
 
-		if ( packed == "catapult")	 // HACK:
+		if (packed == "catapult") // HACK:
 		{
-			CSpriteLayer@ icon = this.getSprite().addSpriteLayer("icon", "/MiniIcons.png" , 16, 16, this.getTeamNum(), -1);
+			CSpriteLayer @icon = this.getSprite().addSpriteLayer("icon", "/MiniIcons.png", 16, 16, this.getTeamNum(), -1);
 			if (icon !is null)
 			{
-				Animation@ anim = icon.addAnimation("display", 0, false);
+				Animation @anim = icon.addAnimation("display", 0, false);
 				anim.AddFrame(4);
 
 				icon.SetOffset(Vec2f(-2, 1));
 				icon.SetRelativeZ(1);
 			}
 			this.getSprite().SetAnimation("label");
+		}
 
-
-		}		
-
-		if ( packed == "ballista")	 // HACK:
+		if (packed == "ballista") // HACK:
 		{
-			CSpriteLayer@ icon = this.getSprite().addSpriteLayer("icon", "/MiniIcons.png" , 16, 16, this.getTeamNum(), -1);
+			CSpriteLayer @icon = this.getSprite().addSpriteLayer("icon", "/MiniIcons.png", 16, 16, this.getTeamNum(), -1);
 			if (icon !is null)
 			{
-				Animation@ anim = icon.addAnimation("display", 0, false);
+				Animation @anim = icon.addAnimation("display", 0, false);
 				anim.AddFrame(5);
 
 				icon.SetOffset(Vec2f(-2, 1));
 				icon.SetRelativeZ(1);
 			}
 			this.getSprite().SetAnimation("label");
-
-
 		}
 
-		if ( packed == "mounted_bow")	 // HACK:
+		if (packed == "mounted_bow") // HACK:
 		{
-			CSpriteLayer@ icon = this.getSprite().addSpriteLayer("icon", "/MiniIcons.png" , 16, 16, this.getTeamNum(), -1);
+			CSpriteLayer @icon = this.getSprite().addSpriteLayer("icon", "/MiniIcons.png", 16, 16, this.getTeamNum(), -1);
 			if (icon !is null)
 			{
-				Animation@ anim = icon.addAnimation("display", 0, false);
+				Animation @anim = icon.addAnimation("display", 0, false);
 				anim.AddFrame(6);
 
 				icon.SetOffset(Vec2f(-2, 1));
 				icon.SetRelativeZ(1);
 			}
 			this.getSprite().SetAnimation("label");
-
-
 		}
-		
-		if ( packed == "balloon")	 // HACK:
+
+		if (packed == "balloon") // HACK:
 		{
-			CSpriteLayer@ icon = this.getSprite().addSpriteLayer("icon", "/MiniIcons.png" , 16, 16, this.getTeamNum(), -1);
+			CSpriteLayer @icon = this.getSprite().addSpriteLayer("icon", "/MiniIcons.png", 16, 16, this.getTeamNum(), -1);
 			if (icon !is null)
 			{
-				Animation@ anim = icon.addAnimation("display", 0, false);
+				Animation @anim = icon.addAnimation("display", 0, false);
 				anim.AddFrame(7);
 
 				icon.SetOffset(Vec2f(-2, 1));
 				icon.SetRelativeZ(1);
 			}
 			this.getSprite().SetAnimation("label");
-
-
 		}
-		
-		if ( packed == "dinghy")	 // HACK:
+
+		if (packed == "dinghy") // HACK:
 		{
-			CSpriteLayer@ icon = this.getSprite().addSpriteLayer("icon", "/MiniIcons.png" , 16, 16, this.getTeamNum(), -1);
+			CSpriteLayer @icon = this.getSprite().addSpriteLayer("icon", "/MiniIcons.png", 16, 16, this.getTeamNum(), -1);
 			if (icon !is null)
 			{
-				Animation@ anim = icon.addAnimation("display", 0, false);
+				Animation @anim = icon.addAnimation("display", 0, false);
 				anim.AddFrame(10);
 
 				icon.SetOffset(Vec2f(-2, 1));
 				icon.SetRelativeZ(1);
 			}
 			this.getSprite().SetAnimation("label");
+		}
 
-
-		}		
-
-		if ( packed == "tank")	 // HACK:
+		if (packed == "tank") // HACK:
 		{
-			CSpriteLayer@ icon = this.getSprite().addSpriteLayer("icon", "/MiniIcons.png" , 16, 16, this.getTeamNum(), -1);
+			CSpriteLayer @icon = this.getSprite().addSpriteLayer("icon", "/MiniIcons.png", 16, 16, this.getTeamNum(), -1);
 			if (icon !is null)
 			{
-				Animation@ anim = icon.addAnimation("display", 0, false);
+				Animation @anim = icon.addAnimation("display", 0, false);
 				anim.AddFrame(11);
 
 				icon.SetOffset(Vec2f(-2, 1));
 				icon.SetRelativeZ(1);
 			}
 			this.getSprite().SetAnimation("label");
-
-
 		}
 
-		if ( packed == "caravel")	 // HACK:
+		if (packed == "caravel") // HACK:
 		{
-			CSpriteLayer@ icon = this.getSprite().addSpriteLayer("icon", "/MiniIcons.png" , 16, 16, this.getTeamNum(), -1);
+			CSpriteLayer @icon = this.getSprite().addSpriteLayer("icon", "/MiniIcons.png", 16, 16, this.getTeamNum(), -1);
 			if (icon !is null)
 			{
-				Animation@ anim = icon.addAnimation("display", 0, false);
+				Animation @anim = icon.addAnimation("display", 0, false);
 				anim.AddFrame(18);
 
 				icon.SetOffset(Vec2f(-2, 1));
 				icon.SetRelativeZ(1);
 			}
 			this.getSprite().SetAnimation("label");
-
-
 		}
 
-		if ( packed == "zeppelin")	 // HACK:
+		if (packed == "zeppelin") // HACK:
 		{
-			CSpriteLayer@ icon = this.getSprite().addSpriteLayer("icon", "/MiniIcons.png" , 16, 16, this.getTeamNum(), -1);
+			CSpriteLayer @icon = this.getSprite().addSpriteLayer("icon", "/MiniIcons.png", 16, 16, this.getTeamNum(), -1);
 			if (icon !is null)
 			{
-				Animation@ anim = icon.addAnimation("display", 0, false);
+				Animation @anim = icon.addAnimation("display", 0, false);
 				anim.AddFrame(19);
 
 				icon.SetOffset(Vec2f(-2, 1));
 				icon.SetRelativeZ(1);
 			}
 			this.getSprite().SetAnimation("label");
-
-
 		}
 
-		if ( packed == "mage")	 // HACK:
+		if (packed == "mage") // HACK:
 		{
-			CSpriteLayer@ icon = this.getSprite().addSpriteLayer("icon", "/MiniIcons.png" , 16, 16, this.getTeamNum(), -1);
+			CSpriteLayer @icon = this.getSprite().addSpriteLayer("icon", "/MiniIcons.png", 16, 16, this.getTeamNum(), -1);
 			if (icon !is null)
 			{
-				Animation@ anim = icon.addAnimation("display", 0, false);
+				Animation @anim = icon.addAnimation("display", 0, false);
 				anim.AddFrame(20);
 
 				icon.SetOffset(Vec2f(-2, 1));
 				icon.SetRelativeZ(1);
 			}
 			this.getSprite().SetAnimation("label");
+		}
 
-
-		}		
-		
-		if ( packed == "bison")	 // HACK:
+		if (packed == "bison") // HACK:
 		{
-			CSpriteLayer@ icon = this.getSprite().addSpriteLayer("icon", "/MiniIcons.png" , 16, 16, this.getTeamNum(), -1);
+			CSpriteLayer @icon = this.getSprite().addSpriteLayer("icon", "/MiniIcons.png", 16, 16, this.getTeamNum(), -1);
 			if (icon !is null)
 			{
-				Animation@ anim = icon.addAnimation("display", 0, false);
+				Animation @anim = icon.addAnimation("display", 0, false);
 				anim.AddFrame(21);
 
 				icon.SetOffset(Vec2f(-2, 1));
 				icon.SetRelativeZ(1);
 			}
 			this.getSprite().SetAnimation("label");
-
-
 		}
-				if ( packed == "fshark")	 // HACK:
+		if (packed == "fshark") // HACK:
 		{
-			CSpriteLayer@ icon = this.getSprite().addSpriteLayer("icon", "/MiniIcons.png" , 16, 16, this.getTeamNum(), -1);
+			CSpriteLayer @icon = this.getSprite().addSpriteLayer("icon", "/MiniIcons.png", 16, 16, this.getTeamNum(), -1);
 			if (icon !is null)
 			{
-				Animation@ anim = icon.addAnimation("display", 0, false);
+				Animation @anim = icon.addAnimation("display", 0, false);
 				anim.AddFrame(22);
 
 				icon.SetOffset(Vec2f(-2, 1));
 				icon.SetRelativeZ(1);
 			}
 			this.getSprite().SetAnimation("label");
-
-
 		}
 
-		if ( packed == "mounted_bazooka")	 // HACK:
+		if (packed == "mounted_bazooka") // HACK:
 		{
-			CSpriteLayer@ icon = this.getSprite().addSpriteLayer("icon", "/MiniIcons.png" , 16, 16, this.getTeamNum(), -1);
+			CSpriteLayer @icon = this.getSprite().addSpriteLayer("icon", "/MiniIcons.png", 16, 16, this.getTeamNum(), -1);
 			if (icon !is null)
 			{
-				Animation@ anim = icon.addAnimation("display", 0, false);
+				Animation @anim = icon.addAnimation("display", 0, false);
 				anim.AddFrame(23);
 
 				icon.SetOffset(Vec2f(-2, 1));
 				icon.SetRelativeZ(1);
 			}
 			this.getSprite().SetAnimation("label");
-
-
 		}
-		
 	}
 
 	const uint unpackSecs = 3;
@@ -339,11 +308,11 @@ void onInit(CBlob@ this)
 	this.getSprite().SetZ(-10.0f);
 }
 
-void onTick(CBlob@ this)
+void onTick(CBlob @ this)
 {
 	// parachute
 
-	if (this.hasTag("parachute"))		// wont work with the tick frequency
+	if (this.hasTag("parachute")) // wont work with the tick frequency
 	{
 		if (this.getSprite().getSpriteLayer("parachute") is null)
 		{
@@ -388,7 +357,7 @@ void onTick(CBlob@ this)
 	}
 }
 
-void Land(CBlob@ this)
+void Land(CBlob @ this)
 {
 	this.Untag("parachute");
 	HideParachute(this);
@@ -406,12 +375,12 @@ void Land(CBlob@ this)
 	}
 }
 
-bool doesCollideWithBlob(CBlob@ this, CBlob@ blob)
+bool doesCollideWithBlob(CBlob @ this, CBlob @blob)
 {
 	return !blob.hasTag("parachute");
 }
 
-bool isInventoryAccessible(CBlob@ this, CBlob@ forBlob)
+bool isInventoryAccessible(CBlob @ this, CBlob @forBlob)
 {
 	if (this.hasTag("unpackall"))
 		return false;
@@ -429,14 +398,14 @@ bool isInventoryAccessible(CBlob@ this, CBlob@ forBlob)
 	return (!hasSomethingPacked(this));
 }
 
-void GetButtonsFor(CBlob@ this, CBlob@ caller)
+void GetButtonsFor(CBlob @ this, CBlob @caller)
 {
 	Vec2f buttonpos(0, 0);
 	/*if (this.getInventory().getItemsCount() > 0 && this.getInventory().getItem(0) is caller)    // fix - iterate if more stuff in crate
 	{
-	    CBitStream params;
-	    params.write_u16( caller.getNetworkID() );
-	    caller.CreateGenericButton( 6, Vec2f(0,0), this, this.getCommandID("getout"), "Get out", params );
+		CBitStream params;
+		params.write_u16( caller.getNetworkID() );
+		caller.CreateGenericButton( 6, Vec2f(0,0), this, this.getCommandID("getout"), "Get out", params );
 	}
 	else*/
 	if (this.hasTag("unpackall"))
@@ -448,12 +417,12 @@ void GetButtonsFor(CBlob@ this, CBlob@ caller)
 
 		string msg = "Can't unpack " + this.get_string("packed name");
 
-		//if (this.isAttached())
+		// if (this.isAttached())
 		//	msg += " while carrying it";
-		//else
+		// else
 		msg += " here";
 
-		CButton@ button = caller.CreateGenericButton(12, buttonpos, this, 0, msg);
+		CButton @button = caller.CreateGenericButton(12, buttonpos, this, 0, msg);
 		if (button !is null)
 		{
 			button.SetEnabled(false);
@@ -469,13 +438,13 @@ void GetButtonsFor(CBlob@ this, CBlob@ caller)
 	}
 	/*else if (this.getInventory().getItemsCount() == 0 && caller.getCarriedBlob() is null)
 	{
-	    CBitStream params;
-	    params.write_u16( caller.getNetworkID() );
-	    caller.CreateGenericButton( 4, Vec2f(0,0), this, this.getCommandID("getin"), "Get inside", params );
+		CBitStream params;
+		params.write_u16( caller.getNetworkID() );
+		caller.CreateGenericButton( 4, Vec2f(0,0), this, this.getCommandID("getin"), "Get inside", params );
 	}*/
 }
 
-void onCommand(CBlob@ this, u8 cmd, CBitStream @params)
+void onCommand(CBlob @ this, u8 cmd, CBitStream @params)
 {
 	if (cmd == this.getCommandID("unpack"))
 	{
@@ -499,27 +468,27 @@ void onCommand(CBlob@ this, u8 cmd, CBitStream @params)
 	}
 	/*else if (cmd == this.getCommandID("getin"))
 	{
-	    CBlob @caller = getBlobByNetworkID( params.read_u16() );
+		CBlob @caller = getBlobByNetworkID( params.read_u16() );
 
-	    if (caller !is null) {
-	        this.server_PutInInventory( caller );
-	    }
+		if (caller !is null) {
+			this.server_PutInInventory( caller );
+		}
 	} else if (cmd == this.getCommandID("getout"))
 	{
-	    CBlob @caller = getBlobByNetworkID( params.read_u16() );
+		CBlob @caller = getBlobByNetworkID( params.read_u16() );
 
-	    if (caller !is null) {
-	        this.server_PutOutInventory( caller );
-	    }
+		if (caller !is null) {
+			this.server_PutOutInventory( caller );
+		}
 	}*/
 }
 
-void Unpack(CBlob@ this)
+void Unpack(CBlob @ this)
 {
 	if (!getNet().isServer())
 		return;
-	
-	CBlob@ blob = server_CreateBlob(this.get_string("packed"), this.getTeamNum(), Vec2f_zero);
+
+	CBlob @blob = server_CreateBlob(this.get_string("packed"), this.getTeamNum(), Vec2f_zero);
 
 	// put on ground if not in water
 
@@ -541,7 +510,7 @@ void Unpack(CBlob@ this)
 		{
 			CBitStream params;
 			params.write_u16(blob.getNetworkID());
-			CBlob@ factory = getBlobByNetworkID(this.get_u16("msg blob"));
+			CBlob @factory = getBlobByNetworkID(this.get_u16("msg blob"));
 			if (factory !is null)
 			{
 				factory.SendCommand(factory.getCommandID("track blob"), params);
@@ -555,28 +524,28 @@ void Unpack(CBlob@ this)
 	this.server_Die();
 }
 
-bool isUnpacking(CBlob@ this)
+bool isUnpacking(CBlob @ this)
 {
 	return getGameTime() <= this.get_u32("unpack time");
 }
 
-void ShowParachute(CBlob@ this)
+void ShowParachute(CBlob @ this)
 {
-	CSprite@ sprite = this.getSprite();
-	CSpriteLayer@ parachute = sprite.addSpriteLayer("parachute",   32, 32);
+	CSprite @sprite = this.getSprite();
+	CSpriteLayer @parachute = sprite.addSpriteLayer("parachute", 32, 32);
 
 	if (parachute !is null)
 	{
-		Animation@ anim = parachute.addAnimation("default", 0, true);
+		Animation @anim = parachute.addAnimation("default", 0, true);
 		anim.AddFrame(4);
-		parachute.SetOffset(Vec2f(0.0f, - 17.0f));
+		parachute.SetOffset(Vec2f(0.0f, -17.0f));
 	}
 }
 
-void HideParachute(CBlob@ this)
+void HideParachute(CBlob @ this)
 {
-	CSprite@ sprite = this.getSprite();
-	CSpriteLayer@ parachute = sprite.getSpriteLayer("parachute");
+	CSprite @sprite = this.getSprite();
+	CSpriteLayer @parachute = sprite.getSpriteLayer("parachute");
 
 	if (parachute !is null && parachute.isVisible())
 	{
@@ -585,7 +554,7 @@ void HideParachute(CBlob@ this)
 	}
 }
 
-void onRemoveFromInventory(CBlob@ this, CBlob@ blob)
+void onRemoveFromInventory(CBlob @ this, CBlob @blob)
 {
 	// die on empty crate
 	if (!this.isInInventory() && this.getInventory().getItemsCount() == 0)
@@ -594,31 +563,31 @@ void onRemoveFromInventory(CBlob@ this, CBlob@ blob)
 	}
 }
 
-void onDie(CBlob@ this)
+void onDie(CBlob @ this)
 {
 	HideParachute(this);
 	this.getSprite().Gib();
 	Vec2f pos = this.getPosition();
 	Vec2f vel = this.getVelocity();
-	//custom gibs
+	// custom gibs
 	string fname = CFileMatcher("/Crate.png").getFirst();
 	for (int i = 0; i < 4; i++)
 	{
-		CParticle@ temp = makeGibParticle(fname, pos, vel + getRandomVelocity(90, 1 , 120), 9, 2 + i, Vec2f(16, 16), 2.0f, 20, "Sounds/material_drop.ogg", 0);
+		CParticle @temp = makeGibParticle(fname, pos, vel + getRandomVelocity(90, 1, 120), 9, 2 + i, Vec2f(16, 16), 2.0f, 20, "Sounds/material_drop.ogg", 0);
 	}
 }
 
-bool canUnpackHere(CBlob@ this)
+bool canUnpackHere(CBlob @ this)
 {
-	CMap@ map = getMap();
+	CMap @map = getMap();
 	Vec2f pos = this.getPosition();
 
 	Vec2f space = this.get_Vec2f(required_space);
 	Vec2f t_off = Vec2f(map.tilesize * 0.5f, map.tilesize * 0.5f);
 	Vec2f offsetPos = crate_getOffsetPos(this, map);
-	for (f32 step_x = 0.0f; step_x < space.x ; ++step_x)
+	for (f32 step_x = 0.0f; step_x < space.x; ++step_x)
 	{
-		for (f32 step_y = 0.0f; step_y < space.y ; ++step_y)
+		for (f32 step_y = 0.0f; step_y < space.y; ++step_y)
 		{
 			Vec2f temp = (Vec2f(step_x + 0.5, step_y + 0.5) * map.tilesize);
 			Vec2f v = offsetPos + temp;
@@ -633,7 +602,7 @@ bool canUnpackHere(CBlob@ this)
 	bool water = packed == "longboat" || packed == "warboat";
 	if (this.isAttached())
 	{
-		CBlob@ parent = this.getAttachments().getAttachedBlob("PICKUP", 0);
+		CBlob @parent = this.getAttachments().getAttachedBlob("PICKUP", 0);
 		if (parent !is null)
 		{
 			return ((!water && parent.isOnGround()) || (water && map.isInWater(parent.getPosition() + Vec2f(0.0f, 8.0f))));
@@ -644,12 +613,12 @@ bool canUnpackHere(CBlob@ this)
 	return (supported);
 }
 
-Vec2f crate_getOffsetPos(CBlob@ blob, CMap@ map)
+Vec2f crate_getOffsetPos(CBlob @blob, CMap @map)
 {
 	Vec2f halfSize = blob.get_Vec2f(required_space) * 0.5f;
 
 	Vec2f alignedWorldPos = map.getAlignedWorldPos(blob.getPosition() + Vec2f(0, -2)) + (Vec2f(0.5f, 0.0f) * map.tilesize);
-	Vec2f offsetPos = alignedWorldPos - Vec2f(halfSize.x , halfSize.y) * map.tilesize;
+	Vec2f offsetPos = alignedWorldPos - Vec2f(halfSize.x, halfSize.y) * map.tilesize;
 	return offsetPos;
 }
 
@@ -657,10 +626,11 @@ Vec2f crate_getOffsetPos(CBlob@ blob, CMap@ map)
 
 // render unpacking time
 
-void onRender(CSprite@ this)
+void onRender(CSprite @ this)
 {
-	CBlob@ blob = this.getBlob();
-	if (!(blob.exists("packed")) || blob.get_string("packed name").size() == 0) return;
+	CBlob @blob = this.getBlob();
+	if (!(blob.exists("packed")) || blob.get_string("packed name").size() == 0)
+		return;
 
 	Vec2f pos2d = blob.getScreenPos();
 	u32 gameTime = getGameTime();
@@ -680,17 +650,21 @@ void onRender(CSprite@ this)
 
 	if (blob.isAttached())
 	{
-		AttachmentPoint@ point = blob.getAttachments().getAttachmentPointByName("PICKUP");
+		AttachmentPoint @point = blob.getAttachments().getAttachmentPointByName("PICKUP");
 
-		CBlob@ holder = point.getOccupied();
+		CBlob @holder = point.getOccupied();
 
-		if (holder is null) { return; }
+		if (holder is null)
+		{
+			return;
+		}
 
-		CPlayer@ local = getLocalPlayer();
+		CPlayer @local = getLocalPlayer();
 		if (local !is null && local.getBlob() is holder)
 		{
-			CMap@ map = blob.getMap();
-			if (map is null) return;
+			CMap @map = blob.getMap();
+			if (map is null)
+				return;
 
 			Vec2f space = blob.get_Vec2f(required_space);
 			Vec2f offsetPos = crate_getOffsetPos(blob, map);
@@ -700,19 +674,18 @@ void onRender(CSprite@ this)
 			Vec2f aligned = getDriver().getScreenPosFromWorldPos(offsetPos);
 			GUI::DrawIcon("CrateSlots.png", 0, Vec2f(40, 32), aligned, zoom);
 
-			for (f32 step_x = 0.0f; step_x < space.x ; ++step_x)
+			for (f32 step_x = 0.0f; step_x < space.x; ++step_x)
 			{
-				for (f32 step_y = 0.0f; step_y < space.y ; ++step_y)
+				for (f32 step_y = 0.0f; step_y < space.y; ++step_y)
 				{
 					Vec2f temp = (Vec2f(step_x + 0.5, step_y + 0.5) * map.tilesize);
 					Vec2f v = offsetPos + temp;
 					if (map.isTileSolid(v))
 					{
-						GUI::DrawIcon("CrateSlots.png", 5, Vec2f(8, 8), aligned + (temp - Vec2f(0.5f, 0.5f)* map.tilesize) * 2 * zoom, zoom);
+						GUI::DrawIcon("CrateSlots.png", 5, Vec2f(8, 8), aligned + (temp - Vec2f(0.5f, 0.5f) * map.tilesize) * 2 * zoom, zoom);
 					}
 				}
 			}
 		}
 	}
-
 }

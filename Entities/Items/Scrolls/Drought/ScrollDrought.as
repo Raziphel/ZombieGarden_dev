@@ -4,21 +4,21 @@
 
 const int radius = 30;
 
-void onInit(CBlob@ this)
+void onInit(CBlob @ this)
 {
 	this.addCommandID("drought");
 
 	this.set_u32("drought_called", 0);
 }
 
-void GetButtonsFor(CBlob@ this, CBlob@ caller)
+void GetButtonsFor(CBlob @ this, CBlob @caller)
 {
 	CBitStream params;
 	params.write_u16(caller.getNetworkID());
 	caller.CreateGenericButton(11, Vec2f_zero, this, this.getCommandID("drought"), "Use this to dry up an orb of water.", params);
 }
 
-void onCommand(CBlob@ this, u8 cmd, CBitStream @params)
+void onCommand(CBlob @ this, u8 cmd, CBitStream @params)
 {
 	if (cmd == this.getCommandID("drought"))
 	{
@@ -29,9 +29,10 @@ void onCommand(CBlob@ this, u8 cmd, CBitStream @params)
 
 		bool acted = false;
 
-		CMap@ map = this.getMap();
+		CMap @map = this.getMap();
 
-		if (map is null) return;
+		if (map is null)
+			return;
 
 		Vec2f pos = this.getPosition();
 
@@ -54,7 +55,6 @@ void onCommand(CBlob@ this, u8 cmd, CBitStream @params)
 				}
 			}
 		}
-
 
 		if (acted)
 		{

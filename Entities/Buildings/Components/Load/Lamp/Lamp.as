@@ -14,20 +14,20 @@ class Lamp : Component
 		id = _id;
 	}
 
-	void Activate(CBlob@ this)
+	void Activate(CBlob @ this)
 	{
 		this.SetLight(true);
 		this.getSprite().SetFrameIndex(1);
 	}
 
-	void Deactivate(CBlob@ this)
+	void Deactivate(CBlob @ this)
 	{
 		this.SetLight(false);
 		this.getSprite().SetFrameIndex(0);
 	}
 }
 
-void onInit(CBlob@ this)
+void onInit(CBlob @ this)
 {
 	// used by BuilderHittable.as
 	this.Tag("builder always hit");
@@ -37,7 +37,7 @@ void onInit(CBlob@ this)
 
 	// used by KnightLogic.as
 	this.Tag("ignore sword");
-	
+
 	this.Tag("survivormechanism");
 
 	// used by TileBackground.as
@@ -51,9 +51,10 @@ void onInit(CBlob@ this)
 	this.SetLightColor(SColor(255, 255, 240, 171));
 }
 
-void onSetStatic(CBlob@ this, const bool isStatic)
+void onSetStatic(CBlob @ this, const bool isStatic)
 {
-	if(!isStatic || this.exists("component")) return;
+	if (!isStatic || this.exists("component"))
+		return;
 
 	const Vec2f POSITION = this.getPosition() / 8;
 	const u16 ANGLE = this.getAngleDegrees();
@@ -61,30 +62,31 @@ void onSetStatic(CBlob@ this, const bool isStatic)
 	Lamp component(POSITION, this.getNetworkID());
 	this.set("component", component);
 
-	if(getNet().isServer())
+	if (getNet().isServer())
 	{
-		MapPowerGrid@ grid;
-		if(!getRules().get("power grid", @grid)) return;
+		MapPowerGrid @grid;
+		if (!getRules().get("power grid", @grid))
+			return;
 
 		grid.setAll(
-		component.x,                        // x
-		component.y,                        // y
-		rotateTopology(ANGLE, TOPO_DOWN),   // input topology
-		TOPO_NONE,                          // output topology
-		INFO_LOAD,                          // information
-		0,                                  // power
-		component.id);                      // id
+			component.x,					  // x
+			component.y,					  // y
+			rotateTopology(ANGLE, TOPO_DOWN), // input topology
+			TOPO_NONE,						  // output topology
+			INFO_LOAD,						  // information
+			0,								  // power
+			component.id);					  // id
 	}
 
-	CSprite@ sprite = this.getSprite();
-	if(sprite !is null)
+	CSprite @sprite = this.getSprite();
+	if (sprite !is null)
 	{
-		const bool FACING = ANGLE < 180? false : true;
+		const bool FACING = ANGLE < 180 ? false : true;
 
 		sprite.SetZ(-55);
 		sprite.SetFacingLeft(FACING);
 
-		CSpriteLayer@ layer = sprite.addSpriteLayer("background", "Lamp.png", 16, 16);
+		CSpriteLayer @layer = sprite.addSpriteLayer("background", "Lamp.png", 16, 16);
 		layer.addAnimation("default", 0, false);
 		layer.animation.AddFrame(2);
 		layer.SetRelativeZ(-1);
@@ -92,7 +94,7 @@ void onSetStatic(CBlob@ this, const bool isStatic)
 	}
 }
 
-bool canBePickedUp(CBlob@ this, CBlob@ byBlob)
+bool canBePickedUp(CBlob @ this, CBlob @byBlob)
 {
 	return false;
 }

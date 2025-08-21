@@ -6,13 +6,13 @@
 
 // To add a new page;
 
-// 1) initialize a new BuildBlock array, 
+// 1) initialize a new BuildBlock array,
 // example:
 // BuildBlock[] my_page;
 // blocks.push_back(my_page);
 
-// 2) 
-// Add a new string to PAGE_NAME in 
+// 2)
+// Add a new string to PAGE_NAME in
 // BuilderInventory.as
 // this will be what you see in the caption
 // box below the menu
@@ -34,9 +34,9 @@
 const string blocks_property = "blocks";
 const string inventory_offset = "inventory offset";
 
-void addCommonBuilderBlocks(BuildBlock[][]@ blocks)
+void addCommonBuilderBlocks(BuildBlock[][] @blocks)
 {
-	CRules@ rules = getRules();
+	CRules @rules = getRules();
 	const bool CTF = rules.gamemode_name == "CTF";
 	const bool TTH = rules.gamemode_name == "TTH";
 	const bool SBX = rules.gamemode_name == "Sandbox";
@@ -82,7 +82,7 @@ void addCommonBuilderBlocks(BuildBlock[][]@ blocks)
 		BuildBlock b(0, "team_bridge", "$team_bridge$", "Trap Bridge\nEnemies fall through this.");
 		AddRequirement(b.reqs, "blob", "mat_wood", "Wood", 10);
 		blocks[0].push_back(b);
-	}	
+	}
 	{
 		BuildBlock b(0, "ladder", "$ladder$", "Ladder\nAnyone can climb it");
 		AddRequirement(b.reqs, "blob", "mat_wood", "Wood", 2);
@@ -97,7 +97,7 @@ void addCommonBuilderBlocks(BuildBlock[][]@ blocks)
 		BuildBlock b(0, "wooden_platform", "$wooden_platform$", "Wooden Platform\nOne way platform");
 		AddRequirement(b.reqs, "blob", "mat_wood", "Wood", 5);
 		blocks[0].push_back(b);
-	}	
+	}
 	{
 		BuildBlock b(0, "spikes", "$spikes$", "Spikes\nPlace on Stone Block\nfor Retracting Trap");
 		AddRequirement(b.reqs, "blob", "mat_stone", "Stone", 15);
@@ -109,23 +109,23 @@ void addCommonBuilderBlocks(BuildBlock[][]@ blocks)
 		AddRequirement(b.reqs, "blob", "mat_stone", "Stone", 25);
 		AddRequirement(b.reqs, "blob", "mat_gold", "Gold", 5);
 		blocks[0].push_back(b);
-	}	
+	}
 	{
-		BuildBlock b( 0, "woodtriangle", "$woodtriangle$", "Wooden Triangle" );
-		AddRequirement( b.reqs, "blob", "mat_wood", "Wood", 30 );
+		BuildBlock b(0, "woodtriangle", "$woodtriangle$", "Wooden Triangle");
+		AddRequirement(b.reqs, "blob", "mat_wood", "Wood", 30);
 		blocks[0].push_back(b);
 	}
 	{
-		BuildBlock b( 0, "stonetriangle", "$stonetriangle$", "Stone Triangle" );
-		AddRequirement( b.reqs, "blob", "mat_stone", "Stone", 20 );
+		BuildBlock b(0, "stonetriangle", "$stonetriangle$", "Stone Triangle");
+		AddRequirement(b.reqs, "blob", "mat_stone", "Stone", 20);
 		blocks[0].push_back(b);
 	}
-	{   // building
-		BuildBlock b( 0, "minibuilding", "$minibuilding$", "Mini Workshop\nStand in an open space\nand tap this button." );
-		AddRequirement( b.reqs, "blob", "mat_wood", "Wood", 25);
+	{ // building
+		BuildBlock b(0, "minibuilding", "$minibuilding$", "Mini Workshop\nStand in an open space\nand tap this button.");
+		AddRequirement(b.reqs, "blob", "mat_wood", "Wood", 25);
 		b.buildOnGround = true;
 		b.size.Set(16, 16);
-		blocks[0].push_back( b );
+		blocks[0].push_back(b);
 	}
 	{
 		BuildBlock b(0, "bonfire", "$fireplace$", "Bonfire\nFire heals all wounds.");
@@ -134,9 +134,9 @@ void addCommonBuilderBlocks(BuildBlock[][]@ blocks)
 		b.buildOnGround = true;
 		blocks[0].push_back(b);
 	}
-	
-	//components disabled due to rotation issues
-	
+
+	// components disabled due to rotation issues
+
 	/*
 	BuildBlock[] page_1;
 	blocks.push_back(page_1);
@@ -160,7 +160,7 @@ void addCommonBuilderBlocks(BuildBlock[][]@ blocks)
 		AddRequirement(b.reqs, "blob", "mat_stone", "Stone", 5);
 		AddRequirement(b.reqs, "blob", "mat_gold", "Gold", 1);
 		blocks[1].push_back(b);
-	}		
+	}
 	{
 		BuildBlock b(0, "junction", "$junction$", "Junction");
 		AddRequirement(b.reqs, "blob", "mat_stone", "Stone", 3);
@@ -330,6 +330,6 @@ void addCommonBuilderBlocks(BuildBlock[][]@ blocks)
 		AddRequirement(b.reqs, "blob", "mat_stone", "Stone", 1);
 		AddRequirement(b.reqs, "blob", "mat_gold", "Gold", 2);
 		blocks[3].push_back(b);
-	}	
+	}
 	*/
 }
