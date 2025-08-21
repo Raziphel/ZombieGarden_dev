@@ -16,6 +16,7 @@ void Config(ZombiesCore@ this)
         this.rules.set_f32("difficulty_bonus", 0.0f);
         this.rules.set_s32("last_wipe_day", -1);
         this.rules.set_s32("days_offset", 0);
+        this.rules.set_f32("finalDifficulty", 0.0f);
 
     // ----------------------------
     // Mob limits (hard caps)

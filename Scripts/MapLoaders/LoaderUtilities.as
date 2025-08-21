@@ -86,7 +86,7 @@ TileType server_onTileHit(CMap@ map, f32 damage, u32 index, TileType oldTileType
 			case CMap::tile_ironore_d2:
 			case CMap::tile_ironore_d3:
 			case CMap::tile_ironore_d4:{OnIronTileHit(map, index); return oldTileType + 1;}		
-			case CMap::tile_ironore_d5: { OnIronTileDestroyed(map, index); return CMap::tile_empty;}		
+			case CMap::tile_ironore_d5: { OnIronTileDestroyed(map, index); return CMap::tile_ground_back;}
 
 			//Coal Ore
 			case CMap::tile_coalore: {OnCoalTileHit(map, index); return CMap::tile_coalore_d0;}	
@@ -95,7 +95,7 @@ TileType server_onTileHit(CMap@ map, f32 damage, u32 index, TileType oldTileType
 			case CMap::tile_coalore_d2:
 			case CMap::tile_coalore_d3:
 			case CMap::tile_coalore_d4:{OnCoalTileHit(map, index); return oldTileType + 1;}		
-			case CMap::tile_coalore_d5: { OnCoalTileDestroyed(map, index); return CMap::tile_empty;}		
+			case CMap::tile_coalore_d5: { OnCoalTileDestroyed(map, index); return CMap::tile_ground_back;}
 
 			//Copper Ore
 			case CMap::tile_copperore: {OnCopperTileHit(map, index); return CMap::tile_copperore_d0;}	
@@ -104,7 +104,7 @@ TileType server_onTileHit(CMap@ map, f32 damage, u32 index, TileType oldTileType
 			case CMap::tile_copperore_d2:
 			case CMap::tile_copperore_d3:
 			case CMap::tile_copperore_d4:{OnCopperTileHit(map, index); return oldTileType + 1;}		
-			case CMap::tile_copperore_d5: { OnCopperTileDestroyed(map, index); return CMap::tile_empty;}	
+			case CMap::tile_copperore_d5: { OnCopperTileDestroyed(map, index); return CMap::tile_ground_back;}
 
 			//BLOOD DIRT
 			case CMap::tile_littlebloodground:
