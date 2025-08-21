@@ -25,11 +25,14 @@ void Config(ZombiesCore@ this)
 	this.rules.set_s32("max_zombies",     250);   // standard zombies
 	this.rules.set_s32("max_pzombies",    25);    // portal-spawned zombies
 	this.rules.set_s32("max_migrantbots", 4);     // migrants
-	this.rules.set_s32("max_wraiths",     20);
-	this.rules.set_s32("max_gregs",       10);
-	this.rules.set_s32("max_imol",        5);
-	this.rules.set_s32("max_digger",      5);
-	this.rules.set_s32("max_bison",       8);
+        this.rules.set_s32("max_wraiths",     20);
+        this.rules.set_s32("max_gregs",       10);
+        this.rules.set_s32("max_imol",        5);
+        this.rules.set_s32("max_digger",      5);
+        this.rules.set_s32("max_bison",       8);
+        this.rules.set_s32("max_banshees",    6);
+        this.rules.set_s32("max_horror",      8);
+        this.rules.set_s32("max_gasbags",     10);
 
 	// ----------------------------
 	// Win/Loss pacing
@@ -75,6 +78,8 @@ void RefreshMobCountsToRules()
     // by exact blob name (bossy/specials we sometimes check directly)
     getBlobsByName("zombieportal", @a); getRules().set_s32("num_zombiePortals", a.length); a.clear();
     getBlobsByName("horror",       @a); getRules().set_s32("num_horror",        a.length); a.clear();
+    getBlobsByName("pbanshee",     @a); getRules().set_s32("num_banshees",     a.length); a.clear();
+    getBlobsByName("gasbag",       @a); getRules().set_s32("num_gasbags",      a.length); a.clear();
     getBlobsByName("abomination",  @a); getRules().set_s32("num_abom",          a.length); a.clear();
     getBlobsByName("immolator",    @a); getRules().set_s32("num_immol",         a.length); a.clear();
     getBlobsByName("digger",       @a); getRules().set_s32("num_digger",        a.length); a.clear();
