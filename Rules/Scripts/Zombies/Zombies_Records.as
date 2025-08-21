@@ -1,7 +1,7 @@
 #define SERVER_ONLY
 
-// store records outside of the scripts directory like Zombies_Reborn
-const string records_file = "../Cache/ZombieRecords.cfg";
+// store records outside of the scripts directory
+const string records_file = "Cache/ZombieRecords.cfg";
 
 u16 getDaysSurvived(CRules @rules)
 {
@@ -84,32 +84,32 @@ void onTick(CRules @ this)
 		}
 	}
 
-       const u16 days = getDaysSurvived(this);
-       this.set_u16("day_number", days);
+	const u16 days = getDaysSurvived(this);
+	this.set_u16("day_number", days);
 
-       // update the stored record as soon as a new day is survived
-       if (!this.get_bool("dayCheated"))
-       {
-               bool newRecord = false;
-               if (days > this.get_u16("map_record"))
-               {
-                       this.set_u16("map_record", days);
-                       newRecord = true;
-               }
-               if (days > this.get_u16("global_record"))
-               {
-                       this.set_u16("global_record", days);
-                       newRecord = true;
-               }
-               if (newRecord)
-               {
-                       SaveRecords(this);
-                       this.Sync("map_record", true);
-                       this.Sync("global_record", true);
-                       if (days > 1)
-                               getNet().server_SendMsg("New survival record: " + days + " day(s)");
-               }
-       }
+	// update the stored record as soon as a new day is survived
+	if (!this.get_bool("dayCheated"))
+	{
+		bool newRecord = false;
+		if (days > this.get_u16("map_record"))
+		{
+			this.set_u16("map_record", days);
+			newRecord = true;
+		}
+		if (days > this.get_u16("global_record"))
+		{
+			this.set_u16("global_record", days);
+			newRecord = true;
+		}
+		if (newRecord)
+		{
+			SaveRecords(this);
+			this.Sync("map_record", true);
+			this.Sync("global_record", true);
+			if (days > 1)
+				getNet().server_SendMsg("New survival record: " + days + " day(s)");
+		}
+	}
 }
 
 void onStateChange(CRules @ this, const u8 oldState)
@@ -119,33 +119,33 @@ void onStateChange(CRules @ this, const u8 oldState)
 		if (!this.get_bool("records_saved"))
 		{
 			this.set_bool("records_saved", true);
-                       const u32 kills = this.get_u32("undead_kills");
-                       if (!this.get_bool("dayCheated"))
-                       {
-                               u32 mapKillRec = this.get_u32("map_kill_record");
-                               u32 globKillRec = this.get_u32("global_kill_record");
-                               bool newKillRecord = false;
+			const u32 kills = this.get_u32("undead_kills");
+			if (!this.get_bool("dayCheated"))
+			{
+				u32 mapKillRec = this.get_u32("map_kill_record");
+				u32 globKillRec = this.get_u32("global_kill_record");
+				bool newKillRecord = false;
 
-                               if (kills > mapKillRec)
-                               {
-                                       this.set_u32("map_kill_record", kills);
-                                       newKillRecord = true;
-                               }
-                               if (kills > globKillRec)
-                               {
-                                       this.set_u32("global_kill_record", kills);
-                                       newKillRecord = true;
-                               }
+				if (kills > mapKillRec)
+				{
+					this.set_u32("map_kill_record", kills);
+					newKillRecord = true;
+				}
+				if (kills > globKillRec)
+				{
+					this.set_u32("global_kill_record", kills);
+					newKillRecord = true;
+				}
 
-                               SaveRecords(this);
-                               this.Sync("map_record", true);
-                               this.Sync("global_record", true);
-                               this.Sync("map_kill_record", true);
-                               this.Sync("global_kill_record", true);
+				SaveRecords(this);
+				this.Sync("map_record", true);
+				this.Sync("global_record", true);
+				this.Sync("map_kill_record", true);
+				this.Sync("global_kill_record", true);
 
-                               if (newKillRecord)
-                                       getNet().server_SendMsg("New kill record: " + kills);
-                       }
+				if (newKillRecord)
+					getNet().server_SendMsg("New kill record: " + kills);
+			}
 		}
 	}
 	else
