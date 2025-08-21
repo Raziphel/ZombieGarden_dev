@@ -13,6 +13,15 @@ SColor color_castle_backwall = SColor(0xff313412);
 SColor color_water = SColor(0xff2cafde);
 SColor color_fire = SColor(0xffd5543f);
 SColor color_iron = SColor(0xff977361);
+SColor color_copper = SColor(0xffd36910);
+SColor color_coal = SColor(0xff151716);
+SColor color_blood = SColor(0xffb73333);
+SColor color_blood_grass = SColor(0xff647814);
+
+bool inRange(const u16 tile, const u16 start, const u16 end)
+{
+        return tile >= start && tile <= end;
+}
 
 void CalculateMinimapColour( CMap@ map, u32 offset, TileType tile, SColor &out col)
 {
@@ -21,8 +30,8 @@ void CalculateMinimapColour( CMap@ map, u32 offset, TileType tile, SColor &out c
 
 	Vec2f pos = Vec2f(X, Y);
 
-	float ts = map.tilesize;
-	Tile ctile = map.getTile(pos * ts);
+        float ts = map.tilesize;
+        Tile currentTile = map.getTile(pos * ts);
 
 	bool show_gold = getRules().get_bool("show_gold");
 
@@ -52,51 +61,75 @@ void CalculateMinimapColour( CMap@ map, u32 offset, TileType tile, SColor &out c
 	{ 
 		col = color_wood;
 	} 
-	else if (map.isTileCastle(tile))      
-	{ 
-		col = color_castle;
-	} 
-	else if (map.isTileBackgroundNonEmpty(ctile) && !map.isTileGrass(tile)) {
-		
-		// TODO(hobey): maybe check if there's a door/platform on this backwall and make a custom color for them?
-		if (tile == CMap::tile_castle_back) 
-		{ 
-			col = color_castle_backwall;
-		} 
-		else if (tile == CMap::tile_wood_back)   
-		{ 
-			col = color_wood_backwall;
-		} 
-		else                                     
-		{ 
-			col = color_dirt_backwall;
-		}
-		
-	} 
-	else 
-	{
-		col = color_sky;
-	}
-	
-	///Tint the map based on Fire/Water State
-	if (map.isInWater( pos * ts ))
-	{
-		col = col.getInterpolated(color_water,0.5f);
-	}
-	else if (map.isInFire( pos * ts ))
-	{
-		col = col.getInterpolated(color_fire,0.5f);
-	}
+        else if (map.isTileCastle(tile))
+        {
+                col = color_castle;
+        }
+        // custom tiles
+        else if (inRange(tile, CMap::tile_goldenbrick, CMap::tile_goldenbrick_d7) ||
+                 inRange(tile, CMap::tile_goldbackwall, CMap::tile_goldbackwall_d6))
+        {
+                col = color_gold;
+        }
+        else if (inRange(tile, CMap::tile_ironbrick, CMap::tile_ironbrick_d11) ||
+                 inRange(tile, CMap::tile_ironbackwall, CMap::tile_ironbackwall_d6) ||
+                 inRange(tile, CMap::tile_ironore, CMap::tile_ironore_d8))
+        {
+                col = color_iron;
+        }
+        else if (inRange(tile, CMap::tile_copperore, CMap::tile_copperore_d5))
+        {
+                col = color_copper;
+        }
+        else if (inRange(tile, CMap::tile_coalore, CMap::tile_coalore_d5))
+        {
+                col = color_coal;
+        }
+        else if (inRange(tile, CMap::tile_littlebloodground, CMap::tile_heapsbloodground_d3))
+        {
+                col = color_blood;
+        }
+        else if (inRange(tile, CMap::tile_littlebloodgrassground, CMap::tile_heapsbloodgrassground_d0) ||
+                 inRange(tile, CMap::tile_littlebloodgrass, CMap::tile_heapsbloodgrass_d2))
+        {
+                col = color_blood_grass;
+        }
+        else if (inRange(tile, CMap::tile_grass_onesidebackground, CMap::tile_grass_onesidebackground_d3) ||
+                 inRange(tile, CMap::tile_grass_fullbackground1, CMap::tile_grass_3sidesbackground_d3))
+        {
+                col = color_dirt_backwall;
+        }
+        else if (map.isTileBackgroundNonEmpty(currentTile) && !map.isTileGrass(tile))
+        {
+                // TODO(hobey): maybe check if there's a door/platform on this backwall and make a custom color for them?
+                if (tile == CMap::tile_castle_back)
+                {
+                        col = color_castle_backwall;
+                }
+                else if (tile == CMap::tile_wood_back)
+                {
+                        col = color_wood_backwall;
+                }
+                else
+                {
+                        col = color_dirt_backwall;
+                }
 
-	///Custom Colors
-	if (tile == CMap::tile_ironbrick) 
-	{ 
-		col = color_iron;
-	} 
-	else if (tile == CMap::tile_goldenbrick)   
-	{ 
-		col = color_gold;
-	} 
+        }
+        else
+        {
+                col = color_sky;
+        }
+	
+        ///Tint the map based on Fire/Water State
+        if (map.isInWater( pos * ts ))
+        {
+                col = col.getInterpolated(color_water,0.5f);
+        }
+        else if (map.isInFire( pos * ts ))
+        {
+                col = col.getInterpolated(color_fire,0.5f);
+        }
 
 }
 
