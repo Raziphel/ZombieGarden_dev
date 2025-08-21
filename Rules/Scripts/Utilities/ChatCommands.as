@@ -8,7 +8,7 @@
 //#include "RPC_War.as";
 #include "RulesCore.as";
 #include "Core/Structs.as";
-#include "WeatherSystem.as";
+shared void TriggerStorm(CRules@ this, const string &in blobname);
 
 bool onServerProcessChat( CRules@ this, const string& in text_in, string& out text_out, CPlayer@ player )
 {
@@ -196,10 +196,20 @@ bool onServerProcessChat( CRules@ this, const string& in text_in, string& out te
     {
         getMap().server_setFloodWaterWorldspace(blob.getPosition(),true);
     }
-	else if (text_in == "!seed")
-	{
-		// crash prevention
-	}
+    else if (text_in == "!storm" && player.isMod())
+    {
+        TriggerStorm(this, "rain");
+        return false;
+    }
+    else if (text_in == "!hellfire" && player.isMod())
+    {
+        TriggerStorm(this, "hellfire");
+        return false;
+    }
+        else if (text_in == "!seed")
+        {
+                // crash prevention
+        }
     else if (text_in == "!killme")
     {
         blob.server_Hit( blob, blob.getPosition(), Vec2f(0,0), 4.0f, 0);

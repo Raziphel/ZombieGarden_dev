@@ -75,7 +75,7 @@ class ZombiesCore : RulesCore
         const int dayNumber         = days_offset + ((getGameTime() - gamestart) / getTicksASecond() / day_cycle) + 1;
 
         const int timeElapsed  = getGameTime() - gamestart;
-        const int ignore_light = (hardmode_day - ((days_offset / 14) * 10));
+        const bool hardmode    = (dayNumber >= hardmode_day);
 
 		// quick player team pass (used for max_undead)
 		int num_survivors_p = 0;
@@ -279,9 +279,9 @@ class ZombiesCore : RulesCore
 				const int _num_di = rules.get_s32("num_digger");
 				const int _max_di = rules.get_s32("max_digger");
 
-				const bool canSpawnNow =
-					   (dayNumber >= ignore_light && _num_z < max_zombies)
-					|| (rules.hasTag("night")     && _num_z < max_zombies);
+                                const bool canSpawnNow =
+                                        (hardmode || rules.hasTag("night"))
+                                        && (_num_z < max_zombies);
 
 				if (canSpawnNow)
 				{
