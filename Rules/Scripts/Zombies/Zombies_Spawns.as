@@ -312,9 +312,9 @@ class ZombiesSpawns : RespawnSystem
 			}
 		}
 
-		Zombies_core.rules.set_u8(propname, 255);
-		Zombies_core.rules.SyncToPlayer(propname,
-										getPlayerByUsername(info.username));
+                Zombies_core.rules.set_u16(propname, 65535);
+                Zombies_core.rules.SyncToPlayer(propname,
+                                                                                getPlayerByUsername(info.username));
 
 		info.can_spawn_time = 0;
 	}
