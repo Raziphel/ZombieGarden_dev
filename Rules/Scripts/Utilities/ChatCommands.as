@@ -221,24 +221,39 @@ bool onServerProcessChat( CRules@ this, const string& in text_in, string& out te
             print("["+blob.getName()+" " + blob.getNetworkID() + "] ");            
         }
     }
-	else if (text_in == "!nokeg" && isMe)
-	{
-		CMap@ map = blob.getMap();
-		CBlob@[] blobs;
-		map.getBlobsInRadius(blob.getPosition(), 99999, @blobs);
+    else if (text_in == "!nokeg" && isMe)
+    {
+        CMap@ map = blob.getMap();
+        CBlob@[] blobs;
+        map.getBlobsInRadius(blob.getPosition(), 99999, @blobs);
 
-		for (uint i = 0; i < blobs.length; i++)
-		{
-			CBlob@ hit_blob = blobs[i];
-			printf("Name:"+hit_blob.getName());
-			if (hit_blob.getName() == "keg") {
-				hit_blob.server_Die();
-			}
+        for (uint i = 0; i < blobs.length; i++)
+        {
+            CBlob@ hit_blob = blobs[i];
+            printf("Name:"+hit_blob.getName());
+            if (hit_blob.getName() == "keg")
+            {
+                hit_blob.server_Die();
+            }
+        }
+        return false;
+    }
+    else if (text_in == "!endruins" && isMe)
+    {
+        // Destroy all ruinstorch blobs to force the round to end
+        CBlob@[] torches;
+        getBlobsByName("ruinstorch", @torches);
 
-			
-		}
-		return false;
-	} 
+        for (uint i = 0; i < torches.length; i++)
+        {
+            CBlob@ torch = torches[i];
+            if (torch !is null)
+            {
+                torch.server_Die();
+            }
+        }
+        return false;
+    }
     else if (text_in.substr(0,1) == "!")
     {
         // check if we have tokens
