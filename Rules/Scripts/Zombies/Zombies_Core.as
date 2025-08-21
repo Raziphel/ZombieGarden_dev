@@ -162,6 +162,7 @@ class ZombiesCore : RulesCore
         if (finalDifficulty < 0.0f) finalDifficulty = 0.0f;
         if (finalDifficulty > 20.0f) finalDifficulty = 20.0f; // expanded cap
         rules.set_f32("difficulty", finalDifficulty);
+        rules.set_f32("finalDifficulty", finalDifficulty);
 
         int spawnRate = 90 - int(finalDifficulty * 3);
         if (spawnRate < 15) spawnRate = 15;

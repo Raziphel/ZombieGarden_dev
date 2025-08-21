@@ -26,9 +26,9 @@ int GetCurrentDay(CRules@ rules)
 	// Prefer HUD-provided day if present (snappier)
     if (rules.exists("hud_dayNumber"))
     {
-        // hud_dayNumber already includes any day offset; avoid double counting
-        const int d = rules.get_s32("hud_dayNumber");
-        return Maths::Max(1, d);
+	// hud_dayNumber already includes any day offset; avoid double counting
+	const int d = rules.get_s32("hud_dayNumber");
+	return Maths::Max(1, d);
     }
 
 	// Fallback: compute from time
@@ -41,21 +41,21 @@ int GetCurrentDay(CRules@ rules)
 // Consistent panel with soft border
 void DrawPanel(Vec2f tl, Vec2f br)
 {
-        GUI::DrawRectangle(tl, br, COL_BG);
-        GUI::DrawRectangle(tl, Vec2f(br.x, tl.y + 1), COL_BORDER);
-        GUI::DrawRectangle(Vec2f(tl.x, br.y - 1), br, COL_BORDER);
-        GUI::DrawRectangle(tl, Vec2f(tl.x + 1, br.y), COL_BORDER);
-        GUI::DrawRectangle(Vec2f(br.x - 1, tl.y), br, COL_BORDER);
+	GUI::DrawRectangle(tl, br, COL_BG);
+	GUI::DrawRectangle(tl, Vec2f(br.x, tl.y + 1), COL_BORDER);
+	GUI::DrawRectangle(Vec2f(tl.x, br.y - 1), br, COL_BORDER);
+	GUI::DrawRectangle(tl, Vec2f(tl.x + 1, br.y), COL_BORDER);
+	GUI::DrawRectangle(Vec2f(br.x - 1, tl.y), br, COL_BORDER);
 }
 
 // Helper to draw bold, centered titles
 void DrawTextCenteredBold(const string &in text, Vec2f pos, SColor color)
 {
-        GUI::DrawTextCentered(text, pos + Vec2f(-1, 0), color);
-        GUI::DrawTextCentered(text, pos + Vec2f(1, 0), color);
-        GUI::DrawTextCentered(text, pos + Vec2f(0, -1), color);
-        GUI::DrawTextCentered(text, pos + Vec2f(0, 1), color);
-        GUI::DrawTextCentered(text, pos, color);
+	GUI::DrawTextCentered(text, pos + Vec2f(-1, 0), color);
+	GUI::DrawTextCentered(text, pos + Vec2f(1, 0), color);
+	GUI::DrawTextCentered(text, pos + Vec2f(0, -1), color);
+	GUI::DrawTextCentered(text, pos + Vec2f(0, 1), color);
+	GUI::DrawTextCentered(text, pos, color);
 }
 
 // small helper for live player count by team
@@ -117,21 +117,21 @@ void onRender(CRules@ this)
 // behaviour.
 bool SafeGetSpawnSeconds(CRules@ rules, const string &in propname, u16 &out seconds)
 {
-        seconds = 0;
-        if (!rules.exists(propname)) return false;
+	seconds = 0;
+	if (!rules.exists(propname)) return false;
 
-        u16 candidate = rules.get_u16(propname);
+	u16 candidate = rules.get_u16(propname);
 
-        // Filter sentinels/garbage commonly used by scripts
-        // 255 is a common "not set" sentinel when stored as u8.
-        if (candidate == 255 || candidate == 65535) return false;
+	// Filter sentinels/garbage commonly used by scripts
+	// 255 is a common "not set" sentinel when stored as u8.
+	if (candidate == 255 || candidate == 65535) return false;
 
-        // Guard against nonsense (negative via wrap or way too large)
-        if (candidate > 3600) // 1h+ is unrealistic for revival seconds
-                return false;
+	// Guard against nonsense (negative via wrap or way too large)
+	if (candidate > 3600) // 1h+ is unrealistic for revival seconds
+	        return false;
 
-        seconds = candidate;
-        return true;
+	seconds = candidate;
+	return true;
 }
 
 
@@ -210,8 +210,8 @@ float DrawRecordStatus(CRules@ rules)
 
 	DrawPanel(tl, br);
 
-        DrawTextCenteredBold(title, Vec2f((tl.x + br.x) * 0.5f, tl.y + padY), COL_TITLE);
-        Vec2f cur = Vec2f(tl.x + padX, tl.y + padY + titleH + titleGap);
+	DrawTextCenteredBold(title, Vec2f((tl.x + br.x) * 0.5f, tl.y + padY), COL_TITLE);
+	Vec2f cur = Vec2f(tl.x + padX, tl.y + padY + titleH + titleGap);
 
 	for (uint i = 0; i < lines.length(); ++i)
 	{
@@ -240,15 +240,13 @@ float DrawZombiesHUDTopRight(CRules@ rules, const float topOffset = 0.0f)
 	const int   num_altars     = rules.get_s32("zombiealter");
 	const int   survivors      = CountTeamPlayers(0);
 	const int   undead         = rules.get_s32("num_undead");
-	const float difficulty     = rules.get_f32("difficulty");
-	const float diff_bonus     = rules.get_f32("difficulty_bonus");
-	const float diff_total     = difficulty + diff_bonus;
+	const float finalDifficulty = rules.get_f32("finalDifficulty");
 
 	array<string> lines;
 	lines.insertLast("Pillars: " + num_hands);
 	lines.insertLast("Survivors: " + survivors);
 	lines.insertLast("Undead: " + undead);
-        lines.insertLast("Difficulty: " + formatFloat(diff_total, "", 0, 1));
+	lines.insertLast("Difficulty: " + formatFloat(finalDifficulty, "", 0, 1));
 	lines.insertLast("Zombies: " + (num_zombies + num_pzombies) + "/" + max_zombies);
 	lines.insertLast("Altars Remaining: " + num_altars);
 
