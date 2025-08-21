@@ -1,6 +1,7 @@
 // ZombieDigCont.as
 // Tweaked for better downward digging: focused below, circular mask, only solid tiles,
-// and light FX throttling. AngelScript Vec2f has no LengthSquared(), so we use manual dsq.
+// light FX throttling and a target-check so zombies don't dig without a reason.
+// AngelScript Vec2f has no LengthSquared(), so we use manual dsq.
 
 //#include "Hitters.as";
 
@@ -13,18 +14,31 @@ void onInit(CBlob@ this)
 
 void onTick(CBlob@ this)
 {
-	if (!getNet().isServer())
-		return;
+        if (!getNet().isServer())
+                return;
 
-	CMap@ map = getMap();
-	if (map is null)
-		return;
+        CMap@ map = getMap();
+        if (map is null)
+                return;
 
-	const Vec2f pos = this.getPosition();
-	const f32 step = map.tilesize;                          // tile size in pixels
-	const f32 radius_px = this.get_f32("dig radius") * step;// radius in pixels
-	const f32 radius_sq = radius_px * radius_px;
-	const f32 dmg = this.get_f32("dig damage");
+        const Vec2f pos = this.getPosition();
+        const f32 step = map.tilesize;                          // tile size in pixels
+        const f32 radius_px = this.get_f32("dig radius") * step;// radius in pixels
+        const f32 radius_sq = radius_px * radius_px;
+        const f32 dmg = this.get_f32("dig damage");
+
+        // Don't blindly dig unless there's something worth chasing below
+        CBrain@ brain = this.getBrain();
+        if (brain !is null)
+        {
+                CBlob@ target = brain.getTarget();
+                if (target is null)
+                        return;
+
+                // Only dig when the target is actually below us
+                if (target.getPosition().y <= pos.y)
+                        return;
+        }
 
 	// Only target tiles below the blob's feet to bias "digging down"
 	// Nudge start a half-tile down so we don't chew our own headspace
@@ -33,7 +47,7 @@ void onTick(CBlob@ this)
 	// Convert radius to tile units for iteration bounds
 	const int r_tiles = Maths::Ceil(radius_px / step);
 
-	bool did_dig = false;
+        bool did_dig = false;
 
 	for (int tx = -r_tiles; tx <= r_tiles; ++tx)
 	{
