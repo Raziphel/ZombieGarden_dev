@@ -179,7 +179,6 @@ class ZombiesSpawns : RespawnSystem
 		u8 teamNum = p_info.team;
 		if (teamNum > 1)
 		{
-			// try to read from actual player if in an unexpected team
 			CPlayer@ player = getPlayerByUsername(p_info.username);
 			if (player !is null) teamNum = player.getTeamNum();
 		}
@@ -197,12 +196,38 @@ class ZombiesSpawns : RespawnSystem
 				}
 			}
 
-			// fallback: random "ruinstorch" spawn
+			// fallback: "ruinstorch" with the smallest Y (highest on map)
 			CBlob@[] spawns0;
 			getBlobsByName("ruinstorch", @spawns0);
 			if (spawns0.length > 0)
 			{
-				return spawns0[XORRandom(spawns0.length)].getPosition();
+				const f32 EPS = 0.1f;
+				f32 bestY = 1e9f;          // looking for min Y
+				CBlob@[] candidates;
+
+				for (uint i = 0; i < spawns0.length; i++)
+				{
+					CBlob@ b = spawns0[i];
+					if (b is null) continue;
+
+					const f32 y = b.getPosition().y;
+
+					if (y < bestY - EPS)
+					{
+						bestY = y;
+						candidates.clear();
+						candidates.push_back(b);
+					}
+					else if (Maths::Abs(y - bestY) <= EPS)
+					{
+						candidates.push_back(b);
+					}
+				}
+
+				if (candidates.length > 0)
+				{
+					return candidates[XORRandom(candidates.length)].getPosition();
+				}
 			}
 		}
 		else if (teamNum == 1)
@@ -214,7 +239,6 @@ class ZombiesSpawns : RespawnSystem
 			{
 				if (undeadstatues[i] !is null)
 				{
-					// particles are client-side; guard to avoid server-only contexts breaking
 					if (isClient())
 					{
 						ParticleZombieLightning(undeadstatues[i].getPosition());
