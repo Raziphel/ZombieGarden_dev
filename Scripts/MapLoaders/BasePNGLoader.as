@@ -15,7 +15,7 @@ const SColor color_zombie_portal (0xff6d12ef);
 const SColor color_zombie_ruins  (0xff2c1e40);
 const SColor color_zombie_alter  (0xff710d71);
 const SColor color_zombie_statue (0xffe42323);
-const SColor color_grave         (0xfff377d7);
+const SColor color_grave         (0xffacacac);
 
 // -----------------------------------------------
 
@@ -503,6 +503,7 @@ class PNGLoader
 		map.AddBackground("Sprites/Back/BackgroundPlains.png", Vec2f(0.0f, -40.0f),  Vec2f(0.06f, 20.0f),  color_white);
 		map.AddBackground("Sprites/Back/BackgroundTrees.png",  Vec2f(0.0f, -100.0f), Vec2f(0.18f, 70.0f),  color_white);
 		map.AddBackground("Sprites/Back/BackgroundIsland.png", Vec2f(0.0f, -220.0f), Vec2f(0.3f,  180.0f), color_white);
+		map.AddBackground("Sprites/Back/BackgroundCastle.png", Vec2f(0.0f, -220.0f), Vec2f(0.3f,  180.0f), color_white);
 
 		// fade in
 		SetScreenFlash(255, 0, 0, 0);

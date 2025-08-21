@@ -5,9 +5,9 @@ namespace custom_colors
 	enum color
 	{
  		//color_goldenbrick = 0xfffea01e, //(255, 254, 160, 30)
- 		color_ironore     = 0xff977361, 
+ 		color_ironore     = 0xff64483a, 
  		color_coalore     = 0xff151716, 
- 		color_copperore   = 0xffd36910, 
+ 		color_copperore   = 0xffd57d03, 
  		color_bloodground = 0xffb73333, 
  		color_bloodgrass  = 0xff647814, 
  	}
@@ -144,14 +144,16 @@ namespace CMap
 		tile_copperore_d3 	= 494,
 		tile_copperore_d4 	= 495,
 		tile_copperore_d5 	= 496,		
+		tile_copperore_d6 	= 497,		
 
-		tile_coalore          = 497,
-		tile_coalore_d0       = 498,
-		tile_coalore_d1       = 499,
-		tile_coalore_d2       = 500,
-		tile_coalore_d3       = 501,
-		tile_coalore_d4       = 502,
-		tile_coalore_d5       = 503,
+		tile_coalore          = 498,
+		tile_coalore_d0       = 499,
+		tile_coalore_d1       = 500,
+		tile_coalore_d2       = 501,
+		tile_coalore_d3       = 502,
+		tile_coalore_d4       = 503,
+		tile_coalore_d5       = 504,
+		tile_coalore_d6       = 505,
 
 	};
 };

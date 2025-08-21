@@ -116,7 +116,7 @@ class ZombiesCore : RulesCore
         float baseDifficulty = dayNumber * 0.16f;
 
         // adjustments based on world state
-        float modified = -0.3f;
+        float modified = 0.2f;
         modified += pillars     * 0.3f;                   // more pillars ease the round
         modified -= altars      * 0.5f;                   // intact altars reduce difficulty
         modified += survivors   * 0.05f;                  // more survivors hardens the waves

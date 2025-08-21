@@ -41,7 +41,7 @@ void onInit(CBlob@ this)
 		ShopItem@ s = addShopItem( this, "Dormitory", "$dorm$", "dorm", "Heal yourself and care for migrants." );
 		AddRequirement( s.requirements, "blob", "mat_wood", "Wood", 50 );
 		AddRequirement( s.requirements, "blob", "mat_stone", "Stone", 25 );
-		AddRequirement( s.requirements, "blob", "migrantbot", "Migrant", 1);
+		//AddRequirement( s.requirements, "blob", "migrantbot", "Migrant", 1);
 	}
 	{
 		ShopItem@ s = addShopItem( this, "Forge", "$forge$", "forge", "Smelt your ores into bars." );
