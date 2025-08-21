@@ -39,6 +39,15 @@ class ZombiesCore : RulesCore
 
         // seed counters once (single source of truth)
         RefreshMobCountsToRules();
+
+        // cache starting world state so difficulty begins at zero
+        float baseWorldMod = -0.3f;
+        baseWorldMod += rules.get_s32("num_ruinstorch") * 0.3f;
+        baseWorldMod -= rules.get_s32("num_alters") * 0.5f;
+        baseWorldMod += rules.get_s32("num_survivors") * 0.05f;
+        baseWorldMod -= rules.get_s32("num_undead") * 0.2f;
+        baseWorldMod += rules.get_s32("days_offset") * 0.1f;
+        rules.set_f32("base_world_mod", baseWorldMod);
     }
 
 	void Update()
@@ -58,11 +67,11 @@ class ZombiesCore : RulesCore
 		const int num_migrantbots   = rules.get_s32("num_migrantbots");
 		const int max_wraiths       = rules.get_s32("max_wraiths");
 		const int num_wraiths       = rules.get_s32("num_wraiths");
-		const int max_gregs         = rules.get_s32("max_gregs");
-		const int num_gregs         = rules.get_s32("num_gregs");
-		const int max_imol          = rules.get_s32("max_imol");
-		const int num_immol         = rules.get_s32("num_immol");
-		const int num_alters        = rules.get_s32("zombiealter");
+                const int max_gregs         = rules.get_s32("max_gregs");
+                const int num_gregs         = rules.get_s32("num_gregs");
+                const int max_imol          = rules.get_s32("max_imol");
+                const int num_immol         = rules.get_s32("num_immol");
+                const int num_alters        = rules.get_s32("num_alters");
 
 		// recompute simple derived values
         const int hardmode_day      = rules.get_s32("hardmode_day");
@@ -113,6 +122,10 @@ class ZombiesCore : RulesCore
         modified += survivors   * 0.05f;                  // more survivors hardens the waves
         modified -= undead      * 0.2f;                   // undead players make it tougher
         modified += days_offset * 0.1f;                 // manual day skips ups difficulty
+        if (rules.exists("base_world_mod"))
+        {
+            modified -= rules.get_f32("base_world_mod");   // normalize to starting state
+        }
 
         // persistent bonus from wipes (defaults to 0 if missing)
         float wipeBonus = rules.exists("difficulty_bonus") ? rules.get_f32("difficulty_bonus") : 0.0f;
