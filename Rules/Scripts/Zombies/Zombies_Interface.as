@@ -205,16 +205,16 @@ float DrawRecordStatus(CRules @rules)
 
 	// Neutral by default; highlight only when meaningful
 	lines.insertLast("Days Survived: " + days);
-	cols.push_back(COL_TEXT);
+	cols.push_back(COL_INFO);
+	lines.insertLast("Zombies Kills: " + undeadKills);
+	cols.push_back(COL_INFO);
 	lines.insertLast("Map Day Record: " + mapRecord);
 	cols.push_back(days > mapRecord ? COL_GOOD : COL_TEXT);
+	lines.insertLast("Map Kill Record: " + mapKillRecord);
+	cols.push_back(undeadKills > mapKillRecord ? COL_GOOD : COL_TEXT);
 	lines.insertLast("Global Day Record: " + globalRecord);
 	cols.push_back(days > globalRecord ? COL_GOOD : COL_TEXT);
-	lines.insertLast("Zombies Killed: " + undeadKills);
-	cols.push_back(COL_TEXT);
-	lines.insertLast("Map Killed Record: " + mapKillRecord);
-	cols.push_back(undeadKills > mapKillRecord ? COL_GOOD : COL_TEXT);
-	lines.insertLast("Global Killed Record: " + globalKillRec);
+	lines.insertLast("Global Kill Record: " + globalKillRec);
 	cols.push_back(undeadKills > globalKillRec ? COL_GOOD : COL_TEXT);
 
 	if (cheated)
