@@ -104,7 +104,7 @@ void onDie(CBlob@ this)
                 if (ruin is null) continue;
 
                 Vec2f pos = ruin.getPosition();
-                pos.x -= 2.0f;
+                pos.x += 1.0f;
                 pos.y += 16.0f;
                 server_CreateBlob("zombieportal", -1, pos);
             }

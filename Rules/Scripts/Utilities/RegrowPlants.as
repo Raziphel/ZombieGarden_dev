@@ -30,8 +30,8 @@ const f32 critter_radius_bison = 96.0f;  // big lad
 
 const f32 moss_stone_chance = 0.002f;
 
-// how many ticks has to pass before stone starts becoming mossy, 10 minutes = 30 * 60 * 10
-const u32 moss_time = 30 * 60 * 10;
+// how many ticks has to pass before stone starts becoming mossy, 20 minutes = 30 * 60 * 20
+const u32 moss_time = 30 * 60 * 20;
 
 // which tiles should turn into moss
 // tile from castle_stuff will turn into a corresponding tile from castle_moss_stuff
