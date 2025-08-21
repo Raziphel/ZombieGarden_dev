@@ -240,13 +240,13 @@ float DrawZombiesHUDTopRight(CRules@ rules, const float topOffset = 0.0f)
 	const int   num_altars     = rules.get_s32("zombiealter");
 	const int   survivors      = CountTeamPlayers(0);
 	const int   undead         = rules.get_s32("num_undead");
-	const float finalDifficulty = rules.get_f32("finalDifficulty");
+        const float difficulty = rules.get_f32("difficulty");
 
 	array<string> lines;
 	lines.insertLast("Pillars: " + num_hands);
 	lines.insertLast("Survivors: " + survivors);
 	lines.insertLast("Undead: " + undead);
-	lines.insertLast("Difficulty: " + formatFloat(finalDifficulty, "", 0, 1));
+        lines.insertLast("Difficulty: " + formatFloat(difficulty, "", 0, 1));
 	lines.insertLast("Zombies: " + (num_zombies + num_pzombies) + "/" + max_zombies);
 	lines.insertLast("Altars Remaining: " + num_altars);
 
