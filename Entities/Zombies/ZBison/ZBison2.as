@@ -21,9 +21,10 @@ void onInit(CBlob@ this)
 
 	this.set_f32("gib health", -3.5f);
     this.Tag("flesh");
+	this.Tag("bisons");
 	
-        this.getCurrentScript().runFlags |= Script::tick_not_attached;
-        this.getCurrentScript().removeIfTag = "dead";
+    this.getCurrentScript().runFlags |= Script::tick_not_attached;
+    this.getCurrentScript().removeIfTag = "dead";
 }
 
 void onTick( CBlob@ this )

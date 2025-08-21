@@ -25,18 +25,19 @@ void Config(ZombiesCore@ this)
 	this.rules.set_s32("max_zombies",     250);   // standard zombies
 	this.rules.set_s32("max_pzombies",    25);    // portal-spawned zombies
 	this.rules.set_s32("max_migrantbots", 4);     // migrants
-	this.rules.set_s32("max_wraiths",     15);
+	this.rules.set_s32("max_wraiths",     20);
 	this.rules.set_s32("max_gregs",       10);
-	this.rules.set_s32("max_imol",        10);
+	this.rules.set_s32("max_imol",        5);
 	this.rules.set_s32("max_digger",      5);
+	this.rules.set_s32("max_bison",       8);
 
 	// ----------------------------
 	// Win/Loss pacing
 	// ----------------------------
-	this.rules.set_s32("days_to_survive", 0);          // <= 0 means endless
-    this.rules.set_s32("curse_day",        250);       // night(s) from which survivors can auto-zombify
-    this.rules.set_s32("hardmode_day",     100);       // the day zombies can spawn during the day
-    this.rules.set_bool("ruins_portal_active", false); // ruins become portals once a pillar falls
+	this.rules.set_s32("days_to_survive", 0);           // <= 0 means endless
+    this.rules.set_s32("curse_day",        250);        // night(s) from which survivors can auto-zombify
+    this.rules.set_s32("hardmode_day",     100);        // the day zombies can spawn during the day
+    this.rules.set_bool("ruins_portal_active", false);  // ruins become portals once a pillar falls
     this.rules.Sync("ruins_portal_active", false);      // If ruins have spawned portals or not.
 
 	// ----------------------------
@@ -67,6 +68,7 @@ void RefreshMobCountsToRules()
 	getBlobsByTag("migrantbot", @a); getRules().set_s32("num_migrantbots",   a.length); a.clear();
 	getBlobsByTag("wraiths",    @a); getRules().set_s32("num_wraiths",       a.length); a.clear();
 	getBlobsByTag("gregs",      @a); getRules().set_s32("num_gregs",         a.length); a.clear();
+	getBlobsByTag("bisons",     @a); getRules().set_s32("num_bisons",        a.length); a.clear();
     getBlobsByTag("ruinstorch", @a); getRules().set_s32("num_ruinstorch",    a.length); a.clear();
 
 
