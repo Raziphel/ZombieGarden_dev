@@ -2,8 +2,9 @@
 
 void onInit(CBlob @ this)
 {
-	this.set_u32("last teleport", 0);
-	this.set_bool("teleport ready", true);
+        this.set_u32("last teleport", 0);
+        this.set_bool("teleport ready", true);
+        this.addCommandID("teleport");
 }
 
 void onTick(CBlob @ this)
@@ -18,9 +19,11 @@ void onTick(CBlob @ this)
 			Vec2f delta = this.getPosition() - this.getAimPos();
 			if (delta.Length() < TELEPORT_DISTANCE)
 			{
-				this.set_u32("last teleport", gametime);
-				this.set_bool("teleport ready", false);
-				SummonElemental(this, this.getAimPos());
+                                this.set_u32("last teleport", gametime);
+                                this.set_bool("teleport ready", false);
+                                CBitStream params;
+                                params.write_Vec2f(this.getAimPos());
+                                this.SendCommand(this.getCommandID("teleport"), params);
 			}
 			else if (this.isMyPlayer())
 			{
@@ -44,6 +47,15 @@ void onTick(CBlob @ this)
 			this.getSprite().PlaySound("/Cooldown1.ogg");
 		}
 	}
+}
+
+void onCommand(CBlob @ this, u8 cmd, CBitStream @params)
+{
+        if (cmd == this.getCommandID("teleport"))
+        {
+                Vec2f aimpos = params.read_Vec2f();
+                SummonElemental(this, aimpos);
+        }
 }
 
 void SummonElemental(CBlob @ this, Vec2f aimpos)
