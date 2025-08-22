@@ -174,7 +174,7 @@ array<BossEntry @> BuildBossTable()
 		b.weight = 2;
 		b.names = {"horror"};
 		b.counts = {5};
-		b.popup = banner + "5x Horror\n16 Hearts • Spawns 3 zombies on death";
+		b.popup = "BOSS WAVE\n\n5x Horror\n16 Hearts • Spawns 3 zombies on death";
 		b.color = SColor(255, 255, 80, 40);
 		b.popupTicks = 12 * getTicksASecond();
 		b.sound = "/FanfareLose.ogg";
@@ -218,7 +218,7 @@ array<BossEntry @> BuildBossTable()
 		b.weight = 1;
 		b.names = {"digger"};
 		b.counts = {3};
-		b.popup = "BOSS WAVE\n\n2x Diggers\nFlying blades that rip through walls";
+		b.popup = "BOSS WAVE\n\n3x Diggers\nFlying blades that rip through walls";
 		b.color = SColor(255, 255, 0, 0);
 		b.popupTicks = 10 * getTicksASecond();
 		b.sound = "/dontyoudare.ogg";

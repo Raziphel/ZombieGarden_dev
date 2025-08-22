@@ -23,8 +23,6 @@ void onInit(CBlob @ this)
 	this.Tag("fire source");
 	this.getSprite().SetZ(-20.0f);
 
-	this.set_u8("migrants max", 1);
-
 	this.getShape().SetRotationsAllowed(false);
 
 	// this.addCommandID("extinguish");

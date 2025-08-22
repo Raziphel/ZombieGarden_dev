@@ -14,8 +14,6 @@ void onInit(CBlob @ this)
 	addTargetInfo(infos, "stone_door", 0.9f);
 	addTargetInfo(infos, "wooden_door", 0.9f);
 	addTargetInfo(infos, "survivorbuilding", 0.6f, true);
-	addTargetInfo(infos, "pet", 0.9f, true);
-	addTargetInfo(infos, "lantern", 0.9f);
 
 	this.set("target infos", infos);
 
@@ -43,7 +41,7 @@ void onInit(CBlob @ this)
 	this.set_f32("explosive_damage", 7.0f);
 	this.set_string("custom_explosion_sound", "Entities/Items/Explosives/KegExplosion.ogg");
 	this.set_f32("map_damage_radius", 64.0f);
-	this.set_f32("map_damage_ratio", 1f);
+	this.set_f32("map_damage_ratio", 1.0f);
 	this.set_bool("map_damage_raycast", true);
 	this.set_bool("explosive_teamkill", false);
 	//
