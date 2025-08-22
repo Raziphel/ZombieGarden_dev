@@ -115,10 +115,10 @@ void onInit(CBlob @ this)
 		AddRequirement(s.requirements, "blob", "mat_stone", "Stone", 50);
 	}
 	{
-		ShopItem @s = addShopItem(this, "Forge", "$forge$", "forge", "Smelt your ores into bars.");
+		ShopItem @s = addShopItem(this, "Scroll Shop", "$scrollshop$", "scrollshop", "Buy scrolls with your soul shards.");
 		AddRequirement(s.requirements, "blob", "mat_wood", "Wood", 100);
-		AddRequirement(s.requirements, "blob", "mat_stone", "Stone", 200);
-		AddRequirement(s.requirements, "blob", "mat_coal", "Coal", 100);
+		AddRequirement(s.requirements, "blob", "mat_stone", "Stone", 100);
+		AddRequirement(s.requirements, "blob", "mat_gold", "Gold", 100);
 	}
 }
 

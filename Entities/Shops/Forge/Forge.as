@@ -21,11 +21,11 @@ void onInit(CBlob @ this)
 
 	// getMap().server_SetTile(this.getPosition(), CMap::tile_castle_back);
 
-	AddIconToken("$mat_copperingot$", "../Resources/Material/Materials.png", Vec2f(16, 16), 51);
-	AddIconToken("$mat_ironingot$", "../Resources/IronIngot/MaterialIronIngot.png", Vec2f(16, 16), 1);
-	AddIconToken("$mat_steelingot$", "../Resources/SteelIngot/MaterialSteelIngot.png", Vec2f(16, 16), 1);
+	AddIconToken("$mat_copperingot$", "../Resources/Material/Materials.png", Vec2f(16, 16), 41);
+	AddIconToken("$mat_ironingot$", "../Resources/IronIngot/MaterialIronIngot.png", Vec2f(16, 16), 3);
+	AddIconToken("$mat_steelingot$", "../Resources/SteelIngot/MaterialSteelIngot.png", Vec2f(16, 16), 3);
 
-	this.set_Vec2f("shop offset", Vec2f(0, 1));
+	this.set_Vec2f("shop offset", Vec2f(0, 0));
 	this.set_Vec2f("shop menu size", Vec2f(5, 2));
 	this.set_string("shop description", "Forge");
 	this.set_u8("shop icon", 15);

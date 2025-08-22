@@ -183,10 +183,19 @@ void addCommonBuilderBlocks(BuildBlock[][] @blocks)
 		blocks[0].push_back(b);
 	}
 	{
-		BuildBlock b(0, "fireplace", "$fireplace$", "fireplace\nOnly gives light!.");
+		BuildBlock b(0, "fireplace", "$fireplace$", "Fireplace\nOnly gives light!.");
 		AddRequirement(b.reqs, "blob", "mat_stone", "Stone", 75);
 		AddRequirement(b.reqs, "blob", "mat_wood", "Wood", 75);
 		b.buildOnGround = true;
+		blocks[0].push_back(b);
+	}
+	{
+		BuildBlock b(0, "forge", "$forge$", "Forge\nSmelt your ores into bars.");
+		AddRequirement(b.reqs, "blob", "mat_wood", "Wood", 100);
+		AddRequirement(b.reqs, "blob", "mat_stone", "Stone", 100);
+		AddRequirement(b.reqs, "blob", "mat_coal", "Coal", 50);
+		b.buildOnGround = true;
+		b.size.Set(24, 24);
 		blocks[0].push_back(b);
 	}
 
