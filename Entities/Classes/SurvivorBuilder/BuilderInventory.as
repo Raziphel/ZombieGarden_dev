@@ -38,17 +38,17 @@ const string[] PAGE_NAME =
 const u8 GRID_SIZE = 48;
 const u8 GRID_PADDING = 12;
 
+// Default menu size. Height is adjusted dynamically based on
+// the number of blocks available on the current page so all
+// blocks are always visible.
 Vec2f MENU_SIZE(4, 6);
 const u32 SHOW_NO_BUILD_TIME = 90;
 
 void onInit(CInventory @ this)
 {
-	CBlob @blob = this.getBlob();
-	if (blob is null)
-		return;
-	bool gold_structures = getRules().get_bool("gold_structures");
-	if (gold_structures)
-		MENU_SIZE.y = 5;
+        CBlob @blob = this.getBlob();
+        if (blob is null)
+                return;
 
 	if (!blob.exists(blocks_property))
 	{
@@ -88,19 +88,22 @@ void MakeBlocksMenu(CInventory @ this, const Vec2f&in INVENTORY_CE)
 	if (blob is null)
 		return;
 
-	BuildBlock[][] @blocks;
-	blob.get(blocks_property, @blocks);
-	if (blocks is null)
-		return;
+        BuildBlock[][] @blocks;
+        blob.get(blocks_property, @blocks);
+        if (blocks is null)
+                return;
 
-	const Vec2f MENU_CE = Vec2f(0, MENU_SIZE.y * -GRID_SIZE - GRID_PADDING) + INVENTORY_CE;
+        const u8 PAGE = blob.get_u8("build page");
 
-	CGridMenu @menu = CreateGridMenu(MENU_CE, blob, MENU_SIZE, "Build");
-	if (menu !is null)
-	{
-		menu.deleteAfterClick = false;
+        // Ensure the menu has enough rows to display all blocks on the page
+        MENU_SIZE.y = Maths::Max(1.0f, Maths::Ceil(float(blocks[PAGE].length) / MENU_SIZE.x));
 
-		const u8 PAGE = blob.get_u8("build page");
+        const Vec2f MENU_CE = Vec2f(0, MENU_SIZE.y * -GRID_SIZE - GRID_PADDING) + INVENTORY_CE;
+
+        CGridMenu @menu = CreateGridMenu(MENU_CE, blob, MENU_SIZE, "Build");
+        if (menu !is null)
+        {
+                menu.deleteAfterClick = false;
 
 		for (u8 i = 0; i < blocks[PAGE].length; i++)
 		{
