@@ -5,8 +5,9 @@
 
 void onInit(CBlob @ this)
 {
-	this.set_u32("last teleport", 0);
-	this.set_bool("teleport ready", true);
+        this.set_u32("last teleport", 0);
+        this.set_bool("teleport ready", true);
+        this.addCommandID("force push");
 }
 
 void onTick(CBlob @ this)
@@ -21,9 +22,11 @@ void onTick(CBlob @ this)
 			Vec2f delta = this.getPosition() - this.getAimPos();
 			if (delta.Length() < TELEPORT_DISTANCE)
 			{
-				this.set_u32("last teleport", gametime);
-				this.set_bool("teleport ready", false);
-				ForcePush(this, this.getAimPos());
+                                this.set_u32("last teleport", gametime);
+                                this.set_bool("teleport ready", false);
+                                CBitStream params;
+                                params.write_Vec2f(this.getAimPos());
+                                this.SendCommand(this.getCommandID("force push"), params);
 			}
 			else if (this.isMyPlayer())
 			{
@@ -49,23 +52,36 @@ void onTick(CBlob @ this)
 	}
 }
 
+void onCommand(CBlob @ this, u8 cmd, CBitStream @params)
+{
+        if (cmd == this.getCommandID("force push"))
+        {
+                Vec2f aimpos = params.read_Vec2f();
+                ForcePush(this, aimpos);
+        }
+}
+
 void ForcePush(CBlob @blob, Vec2f aimpos)
 {
-	CMap @map = blob.getMap();
+        CMap @map = blob.getMap();
 
-	CBlob @[] blobs;
-	map.getBlobsInRadius(aimpos, 25.0f, @blobs);
+        CBlob @[] blobs;
+        map.getBlobsInRadius(aimpos, 25.0f, @blobs);
 
-	for (uint i = 0; i < blobs.length; i++)
-	{
-		CBlob @pushed_blob = blobs[i];
+        if (getNet().isServer())
+        {
+                for (uint i = 0; i < blobs.length; i++)
+                {
+                        CBlob @pushed_blob = blobs[i];
 
-		Vec2f vel = pushed_blob.getPosition() - aimpos;
-		vel.Normalize();
-		pushed_blob.AddForce(vel * 500.0f);
+                        Vec2f vel = pushed_blob.getPosition() - aimpos;
+                        vel.Normalize();
+                        pushed_blob.AddForce(vel * 500.0f);
 
-		SetKnocked(pushed_blob, 15);
-	}
-	ParticleAnimated("ForcePush.png", aimpos, Vec2f(0, 0), 0.0f, 1.0f, 2.5, 0.0f, false);
-	blob.getSprite().PlaySound("/ForcePush.ogg");
+                        SetKnocked(pushed_blob, 15);
+                }
+        }
+
+        ParticleAnimated("ForcePush.png", aimpos, Vec2f(0, 0), 0.0f, 1.0f, 2.5, 0.0f, false);
+        blob.getSprite().PlaySound("/ForcePush.ogg");
 }

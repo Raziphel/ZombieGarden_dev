@@ -330,12 +330,6 @@ f32 onHit(CBlob @ this, Vec2f worldPoint, Vec2f velocity, f32 damage, CBlob @hit
 
 	return damage;
 }
-
-void onHitMap(CBlob @ this, Vec2f worldPoint, Vec2f velocity, f32 damage, u8 customData)
-{
-	getMap().server_DestroyTile(worldPoint, damage, this);
-}
-
 void onAttach(CBlob @ this, CBlob @attached, AttachmentPoint @attachedPoint)
 {
 	this.getCurrentScript().runFlags &= ~Script::tick_not_sleeping;
