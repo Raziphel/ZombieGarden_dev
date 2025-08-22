@@ -14,22 +14,22 @@ void onTick(CBlob @ this)
 
 	if (ready)
 	{
-		if (this.isKeyJustPressed(key_action2))
-		{
-			Vec2f delta = this.getPosition() - this.getAimPos();
-			if (delta.Length() < TELEPORT_DISTANCE)
-			{
+                if (this.isKeyJustPressed(key_action2))
+                {
+                        Vec2f delta = this.getPosition() - this.getAimPos();
+                        if (delta.Length() < TELEPORT_DISTANCE)
+                        {
                                 this.set_u32("last teleport", gametime);
                                 this.set_bool("teleport ready", false);
                                 CBitStream params;
                                 params.write_Vec2f(this.getAimPos());
                                 this.SendCommand(this.getCommandID("teleport"), params);
-			}
-			else if (this.isMyPlayer())
-			{
-				Sound::Play("option.ogg");
-			}
-		}
+                        }
+                        else if (this.isMyPlayer())
+                        {
+                                Sound::Play("option.ogg");
+                        }
+                }
 	}
 	else
 	{
@@ -60,23 +60,24 @@ void onCommand(CBlob @ this, u8 cmd, CBitStream @params)
 
 void SummonElemental(CBlob @ this, Vec2f aimpos)
 {
-	CBlob @[] raven_blobs;
-	getBlobsByName("raven", @raven_blobs);
-	u8 num_raven = raven_blobs.length;
+        ParticleAnimated("MagicSmoke.png", this.getPosition(), Vec2f(0, 0), 0.0f, 1.0f, 1.5, -0.1f, false);
+        this.getSprite().PlaySound("Thunder2.ogg");
 
-	if (getNet().isServer())
-	{
-		if (num_raven < 1)
-		{
-			server_CreateBlob("raven", 0, this.getPosition());
-		}
-	}
+        if (getNet().isServer())
+        {
+                CBlob @[] raven_blobs;
+                getBlobsByName("raven", @raven_blobs);
+                u8 num_raven = raven_blobs.length;
 
-	// whoosh, teleport us
-	ParticleAnimated("MagicSmoke.png", this.getPosition(), Vec2f(0, 0), 0.0f, 1.0f, 1.5, -0.1f, false);
-	this.getSprite().PlaySound("Thunder2.ogg");
-	this.setPosition(aimpos);
-	this.setVelocity(Vec2f_zero);
-	ParticleAnimated("MagicSmoke.png", this.getPosition(), Vec2f(0, 0), 0.0f, 1.0f, 1.5, -0.1f, false);
-	this.getSprite().PlaySound("/Respawn.ogg");
+                if (num_raven < 1)
+                {
+                        server_CreateBlob("raven", 0, this.getPosition());
+                }
+
+                this.setPosition(aimpos);
+                this.setVelocity(Vec2f_zero);
+        }
+
+        ParticleAnimated("MagicSmoke.png", aimpos, Vec2f(0, 0), 0.0f, 1.0f, 1.5, -0.1f, false);
+        this.getSprite().PlaySound("/Respawn.ogg");
 }
