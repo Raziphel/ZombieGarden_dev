@@ -152,11 +152,10 @@ class ZombiesSpawns : RespawnSystem
 				RemovePlayerFromSpawn(player);
 				u8 blobfix = player.getTeamNum();
 
-				if (playerBlob.getTeamNum() != blobfix)
-				{
-					playerBlob.server_setTeamNum(blobfix);
-					warn("Team " + blobfix);
-				}
+                                if (playerBlob.getTeamNum() != blobfix)
+                                {
+                                        playerBlob.server_setTeamNum(blobfix);
+                                }
 			}
 		}
 	}
@@ -325,13 +324,13 @@ class ZombiesSpawns : RespawnSystem
 	{
 		getRules().Sync("gold_structures", true);
 
-		s32 tickspawndelay = 0;
+                s32 tickspawndelay = 0;
 
-		// optional: base spawn time from rules (seconds) -> ticks
-		s32 base_spawn_secs =
-			getRules().exists("spawn_time") ? getRules().get_s32("spawn_time") : 0;
-		if (base_spawn_secs < 0)
-			base_spawn_secs = 0;
+                // optional: base spawn time from rules (seconds) -> ticks
+                f32 base_spawn_secs =
+                        getRules().exists("spawn_time") ? getRules().get_f32("spawn_time") : 0.0f;
+                if (base_spawn_secs < 0.0f)
+                        base_spawn_secs = 0.0f;
 
 		if (player.getDeaths() != 0)
 		{
@@ -344,19 +343,19 @@ class ZombiesSpawns : RespawnSystem
 
 			int seconds_to_midday = (timeElapsed <= half_day) ? (half_day - timeElapsed) : (day_cycle - timeElapsed + half_day);
 
-			// cap at 30s, then add base spawn time
-			int final_secs = Maths::Min(60 * 30, seconds_to_midday) + base_spawn_secs;
-			if (final_secs < 0)
-				final_secs = 0;
+                        // cap at 30s, then add base spawn time
+                        f32 final_secs = Maths::Min(60 * 30, seconds_to_midday) + base_spawn_secs;
+                        if (final_secs < 0.0f)
+                                final_secs = 0.0f;
 
-			tickspawndelay = final_secs * getTicksASecond();
-		}
-		else
-		{
-			// first life; just use base spawn time if any
-			if (base_spawn_secs > 0)
-				tickspawndelay = base_spawn_secs * getTicksASecond();
-		}
+                        tickspawndelay = s32(final_secs * getTicksASecond());
+                }
+                else
+                {
+                        // first life; just use base spawn time if any
+                        if (base_spawn_secs > 0.0f)
+                                tickspawndelay = s32(base_spawn_secs * getTicksASecond());
+                }
 
 		CTFPlayerInfo @info = cast<CTFPlayerInfo @>(core.getInfoFromPlayer(player));
 		if (info is null)

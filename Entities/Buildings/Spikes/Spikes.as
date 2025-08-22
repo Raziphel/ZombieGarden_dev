@@ -119,10 +119,13 @@ void onTick(CBlob @ this)
 		temp.facing = none;
 		temp.onSurface = temp.placedOnStone = false;
 
-		tileCheck(this, map, pos + Vec2f(0.0f, tilesize), 0.0f, up, temp);
-		tileCheck(this, map, pos + Vec2f(-tilesize, 0.0f), 90.0f, right, temp);
-		tileCheck(this, map, pos + Vec2f(tilesize, 0.0f), -90.0f, left, temp);
-		tileCheck(this, map, pos + Vec2f(0.0f, -tilesize), 180.0f, down, temp);
+                tileCheck(this, map, pos + Vec2f(0.0f, tilesize), 0.0f, up, temp);
+                if (!temp.placedOnStone)
+                        tileCheck(this, map, pos + Vec2f(-tilesize, 0.0f), 90.0f, right, temp);
+                if (!temp.placedOnStone)
+                        tileCheck(this, map, pos + Vec2f(tilesize, 0.0f), -90.0f, left, temp);
+                if (!temp.placedOnStone)
+                        tileCheck(this, map, pos + Vec2f(0.0f, -tilesize), 180.0f, down, temp);
 
 		// unbox
 		facing = temp.facing;

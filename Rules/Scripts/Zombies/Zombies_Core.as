@@ -10,7 +10,7 @@ class ZombiesCore : RulesCore
 {
 	s32 warmUpTime;
 	s32 gameDuration;
-	s32 spawnTime;
+        f32 spawnTime;
 
 	ZombiesSpawns @Zombies_spawns;
 

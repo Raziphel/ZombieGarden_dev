@@ -46,6 +46,7 @@ u32 next_check_time = min_random_time;
 
 TileInfo @[] dirt_tiles;
 TileInfo @[] castle_tiles;
+CBlob@[] temp_blobs;
 
 class TileInfo
 {
@@ -88,12 +89,12 @@ class TileInfo
 			// to ignore min time restriction if tile is close to moss, otherwise you can prevent moss from spreading very very easily
 			if (mossyCastle)
 			{
-				TileInfo tinfo = castle_tiles[index];
+                                TileInfo@ tinfo = castle_tiles[index];
 
-				if (tinfo.place_time != 0) // prevent moss that was on the map since the beginning from spreading
-				{
-					return true;
-				}
+                                if (tinfo !is null && tinfo.place_time != 0) // prevent moss that was on the map since the beginning from spreading
+                                {
+                                        return true;
+                                }
 			}
 		}
 
@@ -157,9 +158,13 @@ void onInit(CRules @ this)
 	CMap @map = getMap();
 	if (map !is null)
 	{
-		// add fake tiles to the start of TileInfo arrays so if findTileByCoords returns 0 it doesn't refer to a tile we should've updated
-		dirt_tiles.insertLast(TileInfo(Vec2f(-1, -1), 0, map.getTile(Vec2f(0, 0))));
-		castle_tiles.insertLast(TileInfo(Vec2f(-1, -1), 0, map.getTile(Vec2f(0, 0))));
+                // pre-allocate to avoid repeated growth during initial fill
+                const u32 total_tiles = map.tilemapwidth * map.tilemapheight;
+                dirt_tiles.reserve(total_tiles);
+                castle_tiles.reserve(total_tiles);
+                // add fake tiles to the start of TileInfo arrays so if findTileByCoords returns 0 it doesn't refer to a tile we should've updated
+                dirt_tiles.insertLast(TileInfo(Vec2f(-1, -1), 0, map.getTile(Vec2f(0, 0))));
+                castle_tiles.insertLast(TileInfo(Vec2f(-1, -1), 0, map.getTile(Vec2f(0, 0))));
 		for (u32 x = 0; x < map.tilemapwidth; x++)
 		{
 			for (u32 y = 0; y < map.tilemapheight; y++)
@@ -257,16 +262,17 @@ u32 countBlobsByName(const string&in name)
 
 bool hasBlobNearby(const string&in name, Vec2f pos, f32 radius)
 {
-	CBlob @[] nearby;
-	if (getMap().getBlobsInRadius(pos, radius, nearby))
-	{
-		for (u16 i = 0; i < nearby.length; i++)
-		{
-			if (nearby[i] !is null && nearby[i].getName() == name)
-				return true;
-		}
-	}
-	return false;
+        temp_blobs.clear();
+        if (getMap().getBlobsInRadius(pos, radius, temp_blobs))
+        {
+                for (u16 i = 0; i < temp_blobs.length; i++)
+                {
+                        CBlob@ b = temp_blobs[i];
+                        if (b !is null && b.getName() == name)
+                                return true;
+                }
+        }
+        return false;
 }
 
 void trySpawnCritter(const string&in name, f32 chance, u8 global_cap, Vec2f groundPos, f32 radius)
@@ -297,13 +303,13 @@ void onTick(CRules @ this)
 		CMap @map = getMap();
 		f32 tilesize = map.tilesize;
 
-		for (int i = 1; i < dirt_tiles.size(); i++)
-		{
-			TileInfo tinfo = dirt_tiles[i];
-			if (tinfo is null)
-				return;
-			Vec2f pos_above = tinfo.coords - Vec2f(0, tilesize);
-			Tile tile_above = map.getTile(pos_above);
+                for (int i = 1; i < dirt_tiles.size(); i++)
+                {
+                        TileInfo@ tinfo = dirt_tiles[i];
+                        if (tinfo is null)
+                                continue;
+                        Vec2f pos_above = tinfo.coords - Vec2f(0, tilesize);
+                        Tile tile_above = map.getTile(pos_above);
 
 			if (tile_above.type == CMap::tile_empty || map.isTileGrass(tile_above.type))
 			{
@@ -328,29 +334,26 @@ void onTick(CRules @ this)
 
 				if (plant != -1)
 				{
-					CBlob @[] blobs;
-					bool near_plant = false;
+                                        bool near_plant = false;
+                                        temp_blobs.clear();
+                                        if (map.getBlobsInRadius(tinfo.coords, 8.0f, temp_blobs))
+                                        {
+                                                for (int a = 0; a < temp_blobs.size(); a++)
+                                                {
+                                                        CBlob@ blob = temp_blobs[a];
+                                                        if (blob !is null && plants_stuff.find(blob.getName()) != -1)
+                                                        {
+                                                                near_plant = true;
+                                                                break;
+                                                        }
+                                                }
+                                        }
 
-					if (map.getBlobsInRadius(tinfo.coords, 8.0f, blobs))
-					{
-						for (int a = 0; a < blobs.size(); a++)
-						{
-							CBlob @blob = blobs[a];
-							if (blob is null)
-								continue;
-							if (plants_stuff.find(blob.getName()) != -1) // don't double plant
-							{
-								near_plant = true;
-								break;
-							}
-						}
-					}
-
-					if (!near_plant)
-					{
-						server_CreateBlob(plants_stuff[plant], -1, pos_above);
-					}
-				}
+                                        if (!near_plant)
+                                        {
+                                                server_CreateBlob(plants_stuff[plant], -1, pos_above);
+                                        }
+                                }
 
 				// ---- Critters (spawn over ground with sky/grass above)
 				// safety: ensure the spawn location is reasonable
@@ -370,12 +373,14 @@ void onTick(CRules @ this)
 
 		if (moss_stone)
 		{
-			for (int i = 1; i < castle_tiles.size(); i++)
-			{
-				TileInfo tinfo = castle_tiles[i];
-				f32 random_grow = XORRandom(10000) * 0.0001f;
-				u32 ttype = castle_stuff.find(tinfo.tile.type);
-				f32 luck = tinfo.mossLuck();
+                        for (int i = 1; i < castle_tiles.size(); i++)
+                        {
+                                TileInfo@ tinfo = castle_tiles[i];
+                                if (tinfo is null)
+                                        continue;
+                                f32 random_grow = XORRandom(10000) * 0.0001f;
+                                u32 ttype = castle_stuff.find(tinfo.tile.type);
+                                f32 luck = tinfo.mossLuck();
 
 				if (ttype != -1)
 				{
