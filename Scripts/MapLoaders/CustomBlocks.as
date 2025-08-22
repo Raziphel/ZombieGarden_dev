@@ -126,33 +126,33 @@ namespace CMap
 		tile_ironbrick_d11 = 476,
 		tile_ironbrick_d12 = 477,
 
-                // adjust ore tile indices to match world.png
-                tile_ironore = 480,
-                tile_ironore_d0 = 481,
-                tile_ironore_d1 = 482,
-                tile_ironore_d2 = 483,
-                tile_ironore_d3 = 484,
-                tile_ironore_d4 = 485,
-                tile_ironore_d5 = 486,
-                tile_ironore_d6 = 487,
-                tile_ironore_d7 = 488,
-                tile_ironore_d8 = 489,
+		// adjust ore tile indices to match world.png
+		tile_ironore = 480,
+		tile_ironore_d0 = 481,
+		tile_ironore_d1 = 482,
+		tile_ironore_d2 = 483,
+		tile_ironore_d3 = 484,
+		tile_ironore_d4 = 485,
+		tile_ironore_d5 = 486,
+		tile_ironore_d6 = 487,
+		tile_ironore_d7 = 488,
+		tile_ironore_d8 = 489,
 
-                tile_copperore = 490,
-                tile_copperore_d0 = 491,
-                tile_copperore_d1 = 492,
-                tile_copperore_d2 = 493,
-                tile_copperore_d3 = 494,
-                tile_copperore_d4 = 495,
+		tile_copperore = 490,
+		tile_copperore_d0 = 491,
+		tile_copperore_d1 = 492,
+		tile_copperore_d2 = 493,
+		tile_copperore_d3 = 494,
+		tile_copperore_d4 = 495,
 
-                tile_coalore = 496,
-                tile_coalore_d0 = 497,
-                tile_coalore_d1 = 498,
-                tile_coalore_d2 = 499,
-                tile_coalore_d3 = 500,
-                tile_coalore_d4 = 501,
-                tile_coalore_d5 = 502,
-        };
+		tile_coalore = 496,
+		tile_coalore_d0 = 497,
+		tile_coalore_d1 = 498,
+		tile_coalore_d2 = 499,
+		tile_coalore_d3 = 500,
+		tile_coalore_d4 = 501,
+		tile_coalore_d5 = 502,
+	};
 };
 
 void HandleCustomTile(CMap @map, int offset, SColor pixel)
@@ -183,11 +183,11 @@ void HandleCustomTile(CMap @map, int offset, SColor pixel)
 			map.AddTileFlag(offset, Tile::SOLID | Tile::COLLISION);
 			break;
 
-               case custom_colors::color_bloodgrass:
-                       // place solid blood grass ground so it can be mined
-                       map.SetTile(offset, CMap::tile_mediumbloodgrassground);
-                       map.RemoveTileFlag(offset, Tile::LIGHT_SOURCE | Tile::LIGHT_PASSES);
-                       map.AddTileFlag(offset, Tile::SOLID | Tile::COLLISION);
-                       break;
-       }
+		case custom_colors::color_bloodgrass:
+			// place solid blood grass ground so it can be mined
+			map.SetTile(offset, CMap::tile_mediumbloodgrassground);
+			map.RemoveTileFlag(offset, Tile::LIGHT_SOURCE | Tile::LIGHT_PASSES);
+			map.AddTileFlag(offset, Tile::SOLID | Tile::COLLISION);
+			break;
+	}
 }
