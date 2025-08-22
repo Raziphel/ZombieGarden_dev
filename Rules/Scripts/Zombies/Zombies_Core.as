@@ -44,8 +44,8 @@ class ZombiesCore : RulesCore
 		// seed counters once (single source of truth)
 		RefreshMobCountsToRules();
 
-		// seed initial difficulty value
-		rules.set_f32("difficulty", 0.25f);
+               // seed initial difficulty value
+               rules.set_f32("difficulty", 0.1f);
 	}
 
         void Update()
@@ -165,20 +165,21 @@ class ZombiesCore : RulesCore
 			}
 		}
 
-		// final difficulty (apply cap after any bonus change)
-		// add a base value so negative modifiers don't stall early scaling
-		float difficulty = dayNumber * 0.5f;
-		difficulty += pillars * 0.2f;	  // pillars add pressure
-		difficulty -= altars * 0.2f;	  // altars ease the round
-		difficulty += survivors * 0.05f;  // more survivors harden the waves
-		difficulty -= undead * 0.2f;	  // undead players make it tougher
-		difficulty += days_offset * 0.1f; // manual day skips ups difficulty
-		difficulty += wipeBonus;
-		if (difficulty < 0.0f)
-			difficulty = 0.0f;
-		if (difficulty > 20.0f)
-			difficulty = 20.0f; // expanded cap
-		rules.set_f32("difficulty", difficulty);
+                // final difficulty (apply cap after any bonus change)
+                // baseline grows by 0.1 every day so altars can't stall scaling
+                const float baseDifficulty = dayNumber * 0.1f;
+                float difficulty = dayNumber * 0.5f;
+                difficulty += pillars * 0.2f;     // pillars add pressure
+                difficulty -= altars * 0.2f;      // altars ease the round
+                difficulty += survivors * 0.05f;  // more survivors harden the waves
+                difficulty -= undead * 0.2f;      // undead players make it tougher
+                difficulty += days_offset * 0.1f; // manual day skips ups difficulty
+                difficulty += wipeBonus;
+                if (difficulty < baseDifficulty)
+                        difficulty = baseDifficulty;
+                if (difficulty > 20.0f)
+                        difficulty = 20.0f; // expanded cap
+                rules.set_f32("difficulty", difficulty);
 
 		int spawnRate = 90 - int(difficulty * 3);
 		if (spawnRate < 15)
