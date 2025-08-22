@@ -14,9 +14,9 @@ void Config(ZombiesCore @ this)
 
 	// round-specific bookkeeping so values don't persist between rounds
 	this.rules.set_f32("difficulty_bonus", 0.0f);
-	this.rules.set_s32("last_wipe_day", -1);
-	this.rules.set_s32("days_offset", 0);
-	this.rules.set_f32("difficulty", 0.0f);
+       this.rules.set_s32("last_wipe_day", -1);
+       this.rules.set_s32("days_offset", 0);
+       this.rules.set_f32("difficulty", 0.1f);
 
 	// ----------------------------
 	// Mob limits (hard caps)
