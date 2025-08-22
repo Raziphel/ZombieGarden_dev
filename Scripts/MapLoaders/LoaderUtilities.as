@@ -6,36 +6,6 @@
 #include "ParticleSparks.as";
 
 
-// calculated surface height in world coordinates
-int g_surface_y = 0;
-
-void onInit(CMap@ map)
-{
-        // default to bottom of the map in case no ground is found
-        g_surface_y = map.tilemapheight * map.tilesize;
-
-        // scan from top to bottom for the first row that contains mostly ground tiles
-        for (int y = 0; y < map.tilemapheight; ++y)
-        {
-                int ground_tiles = 0;
-                for (int x = 0; x < map.tilemapwidth; ++x)
-                {
-                        Tile t = map.getTile(Vec2f(x * map.tilesize, y * map.tilesize));
-                        if (map.isTileGround(t.type))
-                        {
-                                ground_tiles++;
-                        }
-                }
-
-                // consider the surface the first row where more than half the tiles are ground
-                if (ground_tiles > map.tilemapwidth / 2)
-                {
-                        g_surface_y = y * map.tilesize;
-                        break;
-                }
-        }
-}
-
 bool onMapTileCollapse(CMap @map, u32 offset)
 {
 	if (isDummyTile(map.getTile(offset).type))
@@ -355,28 +325,17 @@ void onSetTile(CMap @map, u32 index, TileType tile_new, TileType tile_old)
 	//	break;
 	// }
 
-        // replace removed underground tiles with a dirt backwall
-        if (tile_new == CMap::tile_empty)
-        {
-                Vec2f world_pos = map.getTileWorldPosition(index);
-                if (world_pos.y > g_surface_y && (map.isTileStone(tile_old) || map.isTileWood(tile_old) || map.isTileCastle(tile_old) || map.isTileBackground(tile_old)))
-                {
-                        map.server_SetTile(index, CMap::tile_ground_back);
-                        return;
-                }
-        }
+	if (map.getTile(index).type == 23 || map.getTile(index).type == 24) // grassy ground not updating properly
+	{
+		map.SetTileSupport(index, 10);
+		{
+			map.RemoveTileFlag(index, Tile::BACKGROUND | Tile::LIGHT_SOURCE | Tile::LIGHT_PASSES);
+			map.AddTileFlag(index, Tile::SOLID | Tile::COLLISION);
 
-        if (map.getTile(index).type == 23 || map.getTile(index).type == 24) // grassy ground not updating properly
-        {
-                map.SetTileSupport(index, 10);
-                {
-                        map.RemoveTileFlag(index, Tile::BACKGROUND | Tile::LIGHT_SOURCE | Tile::LIGHT_PASSES);
-                        map.AddTileFlag(index, Tile::SOLID | Tile::COLLISION);
-
-                        if (XORRandom(2) == 0)
-                                map.AddTileFlag(index, Tile::MIRROR);
-                }
-        }
+			if (XORRandom(2) == 0)
+				map.AddTileFlag(index, Tile::MIRROR);
+		}
+	}
 
 	if (map.getTile(index).type > 255) // custom solids
 	{
