@@ -183,10 +183,11 @@ void HandleCustomTile(CMap @map, int offset, SColor pixel)
 			map.AddTileFlag(offset, Tile::SOLID | Tile::COLLISION);
 			break;
 
-		case custom_colors::color_bloodgrass:
-			map.SetTile(offset, CMap::tile_mediumbloodgrass);
-			map.RemoveTileFlag(offset, Tile::SOLID | Tile::COLLISION);
-			map.AddTileFlag(offset, Tile::BACKGROUND | Tile::LIGHT_SOURCE | Tile::LIGHT_PASSES | Tile::WATER_PASSES);
-			break;
-	}
+               case custom_colors::color_bloodgrass:
+                       // place solid blood grass ground so it can be mined
+                       map.SetTile(offset, CMap::tile_mediumbloodgrassground);
+                       map.RemoveTileFlag(offset, Tile::LIGHT_SOURCE | Tile::LIGHT_PASSES);
+                       map.AddTileFlag(offset, Tile::SOLID | Tile::COLLISION);
+                       break;
+       }
 }
