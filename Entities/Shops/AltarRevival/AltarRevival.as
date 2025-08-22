@@ -78,8 +78,9 @@ void onDie(CBlob @ this)
 	if (!getNet().isServer())
 		return;
 
-	// int r = XORRandom(2);
-	// if (r == 0)
-
-	server_CreateBlob("lifeforce", -1, this.getPosition());
+	int r = XORRandom(1);
+	if (r == 0)
+	{
+		server_CreateBlob("lifeforce", -1, this.getPosition());
+	}
 }

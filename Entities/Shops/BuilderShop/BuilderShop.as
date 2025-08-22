@@ -36,12 +36,12 @@ void onInit(CBlob @ this)
 	{
 		ShopItem @s = addShopItem(this, "Drill", "$drill$", "drill", descriptions[43], false);
 		AddRequirement(s.requirements, "blob", "mat_stone", "Stone", COST_STONE_DRILL);
-		AddRequirement(s.requirements, "blob", "mat_gold", "Gold", 20);
+		AddRequirement(s.requirements, "blob", "mat_ironingot", "Iron Ingot", 25);
 	}
 	{
 		ShopItem @s = addShopItem(this, "Chainsaw", "$chainsaw$", "chainsaw", "A modified drill, meant specially for tree chopping.", false);
 		AddRequirement(s.requirements, "blob", "mat_stone", "Stone", COST_STONE_DRILL);
-		AddRequirement(s.requirements, "blob", "mat_gold", "Gold", 10);
+		AddRequirement(s.requirements, "blob", "mat_ironingot", "Iron Ingot", 25);
 	}
 	{
 		ShopItem @s = addShopItem(this, "Trampoline", "$trampoline$", "trampoline", descriptions[30], false);
@@ -51,7 +51,7 @@ void onInit(CBlob @ this)
 		ShopItem @s = addShopItem(this, "Saw", "$saw$", "saw", descriptions[12], false);
 		AddRequirement(s.requirements, "blob", "mat_wood", "Wood", 100);
 		AddRequirement(s.requirements, "blob", "mat_stone", "Stone", 100);
-		AddRequirement(s.requirements, "blob", "mat_gold", "Gold", 100);
+		AddRequirement(s.requirements, "blob", "mat_ironingot", "Iron Ingot", 25);
 	}
 	{
 		ShopItem @s = addShopItem(this, "Sponge", "$sponge$", "sponge", descriptions[53], false);

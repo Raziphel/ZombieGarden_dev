@@ -35,16 +35,20 @@ void onInit(CBlob @ this)
 	this.set_u8("shop icon", 25);
 
 	{
-		ShopItem @s = addShopItem(this, "Beer", "$beer$", "beer", "Gotta unwind from killing zombies!", true);
-		AddRequirement(s.requirements, "coin", "", "Coins", 100);
-	}
-	{
 		ShopItem @s = addShopItem(this, "Burger", "$food$", "food", "A nice burger!.", true);
 		AddRequirement(s.requirements, "coin", "", "Coins", 50);
 	}
 	{
 		ShopItem @s = addShopItem(this, "Egg", "$egg$", "egg", "Hope it hatches!.", true);
 		AddRequirement(s.requirements, "coin", "", "Coins", 25);
+	}
+	{
+		ShopItem @s = addShopItem(this, "Beer", "$beer$", "beer", "Gotta unwind from killing zombies!", true);
+		AddRequirement(s.requirements, "coin", "", "Coins", 100);
+	}
+	{
+		ShopItem @s = addShopItem(this, "Vodka", "$vodka$", "vodka", "Gotta REALLY unwind from killing zombies!", true);
+		AddRequirement(s.requirements, "coin", "", "Coins", 200);
 	}
 }
 /*

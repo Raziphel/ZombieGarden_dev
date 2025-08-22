@@ -31,8 +31,6 @@ void MakeParticle(Vec2f pos)
 	if (raindrop is null)
 		return;
 
-	raindrop.AddDieFunction("RainEffects.as", "GrowGrass");
-
 	raindrop.Z = -100 + XORRandom(400);
 	raindrop.timeout = 30 + XORRandom(50);
 	raindrop.scale = 1.0f + (XORRandom(15) * 0.1f);

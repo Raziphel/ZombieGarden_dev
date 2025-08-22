@@ -3,7 +3,7 @@ const int TELEPORT_DISTANCE = 160;	   // getMap().tilesize;
 
 const int FIRE_FREQUENCY = 45;
 const f32 ORB_SPEED = 5.5f;
-const u8 ORB_LIMIT = 1;
+const u8 ORB_LIMIT = 3;
 const u32 ORB_BURST_COOLDOWN = 1 * 1; // 10 secs
 const float ORB_TIME_TO_DIE = 5.0f;
 

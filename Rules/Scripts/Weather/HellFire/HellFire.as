@@ -33,7 +33,7 @@ void onInit(CBlob @ this)
 	this.getCurrentScript().tickFrequency = 1;
 	this.getShape().SetRotationsAllowed(true);
 
-	getMap().CreateSkyGradient("skygradient.png");
+	getMap().CreateSkyGradient("skygradient_hellfire.png");
 
 	if (isServer())
 	{

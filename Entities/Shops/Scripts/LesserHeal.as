@@ -1,6 +1,6 @@
 void onInit(CBlob @ this)
 {
-	this.getCurrentScript().tickFrequency = 45;
+	this.getCurrentScript().tickFrequency = 60;
 }
 
 void onTick(CBlob @ this)

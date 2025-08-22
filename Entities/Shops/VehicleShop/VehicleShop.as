@@ -37,7 +37,7 @@ void onInit(CBlob @ this)
 		ShopItem @s = addShopItem(this, "Catapult", "$catapult$", "catapult", "$catapult$\n\n\n" + descriptions[5], false, true);
 		s.crate_icon = 4;
 		AddRequirement(s.requirements, "coin", "", "Coins", 200);
-		AddRequirement(s.requirements, "blob", "mat_gold", "Gold", 100);
+		AddRequirement(s.requirements, "blob", "mat_stone", "Stone", 200);
 	}
 	{
 		ShopItem @s = addShopItem(this, "Ballista", "$ballista$", "ballista", "$ballista$\n\n\n" + descriptions[6], false, true);
@@ -50,6 +50,7 @@ void onInit(CBlob @ this)
 		s.crate_icon = 11;
 		AddRequirement(s.requirements, "coin", "", "Coins", 750);
 		AddRequirement(s.requirements, "blob", "mat_gold", "Gold", 200);
+		AddRequirement(s.requirements, "blob", "mat_steelingot", "Steel Ingot", 100);
 	}
 	{
 		ShopItem @s = addShopItem(this, "Zeppelin", "$zeppelin$", "zeppelin", "Flying warship.", false, true);
@@ -90,7 +91,8 @@ void onInit(CBlob @ this)
 	{
 		ShopItem @s = addShopItem(this, "War Boat", "$warboat$", "warboat", "$warboat$\n\n\n" + descriptions[37], false, true);
 		AddRequirement(s.requirements, "coin", "", "Coins", 250);
-		AddRequirement(s.requirements, "blob", "mat_gold", "Gold", 100);
+		AddRequirement(s.requirements, "blob", "mat_stone", "Stone", 100);
+		AddRequirement(s.requirements, "blob", "mat_steelingot", "Steel Ingot", 100);
 		s.crate_icon = 2;
 	}
 	{

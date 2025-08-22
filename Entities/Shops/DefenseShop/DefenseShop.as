@@ -37,7 +37,7 @@ void onInit(CBlob @ this)
 	{
 		ShopItem @s = addShopItem(this, "Mounted Fireworks Bazooka", "$mounted_bazooka$", "mounted_bazooka", "For those explosive needs.", false, true);
 		AddRequirement(s.requirements, "coin", "", "Coins", 200);
-		AddRequirement(s.requirements, "blob", "mat_gold", "Gold", 20);
+		AddRequirement(s.requirements, "blob", "mat_steelingot", "Steel Ingot", 20);
 		s.crate_icon = 23;
 	}
 
@@ -53,12 +53,12 @@ void onInit(CBlob @ this)
 	{
 		ShopItem @s = addShopItem(this, "Panzerfaust", "$rocketlauncher$", "rocketlauncher", "Rocketjumps not included.", true);
 		AddRequirement(s.requirements, "coin", "", "Coins", 1500);
-		AddRequirement(s.requirements, "blob", "mat_gold", "Gold", 300);
+		AddRequirement(s.requirements, "blob", "mat_steelingot", "Steel Ingot", 100);
 	}
 	{
 		ShopItem @s = addShopItem(this, "Mega Saw", "$megasaw$", "megasaw", "The legend.", true);
 		AddRequirement(s.requirements, "coin", "", "Coins", 2500);
-		AddRequirement(s.requirements, "blob", "mat_gold", "Gold", 500);
+		AddRequirement(s.requirements, "blob", "mat_steelingot", "Steel Ingot", 100);
 	}
 }
 

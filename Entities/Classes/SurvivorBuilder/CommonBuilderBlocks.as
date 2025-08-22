@@ -45,21 +45,8 @@ void addCommonBuilderBlocks(BuildBlock[][] @blocks)
 	// main blocks
 	BuildBlock[] page_0;
 	blocks.push_back(page_0);
-	{
-		BuildBlock b(CMap::tile_castle, "stone_block", "$stone_block$", "Stone Block\nBasic building block");
-		AddRequirement(b.reqs, "blob", "mat_stone", "Stone", 10);
-		blocks[0].push_back(b);
-	}
-	{
-		BuildBlock b(CMap::tile_castle_back, "back_stone_block", "$back_stone_block$", "Back Stone Wall\nExtra support");
-		AddRequirement(b.reqs, "blob", "mat_stone", "Stone", 2);
-		blocks[0].push_back(b);
-	}
-	{
-		BuildBlock b(0, "stone_door", "$stone_door$", "Stone Door\nPlace next to walls");
-		AddRequirement(b.reqs, "blob", "mat_stone", "Stone", 40);
-		blocks[0].push_back(b);
-	}
+
+	// Wood
 	{
 		BuildBlock b(CMap::tile_wood, "wood_block", "$wood_block$", "Wood Block\nCheap block\nwatch out for fire!");
 		AddRequirement(b.reqs, "blob", "mat_wood", "Wood", 5);
@@ -76,8 +63,8 @@ void addCommonBuilderBlocks(BuildBlock[][] @blocks)
 		blocks[0].push_back(b);
 	}
 	{
-		BuildBlock b(0, "trap_block", "$trap_block$", "Trap Block\nOnly enemies can pass. Also good for wheeled vehicles.");
-		AddRequirement(b.reqs, "blob", "mat_stone", "Stone", 15);
+		BuildBlock b(0, "ladder", "$ladder$", "Ladder\nAnyone can climb it");
+		AddRequirement(b.reqs, "blob", "mat_wood", "Wood", 5);
 		blocks[0].push_back(b);
 	}
 	{
@@ -91,34 +78,24 @@ void addCommonBuilderBlocks(BuildBlock[][] @blocks)
 		blocks[0].push_back(b);
 	}
 	{
-		BuildBlock b(0, "iron_platform", "$iron_platform$", "Iron Platform\nStronger one way platform");
-		AddRequirement(b.reqs, "blob", "mat_ironingot", "Iron Ingot", 10);
-		blocks[0].push_back(b);
-	}
-	{
-		BuildBlock b(0, "ladder", "$ladder$", "Ladder\nAnyone can climb it");
-		AddRequirement(b.reqs, "blob", "mat_wood", "Wood", 5);
-		blocks[0].push_back(b);
-	}
-	{
-		BuildBlock b(0, "ironladder", "$ironladder$", "Iron Ladder\nMuch stronger ladder");
-		AddRequirement(b.reqs, "blob", "mat_ironingot", "Iron Ingot", 5);
-		blocks[0].push_back(b);
-	}
-	{
-		BuildBlock b(0, "spikes", "$spikes$", "Spikes\nPlace on Stone Block\nfor Retracting Trap");
-		AddRequirement(b.reqs, "blob", "mat_stone", "Stone", 30);
-		blocks[0].push_back(b);
-	}
-	{
-		BuildBlock b(0, "fire_trap_block", "$fire_trap_block$", "Fire Trap\nStay away from it.");
-		AddRequirement(b.reqs, "blob", "mat_stone", "Stone", 50);
-		AddRequirement(b.reqs, "blob", "mat_gold", "Gold", 10);
-		blocks[0].push_back(b);
-	}
-	{
 		BuildBlock b(0, "woodtriangle", "$woodtriangle$", "Wooden Triangle");
 		AddRequirement(b.reqs, "blob", "mat_wood", "Wood", 30);
+		blocks[0].push_back(b);
+	}
+	// Stone
+	{
+		BuildBlock b(CMap::tile_castle, "stone_block", "$stone_block$", "Stone Block\nBasic building block");
+		AddRequirement(b.reqs, "blob", "mat_stone", "Stone", 10);
+		blocks[0].push_back(b);
+	}
+	{
+		BuildBlock b(CMap::tile_castle_back, "back_stone_block", "$back_stone_block$", "Back Stone Wall\nExtra support");
+		AddRequirement(b.reqs, "blob", "mat_stone", "Stone", 2);
+		blocks[0].push_back(b);
+	}
+	{
+		BuildBlock b(0, "stone_door", "$stone_door$", "Stone Door\nPlace next to walls");
+		AddRequirement(b.reqs, "blob", "mat_stone", "Stone", 40);
 		blocks[0].push_back(b);
 	}
 	{
@@ -127,26 +104,11 @@ void addCommonBuilderBlocks(BuildBlock[][] @blocks)
 		blocks[0].push_back(b);
 	}
 	{
-		BuildBlock b(0, "goldtriangle", "$goldtriangle$", "Gold Triangle");
-		AddRequirement(b.reqs, "blob", "mat_gold", "Gold", 25);
+		BuildBlock b(0, "trap_block", "$trap_block$", "Trap Block\nOnly enemies can pass. Also good for wheeled vehicles.");
+		AddRequirement(b.reqs, "blob", "mat_stone", "Stone", 15);
 		blocks[0].push_back(b);
 	}
-	{
-		BuildBlock b(0, "irontriangle", "$irontriangle$", "Iron Triangle");
-		AddRequirement(b.reqs, "blob", "mat_ironingot", "Iron Ingots", 25);
-		blocks[0].push_back(b);
-	}
-	{
-		AddIconToken("$IronBrick$", "Sprites/World.png", Vec2f(8, 8), CMap::tile_ironbrick);
-		BuildBlock b(CMap::tile_ironbrick, "IronBrick", "$IronBrick$", "Iron Block\nStrong Building Block");
-		AddRequirement(b.reqs, "blob", "mat_ironingot", "Iron Ingots", 20);
-		blocks[0].push_back(b);
-	}
-	{
-		BuildBlock b(0, "iron_door", "$iron_door$", "Iron Door\nVery Strong");
-		AddRequirement(b.reqs, "blob", "mat_ironingot", "Iron Ingots", 40);
-		blocks[0].push_back(b);
-	}
+	// Gold
 	{
 		AddIconToken("$GoldBrick$", "Sprites/World.png", Vec2f(8, 8), CMap::tile_goldenbrick);
 		BuildBlock b(CMap::tile_goldenbrick, "GoldBrick", "$GoldBrick$", "Gold Block\nRich Building Block\nNot Stronger Than Iron");
@@ -159,6 +121,52 @@ void addCommonBuilderBlocks(BuildBlock[][] @blocks)
 		blocks[0].push_back(b);
 	}
 	{
+		BuildBlock b(0, "goldtriangle", "$goldtriangle$", "Gold Triangle");
+		AddRequirement(b.reqs, "blob", "mat_gold", "Gold", 25);
+		blocks[0].push_back(b);
+	}
+
+	// Iron
+	{
+		AddIconToken("$IronBrick$", "Sprites/World.png", Vec2f(8, 8), CMap::tile_ironbrick);
+		BuildBlock b(CMap::tile_ironbrick, "IronBrick", "$IronBrick$", "Iron Block\nStrong Building Block");
+		AddRequirement(b.reqs, "blob", "mat_ironingot", "Iron Ingots", 20);
+		blocks[0].push_back(b);
+	}
+	{
+		BuildBlock b(0, "iron_door", "$iron_door$", "Iron Door\nVery Strong");
+		AddRequirement(b.reqs, "blob", "mat_ironingot", "Iron Ingots", 40);
+		blocks[0].push_back(b);
+	}
+	{
+		BuildBlock b(0, "iron_platform", "$iron_platform$", "Iron Platform\nStronger one way platform");
+		AddRequirement(b.reqs, "blob", "mat_ironingot", "Iron Ingot", 10);
+		blocks[0].push_back(b);
+	}
+	{
+		BuildBlock b(0, "ironladder", "$ironladder$", "Iron Ladder\nMuch stronger ladder");
+		AddRequirement(b.reqs, "blob", "mat_ironingot", "Iron Ingot", 5);
+		blocks[0].push_back(b);
+	}
+	{
+		BuildBlock b(0, "spikes", "$spikes$", "Spikes\nPlace on Stone Block\nfor Retracting Trap");
+		AddRequirement(b.reqs, "blob", "mat_ironingot", "Iron Ingot", 5);
+		blocks[0].push_back(b);
+	}
+	{
+		BuildBlock b(0, "fire_trap_block", "$fire_trap_block$", "Fire Trap\nStay away from it.");
+		AddRequirement(b.reqs, "blob", "mat_ironingot", "Iron Ingot", 20);
+		AddRequirement(b.reqs, "blob", "mat_gold", "Gold", 10);
+		blocks[0].push_back(b);
+	}
+	{
+		BuildBlock b(0, "irontriangle", "$irontriangle$", "Iron Triangle");
+		AddRequirement(b.reqs, "blob", "mat_ironingot", "Iron Ingots", 25);
+		blocks[0].push_back(b);
+	}
+
+	// Special
+	{
 		BuildBlock b(0, "building", "$building$", "Workshop\nStand in an open space\nand tap this button.");
 		AddRequirement(b.reqs, "blob", "mat_wood", "Wood", 50);
 		b.buildOnGround = true;
@@ -169,7 +177,7 @@ void addCommonBuilderBlocks(BuildBlock[][] @blocks)
 		BuildBlock b(0, "altarrevival", "$altarrevival$", "Altar of Revival\nObtain a crystal from a portal\nand tap this button.");
 		AddRequirement(b.reqs, "blob", "lifeforce", "Life Force Crystal", 1);
 		AddRequirement(b.reqs, "blob", "mat_stone", "Stone", 500);
-		AddRequirement(b.reqs, "blob", "mat_gold", "Gold", 100);
+		AddRequirement(b.reqs, "blob", "mat_wood", "Wood", 100);
 		b.buildOnGround = true;
 		b.size.Set(64, 64);
 		blocks[0].push_back(b);
