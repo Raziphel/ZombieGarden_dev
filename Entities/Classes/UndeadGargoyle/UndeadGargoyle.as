@@ -7,6 +7,7 @@
 const u8 DEFAULT_PERSONALITY = AGGRO_BIT;
 const s16 GRAB_TIME = 120;
 const s16 MAD_TIME = 600;
+const s16 GRAB_COOLDOWN = 60;
 
 const string chomp_tag = "chomping";
 
@@ -102,9 +103,11 @@ void onInit(CBlob @ this)
 	SetHelp(this, "help self action2", "undeadgargoyle", "$Release$Release    $RMB$", "", 4);
 
 	this.Tag("flesh");
-	this.Tag("player");
-	this.set_s16("mad timer", 0);
-	this.set_s16("grab timer", 0);
+       this.Tag("player");
+       this.set_s16("mad timer", 0);
+       this.set_s16("grab timer", 0);
+       this.set_s16("grab cooldown", 0);
+       this.set_bool("was attached", false);
 
 	//	this.getShape().SetOffset(Vec2f(0,8));
 
@@ -123,46 +126,64 @@ bool canBePickedUp(CBlob @ this, CBlob @byBlob)
 
 void onTick(CBlob @ this)
 {
-	CPlayer @thisPlayer = this.getPlayer();
+        CPlayer @thisPlayer = this.getPlayer();
+       bool attached = this.hasAttached();
+       bool wasAttached = this.get_bool("was attached");
 
-	if (this.isKeyJustPressed(key_action2) || this.isKeyJustPressed(key_pickup))
-	{
-		this.server_DetachAll();
-	}
+       if (this.isKeyJustPressed(key_action2) || this.isKeyJustPressed(key_pickup))
+       {
+               this.server_DetachAll();
+               attached = false;
+       }
 
-	f32 x = this.getVelocity().x;
-	if (this.hasAttached())
-	{
-		s16 grabTimer = this.get_s16("grab timer");
+       f32 x = this.getVelocity().x;
+       if (attached)
+       {
+               s16 grabTimer = this.get_s16("grab timer");
 
-		Vec2f pos = this.getPosition();
-		CMap @map = this.getMap();
-		const f32 radius = this.getRadius();
+               Vec2f pos = this.getPosition();
+               CMap @map = this.getMap();
+               const f32 radius = this.getRadius();
 
-		f32 x = pos.x;
-		Vec2f top = Vec2f(x, map.tilesize);
-		Vec2f bottom = Vec2f(x, map.tilemapheight * map.tilesize);
-		Vec2f end;
+               f32 x = pos.x;
+               Vec2f top = Vec2f(x, map.tilesize);
+               Vec2f bottom = Vec2f(x, map.tilemapheight * map.tilesize);
+               Vec2f end;
 
-		if (map.rayCastSolid(top, bottom, end))
-		{
-			f32 y = end.y;
+               if (map.rayCastSolid(top, bottom, end))
+               {
+                       f32 y = end.y;
 
-			if (grabTimer > GRAB_TIME)
-			{
-				this.server_DetachAll();
-			}
-		}
+                       if (grabTimer > GRAB_TIME)
+                       {
+                               this.server_DetachAll();
+                               attached = false;
+                       }
+               }
 
-		this.set_s16("grab timer", grabTimer + 1);
-	}
-	else
-		this.set_s16("grab timer", 0);
+               this.set_s16("grab timer", grabTimer + 1);
+       }
+       else
+       {
+               this.set_s16("grab timer", 0);
+               s16 cooldown = this.get_s16("grab cooldown");
+               if (cooldown > 0)
+               {
+                       this.set_s16("grab cooldown", cooldown - 1);
+               }
+       }
 
-	if (Maths::Abs(x) > 1.0f)
-	{
-		this.SetFacingLeft(x < 0);
-	}
+       if (!attached && wasAttached)
+       {
+               this.set_s16("grab cooldown", GRAB_COOLDOWN);
+       }
+
+       this.set_bool("was attached", attached);
+
+       if (Maths::Abs(x) > 1.0f)
+       {
+               this.SetFacingLeft(x < 0);
+       }
 
 	if (getNet().isServer() && getGameTime() % 10 == 0)
 	{
@@ -213,7 +234,9 @@ void MadAt(CBlob @ this, CBlob @hitterBlob)
 
 void onDetach(CBlob @ this, CBlob @detached, AttachmentPoint @attachedPoint)
 {
-	this.set_s16("grab timer", 0);
+       this.set_s16("grab timer", 0);
+       this.set_s16("grab cooldown", GRAB_COOLDOWN);
+       this.set_bool("was attached", false);
 }
 
 #include "Hitters.as";
@@ -247,10 +270,10 @@ void onCollision(CBlob @ this, CBlob @blob, bool solid, Vec2f normal, Vec2f poin
 			direction.Normalize();
 			vel.Normalize();
 			// if (vel * direction > 0.33f)
-			if (getNet().isServer() && !blob.isAttached() && this.isKeyPressed(key_action1))
-			{
-				this.server_AttachTo(blob, "PICKUP");
-			}
+                       if (getNet().isServer() && !blob.isAttached() && this.isKeyPressed(key_action1) && this.get_s16("grab cooldown") <= 0)
+                       {
+                               this.server_AttachTo(blob, "PICKUP");
+                       }
 		}
 
 		MadAt(this, blob);
