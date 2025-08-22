@@ -7,19 +7,28 @@
 
 bool onMapTileCollapse(CMap @map, u32 offset)
 {
-	if (isDummyTile(map.getTile(offset).type))
-	{
-		CBlob @blob = getBlobByNetworkID(server_getDummyGridNetworkID(offset));
-		if (blob !is null)
-		{
-			blob.server_Die();
-		}
-	}
-	if (map.getTile(offset).type > 260 && map.getTile(offset).type < 267)
-	{
-		return false;
-	}
-	return true;
+       TileType type = map.getTile(offset).type;
+
+       // only handle custom tiles here; let vanilla tiles collapse normally
+       if (type <= 255)
+       {
+               return true;
+       }
+
+       if (isDummyTile(type))
+       {
+               CBlob @blob = getBlobByNetworkID(server_getDummyGridNetworkID(offset));
+               if (blob !is null)
+               {
+                       blob.server_Die();
+               }
+       }
+
+       if (type > 260 && type < 267)
+       {
+               return false;
+       }
+       return true;
 }
 
 TileType server_onTileHit(CMap @map, f32 damage, u32 index, TileType oldTileType)
