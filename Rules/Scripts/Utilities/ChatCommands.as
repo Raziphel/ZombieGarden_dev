@@ -11,7 +11,6 @@
 #include "RulesCore.as";
 #include "WeatherSystem.as";
 
-
 bool onServerProcessChat(CRules @ this, const string& in text_in, string& out text_out, CPlayer @player)
 {
 	if (player is null)

@@ -2,7 +2,6 @@
 #include "CustomBlocks.as";
 #include "Hitters.as"
 
-
 void BloodTiles(CParticle @p)
 {
 	CRules @rules = getRules();

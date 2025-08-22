@@ -9,7 +9,6 @@
 #include "ShieldCommon.as";
 #include "ThrowCommon.as"
 
-
 const int FLETCH_COOLDOWN = 45;
 const int PICKUP_COOLDOWN = 15;
 const int fletch_num_arrows = 1;

@@ -5,7 +5,6 @@
 #include "GameplayEventsCommon.as";
 #include "Hitters.as"
 
-
 const int coinsOnDamageAdd = 6;
 const int coinsOnAssistAdd = 8;
 const int coinsOnKillAdd = 12;

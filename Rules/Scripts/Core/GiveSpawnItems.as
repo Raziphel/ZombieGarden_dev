@@ -3,7 +3,6 @@
 #include "Core/Structs.as";
 #include "RulesCore.as";
 
-
 const u32 materials_wait = 20;		  // seconds between free mats
 const u32 materials_wait_warmup = 40; // seconds between free mats
 

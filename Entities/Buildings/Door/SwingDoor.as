@@ -5,7 +5,6 @@
 #include "Hitters.as"
 #include "MapFlags.as"
 
-
 void onInit(CBlob @ this)
 {
 	this.getShape().SetRotationsAllowed(false);

@@ -33,11 +33,11 @@ void onRestart(CRules @ this)
 
 void LoadRecords(CRules @ this)
 {
-        ConfigFile cfg;
-        if (!cfg.loadFile(records_file_path))
-        {
-                cfg.saveFile(records_file_name);
-        }
+	ConfigFile cfg;
+	if (!cfg.loadFile(records_file_path))
+	{
+		cfg.saveFile(records_file_name);
+	}
 	string map = this.get_string("map_name");
 	if (map == "" && getMap() !is null)
 	{
@@ -59,11 +59,11 @@ void LoadRecords(CRules @ this)
 
 void SaveRecords(CRules @ this)
 {
-        ConfigFile cfg;
-        if (!cfg.loadFile(records_file_path))
-        {
-                cfg.saveFile(records_file_name);
-        }
+	ConfigFile cfg;
+	if (!cfg.loadFile(records_file_path))
+	{
+		cfg.saveFile(records_file_name);
+	}
 	string map = this.get_string("map_name");
 	if (map == "" && getMap() !is null)
 	{
@@ -71,10 +71,10 @@ void SaveRecords(CRules @ this)
 		this.set_string("map_name", map);
 	}
 	cfg.add_u16("map_" + map, this.get_u16("map_record"));
-        cfg.add_u16("global", this.get_u16("global_record"));
-        cfg.add_u32("map_kills_" + map, this.get_u32("map_kill_record"));
-        cfg.add_u32("global_kills", this.get_u32("global_kill_record"));
-        cfg.saveFile(records_file_name);
+	cfg.add_u16("global", this.get_u16("global_record"));
+	cfg.add_u32("map_kills_" + map, this.get_u32("map_kill_record"));
+	cfg.add_u32("global_kills", this.get_u32("global_kill_record"));
+	cfg.saveFile(records_file_name);
 }
 
 void onTick(CRules @ this)

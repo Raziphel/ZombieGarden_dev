@@ -2,7 +2,6 @@
 #include "Hitters.as";
 #include "MapFlags.as";
 
-
 int openRecursion = 0;
 
 void onInit(CBlob @ this)

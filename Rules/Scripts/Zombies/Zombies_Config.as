@@ -9,15 +9,15 @@ void Config(ZombiesCore @ this)
 	// Tunables
 	// ============================
 
-        // How long a dead player waits before they can respawn (seconds)
-        this.spawnTime = 0.2f;
-        this.rules.set_f32("spawn_time", this.spawnTime);
+	// How long a dead player waits before they can respawn (seconds)
+	this.spawnTime = 0.2f;
+	this.rules.set_f32("spawn_time", this.spawnTime);
 
 	// round-specific bookkeeping so values don't persist between rounds
 	this.rules.set_f32("difficulty_bonus", 0.0f);
-       this.rules.set_s32("last_wipe_day", -1);
-       this.rules.set_s32("days_offset", 0);
-       this.rules.set_f32("difficulty", 0.1f);
+	this.rules.set_s32("last_wipe_day", -1);
+	this.rules.set_s32("days_offset", 0);
+	this.rules.set_f32("difficulty", 0.1f);
 
 	// ----------------------------
 	// Mob limits (hard caps)
@@ -54,10 +54,10 @@ void Config(ZombiesCore @ this)
 	this.rules.set_bool("grave_spawn", true); // spawn graves with loot at markers
 	this.rules.set_bool("zombify", true);	  // allow players to zombify after death
 
-        // ----------------------------
-        // Debug logging (optional)
-        // ----------------------------
-        // Removed runtime print to reduce log overhead
+											  // ----------------------------
+	// Debug logging (optional)
+	// ----------------------------
+	// Removed runtime print to reduce log overhead
 }
 
 /**
@@ -67,86 +67,86 @@ void Config(ZombiesCore @ this)
  */
 void RefreshMobCountsToRules()
 {
-        CRules@ rules = getRules();
+	CRules @rules = getRules();
 
-        s32 num_zombies = 0;
-        s32 num_pzombies = 0;
-        s32 num_migrantbots = 0;
-        s32 num_wraiths = 0;
-        s32 num_gregs = 0;
-        s32 num_bisons = 0;
-        s32 num_ruinstorch = 0;
-        s32 num_zombiePortals = 0;
-        s32 num_horror = 0;
-        s32 num_banshees = 0;
-        s32 num_gasbags = 0;
-        s32 num_abom = 0;
-        s32 num_immol = 0;
-        s32 num_digger = 0;
-        s32 num_alters = 0;
-        s32 num_survivors = 0;
-        s32 num_undead = 0;
+	s32 num_zombies = 0;
+	s32 num_pzombies = 0;
+	s32 num_migrantbots = 0;
+	s32 num_wraiths = 0;
+	s32 num_gregs = 0;
+	s32 num_bisons = 0;
+	s32 num_ruinstorch = 0;
+	s32 num_zombiePortals = 0;
+	s32 num_horror = 0;
+	s32 num_banshees = 0;
+	s32 num_gasbags = 0;
+	s32 num_abom = 0;
+	s32 num_immol = 0;
+	s32 num_digger = 0;
+	s32 num_alters = 0;
+	s32 num_survivors = 0;
+	s32 num_undead = 0;
 
-        CBlob@[] all;
-        getBlobs(@all);
-        for (uint i = 0; i < all.length; ++i)
-        {
-                CBlob@ b = all[i];
-                const string name = b.getName();
+	CBlob @[] all;
+	getBlobs(@all);
+	for (uint i = 0; i < all.length; ++i)
+	{
+		CBlob @b = all[i];
+		const string name = b.getName();
 
-                if (b.hasTag("zombie"))
-                        num_zombies++;
-                if (b.hasTag("pzombie"))
-                        num_pzombies++;
-                if (b.hasTag("migrantbot"))
-                        num_migrantbots++;
-                if (b.hasTag("wraiths"))
-                        num_wraiths++;
-                if (b.hasTag("gregs"))
-                        num_gregs++;
-                if (b.hasTag("bisons"))
-                        num_bisons++;
-                if (b.hasTag("ruinstorch"))
-                        num_ruinstorch++;
-                if (b.hasTag("survivorplayer"))
-                        num_survivors++;
-                if (b.hasTag("undeadplayer"))
-                        num_undead++;
+		if (b.hasTag("zombie"))
+			num_zombies++;
+		if (b.hasTag("pzombie"))
+			num_pzombies++;
+		if (b.hasTag("migrantbot"))
+			num_migrantbots++;
+		if (b.hasTag("wraiths"))
+			num_wraiths++;
+		if (b.hasTag("gregs"))
+			num_gregs++;
+		if (b.hasTag("bisons"))
+			num_bisons++;
+		if (b.hasTag("ruinstorch"))
+			num_ruinstorch++;
+		if (b.hasTag("survivorplayer"))
+			num_survivors++;
+		if (b.hasTag("undeadplayer"))
+			num_undead++;
 
-                if (name == "zombieportal")
-                        num_zombiePortals++;
-                else if (name == "horror")
-                        num_horror++;
-                else if (name == "pbanshee")
-                        num_banshees++;
-                else if (name == "gasbag")
-                        num_gasbags++;
-                else if (name == "abomination")
-                        num_abom++;
-                else if (name == "immolator")
-                        num_immol++;
-                else if (name == "digger")
-                        num_digger++;
-                else if (name == "zombiealter")
-                        num_alters++;
-        }
+		if (name == "zombieportal")
+			num_zombiePortals++;
+		else if (name == "horror")
+			num_horror++;
+		else if (name == "pbanshee")
+			num_banshees++;
+		else if (name == "gasbag")
+			num_gasbags++;
+		else if (name == "abomination")
+			num_abom++;
+		else if (name == "immolator")
+			num_immol++;
+		else if (name == "digger")
+			num_digger++;
+		else if (name == "zombiealter")
+			num_alters++;
+	}
 
-        rules.set_s32("num_zombies", num_zombies);
-        rules.set_s32("num_pzombies", num_pzombies);
-        rules.set_s32("num_migrantbots", num_migrantbots);
-        rules.set_s32("num_wraiths", num_wraiths);
-        rules.set_s32("num_gregs", num_gregs);
-        rules.set_s32("num_bisons", num_bisons);
-        rules.set_s32("num_ruinstorch", num_ruinstorch);
-        rules.set_s32("num_zombiePortals", num_zombiePortals);
-        rules.set_s32("num_horror", num_horror);
-        rules.set_s32("num_banshees", num_banshees);
-        rules.set_s32("num_gasbags", num_gasbags);
-        rules.set_s32("num_abom", num_abom);
-        rules.set_s32("num_immol", num_immol);
-        rules.set_s32("num_digger", num_digger);
-        rules.set_s32("num_alters", num_alters);
-        rules.set_s32("zombiealter", num_alters);
-        rules.set_s32("num_survivors", num_survivors);
-        rules.set_s32("num_undead", num_undead);
+	rules.set_s32("num_zombies", num_zombies);
+	rules.set_s32("num_pzombies", num_pzombies);
+	rules.set_s32("num_migrantbots", num_migrantbots);
+	rules.set_s32("num_wraiths", num_wraiths);
+	rules.set_s32("num_gregs", num_gregs);
+	rules.set_s32("num_bisons", num_bisons);
+	rules.set_s32("num_ruinstorch", num_ruinstorch);
+	rules.set_s32("num_zombiePortals", num_zombiePortals);
+	rules.set_s32("num_horror", num_horror);
+	rules.set_s32("num_banshees", num_banshees);
+	rules.set_s32("num_gasbags", num_gasbags);
+	rules.set_s32("num_abom", num_abom);
+	rules.set_s32("num_immol", num_immol);
+	rules.set_s32("num_digger", num_digger);
+	rules.set_s32("num_alters", num_alters);
+	rules.set_s32("zombiealter", num_alters);
+	rules.set_s32("num_survivors", num_survivors);
+	rules.set_s32("num_undead", num_undead);
 }

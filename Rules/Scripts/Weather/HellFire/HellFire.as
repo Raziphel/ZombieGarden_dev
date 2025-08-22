@@ -6,7 +6,6 @@
 #include "MakeSeed.as";
 #include "canGrow.as";
 
-
 const int spritesize = 128;
 f32 uvs;
 Vertex[] HellFire_vs;

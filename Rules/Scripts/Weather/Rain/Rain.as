@@ -6,7 +6,6 @@
 #include "MakeSeed.as";
 #include "canGrow.as";
 
-
 void onInit(CBlob @ this)
 {
 	this.getShape().SetStatic(true);

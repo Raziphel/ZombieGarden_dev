@@ -1,7 +1,6 @@
 #include "FUNHitters.as"
 #include "Hitters.as"
 
-
 enum facing_direction
 {
 	none = 0,

@@ -6,7 +6,6 @@
 #include "PixelOffsets.as"
 #include "RunnerTextures.as"
 
-
 const s32 NUM_HEADFRAMES = 4;
 const s32 NUM_UNIQUEHEADS = 30;
 const int FRAMES_WIDTH = 8 * NUM_HEADFRAMES;
