@@ -36,6 +36,20 @@ const u8 GRID_PADDING = 12;
 Vec2f MENU_SIZE(3, 5);
 const u32 SHOW_NO_BUILD_TIME = 90;
 
+// This script is used by both the builder's inventory and sprite.
+// When it's loaded as a sprite script the engine still calls an
+// `onInit` callback which expects a `CSprite@` parameter.  The original
+// inventory-only implementation didn't provide such a handler which led
+// the engine to attempt casting the sprite to a `CInventory@` instead,
+// spamming the console with InvalidCastException errors as soon as the
+// class was initialised.  Providing this no-op overload ensures the
+// correct function is invoked for each component type.
+void onInit(CSprite @this)
+{
+    // Intentionally left blank – required so the script can be safely
+    // attached as a sprite script without causing cast exceptions.
+}
+
 void onInit(CInventory @ this)
 {
 	CBlob @blob = this.getBlob();
