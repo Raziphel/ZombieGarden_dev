@@ -17,22 +17,22 @@ void onTick(CBlob @ this)
 
 	if (ready)
 	{
-		if (this.isKeyJustPressed(key_action2))
-		{
-			Vec2f delta = this.getPosition() - this.getAimPos();
-			if (delta.Length() < TELEPORT_DISTANCE)
-			{
+                if (this.isKeyJustPressed(key_action2))
+                {
+                        Vec2f delta = this.getPosition() - this.getAimPos();
+                        if (delta.Length() < TELEPORT_DISTANCE)
+                        {
                                 this.set_u32("last teleport", gametime);
                                 this.set_bool("teleport ready", false);
                                 CBitStream params;
                                 params.write_Vec2f(this.getAimPos());
                                 this.SendCommand(this.getCommandID("force push"), params);
-			}
-			else if (this.isMyPlayer())
-			{
-				Sound::Play("option.ogg");
-			}
-		}
+                        }
+                        else if (this.isMyPlayer())
+                        {
+                                Sound::Play("option.ogg");
+                        }
+                }
 	}
 	else
 	{
@@ -65,11 +65,11 @@ void ForcePush(CBlob @blob, Vec2f aimpos)
 {
         CMap @map = blob.getMap();
 
-        CBlob @[] blobs;
-        map.getBlobsInRadius(aimpos, 25.0f, @blobs);
-
         if (getNet().isServer())
         {
+                CBlob @[] blobs;
+                map.getBlobsInRadius(aimpos, 25.0f, @blobs);
+
                 for (uint i = 0; i < blobs.length; i++)
                 {
                         CBlob @pushed_blob = blobs[i];
