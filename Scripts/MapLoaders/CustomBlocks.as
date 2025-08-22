@@ -124,6 +124,7 @@ namespace CMap
 		tile_ironbrick_d9 = 474,
 		tile_ironbrick_d10 = 475,
 		tile_ironbrick_d11 = 476,
+		tile_ironbrick_d12 = 477,
 
 		tile_ironore = 480,
 		tile_ironore_d0 = 481,
@@ -161,19 +162,19 @@ void HandleCustomTile(CMap @map, int offset, SColor pixel)
 	switch (pixel.color)
 	{
 		case custom_colors::color_ironore:
-			map.SetTile(offset, CMap::tile_ironore + XORRandom(1));
+			map.SetTile(offset, CMap::tile_ironore);
 			map.RemoveTileFlag(offset, Tile::LIGHT_SOURCE | Tile::LIGHT_PASSES);
 			map.AddTileFlag(offset, Tile::SOLID | Tile::COLLISION);
 			break;
 
 		case custom_colors::color_copperore:
-			map.SetTile(offset, CMap::tile_copperore + XORRandom(1));
+			map.SetTile(offset, CMap::tile_copperore);
 			map.RemoveTileFlag(offset, Tile::LIGHT_SOURCE | Tile::LIGHT_PASSES);
 			map.AddTileFlag(offset, Tile::SOLID | Tile::COLLISION);
 			break;
 
 		case custom_colors::color_coalore:
-			map.SetTile(offset, CMap::tile_coalore + XORRandom(1));
+			map.SetTile(offset, CMap::tile_coalore);
 			map.RemoveTileFlag(offset, Tile::LIGHT_SOURCE | Tile::LIGHT_PASSES);
 			map.AddTileFlag(offset, Tile::SOLID | Tile::COLLISION);
 			break;

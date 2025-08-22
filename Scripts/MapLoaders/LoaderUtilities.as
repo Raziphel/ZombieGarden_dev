@@ -5,7 +5,6 @@
 #include "DummyCommon.as";
 #include "ParticleSparks.as";
 
-
 bool onMapTileCollapse(CMap @map, u32 offset)
 {
 	if (isDummyTile(map.getTile(offset).type))
@@ -16,11 +15,11 @@ bool onMapTileCollapse(CMap @map, u32 offset)
 			blob.server_Die();
 		}
 	}
-        if (map.getTile(offset).type > 260 && map.getTile(offset).type < 267)
-        {
-                return false;
-        }
-        return true;
+	if (map.getTile(offset).type > 260 && map.getTile(offset).type < 267)
+	{
+		return false;
+	}
+	return true;
 }
 
 TileType server_onTileHit(CMap @map, f32 damage, u32 index, TileType oldTileType)
@@ -163,59 +162,62 @@ TileType server_onTileHit(CMap @map, f32 damage, u32 index, TileType oldTileType
 			case CMap::tile_ironore_d2:
 			case CMap::tile_ironore_d3:
 			case CMap::tile_ironore_d4:
+			case CMap::tile_ironore_d5:
+			case CMap::tile_ironore_d6:
+			case CMap::tile_ironore_d7:
 			{
 				OnIronTileHit(map, index);
 				return oldTileType + 1;
 			}
-			case CMap::tile_ironore_d5:
+			case CMap::tile_ironore_d8:
 			{
 				OnIronTileDestroyed(map, index);
 				return CMap::tile_ground_back;
 			}
 
-			// Coal Ore
-                        case CMap::tile_coalore:
-                        {
-                                OnCoalTileHit(map, index);
-                                return CMap::tile_coalore_d0;
-                        }
-                        case CMap::tile_coalore_d0:
-                        case CMap::tile_coalore_d1:
-                        case CMap::tile_coalore_d2:
-                        case CMap::tile_coalore_d3:
-                        case CMap::tile_coalore_d4:
-                        case CMap::tile_coalore_d5:
-                        {
-                                OnCoalTileHit(map, index);
-                                return oldTileType + 1;
-                        }
-                        case CMap::tile_coalore_d6:
-                        {
-                                OnCoalTileDestroyed(map, index);
-                                return CMap::tile_ground_back;
-                        }
+				// Coal Ore
+			case CMap::tile_coalore:
+			{
+				OnCoalTileHit(map, index);
+				return CMap::tile_coalore_d0;
+			}
+			case CMap::tile_coalore_d0:
+			case CMap::tile_coalore_d1:
+			case CMap::tile_coalore_d2:
+			case CMap::tile_coalore_d3:
+			case CMap::tile_coalore_d4:
+			case CMap::tile_coalore_d5:
+			{
+				OnCoalTileHit(map, index);
+				return oldTileType + 1;
+			}
+			case CMap::tile_coalore_d6:
+			{
+				OnCoalTileDestroyed(map, index);
+				return CMap::tile_ground_back;
+			}
 
-			// Copper Ore
-                        case CMap::tile_copperore:
-                        {
-                                OnCopperTileHit(map, index);
-                                return CMap::tile_copperore_d0;
-                        }
-                        case CMap::tile_copperore_d0:
-                        case CMap::tile_copperore_d1:
-                        case CMap::tile_copperore_d2:
-                        case CMap::tile_copperore_d3:
-                        case CMap::tile_copperore_d4:
-                        case CMap::tile_copperore_d5:
-                        {
-                                OnCopperTileHit(map, index);
-                                return oldTileType + 1;
-                        }
-                        case CMap::tile_copperore_d6:
-                        {
-                                OnCopperTileDestroyed(map, index);
-                                return CMap::tile_ground_back;
-                        }
+				// Copper Ore
+			case CMap::tile_copperore:
+			{
+				OnCopperTileHit(map, index);
+				return CMap::tile_copperore_d0;
+			}
+			case CMap::tile_copperore_d0:
+			case CMap::tile_copperore_d1:
+			case CMap::tile_copperore_d2:
+			case CMap::tile_copperore_d3:
+			case CMap::tile_copperore_d4:
+			case CMap::tile_copperore_d5:
+			{
+				OnCopperTileHit(map, index);
+				return oldTileType + 1;
+			}
+			case CMap::tile_copperore_d6:
+			{
+				OnCopperTileDestroyed(map, index);
+				return CMap::tile_ground_back;
+			}
 
 			// BLOOD DIRT
 			case CMap::tile_littlebloodground:
@@ -430,6 +432,8 @@ void onSetTile(CMap @map, u32 index, TileType tile_new, TileType tile_old)
 			case CMap::tile_ironbrick_d8:
 			case CMap::tile_ironbrick_d9:
 			case CMap::tile_ironbrick_d10:
+			case CMap::tile_ironbrick_d11:
+			case CMap::tile_ironbrick_d12:
 			{
 				OnGoldTileHit(map, index);
 				map.RemoveTileFlag(index, Tile::LIGHT_PASSES | Tile::LIGHT_SOURCE);
@@ -454,37 +458,37 @@ void onSetTile(CMap @map, u32 index, TileType tile_new, TileType tile_old)
 				break;
 			}
 
-			// coal ore
-                        case CMap::tile_coalore:
-                        case CMap::tile_coalore_d0:
-                        case CMap::tile_coalore_d1:
-                        case CMap::tile_coalore_d2:
-                        case CMap::tile_coalore_d3:
-                        case CMap::tile_coalore_d4:
-                        case CMap::tile_coalore_d5:
-                        case CMap::tile_coalore_d6:
-                        {
-                                OnCoalTileHit(map, index);
-                                map.RemoveTileFlag(index, Tile::LIGHT_PASSES | Tile::LIGHT_SOURCE);
-                                map.AddTileFlag(index, Tile::SOLID | Tile::COLLISION);
-                                break;
-                        }
+				// coal ore
+			case CMap::tile_coalore:
+			case CMap::tile_coalore_d0:
+			case CMap::tile_coalore_d1:
+			case CMap::tile_coalore_d2:
+			case CMap::tile_coalore_d3:
+			case CMap::tile_coalore_d4:
+			case CMap::tile_coalore_d5:
+			case CMap::tile_coalore_d6:
+			{
+				OnCoalTileHit(map, index);
+				map.RemoveTileFlag(index, Tile::LIGHT_PASSES | Tile::LIGHT_SOURCE);
+				map.AddTileFlag(index, Tile::SOLID | Tile::COLLISION);
+				break;
+			}
 
-			// copper ore
-                        case CMap::tile_copperore:
-                        case CMap::tile_copperore_d0:
-                        case CMap::tile_copperore_d1:
-                        case CMap::tile_copperore_d2:
-                        case CMap::tile_copperore_d3:
-                        case CMap::tile_copperore_d4:
-                        case CMap::tile_copperore_d5:
-                        case CMap::tile_copperore_d6:
-                        {
-                                OnCopperTileHit(map, index);
-                                map.RemoveTileFlag(index, Tile::LIGHT_PASSES | Tile::LIGHT_SOURCE);
-                                map.AddTileFlag(index, Tile::SOLID | Tile::COLLISION);
-                                break;
-                        }
+				// copper ore
+			case CMap::tile_copperore:
+			case CMap::tile_copperore_d0:
+			case CMap::tile_copperore_d1:
+			case CMap::tile_copperore_d2:
+			case CMap::tile_copperore_d3:
+			case CMap::tile_copperore_d4:
+			case CMap::tile_copperore_d5:
+			case CMap::tile_copperore_d6:
+			{
+				OnCopperTileHit(map, index);
+				map.RemoveTileFlag(index, Tile::LIGHT_PASSES | Tile::LIGHT_SOURCE);
+				map.AddTileFlag(index, Tile::SOLID | Tile::COLLISION);
+				break;
+			}
 
 			// blood ground
 			case CMap::tile_littlebloodground:
