@@ -48,14 +48,20 @@ class ZombiesCore : RulesCore
 		rules.set_f32("difficulty", 0.25f);
 	}
 
-	void Update()
-	{
-		if (rules.isGameOver())
-			return;
+        void Update()
+        {
+                if (rules.isGameOver())
+                        return;
 
-		const int day_cycle = getRules().daycycle_speed * 60;
-		int transition = rules.get_s32("transition");
-		const int gamestart = rules.get_s32("gamestart");
+                // Refresh counts early so difficulty sees newly spawned altars
+                if (getGameTime() < 30 || getGameTime() % 150 == 0)
+                {
+                        RefreshMobCountsToRules(); // <— single source of truth
+                }
+
+                const int day_cycle = getRules().daycycle_speed * 60;
+                int transition = rules.get_s32("transition");
+                const int gamestart = rules.get_s32("gamestart");
 
 		// easy reads (all counts come from rules now)
 		const int max_zombies = rules.get_s32("max_zombies");
@@ -199,27 +205,24 @@ class ZombiesCore : RulesCore
 			}
 		}
 
-		// === periodic maintenance: refresh *all* counts into rules ===
-		if (getGameTime() % 150 == 0)
-		{
-			RefreshMobCountsToRules(); // <— single source of truth
-
-			// Curse logic (throttled)
-			if (map !is null && dayNumber >= curse_day &&
-				rules.get_s32("num_undead") < max_undead)
-			{
-				const u8 pCount = getPlayersCount();
-				if (pCount > 0)
-				{
-					CPlayer @player = getPlayer(XORRandom(pCount));
-					if (player !is null && player.getTeamNum() == 0)
-					{
-						Zombify(player);
-						server_CreateBlob("cursemessage");
-					}
-				}
-			}
-		}
+                // === periodic maintenance: curse logic (throttled) ===
+                if (getGameTime() % 150 == 0)
+                {
+                        if (map !is null && dayNumber >= curse_day &&
+                                rules.get_s32("num_undead") < max_undead)
+                        {
+                                const u8 pCount = getPlayersCount();
+                                if (pCount > 0)
+                                {
+                                        CPlayer @player = getPlayer(XORRandom(pCount));
+                                        if (player !is null && player.getTeamNum() == 0)
+                                        {
+                                                Zombify(player);
+                                                server_CreateBlob("cursemessage");
+                                        }
+                                }
+                        }
+                }
 
 		// === Day change bookkeeping to re-arm boss trigger on non-boss days ===
 		{
