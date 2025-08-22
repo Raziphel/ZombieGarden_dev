@@ -324,44 +324,44 @@ class ZombiesSpawns : RespawnSystem
 	{
 		getRules().Sync("gold_structures", true);
 
-                s32 tickspawndelay = 0;
+		s32 tickspawndelay = 0;
 
-                // optional: base spawn time from rules (seconds) -> ticks
-                f32 base_spawn_secs =
-                        getRules().exists("spawn_time") ? getRules().get_f32("spawn_time") : 0.0f;
-                if (base_spawn_secs < 0.0f)
-                        base_spawn_secs = 0.0f;
+		// optional: base spawn time from rules (seconds) -> ticks
+		f32 base_spawn_secs =
+			getRules().exists("spawn_time") ? getRules().get_f32("spawn_time") : 0.0f;
+		if (base_spawn_secs < 0.0f)
+			base_spawn_secs = 0.0f;
 
-			// calculate day cycle and current time within it
-			int gamestart = getRules().get_s32("gamestart");
-			int day_cycle = getRules().daycycle_speed * 60; // seconds in a full KAG day
-			int timeElapsed = ((getGameTime() - gamestart) / getTicksASecond()) % day_cycle;
-			int half_day = day_cycle / 2;
+		// calculate day cycle and current time within it
+		int gamestart = getRules().get_s32("gamestart");
+		int day_cycle = getRules().daycycle_speed * 60; // seconds in a full KAG day
+		int timeElapsed = ((getGameTime() - gamestart) / getTicksASecond()) % day_cycle;
+		int half_day = day_cycle / 2;
 
-			if (player.getDeaths() != 0)
-			{
+		if (player.getDeaths() != 0)
+		{
 
-                        int seconds_to_midday = (timeElapsed <= half_day) ? (half_day - timeElapsed) : (day_cycle - timeElapsed + half_day);
+			int seconds_to_midday = (timeElapsed <= half_day) ? (half_day - timeElapsed) : (day_cycle - timeElapsed + half_day);
 
-                        // cap at 30s, then add base spawn time
-                        f32 final_secs = Maths::Min(60 * 30, seconds_to_midday) + base_spawn_secs;
-                        if (final_secs < 0.0f)
-                                final_secs = 0.0f;
+			// cap at 30s, then add base spawn time
+			f32 final_secs = Maths::Min(60 * 30, seconds_to_midday) + base_spawn_secs;
+			if (final_secs < 0.0f)
+				final_secs = 0.0f;
 
-                        tickspawndelay = s32(final_secs * getTicksASecond());
-                }
-                else
-                {
-                        // first life; just use base spawn time if any
-                        if (base_spawn_secs > 0.0f)
-                                tickspawndelay = s32(base_spawn_secs * getTicksASecond());
-                }
+			tickspawndelay = s32(final_secs * getTicksASecond());
+		}
+		else
+		{
+			// first life; just use base spawn time if any
+			if (base_spawn_secs > 0.0f)
+				tickspawndelay = s32(base_spawn_secs * getTicksASecond());
+		}
 
-			// during day: set respawn timer to 1 second
-			if (timeElapsed < half_day)
-				tickspawndelay = getTicksASecond();
+		// during day: set respawn timer to 1 second
+		if (timeElapsed < half_day)
+			tickspawndelay = getTicksASecond();
 
-                CTFPlayerInfo @info = cast<CTFPlayerInfo @>(core.getInfoFromPlayer(player));
+		CTFPlayerInfo @info = cast<CTFPlayerInfo @>(core.getInfoFromPlayer(player));
 		if (info is null)
 		{
 			warn("Zombies LOGIC: Couldn't get player info (in AddPlayerToSpawn)");

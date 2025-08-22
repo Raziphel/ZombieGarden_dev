@@ -38,15 +38,11 @@ void Config(ZombiesCore @ this)
 	// ----------------------------
 	// Win/Loss pacing
 	// ----------------------------
-	this.rules.set_s32("days_to_survive", 0); // <= 0 means endless
-	this.rules.set_s32("curse_day",
-					   250);				  // night(s) from which survivors can auto-zombify
-	this.rules.set_s32("hardmode_day",
-					   100);				  // the day zombies can spawn during the day
-	this.rules.set_bool("ruins_portal_active",
-						false);				  // ruins become portals once a pillar falls
-	this.rules.Sync("ruins_portal_active",
-					false);					  // If ruins have spawned portals or not.
+	this.rules.set_s32("days_to_survive", 0);                         // <= 0 means endless
+	this.rules.set_s32("curse_day", 250);				  // night(s) from which survivors can auto-zombify
+	this.rules.set_s32("hardmode_day", 100);			  // the day zombies can spawn during the day
+	this.rules.set_bool("ruins_portal_active", false);		  // ruins become portals once a pillar falls
+	this.rules.Sync("ruins_portal_active", false);			  // If ruins have spawned portals or not.
 
 	// ----------------------------
 	// Flavor toggles
