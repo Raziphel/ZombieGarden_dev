@@ -1,5 +1,6 @@
 #include "Core/Structs.as"
 #include "GlobalPopup.as"
+#include "Scripts/Default/DefaultGUI.as"
 
 // -------------------------------------
 //  Interface / HUD rendering
@@ -78,7 +79,14 @@ int CountTeamPlayers(const int teamNum)
 // -------------------------------------
 void onInit(CRules @ this)
 {
-	// nothing needed here (kept for symmetry)
+        // Load default GUI assets so icons and tokens are available
+        LoadDefaultGUI();
+}
+
+void onRestart(CRules @ this)
+{
+        // Ensure GUI assets are reloaded on map restart
+        LoadDefaultGUI();
 }
 
 void onRender(CRules @ this)
