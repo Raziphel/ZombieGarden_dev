@@ -167,13 +167,13 @@ class ZombiesCore : RulesCore
 
 		// final difficulty (apply cap after any bonus change)
 		// baseline grows by 0.1 every day so altars can't stall scaling
-		const float baseDifficulty = dayNumber * 0.1f;
-		float difficulty = dayNumber * 0.5f;
-		difficulty += pillars * 0.2f;	  // pillars add pressure
+		const float baseDifficulty = dayNumber * 0.25f;
+		float difficulty = dayNumber * 0.65f;
+		difficulty += pillars * 0.3f;	  // pillars add pressure
 		difficulty -= altars * 0.2f;	  // altars ease the round
 		difficulty += survivors * 0.05f;  // more survivors harden the waves
-		difficulty -= undead * 0.2f;	  // undead players make it tougher
-		difficulty += days_offset * 0.1f; // manual day skips ups difficulty
+		difficulty += undead * 0.2f;	  // undead players make it tougher
+		difficulty += days_offset * 0.05f; // manual day skips ups difficulty
 		difficulty += wipeBonus;
 		if (difficulty < baseDifficulty)
 			difficulty = baseDifficulty;
@@ -352,16 +352,16 @@ class ZombiesCore : RulesCore
 					}
 					else if (r >= 12.5f && _num_im < _max_im)
 						server_CreateBlob("immolator", -1, sp);
-					else if (r >= 9.0f && _num_ga < _max_ga)
+					else if (r >= 7.0f && _num_ga < _max_ga)
 						server_CreateBlob("gasbag", -1, sp);
-					else if (r >= 7.5f)
+					else if (r >= 5.5f)
 						server_CreateBlob("zombieknight", -1, sp);
-					else if (r >= 4.5f)
+					else if (r >= 2.5f)
 					{
 						const u8 v = XORRandom(3);
 						server_CreateBlob(v == 0 ? "evilzombie" : (v == 1 ? "bloodzombie" : "plantzombie"), -1, sp);
 					}
-					else if (r >= 1.5f)
+					else if (r >= 1.0f)
 					{
 						const u8 v = XORRandom(2);
 						server_CreateBlob((v == 0 ? "zombie" : "zombie2"), -1, sp);

@@ -98,8 +98,8 @@ BuildMiniTable()
 		BossEntry b;
 		b.weight = 3;
 		b.names = {"horror"};
-		b.counts = {3};
-		b.popup = "MINI-WAVE\n\n3x Horrors\n16 Hearts • Spawns specials";
+		b.counts = {2};
+		b.popup = "MINI-WAVE\n\n2x Horrors\n16 Hearts • Spawns 3 zombies on death";
 		b.color = SColor(255, 255, 200, 0);
 		b.popupTicks = 10 * getTicksASecond();
 		b.sound = "/dontyoudare.ogg";
@@ -109,8 +109,8 @@ BuildMiniTable()
 		BossEntry b;
 		b.weight = 3;
 		b.names = {"pbanshee"};
-		b.counts = {2};
-		b.popup = "MINI-WAVE\n\n2x Banshee\nBlast + Stunning Scream";
+		b.counts = {3};
+		b.popup = "MINI-WAVE\n\n3x Banshee\nExplosive + Stunning Scream";
 		b.color = SColor(255, 255, 200, 0);
 		b.popupTicks = 10 * getTicksASecond();
 		b.sound = "/dontyoudare.ogg";
@@ -121,7 +121,7 @@ BuildMiniTable()
 		b.weight = 2;
 		b.names = {"writher"};
 		b.counts = {1};
-		b.popup = "MINI-WAVE\n\n1x Writher\nExplodes • Spawns Wraiths on death";
+		b.popup = "MINI-WAVE\n\n1x Writher\nExploding Rot Clouds • Spawns 3x Wraiths on death";
 		b.color = SColor(255, 255, 200, 0);
 		b.popupTicks = 10 * getTicksASecond();
 		b.sound = "/dontyoudare.ogg";
@@ -132,7 +132,7 @@ BuildMiniTable()
 		b.weight = 2;
 		b.names = {"zbison", "zbison2"};
 		b.counts = {4, 4};
-		b.popup = "MINI-WAVE\n\nBison Horde\n8 total (4 of each)";
+		b.popup = "MINI-WAVE\n\n8x Bisons\nTough and charges";
 		b.color = SColor(255, 255, 200, 0);
 		b.popupTicks = 10 * getTicksASecond();
 		b.sound = "/dontyoudare.ogg";
@@ -143,7 +143,7 @@ BuildMiniTable()
 		b.weight = 2;
 		b.names = {"immolator"};
 		b.counts = {8};
-		b.popup = "MINI-WAVE\n\n8x Immolator\nChain booms — keep distance";
+		b.popup = "MINI-WAVE\n\n8x Immolator\nCharging explosion\nSpawns Rot clouds on death";
 		b.color = SColor(255, 255, 200, 0);
 		b.popupTicks = 10 * getTicksASecond();
 		b.sound = "/dontyoudare.ogg";
@@ -162,8 +162,8 @@ array<BossEntry @> BuildBossTable()
 		BossEntry b;
 		b.weight = 3;
 		b.names = {"abomination"};
-		b.counts = {2};
-		b.popup = "BOSS WAVE\n\n2x Abominations\n60 Hearts • 4 DMG";
+		b.counts = {1};
+		b.popup = "BOSS WAVE\n\n1x Abominations\n60 Hearts • 4 DMG";
 		b.color = SColor(255, 255, 0, 0);
 		b.popupTicks = 10 * getTicksASecond();
 		b.sound = "/dontyoudare.ogg";
@@ -172,9 +172,20 @@ array<BossEntry @> BuildBossTable()
 	{
 		BossEntry b;
 		b.weight = 2;
+		b.names = {"horror"};
+		b.counts = {5};
+		b.popup = banner + "5x Horror\n16 Hearts • Spawns 3 zombies on death";
+		b.color = SColor(255, 255, 80, 40);
+		b.popupTicks = 12 * getTicksASecond();
+		b.sound = "/FanfareLose.ogg";
+		t.push_back(b);
+	}
+	{
+		BossEntry b;
+		b.weight = 2;
 		b.names = {"writher"};
-		b.counts = {3};
-		b.popup = "BOSS WAVE\n\n3x Writhers\nExplodes • Spawns Wraiths";
+		b.counts = {2};
+		b.popup = "BOSS WAVE\n\n2x Writhers\nExploding Rot Clouds • Spawns 3x Wraiths on death";
 		b.color = SColor(255, 255, 0, 0);
 		b.popupTicks = 10 * getTicksASecond();
 		b.sound = "/dontyoudare.ogg";
@@ -185,7 +196,7 @@ array<BossEntry @> BuildBossTable()
 		b.weight = 2;
 		b.names = {"immolator"};
 		b.counts = {16};
-		b.popup = "BOSS WAVE\n\n16x Immolator\nWide-area blast pressure";
+		b.popup = "BOSS WAVE\n\n16x Immolator\nCharging explosion\nSpawns Rot clouds on death";
 		b.color = SColor(255, 255, 0, 0);
 		b.popupTicks = 10 * getTicksASecond();
 		b.sound = "/dontyoudare.ogg";
@@ -194,9 +205,9 @@ array<BossEntry @> BuildBossTable()
 	{
 		BossEntry b;
 		b.weight = 1;
-		b.names = {"zbison", "zbison2"};
+		b.names = {"greg", "greg2"};
 		b.counts = {8, 8};
-		b.popup = "BOSS WAVE\n\nStampede\n16 total";
+		b.popup = "BOSS WAVE\n\n16x Gregs\nGrabs players and drops them from the sky\nCan carry zombies to your base";
 		b.color = SColor(255, 255, 0, 0);
 		b.popupTicks = 10 * getTicksASecond();
 		b.sound = "/dontyoudare.ogg";
@@ -207,7 +218,7 @@ array<BossEntry @> BuildBossTable()
 		b.weight = 1;
 		b.names = {"digger"};
 		b.counts = {3};
-		b.popup = "BOSS WAVE\n\n3x Diggers\nFlying blades that rip through walls";
+		b.popup = "BOSS WAVE\n\n2x Diggers\nFlying blades that rip through walls";
 		b.color = SColor(255, 255, 0, 0);
 		b.popupTicks = 10 * getTicksASecond();
 		b.sound = "/dontyoudare.ogg";
@@ -226,18 +237,16 @@ array<BossEntry @> BuildCataclysmTable(const int dayNumber)
 	// You can branch by milestone here if you want different themes
 	// Example themes: 25=“Onslaught”, 50=“Cataclysm”, 75=“Rapture”,
 	// 100=“Apocalypse”
-	const int milestone = (dayNumber % 100 == 0 ? 100 : dayNumber % 75 == 0 ? 75 :
-													dayNumber % 50 == 0		? 50 :
-																			  25);
+	const int milestone = (dayNumber % 100 == 0 ? 100 : dayNumber % 75 == 0 ? 75 : dayNumber % 50 == 0		? 50 : 25);
 
 	string banner = "CATACLYSM WAVE\n\n";
 
 	{
 		BossEntry b;
 		b.weight = 3;
-		b.names = {"abomination", "writher"};
-		b.counts = {3, 3};
-		b.popup = banner + "3x Abomination + 3x Writher\nTank + burst combo";
+		b.names = {"abomination"};
+		b.counts = {3};
+		b.popup = banner + "3x Abomination\n60 Hearts • 4 DMG";
 		b.color = SColor(255, 255, 80, 40);
 		b.popupTicks = 12 * getTicksASecond();
 		b.sound = "/FanfareLose.ogg";
@@ -246,9 +255,9 @@ array<BossEntry @> BuildCataclysmTable(const int dayNumber)
 	{
 		BossEntry b;
 		b.weight = 3;
-		b.names = {"pbanshee", "wraith"};
-		b.counts = {3, 6};
-		b.popup = banner + "3x Banshee + 6x Wraith\nControl + chasers";
+		b.names = {"writher"};
+		b.counts = {5};
+		b.popup = banner + "5x Writher\nExploding Rot Clouds • Spawns 3x Wraiths on death";
 		b.color = SColor(255, 255, 80, 40);
 		b.popupTicks = 12 * getTicksASecond();
 		b.sound = "/FanfareLose.ogg";
@@ -257,9 +266,9 @@ array<BossEntry @> BuildCataclysmTable(const int dayNumber)
 	{
 		BossEntry b;
 		b.weight = 2;
-		b.names = {"immolator", "writher"};
-		b.counts = {8, 4, 4};
-		b.popup = banner + "16x Immolator + 4x Writher\nChain detonation hazard";
+		b.names = {"immolator"};
+		b.counts = {32};
+		b.popup = banner + "32x Immolator\nCharging explosion\nSpawns Rot clouds on death";
 		b.color = SColor(255, 255, 80, 40);
 		b.popupTicks = 12 * getTicksASecond();
 		b.sound = "/FanfareLose.ogg";
@@ -268,9 +277,9 @@ array<BossEntry @> BuildCataclysmTable(const int dayNumber)
 	{
 		BossEntry b;
 		b.weight = 2;
-		b.names = {"zbison", "zbison2", "horror"};
-		b.counts = {8, 8, 4};
-		b.popup = banner + "Bison stampede + 4x Horror\nCrowd + elites";
+		b.names = {"horror"};
+		b.counts = {6};
+		b.popup = banner + "6x Horror\n16 Hearts • Spawns 3 zombies on death";
 		b.color = SColor(255, 255, 80, 40);
 		b.popupTicks = 12 * getTicksASecond();
 		b.sound = "/FanfareLose.ogg";
@@ -281,7 +290,7 @@ array<BossEntry @> BuildCataclysmTable(const int dayNumber)
 		b.weight = 1;
 		b.names = {"digger"};
 		b.counts = {7};
-		b.popup = banner + "7x Diggers\nExcavation Team";
+		b.popup = banner + "7x Diggers\nFlying blades that rip through walls";
 		b.color = SColor(255, 255, 80, 40);
 		b.popupTicks = 12 * getTicksASecond();
 		b.sound = "/FanfareLose.ogg";

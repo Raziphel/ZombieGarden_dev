@@ -73,6 +73,8 @@ void onTick(CBlob @ this)
 				server_CreateBlob("rotcloud", -1, sp);
 				server_CreateBlob("rotcloud", -1, sp);
 				server_CreateBlob("rotcloud", -1, sp);
+				server_CreateBlob("rotcloud", -1, sp);
+				server_CreateBlob("rotcloud", -1, sp);
 				this.server_Die();
 			}
 		}
@@ -92,6 +94,7 @@ void onTick(CBlob @ this)
 
 void onDie(CBlob @ this)
 {
+	server_CreateBlob("wraith", -1, this.getPosition());
 	server_CreateBlob("wraith", -1, this.getPosition());
 	server_CreateBlob("wraith", -1, this.getPosition());
 }
