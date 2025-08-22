@@ -190,7 +190,7 @@ class ZombiesCore : RulesCore
 		bool isNight = false;
 		if (map !is null)
 		{
-			isNight = (map.getDayTime() > 0.7f || map.getDayTime() < 0.1f);
+			isNight = (map.getDayTime() > 0.8f || map.getDayTime() < 0.1f);
 			if (isNight)
 			{
 				if (!rules.hasTag("night"))
