@@ -342,8 +342,8 @@ class ZombiesCore : RulesCore
 					}
 					else if (r >= 17.0f && _num_wr < _max_wr)
 					{
-						const u8 v = XORRandom(2);
-						server_CreateBlob((v == 0 ? "wraith" : "wraith2"), -1, sp);
+						const u8 v = XORRandom(3);
+                                                server_CreateBlob(v == 0 ? "wraith" : (v == 1 ? "wraith2" : "landwraith"), -1, sp);
 					}
 					else if (r >= 15.0f && _num_gr < _max_gr)
 					{
