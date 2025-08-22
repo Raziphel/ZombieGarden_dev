@@ -332,20 +332,14 @@ class ZombiesSpawns : RespawnSystem
                 if (base_spawn_secs < 0.0f)
                         base_spawn_secs = 0.0f;
 
-                // calculate current day number
-                int gamestart = getRules().get_s32("gamestart");
-                int day_cycle = getRules().daycycle_speed * 60; // seconds in a full KAG day
-                int dayNumber;
-                if (getRules().exists("hud_dayNumber"))
-                        dayNumber = getRules().get_s32("hud_dayNumber");
-                else
-                        dayNumber = ((getGameTime() - gamestart) / getTicksASecond() / day_cycle) + 1;
+			// calculate day cycle and current time within it
+			int gamestart = getRules().get_s32("gamestart");
+			int day_cycle = getRules().daycycle_speed * 60; // seconds in a full KAG day
+			int timeElapsed = ((getGameTime() - gamestart) / getTicksASecond()) % day_cycle;
+			int half_day = day_cycle / 2;
 
-                if (player.getDeaths() != 0)
-                {
-                        int timeElapsed =
-                                ((getGameTime() - gamestart) / getTicksASecond()) % day_cycle;
-                        int half_day = day_cycle / 2;
+			if (player.getDeaths() != 0)
+			{
 
                         int seconds_to_midday = (timeElapsed <= half_day) ? (half_day - timeElapsed) : (day_cycle - timeElapsed + half_day);
 
@@ -363,9 +357,9 @@ class ZombiesSpawns : RespawnSystem
                                 tickspawndelay = s32(base_spawn_secs * getTicksASecond());
                 }
 
-                // first day: always instant respawn
-                if (dayNumber <= 1)
-                        tickspawndelay = 0;
+			// during day: set respawn timer to 1 second
+			if (timeElapsed < half_day)
+				tickspawndelay = getTicksASecond();
 
                 CTFPlayerInfo @info = cast<CTFPlayerInfo @>(core.getInfoFromPlayer(player));
 		if (info is null)
