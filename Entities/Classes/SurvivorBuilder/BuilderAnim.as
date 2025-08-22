@@ -1,4 +1,5 @@
 #include "RunnerCommon.as"
+#include "KnockedCommon.as"
 
 void onInit(CSprite@ this)
 {
@@ -20,9 +21,15 @@ void onTick(CSprite@ this)
         {
             this.SetAnimation("dead");
         }
+
+        // ensure the head shows the correct dead frame
+        blob.Tag("dead head");
+        blob.Untag("attack head");
         return;
     }
 
+    bool knocked = isKnocked(blob);
+    const bool action1 = blob.isKeyPressed(key_action1);
     const bool left = blob.isKeyPressed(key_left);
     const bool right = blob.isKeyPressed(key_right);
     const bool up = blob.isKeyPressed(key_up);
@@ -33,7 +40,7 @@ void onTick(CSprite@ this)
     {
         this.SetAnimation("crouch");
     }
-    else if (blob.isKeyPressed(key_action1) || (this.isAnimation("build") && !this.isAnimationEnded()))
+    else if (action1 || (this.isAnimation("build") && !this.isAnimationEnded()))
     {
         this.SetAnimation("build");
     }
@@ -48,5 +55,22 @@ void onTick(CSprite@ this)
     else
     {
         this.SetAnimation("default");
+    }
+
+    // handle head animation tags
+    if (knocked)
+    {
+        blob.Tag("dead head");
+        blob.Untag("attack head");
+    }
+    else if (action1)
+    {
+        blob.Tag("attack head");
+        blob.Untag("dead head");
+    }
+    else
+    {
+        blob.Untag("attack head");
+        blob.Untag("dead head");
     }
 }
