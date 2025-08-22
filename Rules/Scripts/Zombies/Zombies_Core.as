@@ -159,8 +159,9 @@ class ZombiesCore : RulesCore
 			}
 		}
 
-		// final difficulty (apply cap after any bonus change)
-		float difficulty = dayNumber * 0.5f;
+                // final difficulty (apply cap after any bonus change)
+                // add a base value so negative modifiers don't stall early scaling
+                float difficulty = 1.0f + dayNumber * 0.5f;
 		difficulty += pillars * 0.2f;	  // pillars add pressure
 		difficulty -= altars * 0.2f;	  // altars ease the round
 		difficulty += survivors * 0.05f;  // more survivors harden the waves
