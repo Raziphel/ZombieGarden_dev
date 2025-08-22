@@ -327,11 +327,10 @@ namespace Material
 				case CMap::tile_copperore_d0:
 				case CMap::tile_copperore_d1:
 				case CMap::tile_copperore_d2:
-				case CMap::tile_copperore_d3:
-				case CMap::tile_copperore_d4:
-				case CMap::tile_copperore_d5:
-					createFor(this, 'mat_copperore', 3 * damage);
-					break;
+                                case CMap::tile_copperore_d3:
+                                case CMap::tile_copperore_d4:
+                                        createFor(this, 'mat_copperore', 3 * damage);
+                                        break;
 
 				case CMap::tile_coalore:
 				case CMap::tile_coalore_d0:
