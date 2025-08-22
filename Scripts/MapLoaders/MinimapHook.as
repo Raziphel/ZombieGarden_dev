@@ -77,10 +77,10 @@ void CalculateMinimapColour(CMap @map, u32 offset, TileType tile, SColor&out col
 	{
 		col = color_iron;
 	}
-	else if (inRange(tile, CMap::tile_copperore, CMap::tile_copperore_d5))
-	{
-		col = color_copper;
-	}
+        else if (inRange(tile, CMap::tile_copperore, CMap::tile_copperore_d4))
+        {
+                col = color_copper;
+        }
 	else if (inRange(tile, CMap::tile_coalore, CMap::tile_coalore_d5))
 	{
 		col = color_coal;
