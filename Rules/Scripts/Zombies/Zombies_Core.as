@@ -28,9 +28,10 @@ class ZombiesCore : RulesCore
 
 		server_CreateBlob("music", 0, Vec2f(0, 0));
 
-		const int gamestart = getGameTime();
-		rules.set_s32("gamestart", gamestart);
-		rules.SetCurrentState(WARMUP);
+                const int gamestart = getGameTime();
+                rules.set_s32("gamestart", gamestart);
+                rules.Sync("gamestart", true);
+                rules.SetCurrentState(WARMUP);
 
 		// Arm the boss transition for the first cycle
 		rules.set_s32("transition", 1);
@@ -113,8 +114,12 @@ class ZombiesCore : RulesCore
 		const int max_undead = (num_survivors_p / 3);
 		rules.set_s32("max_undead", max_undead);
 
-		// expose the current day to the HUD for snappier rendering
-		rules.set_s32("hud_dayNumber", dayNumber);
+                // expose the current day to the HUD for snappier rendering
+                if (!rules.exists("hud_dayNumber") || rules.get_s32("hud_dayNumber") != dayNumber)
+                {
+                        rules.set_s32("hud_dayNumber", dayNumber);
+                        rules.Sync("hud_dayNumber", true);
+                }
 
 		// transition from warmup to game
 		if (rules.isWarmup() && timeElapsed > getTicksASecond() * 30)
