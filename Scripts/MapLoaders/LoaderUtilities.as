@@ -166,23 +166,22 @@ TileType server_onTileHit(CMap @map, f32 damage, u32 index, TileType oldTileType
 				OnIronTileHit(map, index);
 				return CMap::tile_ironore_d0;
 			}
-			case CMap::tile_ironore_d0:
-			case CMap::tile_ironore_d1:
-			case CMap::tile_ironore_d2:
-			case CMap::tile_ironore_d3:
-			case CMap::tile_ironore_d4:
-			case CMap::tile_ironore_d5:
-			case CMap::tile_ironore_d6:
-			case CMap::tile_ironore_d7:
-			{
-				OnIronTileHit(map, index);
-				return oldTileType + 1;
-			}
-			case CMap::tile_ironore_d8:
-			{
-				OnIronTileDestroyed(map, index);
-				return CMap::tile_ground_back;
-			}
+                        case CMap::tile_ironore_d0:
+                        case CMap::tile_ironore_d1:
+                        case CMap::tile_ironore_d2:
+                        case CMap::tile_ironore_d3:
+                        case CMap::tile_ironore_d4:
+                        case CMap::tile_ironore_d5:
+                        case CMap::tile_ironore_d6:
+                        {
+                                OnIronTileHit(map, index);
+                                return oldTileType + 1;
+                        }
+                        case CMap::tile_ironore_d7:
+                        {
+                                OnIronTileDestroyed(map, index);
+                                return CMap::tile_ground_back;
+                        }
 
 				// Coal Ore
 			case CMap::tile_coalore:
@@ -453,16 +452,15 @@ void onSetTile(CMap @map, u32 index, TileType tile_new, TileType tile_old)
 			case CMap::tile_ironore_d2:
 			case CMap::tile_ironore_d3:
 			case CMap::tile_ironore_d4:
-			case CMap::tile_ironore_d5:
-			case CMap::tile_ironore_d6:
-			case CMap::tile_ironore_d7:
-			case CMap::tile_ironore_d8:
-			{
-				OnIronTileHit(map, index);
-				map.RemoveTileFlag(index, Tile::LIGHT_PASSES | Tile::LIGHT_SOURCE);
-				map.AddTileFlag(index, Tile::SOLID | Tile::COLLISION);
-				break;
-			}
+                        case CMap::tile_ironore_d5:
+                        case CMap::tile_ironore_d6:
+                        case CMap::tile_ironore_d7:
+                        {
+                                OnIronTileHit(map, index);
+                                map.RemoveTileFlag(index, Tile::LIGHT_PASSES | Tile::LIGHT_SOURCE);
+                                map.AddTileFlag(index, Tile::SOLID | Tile::COLLISION);
+                                break;
+                        }
 
 				// coal ore
 			case CMap::tile_coalore:
