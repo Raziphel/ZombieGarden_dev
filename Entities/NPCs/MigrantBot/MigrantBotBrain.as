@@ -2,7 +2,7 @@
 
 #define SERVER_ONLY
 
-#include "/Entities/Shared/Emotes/EmotesCommon.as"
+#include "EmotesCommon.as"
 #include "HallCommon.as"
 #include "MigrantCommon.as"
 
