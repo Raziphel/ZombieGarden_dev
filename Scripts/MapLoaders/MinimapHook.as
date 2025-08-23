@@ -72,8 +72,8 @@ void CalculateMinimapColour(CMap @map, u32 offset, TileType tile, SColor&out col
 		col = color_gold;
 	}
 	else if (inRange(tile, CMap::tile_ironbrick, CMap::tile_ironbrick_d11) ||
-			 inRange(tile, CMap::tile_ironbackwall, CMap::tile_ironbackwall_d6) ||
-			 inRange(tile, CMap::tile_ironore, CMap::tile_ironore_d8))
+                         inRange(tile, CMap::tile_ironbackwall, CMap::tile_ironbackwall_d6) ||
+                         inRange(tile, CMap::tile_ironore, CMap::tile_ironore_d7))
 	{
 		col = color_iron;
 	}

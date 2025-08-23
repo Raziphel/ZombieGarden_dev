@@ -320,11 +320,10 @@ namespace Material
 				case CMap::tile_ironore_d3:
 				case CMap::tile_ironore_d4:
 				case CMap::tile_ironore_d5:
-				case CMap::tile_ironore_d6:
-				case CMap::tile_ironore_d7:
-				case CMap::tile_ironore_d8:
-					createFor(this, 'mat_ironore', 3 * damage);
-					break;
+                                case CMap::tile_ironore_d6:
+                                case CMap::tile_ironore_d7:
+                                        createFor(this, 'mat_ironore', 3 * damage);
+                                        break;
 
 				case CMap::tile_copperore:
 				case CMap::tile_copperore_d0:
