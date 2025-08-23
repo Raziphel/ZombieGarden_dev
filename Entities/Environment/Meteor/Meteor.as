@@ -1,5 +1,5 @@
-#include "/Entities/Shared/Attacks/Hitters.as";
-#include "/Entities/Shared/Attacks/LimitedAttacks.as";
+#include "Hitters.as";
+#include "LimitedAttacks.as";
 
 const int pierce_amount = 8;
 
