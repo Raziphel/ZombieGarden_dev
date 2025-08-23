@@ -79,14 +79,14 @@ int CountTeamPlayers(const int teamNum)
 // -------------------------------------
 void onInit(CRules @ this)
 {
-        // Load default GUI assets so icons and tokens are available
-        LoadDefaultGUI();
+	// Load default GUI assets so icons and tokens are available
+	LoadDefaultGUI();
 }
 
 void onRestart(CRules @ this)
 {
-        // Ensure GUI assets are reloaded on map restart
-        LoadDefaultGUI();
+	// Ensure GUI assets are reloaded on map restart
+	LoadDefaultGUI();
 }
 
 void onRender(CRules @ this)

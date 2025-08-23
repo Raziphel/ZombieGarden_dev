@@ -50,14 +50,14 @@ void Server_GlobalPopup(CRules @rules,
 	rules.set_u32(POP_COLOR_HEAD_KEY, PackColor(bodyCol)); // same as body for normal
 	rules.set_u32(POP_COLOR_BODY_KEY, PackColor(bodyCol));
 
-        // Broadcast to all clients
-        // 2nd parameter "true" ensures the value is synced publicly
-        rules.Sync(POP_MSG_KEY, true);
-        rules.Sync(POP_START_KEY, true);
-        rules.Sync(POP_DURATION_KEY, true);
-        rules.Sync(POP_KIND_KEY, true);
-        rules.Sync(POP_COLOR_HEAD_KEY, true);
-        rules.Sync(POP_COLOR_BODY_KEY, true);
+	// Broadcast to all clients
+	// 2nd parameter "true" ensures the value is synced publicly
+	rules.Sync(POP_MSG_KEY, true);
+	rules.Sync(POP_START_KEY, true);
+	rules.Sync(POP_DURATION_KEY, true);
+	rules.Sync(POP_KIND_KEY, true);
+	rules.Sync(POP_COLOR_HEAD_KEY, true);
+	rules.Sync(POP_COLOR_BODY_KEY, true);
 }
 
 // ----------------------------------
@@ -81,13 +81,13 @@ void Server_BossPopup(CRules @rules,
 	rules.set_u32(POP_COLOR_HEAD_KEY, PackColor(headlineCol));
 	rules.set_u32(POP_COLOR_BODY_KEY, PackColor(bodyCol));
 
-        // Ensure clients receive all popup parameters
-        rules.Sync(POP_MSG_KEY, true);
-        rules.Sync(POP_START_KEY, true);
-        rules.Sync(POP_DURATION_KEY, true);
-        rules.Sync(POP_KIND_KEY, true);
-        rules.Sync(POP_COLOR_HEAD_KEY, true);
-        rules.Sync(POP_COLOR_BODY_KEY, true);
+	// Ensure clients receive all popup parameters
+	rules.Sync(POP_MSG_KEY, true);
+	rules.Sync(POP_START_KEY, true);
+	rules.Sync(POP_DURATION_KEY, true);
+	rules.Sync(POP_KIND_KEY, true);
+	rules.Sync(POP_COLOR_HEAD_KEY, true);
+	rules.Sync(POP_COLOR_BODY_KEY, true);
 }
 
 // Optional compatibility shim

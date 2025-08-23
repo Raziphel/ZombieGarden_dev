@@ -170,18 +170,18 @@ class ZombiesCore : RulesCore
 		// baseline grows by 0.1 every day so altars can't stall scaling
 		const float baseDifficulty = dayNumber * 0.25f;
 		float difficulty = dayNumber * 0.65f;
-		difficulty += pillars * 0.3f;	  // pillars add pressure
-		difficulty -= altars * 0.2f;	  // altars ease the round
-		difficulty += survivors * 0.05f;  // more survivors harden the waves
-		difficulty += undead * 0.2f;	  // undead players make it tougher
+		difficulty += pillars * 0.3f;	   // pillars add pressure
+		difficulty -= altars * 0.2f;	   // altars ease the round
+		difficulty += survivors * 0.05f;   // more survivors harden the waves
+		difficulty += undead * 0.2f;	   // undead players make it tougher
 		difficulty += days_offset * 0.05f; // manual day skips ups difficulty
 		difficulty += wipeBonus;
 		if (difficulty < baseDifficulty)
 			difficulty = baseDifficulty;
 		if (difficulty > 50.0f)
 			difficulty = 50.0f; // expanded cap
-			rules.set_f32("difficulty", difficulty);
-			rules.Sync("difficulty", true);
+		rules.set_f32("difficulty", difficulty);
+		rules.Sync("difficulty", true);
 
 		int spawnRate = 200 - int(difficulty * 3.3);
 		if (spawnRate < 15)
@@ -481,4 +481,4 @@ class ZombiesCore : RulesCore
 			// (score bookkeeping if needed)
 		}
 	}
-	}
+}
