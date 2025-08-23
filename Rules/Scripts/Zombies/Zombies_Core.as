@@ -46,6 +46,7 @@ class ZombiesCore : RulesCore
 
 		// seed initial difficulty value
 		rules.set_f32("difficulty", 0.1f);
+		rules.Sync("difficulty", true);
 	}
 
 	void Update()
@@ -151,6 +152,7 @@ class ZombiesCore : RulesCore
 			{
 				wipeBonus += 0.5f;
 				rules.set_f32("difficulty_bonus", wipeBonus);
+				rules.Sync("difficulty_bonus", true);
 				rules.set_s32("last_wipe_day", dayNumber);
 
 				const float previewDifficulty = Maths::Min(
@@ -179,7 +181,8 @@ class ZombiesCore : RulesCore
 			difficulty = baseDifficulty;
 		if (difficulty > 50.0f)
 			difficulty = 50.0f; // expanded cap
-		rules.set_f32("difficulty", difficulty);
+			rules.set_f32("difficulty", difficulty);
+			rules.Sync("difficulty", true);
 
 		int spawnRate = 200 - int(difficulty * 3.3);
 		if (spawnRate < 15)
@@ -479,4 +482,4 @@ class ZombiesCore : RulesCore
 			// (score bookkeeping if needed)
 		}
 	}
-}
+	}

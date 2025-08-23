@@ -106,10 +106,12 @@ bool onServerProcessChat(CRules @ this, const string& in text_in, string& out te
 				int day_cycle = getRules().daycycle_speed * 60;
 				int gamestart = getRules().get_s32("gamestart");
 				int dayNumber = ((getGameTime() - gamestart) / getTicksASecond() / day_cycle) + 1;
-				int extra = (time - dayNumber) * day_cycle * getTicksASecond();
-				getRules().set_s32("gamestart", gamestart - extra);
-				getMap().SetDayTime(time);
-				getRules().set_bool("dayCheated", true);
+int extra = (time - dayNumber) * day_cycle * getTicksASecond();
+getRules().set_s32("gamestart", gamestart - extra);
+getRules().Sync("gamestart", true);
+getMap().SetDayTime(time);
+getRules().set_bool("dayCheated", true);
+getRules().Sync("dayCheated", true);
 			}
 		}
 	}
