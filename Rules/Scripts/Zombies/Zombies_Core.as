@@ -160,8 +160,7 @@ class ZombiesCore : RulesCore
 
 				Server_GlobalPopup(
 					rules,
-					"All survivors have fallen!\n\n+0.5 Difficulty (now " +
-						previewDifficulty + ")",
+					"All survivors have fallen!\n\n+0.5 Difficulty",
 					SColor(255, 255, 0, 0),
 					6 * getTicksASecond());
 			}
