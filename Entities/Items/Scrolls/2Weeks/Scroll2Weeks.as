@@ -26,9 +26,10 @@ void onCommand(CBlob @ this, u8 cmd, CBitStream @params)
 		{
 			if (getNet().isServer())
 			{
-				getRules().add_s32("days_offset", 14);
-				getMap().SetDayTime(0.5);
-				hit = true;
+getRules().add_s32("days_offset", 14);
+getRules().Sync("days_offset", true);
+getMap().SetDayTime(0.5);
+hit = true;
 			}
 		}
 

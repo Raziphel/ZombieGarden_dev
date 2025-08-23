@@ -22,6 +22,7 @@ void onInit(CRules @ this)
 	this.set_bool("dayCheated", false);
 	this.set_bool("records_saved", false);
 	this.set_bool("records_loaded", false);
+	this.Sync("dayCheated", true);
 }
 
 void onRestart(CRules @ this)
@@ -29,6 +30,7 @@ void onRestart(CRules @ this)
 	this.set_bool("dayCheated", false);
 	this.set_bool("records_saved", false);
 	this.set_bool("records_loaded", false);
+	this.Sync("dayCheated", true);
 }
 
 void LoadRecords(CRules @ this)

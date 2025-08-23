@@ -10,14 +10,20 @@ void Config(ZombiesCore @ this)
 	// ============================
 
 	// How long a dead player waits before they can respawn (seconds)
-	this.spawnTime = 0.2f;
-	this.rules.set_f32("spawn_time", this.spawnTime);
+this.spawnTime = 0.2f;
+this.rules.set_f32("spawn_time", this.spawnTime);
+this.rules.Sync("spawn_time", true);
 
 	// round-specific bookkeeping so values don't persist between rounds
-	this.rules.set_f32("difficulty_bonus", 0.0f);
-	this.rules.set_s32("last_wipe_day", -1);
-	this.rules.set_s32("days_offset", 0);
-	this.rules.set_f32("difficulty", 0.1f);
+this.rules.set_f32("difficulty_bonus", 0.0f);
+this.rules.set_s32("last_wipe_day", -1);
+this.rules.set_s32("days_offset", 0);
+this.rules.set_f32("difficulty", 0.1f);
+
+this.rules.Sync("difficulty_bonus", true);
+this.rules.Sync("last_wipe_day", true);
+this.rules.Sync("days_offset", true);
+this.rules.Sync("difficulty", true);
 
 	// ----------------------------
 	// Mob limits (hard caps)
@@ -33,22 +39,39 @@ void Config(ZombiesCore @ this)
 	this.rules.set_s32("max_bison", 8);
 	this.rules.set_s32("max_banshees", 6);
 	this.rules.set_s32("max_horror", 8);
-	this.rules.set_s32("max_gasbags", 10);
+this.rules.set_s32("max_gasbags", 10);
 
-	// ----------------------------
+this.rules.Sync("max_zombies", true);
+this.rules.Sync("max_pzombies", true);
+this.rules.Sync("max_migrantbots", true);
+this.rules.Sync("max_wraiths", true);
+this.rules.Sync("max_gregs", true);
+this.rules.Sync("max_imol", true);
+this.rules.Sync("max_digger", true);
+this.rules.Sync("max_bison", true);
+this.rules.Sync("max_banshees", true);
+this.rules.Sync("max_horror", true);
+this.rules.Sync("max_gasbags", true);
+
+// ----------------------------
 	// Win/Loss pacing
 	// ----------------------------
 	this.rules.set_s32("days_to_survive", 0);                         // <= 0 means endless
 	this.rules.set_s32("curse_day", 250);				  // night(s) from which survivors can auto-zombify
 	this.rules.set_s32("hardmode_day", 100);			  // the day zombies can spawn during the day
 	this.rules.set_bool("ruins_portal_active", false);		  // ruins become portals once a pillar falls
-	this.rules.Sync("ruins_portal_active", false);			  // If ruins have spawned portals or not.
+	this.rules.Sync("days_to_survive", true);
+	this.rules.Sync("curse_day", true);
+	this.rules.Sync("hardmode_day", true);
+	this.rules.Sync("ruins_portal_active", true);			  // If ruins have spawned portals or not.
 
 	// ----------------------------
 	// Flavor toggles
 	// ----------------------------
 	this.rules.set_bool("grave_spawn", true); // spawn graves with loot at markers
 	this.rules.set_bool("zombify", true);	  // allow players to zombify after death
+	this.rules.Sync("grave_spawn", true);
+	this.rules.Sync("zombify", true);
 
 											  // ----------------------------
 	// Debug logging (optional)
@@ -145,4 +168,14 @@ void RefreshMobCountsToRules()
 	rules.set_s32("zombiealter", num_alters);
 	rules.set_s32("num_survivors", num_survivors);
 	rules.set_s32("num_undead", num_undead);
+
+	const string[] props = {
+	"num_zombies", "num_pzombies", "num_migrantbots", "num_wraiths",
+	"num_gregs", "num_bisons", "num_ruinstorch", "num_zombiePortals",
+	"num_horror", "num_banshees", "num_gasbags", "num_abom",
+	"num_immol", "num_digger", "num_alters", "zombiealter",
+	"num_survivors", "num_undead"
+	};
+	for (uint i = 0; i < props.length; ++i)
+		rules.Sync(props[i], true);
 }
