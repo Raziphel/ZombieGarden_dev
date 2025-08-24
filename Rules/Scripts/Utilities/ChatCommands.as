@@ -7,7 +7,7 @@
 #include "MakeSeed.as";
 
 // #include "RPC_War.as";
-#include "Core/Structs.as";
+#include "Structs.as";
 #include "RulesCore.as";
 #include "WeatherSystem.as";
 

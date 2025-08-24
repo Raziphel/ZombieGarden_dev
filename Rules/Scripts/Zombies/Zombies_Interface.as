@@ -1,6 +1,6 @@
-#include "Core/Structs.as"
+#include "Structs.as"
 #include "GlobalPopup.as"
-#include "Scripts/Default/DefaultGUI.as"
+#include "DefaultGUI.as"
 
 // -------------------------------------
 //  Interface / HUD rendering

@@ -1,7 +1,7 @@
 // management structs
 
-#include "Rules/CommonScripts/BaseTeamInfo.as";
-#include "Rules/CommonScripts/PlayerInfo.as";
+#include "BaseTeamInfo.as";
+#include "PlayerInfo.as";
 
 namespace ItemFlag
 {
