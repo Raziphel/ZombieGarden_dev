@@ -1,7 +1,7 @@
 // default startup functions for autostart scripts
 
-#include "Default/DefaultGUI.as"
-#include "Default/DefaultLoaders.as"
+#include "DefaultGUI.as"
+#include "DefaultLoaders.as"
 
 void RunServer()
 {

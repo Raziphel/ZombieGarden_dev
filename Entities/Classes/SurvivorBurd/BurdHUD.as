@@ -1,7 +1,7 @@
 // burd HUD
 // by The Sopranos
 
-#include "/Entities/Shared/GUI/nActorHUDStartPos.as";
+#include "nActorHUDStartPos.as";
 
 const string iconsFilename = "jclass.png";
 const int slotsSize = 6;

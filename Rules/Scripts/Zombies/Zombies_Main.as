@@ -1,7 +1,7 @@
 // Zombies_Main.as
 #define SERVER_ONLY
 
-#include "Core/Structs.as"
+#include "Structs.as"
 #include "RespawnSystem.as"
 #include "RulesCore.as"
 

@@ -1,5 +1,5 @@
 // Zombies_Spawns.as
-#include "Core/Structs.as"
+#include "Structs.as"
 #include "RespawnSystem.as"
 #include "RulesCore.as"
 

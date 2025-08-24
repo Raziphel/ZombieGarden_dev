@@ -1,6 +1,6 @@
 // spawn resources
 
-#include "Core/Structs.as";
+#include "Structs.as";
 #include "RulesCore.as";
 
 const u32 materials_wait = 20;		  // seconds between free mats

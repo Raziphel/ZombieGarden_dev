@@ -1,6 +1,6 @@
 // default actor hud
 //  a bar with hearts in the bottom left, bottom right free for actor specific stuff
-#include "/Entities/Shared/GUI/nActorHUDStartPos.as";
+#include "nActorHUDStartPos.as";
 const int slotsSize = 6;
 
 void renderBackBar(Vec2f origin, f32 width, f32 scale)
