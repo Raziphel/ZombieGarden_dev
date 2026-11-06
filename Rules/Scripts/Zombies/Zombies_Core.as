@@ -13,6 +13,9 @@ class ZombiesCore : RulesCore
 	f32 spawnTime;
 
 	ZombiesSpawns @Zombies_spawns;
+	// Fallback ground positions are map-dependent, not horde-dependent.
+	Vec2f[] fallbackSpawnPlaces;
+	bool fallbackSpawnPlacesReady = false;
 
 	ZombiesCore()
 	{}
@@ -25,6 +28,8 @@ class ZombiesCore : RulesCore
 	{
 		RulesCore::Setup(_rules, _respawns);
 		@Zombies_spawns = cast<ZombiesSpawns @>(_respawns);
+		fallbackSpawnPlaces.clear();
+		fallbackSpawnPlacesReady = false;
 
 		server_CreateBlob("music", 0, Vec2f(0, 0));
 
@@ -333,26 +338,34 @@ class ZombiesCore : RulesCore
 
 				if (zombiePlaces.length <= 0)
 				{
-					// build simple edge fallback list
-					for (int zp = 8; zp < 16; zp++)
+					// With no portals, the old code performed 16 terrain
+					// raycasts on every spawn attempt. Cache the ground
+					// positions for this map and reset them at Setup().
+					if (!fallbackSpawnPlacesReady)
 					{
-						Vec2f col;
-						if (map.rayCastSolid(Vec2f(zp * 8, 0.0f),
-										 Vec2f(zp * 8, map.tilemapheight * 8),
-										 col))
+						fallbackSpawnPlaces.clear();
+						for (int zp = 8; zp < 16; ++zp)
 						{
-							col.y -= 16.0f;
-							zombiePlaces.push_back(col);
+							Vec2f col;
+							if (map.rayCastSolid(Vec2f(zp * 8, 0.0f),
+								Vec2f(zp * 8, map.tilemapheight * 8), col))
+							{
+								col.y -= 16.0f;
+								fallbackSpawnPlaces.push_back(col);
+							}
+							if (map.rayCastSolid(
+								Vec2f((map.tilemapwidth - zp) * 8, 0.0f),
+								Vec2f((map.tilemapwidth - zp) * 8, map.tilemapheight * 8), col))
+							{
+								col.y -= 16.0f;
+								fallbackSpawnPlaces.push_back(col);
+							}
 						}
-						if (map.rayCastSolid(
-							Vec2f((map.tilemapwidth - zp) * 8, 0.0f),
-							Vec2f((map.tilemapwidth - zp) * 8, map.tilemapheight * 8),
-							col))
-						{
-							col.y -= 16.0f;
-							zombiePlaces.push_back(col);
-						}
+						// If terrain isn't loaded yet, try again next spawn.
+						fallbackSpawnPlacesReady = fallbackSpawnPlaces.length > 0;
 					}
+					for (uint i = 0; i < fallbackSpawnPlaces.length; ++i)
+						zombiePlaces.push_back(fallbackSpawnPlaces[i]);
 				}
 
 				// If still empty somehow, bail this tick safely
