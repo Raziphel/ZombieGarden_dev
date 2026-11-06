@@ -266,16 +266,23 @@ class ZombiesCore : RulesCore
 			if (map !is null && rules.get_bool("zombify") &&
 				dayNumber >= curse_day && num_undead_p < max_undead)
 			{
-				const u8 pCount = getPlayersCount();
-				if (pCount > 0)
+				// Curse is advertised as affecting fallen survivors. Do not
+				// randomly turn an actively defending player into an undead.
+				CPlayer @[] fallen;
+				for (uint i = 0; i < getPlayersCount(); ++i)
 				{
-					CPlayer @player = getPlayer(XORRandom(pCount));
-					if (player !is null && player.getTeamNum() == 0)
-					{
-						Zombify(player);
-						server_CreateBlob("cursemessage");
-					}
+					CPlayer @candidate = getPlayer(i);
+					if (candidate is null || candidate.getTeamNum() != 0 ||
+						candidate.getDeaths() == 0)
+						continue;
+
+					CBlob @body = candidate.getBlob();
+					if (body is null || body.hasTag("dead"))
+						fallen.push_back(candidate);
 				}
+
+				if (fallen.length > 0 && Zombify(fallen[XORRandom(fallen.length)]))
+					server_CreateBlob("cursemessage");
 			}
 		}
 
@@ -509,21 +516,27 @@ class ZombiesCore : RulesCore
 		}
 	}
 
-	void Zombify(CPlayer @player)
+	bool Zombify(CPlayer @player)
 	{
-		if (player is null || player.getTeamNum() != 0)
-			return;
+		if (player is null || player.getTeamNum() != 0 ||
+			player.getDeaths() == 0)
+			return false;
+
+		CBlob @body = player.getBlob();
+		if (body !is null && !body.hasTag("dead"))
+			return false;
 
 		PlayerInfo @pInfo = getInfoFromName(player.getUsername());
 		if (pInfo is null)
-			return;
+			return false;
 
 		ChangePlayerTeam(player, 1);
 		Server_GlobalPopup(
 			rules,
-			"The Curse has started\n\nA player has now joined the Undead Team.",
+			"The Curse has started\n\nA fallen survivor joined the Undead Team.",
 			SColor(255, 255, 0, 0),
 			10 * getTicksASecond());
+		return true;
 	}
 
 	void CheckTeamWon()
