@@ -61,6 +61,51 @@ class ZombiesCore : RulesCore
 		rules.Sync("difficulty", true);
 	}
 
+	// Dawn's Respite: a modest reward for players who actually survived
+	// the previous night. No payout for spectators, fallen players,
+	// skipped days or cheat-adjusted rounds.
+	void AwardDawnRespite(const int previousDay)
+	{
+		if (!rules.isMatchRunning() || !rules.get_bool("dawn_respite") ||
+			rules.get_bool("dayCheated") || previousDay <= 0)
+			return;
+
+		const bool milestoneNight = GetWaveKindForDay(previousDay) != WAVE_NONE &&
+			rules.get_s32("boss_spawned_day") == previousDay;
+		const int coinReward = milestoneNight ? 85 : 25;
+		const f32 healthRecovery = milestoneNight ? 1.0f : 0.5f;
+		int survivorsRewarded = 0;
+
+		for (int i = 0; i < getPlayersCount(); ++i)
+		{
+			CPlayer @player = getPlayer(i);
+			if (player is null || player.getTeamNum() != 0)
+				continue;
+
+			CBlob @defender = player.getBlob();
+			if (defender is null || defender.hasTag("dead") ||
+				!defender.hasTag("survivorplayer"))
+				continue;
+
+			player.server_setCoins(player.getCoins() + coinReward);
+			const f32 recoveredHealth = Maths::Min(
+				defender.getInitialHealth(), defender.getHealth() + healthRecovery);
+			if (recoveredHealth > defender.getHealth())
+				defender.server_SetHealth(recoveredHealth);
+			survivorsRewarded++;
+		}
+
+		if (survivorsRewarded > 0)
+		{
+			const string header = milestoneNight ?
+				"MILESTONE NIGHT SURVIVED" : "DAWN'S RESPITE";
+			Server_GlobalPopup(rules,
+				header + "\nThe living defenders held the ruins.\n+" +
+				coinReward + " coins and some healing.",
+				SColor(255, 235, 210, 120), 5 * getTicksASecond());
+		}
+	}
+
 	void Update()
 	{
 		if (rules.isGameOver())
@@ -298,6 +343,11 @@ class ZombiesCore : RulesCore
 			const int prevDay = rules.get_s32("last_boss_day");
 			if (dayNumber != prevDay)
 			{
+				// Only reward one naturally elapsed day at a time. A server
+				// restart or administrative day jump is not a survived night.
+				if (dayNumber == prevDay + 1 && prevDay > 0)
+					AwardDawnRespite(prevDay);
+
 				rules.set_s32("last_boss_day", dayNumber);
 
 				// Re-arm outside boss days so %5 ticks can fire once
