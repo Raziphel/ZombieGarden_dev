@@ -41,11 +41,17 @@ GetFallbackBossSpawn()
 // dozens of physics bodies, sprites and brains in the same server tick.
 const int BOSS_SPAWN_BATCH_SIZE = 3;
 const u32 BOSS_SPAWN_BATCH_TICKS = 5;
+// Milestone enemies may temporarily exceed the ordinary horde cap, but
+// cannot grow it without bound during a long or heavily populated round.
+const int BOSS_SPAWN_EXTRA_HEADROOM = 24;
+const u32 BOSS_SPAWN_QUEUE_TIMEOUT = 180 * 30;
 
 string[] zg_boss_pending_names;
 int[] zg_boss_pending_counts;
 Vec2f[] zg_boss_pending_positions;
 u32 zg_boss_next_batch_tick = 0;
+u32 zg_boss_queue_started_tick = 0;
+int zg_boss_failed_attempts = 0;
 
 void ResetBossSpawnQueue()
 {
@@ -53,12 +59,17 @@ void ResetBossSpawnQueue()
 	zg_boss_pending_counts.clear();
 	zg_boss_pending_positions.clear();
 	zg_boss_next_batch_tick = 0;
+	zg_boss_queue_started_tick = 0;
+	zg_boss_failed_attempts = 0;
 }
 
 void QueueBossSpawns(const string&in blobName, int count, const Vec2f&in pos)
 {
 	if (blobName.length == 0 || count <= 0)
 		return;
+
+	if (zg_boss_pending_names.length == 0)
+		zg_boss_queue_started_tick = getGameTime();
 
 	zg_boss_pending_names.push_back(blobName);
 	zg_boss_pending_counts.push_back(count);
@@ -71,14 +82,57 @@ void ProcessBossSpawnQueue()
 		getGameTime() < zg_boss_next_batch_tick)
 		return;
 
-	for (int i = 0; i < BOSS_SPAWN_BATCH_SIZE &&
-		zg_boss_pending_names.length > 0; ++i)
+	CRules @rules = getRules();
+	CMap @map = getMap();
+	if (rules is null || map is null || !rules.isMatchRunning() ||
+		getPlayersCount() == 0)
+		return;
+
+	// A stalemate must not leave hundreds of delayed spawns in memory
+	// forever. The remaining portion of this encounter is abandoned if
+	// players have not made room after three minutes.
+	if (getGameTime() - zg_boss_queue_started_tick > BOSS_SPAWN_QUEUE_TIMEOUT)
 	{
-		// Small horizontal variation reduces body stacking without moving
-		// enemies far away from the original portal or map spawn marker.
+		warn("Zombie Garden: boss reinforcements timed out at population cap.");
+		ResetBossSpawnQueue();
+		return;
+	}
+
+	// Ordinary spawns stop at max_zombies. A milestone encounter gets 24
+	// extra slots, not an unbounded exemption from the performance limit.
+	CBlob @[] currentZombies;
+	getBlobsByTag("zombie", @currentZombies);
+	int livingZombies = 0;
+	for (uint i = 0; i < currentZombies.length; ++i)
+	{
+		CBlob @zombie = currentZombies[i];
+		if (zombie !is null && !zombie.hasTag("dead"))
+			livingZombies++;
+	}
+	const int bossPopulationLimit =
+		Maths::Max(0, rules.get_s32("max_zombies")) + BOSS_SPAWN_EXTRA_HEADROOM;
+
+	for (int i = 0; i < BOSS_SPAWN_BATCH_SIZE &&
+		zg_boss_pending_names.length > 0 && livingZombies < bossPopulationLimit; ++i)
+	{
 		Vec2f spawnPos = zg_boss_pending_positions[0];
 		spawnPos.x += (int(XORRandom(3)) - 1) * 8.0f;
-		server_CreateBlob(zg_boss_pending_names[0], -1, spawnPos);
+		CBlob @spawned = server_CreateBlob(zg_boss_pending_names[0], -1, spawnPos);
+		if (spawned is null)
+		{
+			// Retry transient failures, then skip a permanently unavailable
+			// entity rather than blocking the remaining boss encounter.
+			zg_boss_failed_attempts++;
+			if (zg_boss_failed_attempts < 3)
+				break;
+			warn("Zombie Garden: skipped a boss reinforcement that failed to spawn.");
+			zg_boss_failed_attempts = 0;
+		}
+		else
+		{
+			zg_boss_failed_attempts = 0;
+			livingZombies++;
+		}
 
 		zg_boss_pending_counts[0]--;
 		if (zg_boss_pending_counts[0] <= 0)
@@ -88,7 +142,6 @@ void ProcessBossSpawnQueue()
 			zg_boss_pending_positions.erase(0);
 		}
 	}
-
 	zg_boss_next_batch_tick = getGameTime() + BOSS_SPAWN_BATCH_TICKS;
 }
 
