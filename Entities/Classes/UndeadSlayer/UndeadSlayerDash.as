@@ -36,7 +36,7 @@ void onTick(CBlob @ this)
 	if (left == right || !(this.isOnGround() || this.isOnLadder()))
 		return;
 
-	const Vec2f vel = this.getVelocity();
+	Vec2f vel = this.getVelocity();
 	if (vel.Length() >= 3.0f)
 		return;
 
