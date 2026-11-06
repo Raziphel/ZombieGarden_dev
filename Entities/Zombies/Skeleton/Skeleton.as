@@ -71,5 +71,12 @@ f32 onHit(CBlob @ this, Vec2f worldPoint, Vec2f velocity, f32 damage, CBlob @hit
 
 void onDie(CBlob @ this)
 {
-	this.getSprite().PlaySound("/SkeletonBreak1");
+	// Population replacement quietly retires unused enemies; avoid a
+	// misleading death sound when no player actually killed them.
+	if (this.hasTag("zg_horde_retired") || !isClient())
+		return;
+
+	CSprite @sprite = this.getSprite();
+	if (sprite !is null)
+		sprite.PlaySound("/SkeletonBreak1");
 }
