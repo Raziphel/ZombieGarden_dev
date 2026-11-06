@@ -98,6 +98,11 @@ void ProcessBossSpawnQueue()
 // - ends with 5 => Mini-boss wave
 WaveKind GetWaveKindForDay(const int dayNumber)
 {
+	// Day zero is used during round setup, but must never trigger an
+	// immediate Cataclysm because 0 % 25 is also zero.
+	if (dayNumber <= 0)
+		return WAVE_NONE;
+
 	if (dayNumber % 25 == 0)
 		return WAVE_CATACLYSM; // highest priority & exclusive
 
@@ -380,7 +385,7 @@ int RunBossWave(const int dayNumber, const float difficulty,
 	const int lastSpawnDay =
 		rules.exists("boss_spawned_day") ? rules.get_s32("boss_spawned_day") : -1;
 	if (lastSpawnDay == dayNumber)
-		return transition;
+		return 0; // a finished wave is no longer armed this day
 
 	const WaveKind kind = GetWaveKindForDay(dayNumber);
 	if (kind == WAVE_NONE)
@@ -407,6 +412,8 @@ int RunBossWave(const int dayNumber, const float difficulty,
 
 	const uint idx = PickWeightedIndex(@table);
 	BossEntry @e = table[idx];
+	if (e is null || e.names.length == 0)
+		return transition;
 
 	// Lock the transition only after we have a valid encounter to queue.
 	transition = 0;
