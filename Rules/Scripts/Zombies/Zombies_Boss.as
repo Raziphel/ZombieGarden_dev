@@ -40,13 +40,59 @@ GetFallbackBossSpawn()
 	return pos;
 }
 
-// Spawn N of blob @ position
-void SpawnMany(const string&in blobName, int count, const Vec2f&in pos)
+// Spread large milestone waves across several updates rather than creating
+// dozens of physics bodies, sprites and brains in the same server tick.
+const int BOSS_SPAWN_BATCH_SIZE = 3;
+const u32 BOSS_SPAWN_BATCH_TICKS = 5;
+
+string[] zg_boss_pending_names;
+int[] zg_boss_pending_counts;
+Vec2f[] zg_boss_pending_positions;
+u32 zg_boss_next_batch_tick = 0;
+
+void ResetBossSpawnQueue()
 {
-	for (int i = 0; i < count; i++)
+	zg_boss_pending_names.clear();
+	zg_boss_pending_counts.clear();
+	zg_boss_pending_positions.clear();
+	zg_boss_next_batch_tick = 0;
+}
+
+void QueueBossSpawns(const string&in blobName, int count, const Vec2f&in pos)
+{
+	if (blobName.length == 0 || count <= 0)
+		return;
+
+	zg_boss_pending_names.push_back(blobName);
+	zg_boss_pending_counts.push_back(count);
+	zg_boss_pending_positions.push_back(pos);
+}
+
+void ProcessBossSpawnQueue()
+{
+	if (!isServer() || zg_boss_pending_names.length == 0 ||
+		getGameTime() < zg_boss_next_batch_tick)
+		return;
+
+	for (int i = 0; i < BOSS_SPAWN_BATCH_SIZE &&
+		zg_boss_pending_names.length > 0; ++i)
 	{
-		server_CreateBlob(blobName, -1, pos);
+		// Small horizontal variation reduces body stacking without moving
+		// enemies far away from the original portal or map spawn marker.
+		Vec2f spawnPos = zg_boss_pending_positions[0];
+		spawnPos.x += (int(XORRandom(3)) - 1) * 8.0f;
+		server_CreateBlob(zg_boss_pending_names[0], -1, spawnPos);
+
+		zg_boss_pending_counts[0]--;
+		if (zg_boss_pending_counts[0] <= 0)
+		{
+			zg_boss_pending_names.erase(0);
+			zg_boss_pending_counts.erase(0);
+			zg_boss_pending_positions.erase(0);
+		}
 	}
+
+	zg_boss_next_batch_tick = getGameTime() + BOSS_SPAWN_BATCH_TICKS;
 }
 
 // Pick wave kind from the day number.
@@ -346,9 +392,6 @@ int RunBossWave(const int dayNumber, const float difficulty,
 	else
 		sp = GetFallbackBossSpawn();
 
-	// Lock the transition so we don't double-spawn this day
-	transition = 0;
-
 	// Build the right table for this day
 	array<BossEntry @> table;
 	if (kind == WAVE_MINI)
@@ -358,16 +401,22 @@ int RunBossWave(const int dayNumber, const float difficulty,
 	else
 		table = BuildCataclysmTable(dayNumber);
 
+	if (table.length == 0)
+		return transition;
+
 	const uint idx = PickWeightedIndex(@table);
 	BossEntry @e = table[idx];
 
-	// Server: spawn + popup
+	// Lock the transition only after we have a valid encounter to queue.
+	transition = 0;
+
+	// Server: queue spawns + popup
 	if (isServer())
 	{
 		for (uint k = 0; k < e.names.length; k++)
 		{
 			const int count = (k < e.counts.length ? e.counts[k] : 1);
-			SpawnMany(e.names[k], count, sp);
+			QueueBossSpawns(e.names[k], count, sp);
 		}
 		Server_GlobalPopup(rules, e.popup, e.color, e.popupTicks);
 		// Zombies_Main.as is SERVER_ONLY. Send the selected sound to
