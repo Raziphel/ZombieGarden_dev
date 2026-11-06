@@ -9,6 +9,14 @@ void Config(ZombiesCore @ this)
 	// Tunables
 	// ============================
 
+	// Zombie Garden is an endless survival mode unless days_to_survive
+	// is set below. The generic KAG TimeToEnd script must not end the round
+	// immediately after warmup because gameDuration was left uninitialized.
+	this.warmUpTime = 30 * getTicksASecond();
+	this.gameDuration = 0;
+	this.rules.set_bool("no timer", true);
+	this.rules.set_u32("game_end_time", 0);
+
 	// How long a dead player waits before they can respawn (seconds)
 	this.spawnTime = 0.2f;
 	this.rules.set_f32("spawn_time", this.spawnTime);
