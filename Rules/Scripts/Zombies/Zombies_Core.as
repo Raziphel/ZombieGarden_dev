@@ -92,7 +92,13 @@ class ZombiesCore : RulesCore
 			const f32 recoveredHealth = Maths::Min(
 				defender.getInitialHealth(), defender.getHealth() + healthRecovery);
 			if (recoveredHealth > defender.getHealth())
+			{
 				defender.server_SetHealth(recoveredHealth);
+				// Use the existing short-lived Priest animation as immediate
+				// feedback that the defender survived until sunrise.
+				server_CreateBlob("healanimation", defender.getTeamNum(),
+					defender.getPosition());
+			}
 			survivorsRewarded++;
 		}
 
