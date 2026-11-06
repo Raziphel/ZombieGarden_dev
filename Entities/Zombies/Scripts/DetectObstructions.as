@@ -48,6 +48,12 @@ CBlob @FindBlockingFortification(CBlob @blob)
 
 void HandleZombieObstruction(CBrain @brain, CBlob @blob)
 {
+	// Do not repeatedly clear navigation every tick when a wall cannot be
+	// broken immediately. The attack script refreshes last_hit_time on hits.
+	if (getGameTime() < blob.get_u32("zg_obstruction_retry"))
+		return;
+	blob.set_u32("zg_obstruction_retry", getGameTime() + OBSTRUCTION_THRESHOLD);
+
 	CBlob @barrier = FindBlockingFortification(blob);
 	brain.EndPath();
 	ResetDestination(blob);
