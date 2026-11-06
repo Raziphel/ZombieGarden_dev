@@ -38,6 +38,8 @@ class ZombiesCore : RulesCore
 		rules.set_s32("last_boss_day", 0);
 		rules.set_s32("boss_spawned_day", 0);
 		rules.Sync("boss_spawned_day", true);
+		rules.set_string("boss_wave_sound", "");
+		rules.Sync("boss_wave_sound", true);
 
 		// reset kill counter for new record tracking
 		rules.set_u32("undead_kills", 0);
