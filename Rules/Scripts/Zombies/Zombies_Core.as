@@ -541,7 +541,10 @@ class ZombiesCore : RulesCore
 
 	void CheckTeamWon()
 	{
-		if (!rules.isMatchRunning())
+		// Checking for destroyed pillars requires a world blob lookup.
+		// Twice per second is responsive without repeating that lookup
+		// on every simulation tick during a large horde.
+		if (!rules.isMatchRunning() || getGameTime() % 15 != 0)
 			return;
 
 		const int gamestart = rules.get_s32("gamestart");
