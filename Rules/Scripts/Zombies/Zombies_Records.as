@@ -11,10 +11,11 @@ const string records_file_path = "../Cache/" + records_file_name;
 u16 getDaysSurvived(CRules @rules)
 {
 	const int gamestart = rules.get_s32("gamestart");
-	const int day_cycle = rules.daycycle_speed * 60;
+	const int day_cycle = Maths::Max(1, int(rules.daycycle_speed * 60));
 	const int days_offset = rules.get_s32("days_offset");
-	return days_offset +
-		   ((getGameTime() - gamestart) / getTicksASecond() / day_cycle) + 1;
+	const int currentDay = days_offset +
+		((getGameTime() - gamestart) / getTicksASecond() / day_cycle) + 1;
+	return u16(Maths::Clamp(currentDay, 1, 65535));
 }
 
 void onInit(CRules @ this)
@@ -89,6 +90,12 @@ void onTick(CRules @ this)
 			LoadRecords(this);
 			this.set_bool("records_loaded", true);
 		}
+		else
+		{
+			// Do not overwrite saved records with default zero values before
+			// the map has a name and the records file can be loaded.
+			return;
+		}
 	}
 
 	const u16 days = getDaysSurvived(this);
@@ -121,6 +128,9 @@ void onTick(CRules @ this)
 
 void onStateChange(CRules @ this, const u8 oldState)
 {
+	if (!this.get_bool("records_loaded"))
+		return;
+
 	if (this.isGameOver())
 	{
 		if (!this.get_bool("records_saved"))
