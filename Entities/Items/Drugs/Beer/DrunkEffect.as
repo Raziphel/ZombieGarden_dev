@@ -36,6 +36,10 @@ void onTick(CBlob @ this)
 
 	if (level == 0 || this.hasTag("dead"))
 	{
+		// A player who sobers up is not guaranteed to die, so deactivate
+		// the fullscreen shader before removing the effect script.
+		if (this.isMyPlayer())
+			getDriver().SetShader("drunk", false);
 		this.getCurrentScript().runFlags |= Script::remove_after_this;
 	}
 }
