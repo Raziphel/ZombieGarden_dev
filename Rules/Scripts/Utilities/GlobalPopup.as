@@ -122,7 +122,8 @@ void DrawGlobalPopup(CRules @ this)
 
 	// Fade ~0.2s at in/out edges
 	const f32 t = f32(now - start) / f32(duration); // 0..1
-	const f32 fadeEdge = 6.0f / f32(getTicksASecond());
+	// Six ticks of fade at each edge, regardless of the popup duration.
+	const f32 fadeEdge = Maths::Min(0.5f, 6.0f / f32(duration));
 	f32 alphaMul = 1.0f;
 	if (t < fadeEdge)
 		alphaMul = t / fadeEdge;
