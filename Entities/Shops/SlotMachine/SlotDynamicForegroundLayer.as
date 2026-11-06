@@ -12,7 +12,7 @@ void translateReel(CSprite @ this, s8 reelNum)
 {
 	CSpriteLayer @reel = this.getSpriteLayer("reel" + reelNum);
 	CSpriteLayer @reeln = this.getSpriteLayer("reeln" + reelNum);
-	if (reel !is null)
+	if (reel !is null && reeln !is null)
 	{
 		CBlob @blob = this.getBlob();
 		s8 dist = blob.get_s8("dist" + reelNum);
@@ -30,7 +30,6 @@ void translateReel(CSprite @ this, s8 reelNum)
 			blob.set_u8("csymbol" + reelNum, next);
 			u32 spinRand = blob.get_u32("spinRand");
 			u32 symbol = NextUInt(spinRand);
-			printf("rand:" + symbol);
 			blob.set_u32("spinRand", symbol);
 			symbol = symbol & 65535;
 			symbol = (symbol * 8) / 65535;
@@ -47,6 +46,9 @@ void onTick(CSprite @ this)
 {
 	CSpriteLayer @front = this.getSpriteLayer("front layer");
 	CBlob @blob = this.getBlob();
+	if (blob is null || front is null)
+		return;
+
 	s8 frame = blob.get_s8("frame");
 	front.SetFrameIndex(1);
 	frame++;
@@ -81,31 +83,18 @@ void onTick(CSprite @ this)
 		if (spinCount == 0)
 		{
 			blob.set_bool("spinning", false);
-			if ((r1 == r2 && r2 == r3) || (r1 == 0) ||
-				(r1 == 6 && r2 == r3) ||
-				(r2 == 6 && r1 == r3) ||
-				(r3 == 6 && r1 == r2) ||
-				(r2 == 6 && r3 == 6) ||
-				(r1 == 6 && r2 == 6) ||
-				(r1 == 6 && r3 == 6))
-			{
-				CPlayer @p = getLocalPlayer();
-				CBlob @local = p.getBlob();
-				if (local !is null)
-				{
-					u16 callid = blob.get_u16("callid");
-					if (local.getNetworkID() == callid)
-					{
-						CBitStream params;
 
-						CBlob @caller = getBlobByNetworkID(callid);
-						params.write_netid(caller.getNetworkID());
-						params.write_u8(r1);
-						params.write_u8(r2);
-						params.write_u8(r3);
-						blob.SendCommand(blob.getCommandID("win"), params);
-					}
-				}
+			// Client reels are presentation only. The server has already
+			// selected and paid the outcome.
+			for (u8 reelNum = 1; reelNum <= 3; ++reelNum)
+			{
+				const u8 symbol = blob.get_u8("slot_r" + reelNum);
+				CSpriteLayer @reel = this.getSpriteLayer("reel" + reelNum);
+				CSpriteLayer @reeln = this.getSpriteLayer("reeln" + reelNum);
+				if (reel !is null)
+					reel.SetFrameIndex(symbol);
+				if (reeln !is null)
+					reeln.SetFrameIndex(symbol);
 			}
 		}
 	}
