@@ -31,7 +31,7 @@ void onInit(CMovement @ this)
 	//
 	moveVars.walljumped = false;
 	moveVars.walljumped_side = Walljump::NONE;
-	moveVars.wallrun_length = 7;
+	moveVars.wallrun_count = 0; // current KAG uses a runtime counter, not wallrun_length
 	moveVars.wallclimbing = false;
 	moveVars.wallsliding = false;
 	//
