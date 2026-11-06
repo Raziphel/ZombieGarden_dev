@@ -5,6 +5,9 @@ void onInit(CBlob @ this)
 
 void onTick(CBlob @ this)
 {
+	if (!isServer())
+		return;
+
 	CBlob @[] blobsInRadius;
 	if (getMap().getBlobsInRadius(this.getPosition(), this.getRadius(), @blobsInRadius))
 	{
@@ -12,7 +15,7 @@ void onTick(CBlob @ this)
 		for (uint i = 0; i < blobsInRadius.length; i++)
 		{
 			CBlob @b = blobsInRadius[i];
-			if (this.getTeamNum() == teamNum && b.getHealth() < b.getInitialHealth() && b.hasTag("survivorplayer") && !b.hasTag("dead"))
+			if (b.getTeamNum() == teamNum && b.getHealth() < b.getInitialHealth() && (b.hasTag("survivorplayer") || b.hasTag("undeadplayer")) && !b.hasTag("dead"))
 			{
 				b.server_Heal(0.5f);
 				b.getSprite().PlaySound("/Heart.ogg");
