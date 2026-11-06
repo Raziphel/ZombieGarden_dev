@@ -3,7 +3,6 @@ const u32 VANISH_BODY_SECS = 10;
 void onInit(CBlob @ this)
 {
 	this.set_f32("hit dmg modifier", 0.0f);
-	this.set_f32("hit dmg modifier", 0.0f);
 	this.getCurrentScript().tickFrequency = 0; // make it not run ticks until dead
 }
 
@@ -16,7 +15,6 @@ f32 onHit(CBlob @ this, Vec2f worldPoint, Vec2f velocity, f32 damage, CBlob @hit
 		this.Tag("dead");
 		this.set_u32("death time", getGameTime());
 
-		this.set_f32("hit dmg modifier", 0.1f);
 		this.set_f32("hit dmg modifier", 0.1f);
 
 		// add pickup attachment so we can pickup body
@@ -67,10 +65,13 @@ void onTick(CBlob @ this)
 		CInventory @inv = this.getInventory();
 		if (inv !is null)
 		{
-			for (int i = 0; i < inv.getItemsCount(); i++)
+			// Item deaths can immediately remove entries from the inventory.
+			// Walking forward skipped every other item after a removal.
+			for (int i = inv.getItemsCount() - 1; i >= 0; --i)
 			{
-				CBlob @blob = inv.getItem(i);
-				blob.server_Die();
+				CBlob @item = inv.getItem(i);
+				if (item !is null)
+					item.server_Die();
 			}
 		}
 
@@ -124,5 +125,9 @@ void onAttach(CBlob @ this, CBlob @attached, AttachmentPoint @attachedPoint)
 
 bool isInventoryAccessible(CBlob @ this, CBlob @forBlob)
 {
-	return (this.hasTag("dead") && this.getInventory().getItemsCount() > 0);
+	if (!this.hasTag("dead") || forBlob is null)
+		return false;
+
+	CInventory @inv = this.getInventory();
+	return inv !is null && inv.getItemsCount() > 0;
 }
