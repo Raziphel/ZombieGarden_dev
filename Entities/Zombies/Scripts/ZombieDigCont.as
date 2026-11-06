@@ -33,7 +33,7 @@ void onTick(CBlob @ this)
 		return;
 	}
 
-	const Vec2f pos = this.getPosition();
+	Vec2f pos = this.getPosition();
 	const f32 step = map.tilesize;							 // tile size in pixels
 	const f32 radius_px = Maths::Clamp(this.get_f32("dig radius"), 0.0f, 6.0f) * step;
 	const f32 radius_sq = radius_px * radius_px;
@@ -55,7 +55,7 @@ void onTick(CBlob @ this)
 		return;
 	}
 
-	const Vec2f goal = target.getPosition();
+	Vec2f goal = target.getPosition();
 	const bool targetBelow = goal.y > pos.y + step;
 	const bool toRight = goal.x > pos.x + step;
 	const bool toLeft = goal.x < pos.x - step;
@@ -94,7 +94,7 @@ void onTick(CBlob @ this)
 			Vec2f tpos = Vec2f(pos.x + tx * step, start_y + ty * step);
 
 			// Circular mask using manual squared distance (AngelScript lacks LengthSquared())
-			const Vec2f delta = tpos - pos;
+			Vec2f delta = tpos - pos;
 			const f32 dsq = delta.x * delta.x + delta.y * delta.y;
 			if (dsq > radius_sq)
 				continue;
