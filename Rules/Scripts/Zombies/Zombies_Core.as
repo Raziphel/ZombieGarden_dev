@@ -434,21 +434,24 @@ class ZombiesCore : RulesCore
 				Vec2f sp = zombiePlaces[XORRandom(zombiePlaces.length)];
 
 				// read current caps/counters from rules (already refreshed)
-				const int _num_wr = rules.get_s32("num_wraiths");
+				// Update live special-mob counters from the SAME scan used
+				// for the total horde cap. Replicated HUD counts are refreshed
+				// every 150 ticks and can overshoot small special caps.
+				int _num_wr = 0;
 				const int _max_wr = rules.get_s32("max_wraiths");
-				const int _num_gr = rules.get_s32("num_gregs");
+				int _num_gr = 0;
 				const int _max_gr = rules.get_s32("max_gregs");
-				const int _num_im = rules.get_s32("num_immol");
+				int _num_im = 0;
 				const int _max_im = rules.get_s32("max_imol");
-				const int _num_di = rules.get_s32("num_digger");
+				int _num_di = 0;
 				const int _max_di = rules.get_s32("max_digger");
-				const int _num_bi = rules.get_s32("num_bisons");
+				int _num_bi = 0;
 				const int _max_bi = rules.get_s32("max_bisons");
-				const int _num_ba = rules.get_s32("num_banshees");
+				int _num_ba = 0;
 				const int _max_ba = rules.get_s32("max_banshees");
-				const int _num_ho = rules.get_s32("num_horror");
+				int _num_ho = 0;
 				const int _max_ho = rules.get_s32("max_horror");
-				const int _num_ga = rules.get_s32("num_gasbags");
+				int _num_ga = 0;
 				const int _max_ga = rules.get_s32("max_gasbags");
 
 				// The replicated population is updated every 150 ticks, so
@@ -463,8 +466,28 @@ class ZombiesCore : RulesCore
 					for (uint i = 0; i < currentZombies.length; ++i)
 					{
 						CBlob @zombie = currentZombies[i];
-						if (zombie !is null && !zombie.hasTag("dead"))
-							livingZombies++;
+						if (zombie is null || zombie.hasTag("dead"))
+							continue;
+
+						livingZombies++;
+						if (zombie.hasTag("wraiths"))
+							_num_wr++;
+						if (zombie.hasTag("gregs"))
+							_num_gr++;
+						if (zombie.hasTag("bisons"))
+							_num_bi++;
+
+						const string name = zombie.getName();
+						if (name == "immolator")
+							_num_im++;
+						else if (name == "digger")
+							_num_di++;
+						else if (name == "pbanshee")
+							_num_ba++;
+						else if (name == "horror")
+							_num_ho++;
+						else if (name == "gasbag")
+							_num_ga++;
 					}
 					canSpawnNow = livingZombies < max_zombies;
 				}
