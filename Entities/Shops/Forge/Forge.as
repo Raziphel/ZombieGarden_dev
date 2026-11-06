@@ -31,7 +31,7 @@ void onInit(CBlob @ this)
         AddIconToken("$mat_steelingot$", "Entities/Resources/SteelIngot/MaterialSteelIngot.png", Vec2f(16, 16), 3);
         AddIconToken("$mat_coal$", "Entities/Resources/Coal/MaterialCoal.png", Vec2f(16, 16), 24);
 
-	this.set_Vec2f("shop offset", Vec2f(0, 0));
+	this.set_Vec2f("shop offset", Vec2f(2, 0));
 	this.set_Vec2f("shop menu size", Vec2f(5, 2));
 	this.set_string("shop description", "Forge");
 	this.set_u8("shop icon", 15);
@@ -68,11 +68,9 @@ void onInit(CBlob @ this)
 	}
 }
 
-void GetButtonsFor(CBlob @ this, CBlob @caller)
-{
-	this.set_Vec2f("shop offset", Vec2f(2, 0));
-	this.set_bool("shop available", caller !is null && this.isOverlapping(caller));
-}
+// Leave "shop available" global. KAG's Shop.as handles each caller's
+// button radius and validates purchase distance on the server. Flipping a
+// shared availability flag in GetButtonsFor hid the shop from other players.
 
 void onTick(CBlob @ this)
 {
