@@ -38,8 +38,15 @@ bool ZGIsReplaceableHordeMob(CBlob @blob)
 	if (blob is null || blob.hasTag("dead") || !blob.hasTag("zombie") ||
 		blob.hasTag("pzombie") || blob.hasTag("necromancer_zombie") ||
 		blob.hasTag("undeadplayer") || blob.hasTag("zg_boss_spawn") ||
-		blob.hasTag("zg_horde_retired") || blob.getPlayer() !is null ||
-		blob.isAttached() || blob.getTeamNum() != 255)
+		blob.hasTag("zg_horde_retired") || blob.hasTag("chomping") ||
+		blob.getPlayer() !is null || blob.isAttached() ||
+		blob.getTeamNum() != 255)
+		return false;
+
+	// Zombies can hold items or corpses. Never delete a player's loot
+	// just to improve the composition of a distant horde.
+	CInventory @inv = blob.getInventory();
+	if (inv !is null && inv.getItemsCount() > 0)
 		return false;
 
 	const string name = blob.getName();
