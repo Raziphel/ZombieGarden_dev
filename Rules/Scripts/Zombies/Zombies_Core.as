@@ -39,6 +39,7 @@ class ZombiesCore : RulesCore
 		rules.set_s32("gamestart", gamestart);
 		rules.Sync("gamestart", true);
 		rules.SetCurrentState(WARMUP);
+		rules.Untag("night"); // a new map must never inherit a previous night's flag
 		ResetBossSpawnQueue();
 
 		// Arm the boss transition for the first cycle
@@ -283,6 +284,16 @@ class ZombiesCore : RulesCore
 			}
 			else
 			{
+				// Reward the actual transition from night to daylight, rather
+				// than midnight (where the numeric day advances but danger remains).
+				// Record the processed night even if no defender qualifies so
+				// respawning after sunrise cannot grant an unearned payout.
+				if (rules.hasTag("night") && dayNumber > 1 &&
+					rules.get_s32("last_dawn_respite_day") != dayNumber - 1)
+				{
+					rules.set_s32("last_dawn_respite_day", dayNumber - 1);
+					AwardDawnRespite(dayNumber - 1);
+				}
 				rules.Untag("night");
 			}
 		}
@@ -343,11 +354,6 @@ class ZombiesCore : RulesCore
 			const int prevDay = rules.get_s32("last_boss_day");
 			if (dayNumber != prevDay)
 			{
-				// Only reward one naturally elapsed day at a time. A server
-				// restart or administrative day jump is not a survived night.
-				if (dayNumber == prevDay + 1 && prevDay > 0)
-					AwardDawnRespite(prevDay);
-
 				rules.set_s32("last_boss_day", dayNumber);
 
 				// Re-arm outside boss days so %5 ticks can fire once
