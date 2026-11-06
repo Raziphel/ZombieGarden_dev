@@ -100,39 +100,32 @@ void onCommand(CBlob @ this, u8 cmd, CBitStream @params)
 		if (isServer())
 		{
 			u16 caller, item;
-
 			if (!params.saferead_netid(caller) || !params.saferead_netid(item))
 				return;
 
-			string name = params.read_string();
+			// Only produce recipes the Forge actually offers. Parsing an
+			// untrusted "mat_<name>-<quantity>" string allowed arbitrary
+			// materials and quantities to reach MakeMat.
+			const string recipe = params.read_string();
+			string output = "";
+			if (recipe == "mat_copperingot-10")
+				output = "mat_copperingot";
+			else if (recipe == "mat_ironingot-10")
+				output = "mat_ironingot";
+			else if (recipe == "mat_steelingot-10")
+				output = "mat_steelingot";
+			else if (recipe == "mat_coal-10")
+				output = "mat_coal";
+			else
+				return;
 
-			if (name.findFirst("mat_") != -1 || name.findFirst("ammo_") != -1)
-			{
-				CBlob @callerBlob = getBlobByNetworkID(caller);
+			CBlob @callerBlob = getBlobByNetworkID(caller);
+			if (callerBlob is null || callerBlob.getPlayer() is null ||
+				!this.isOverlapping(callerBlob))
+				return;
 
-				if (callerBlob !is null)
-				{
-					CPlayer @callerPlayer = callerBlob.getPlayer();
-					string[] tokens = name.split("-");
-
-					if (callerPlayer !is null)
-					{
-						MakeMat(callerBlob, this.getPosition(), tokens[0], parseInt(tokens[1]));
-
-						// CBlob@ mat = server_CreateBlob(tokens[0]);
-
-						// if (mat !is null)
-						// {
-						// mat.Tag("do not set materials");
-						// mat.server_SetQuantity(parseInt(tokens[1]));
-						// if (!callerBlob.server_PutInInventory(mat))
-						// {
-						// mat.setPosition(callerBlob.getPosition());
-						// }
-						// }
-					}
-				}
-			}
+			// The shop handles the recipe's actual item requirements.
+			MakeMat(callerBlob, this.getPosition(), output, 10);
 		}
 	}
 }
