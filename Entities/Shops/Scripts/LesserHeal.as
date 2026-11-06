@@ -1,25 +1,37 @@
-void onInit(CBlob @ this)
+// Passive building healing runs on the authoritative server only.
+void onInit(CBlob @this)
 {
 	this.getCurrentScript().tickFrequency = 60;
 }
 
-void onTick(CBlob @ this)
+void onTick(CBlob @this)
 {
-	if (!isServer())
+	if (!isServer() || this is null || this.hasTag("dead"))
 		return;
 
-	CBlob @[] blobsInRadius;
-	if (getMap().getBlobsInRadius(this.getPosition(), this.getRadius(), @blobsInRadius))
+	CMap @map = this.getMap();
+	if (map is null)
+		return;
+
+	CBlob @[] nearby;
+	if (!map.getBlobsInRadius(this.getPosition(), this.getRadius(), @nearby))
+		return;
+
+	const u8 team = this.getTeamNum();
+	for (uint i = 0; i < nearby.length; ++i)
 	{
-		const u8 teamNum = this.getTeamNum();
-		for (uint i = 0; i < blobsInRadius.length; i++)
+		CBlob @target = nearby[i];
+		if (target is null || target is this || target.hasTag("dead") ||
+			target.getTeamNum() != team || !(b.hasTag("survivorplayer") || b.hasTag("undeadplayer")))
+			continue;
+
+		const f32 missing = target.getInitialHealth() - target.getHealth();
+		if (missing > 0.0f)
 		{
-			CBlob @b = blobsInRadius[i];
-			if (b.getTeamNum() == teamNum && b.getHealth() < b.getInitialHealth() && (b.hasTag("survivorplayer") || b.hasTag("undeadplayer")) && !b.hasTag("dead"))
-			{
-				b.server_Heal(0.5f);
-				b.getSprite().PlaySound("/Heart.ogg");
-			}
+			// Never let passive building healing grant overheal.
+			target.server_Heal(Maths::Min(missing, 0.5f));
+			// Do not call sprite.PlaySound here: this hook only runs on
+			// the dedicated server, which may have no sprite.
 		}
 	}
 }
