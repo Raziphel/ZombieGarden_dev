@@ -12,32 +12,46 @@ void onInit(CBlob @ this)
 	this.getCurrentScript().removeIfTag = "dead";
 }
 
+void SetZombieDigging(CBlob @blob, bool digging)
+{
+	if (blob.get_bool("is_digging") != digging)
+	{
+		blob.set_bool("is_digging", digging);
+		blob.Sync("is_digging", true);
+	}
+}
+
 void onTick(CBlob @ this)
 {
 	if (!getNet().isServer())
 		return;
 
-	CMap @map = getMap();
+	CMap @map = this.getMap();
 	if (map is null)
+	{
+		SetZombieDigging(this, false);
 		return;
+	}
 
 	const Vec2f pos = this.getPosition();
 	const f32 step = map.tilesize;							 // tile size in pixels
-	const f32 radius_px = this.get_f32("dig radius") * step; // radius in pixels
+	const f32 radius_px = Maths::Clamp(this.get_f32("dig radius"), 0.0f, 6.0f) * step;
 	const f32 radius_sq = radius_px * radius_px;
 	const f32 dmg = this.get_f32("dig damage");
+	if (radius_px < step || dmg <= 0.0f)
+	{
+		SetZombieDigging(this, false);
+		return;
+	}
 
 	// Don't blindly dig unless there's something worth chasing below
 	CBrain @brain = this.getBrain();
-	if (brain !is null)
+	CBlob @target = brain is null ? null : brain.getTarget();
+	if (target is null || target.hasTag("dead") ||
+		target.getPosition().y <= pos.y)
 	{
-		CBlob @target = brain.getTarget();
-		if (target is null)
-			return;
-
-		// Only dig when the target is actually below us
-		if (target.getPosition().y <= pos.y)
-			return;
+		SetZombieDigging(this, false);
+		return;
 	}
 
 	// Only target tiles below the blob's feet to bias "digging down"
@@ -73,8 +87,9 @@ void onTick(CBlob @ this)
 		}
 	}
 
-	// Let the sprite know whether we actually dug something
-	this.set_bool("is_digging", did_dig);
+	// Replicate only transitions so the client can reliably play and stop
+	// the dust effect without a full network update every 40 ticks.
+	SetZombieDigging(this, did_dig);
 }
 
 void onTick(CSprite @ this)
