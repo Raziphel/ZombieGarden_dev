@@ -39,6 +39,9 @@ void onInit(CBlob @ this)
 
 void onTick(CBlob @ this)
 {
+	if (!isServer() || this.hasTag("dead"))
+		return;
+
 	CBlob @[] overlapping;
 	if (this.getOverlapping(@overlapping))
 	{
@@ -55,7 +58,7 @@ void onTick(CBlob @ this)
 
 void onCollision(CBlob @ this, CBlob @blob, bool solid, Vec2f normal, Vec2f point1)
 {
-	if (blob is null)
+	if (!isServer() || this.hasTag("dead") || blob is null)
 		return;
 
 	if (canEat(this, blob))
@@ -66,6 +69,9 @@ void onCollision(CBlob @ this, CBlob @blob, bool solid, Vec2f normal, Vec2f poin
 
 bool canEat(CBlob @ this, CBlob @blob)
 {
+	if (this is null || blob is null || blob is this || blob.hasTag("dead"))
+		return false;
+
 	// TODO: mouth position & radius
 
 	bool facing_left = this.isFacingLeft();
@@ -77,10 +83,12 @@ bool canEat(CBlob @ this, CBlob @blob)
 	if (can_eat)
 	{
 		string[] @names;
-		this.get("names to eat", @names);
+		if (!this.get("names to eat", @names) || names is null)
+			return false;
 
 		string[] @notnames;
-		this.get("names not to eat", @notnames);
+		if (!this.get("names not to eat", @notnames) || notnames is null)
+			return false;
 
 		string name = blob.getName();
 
@@ -107,7 +115,8 @@ bool canEat(CBlob @ this, CBlob @blob)
 		if (!can_eat && !found_in_notnames) // find a tag
 		{
 			string[] @tags;
-			this.get("tags to eat", @tags);
+			if (!this.get("tags to eat", @tags) || tags is null)
+				return false;
 			for (uint step = 0; step < tags.length; ++step)
 			{
 				if (blob.hasTag(tags[step]))
@@ -124,6 +133,16 @@ bool canEat(CBlob @ this, CBlob @blob)
 
 void Bite(CBlob @ this, CBlob @other, Vec2f pos)
 {
+	if (!isServer() || this is null || other is null ||
+		this.hasTag("dead") || other.hasTag("dead"))
+		return;
+
+	// The collision callback and overlap scan can run in the same tick;
+	// rate-limit bites so a single target cannot be hit dozens of times.
+	if (getGameTime() < this.get_u32("zg_next_bite"))
+		return;
+	this.set_u32("zg_next_bite", getGameTime() + 15);
+
 	bool facing_left = this.isFacingLeft();
 	Vec2f hitvel = Vec2f(facing_left ? -1.0 : 1.0, 0.0f);
 	this.server_Hit(other, pos, hitvel, this.get_f32("bite damage"), this.get_u8("bite hitter"), true);
