@@ -26,17 +26,14 @@ GetFallbackBossSpawn()
 
 	const bool left = (XORRandom(2) == 0);
 	const f32 x = left ? 32.0f : (w - 32.0f);
-	f32 y = 32.0f + XORRandom(Maths::Max(32, int(h - 64)));
+	Vec2f pos(x, 32.0f);
 
-	Vec2f pos(x, y);
-
-	// settle roughly to ground
-	for (int i = 0; i < 24; i++)
-	{
-		if (map.isTileSolid(pos + Vec2f(0, 8)))
-			break;
-		pos.y += 8;
-	}
+	// Use the terrain's actual surface for fallback spawns. The old
+	// random height + 24-step walk could leave a boss buried in terrain
+	// or hovering in the air on tall or deeply excavated maps.
+	const s32 column = s32(x / map.tilesize);
+	const f32 groundY = map.getLandYAtX(column) * map.tilesize - 16.0f;
+	pos.y = Maths::Clamp(groundY, 16.0f, Maths::Max(16.0f, h - 16.0f));
 	return pos;
 }
 
