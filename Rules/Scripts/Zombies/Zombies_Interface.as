@@ -34,7 +34,7 @@ int GetCurrentDay(CRules @rules)
 
 	// Fallback: compute from time
 	const int gamestart = rules.get_s32("gamestart");
-	const int day_cycle = getRules().daycycle_speed * 60;
+	const int day_cycle = Maths::Max(1, int(rules.daycycle_speed * 60));
 	const int d =
 		((getGameTime() - gamestart) / getTicksASecond() / day_cycle) + 1;
 	return Maths::Max(
@@ -212,7 +212,7 @@ float DrawRecordStatus(CRules @rules)
 	array<SColor> cols;
 
 	// Neutral by default; highlight only when meaningful
-	lines.insertLast("Days Survived: " + days);
+	lines.insertLast("Current Day: " + days);
 	cols.push_back(COL_INFO);
 	lines.insertLast("Zombies Kills: " + undeadKills);
 	cols.push_back(COL_INFO);
@@ -268,10 +268,11 @@ float DrawZombiesHUDTopRight(CRules @rules, const float topOffset = 0.0f)
 	const int num_zombies = rules.get_s32("num_zombies");
 	const int max_zombies = rules.get_s32("max_zombies");
 	const int num_pzombies = rules.get_s32("num_pzombies");
+	const int max_pzombies = rules.get_s32("max_pzombies");
 	const int num_hands = rules.get_s32("num_ruinstorch");
 	const int num_altars = rules.get_s32("zombiealter");
 	const int survivors = CountTeamPlayers(0);
-	const int undead = rules.get_s32("num_undead");
+	const int undead = CountTeamPlayers(1);
 	const float difficulty = rules.get_f32("difficulty");
 
 	array<string> lines;
@@ -279,8 +280,8 @@ float DrawZombiesHUDTopRight(CRules @rules, const float topOffset = 0.0f)
 	lines.insertLast("Survivors: " + survivors);
 	lines.insertLast("Undead: " + undead);
 	lines.insertLast("Difficulty: " + formatFloat(difficulty, "", 0, 1));
-	lines.insertLast("Zombies: " + (num_zombies + num_pzombies) + "/" +
-					 max_zombies);
+	lines.insertLast("Zombies: " + num_zombies + "/" + max_zombies);
+	lines.insertLast("Portal Undead: " + num_pzombies + "/" + max_pzombies);
 	lines.insertLast("Altars Remaining: " + num_altars);
 
 	const float boxW = 260.0f;
@@ -300,6 +301,8 @@ float DrawZombiesHUDTopRight(CRules @rules, const float topOffset = 0.0f)
 		SColor col = COL_TEXT;
 		if (lines[i].findFirst("Zombies: ") == 0)
 			col = COL_WARN;					  // amber
+		else if (lines[i].findFirst("Portal Undead: ") == 0)
+			col = COL_WARN;
 		else if (lines[i].findFirst("Survivors: ") == 0)
 			col = COL_INFO;					  // blue
 		else if (lines[i].findFirst("Undead: ") == 0)
@@ -333,6 +336,7 @@ float DrawModeStatus(CRules @rules, const float topOffset = 0.0f)
 	const int curDay = GetCurrentDay(rules);
 	const int hardDay = rules.get_s32("hardmode_day");
 	const int curseDay = rules.get_s32("curse_day");
+	const bool curseEnabled = rules.get_bool("zombify");
 
 	const int hardRemain = hardDay - curDay;
 	const int curseRemain = curseDay - curDay;
@@ -358,7 +362,12 @@ float DrawModeStatus(CRules @rules, const float topOffset = 0.0f)
 
 	string curseLine;
 	SColor curseCol = COL_TEXT;
-	if (curseRemain <= 0)
+	if (!curseEnabled)
+	{
+		curseLine = "Curse: DISABLED";
+		curseCol = COL_GOOD;
+	}
+	else if (curseRemain <= 0)
 	{
 		curseLine = "Curse: ACTIVE";
 		curseCol = COL_BAD;
@@ -380,8 +389,22 @@ float DrawModeStatus(CRules @rules, const float topOffset = 0.0f)
 		ruinsActive ? "Ruin Portals: ACTIVE" : "Ruin Portals: INACTIVE";
 	const SColor ruinsCol = ruinsActive ? COL_BAD : COL_GOOD;
 
+	// Show the next milestone using the same schedule as Zombies_Boss.as.
+	// A completed event advances the forecast instead of saying "today" forever.
+	int nextWaveDay = curDay + (5 - (curDay % 5)) % 5;
+	if (nextWaveDay == curDay && rules.get_s32("boss_spawned_day") == curDay)
+		nextWaveDay += 5;
+
+	const int daysUntilWave = nextWaveDay - curDay;
+	const string waveKind = nextWaveDay % 25 == 0 ? "Cataclysm" :
+		(nextWaveDay % 10 == 0 ? "Boss" : "Mini-boss");
+	const string waveLine = daysUntilWave == 0 ?
+		waveKind + " wave: TODAY" :
+		"Next " + waveKind + ": D" + nextWaveDay + " (" + daysUntilWave + "d)";
+	const SColor waveCol = daysUntilWave == 0 ? COL_WARN : COL_INFO;
+
 	// --- box sizing ---
-	const int numLines = 3; // hard + curse + ruins (always drawn)
+	const int numLines = 4; // hard + curse + ruins + next milestone
 	const float boxW = 260.0f;
 	const float boxH = padY * 2 + titleH + titleGap + (numLines * lineH);
 
@@ -401,6 +424,8 @@ float DrawModeStatus(CRules @rules, const float topOffset = 0.0f)
 	GUI::DrawText(curseLine, cur, curseCol);
 	cur.y += lineH;
 	GUI::DrawText(ruinsLine, cur, ruinsCol);
+	cur.y += lineH;
+	GUI::DrawText(waveLine, cur, waveCol);
 	cur.y += lineH;
 
 	return boxH + margin + topOffset;
