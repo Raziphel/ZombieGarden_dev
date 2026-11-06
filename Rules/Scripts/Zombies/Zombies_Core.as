@@ -185,8 +185,12 @@ class ZombiesCore : RulesCore
 			difficulty = baseDifficulty;
 		if (difficulty > 50.0f)
 			difficulty = 50.0f; // expanded cap
-		rules.set_f32("difficulty", difficulty);
-		rules.Sync("difficulty", true);
+		// The value is stable between wave/day updates; avoid a network sync every tick.
+		if (!rules.exists("difficulty") || rules.get_f32("difficulty") != difficulty)
+		{
+			rules.set_f32("difficulty", difficulty);
+			rules.Sync("difficulty", true);
+		}
 
 		int spawnRate = 200 - int(difficulty * 3.3);
 		if (spawnRate < 15)
@@ -385,7 +389,12 @@ class ZombiesCore : RulesCore
 						server_CreateBlob("zchicken", -1, sp);
 					}
 
-					// === boss waves ===
+				}
+
+				// Boss waves are milestones, not ordinary spawns. They must still
+				// happen when the regular zombie population has reached its cap.
+				if (hardmode || isNight)
+				{
 					int newTransition =
 						RunBossWave(dayNumber, difficulty, zombiePlaces, transition);
 					if (newTransition != transition)
