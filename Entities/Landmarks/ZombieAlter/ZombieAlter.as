@@ -41,16 +41,22 @@ void onInit(CBlob @ this)
 
 void onTick(CBlob @ this)
 {
-	int spawnRate = 60 + (190 * this.getHealth() / 44.0);
+	// Damaged altars become more aggressive, but the modulo must
+	// always have a positive divisor even during their death tick.
+	const int spawnRate = Maths::Max(30, int(60.0f +
+		190.0f * Maths::Max(0.0f, this.getHealth()) / 44.0f));
 
 	if (getGameTime() % spawnRate == 0 && this.get_bool("portalbreach"))
 	{
 		this.getSprite().PlaySound("Thunder");
 		CSpriteLayer @lightning = this.getSprite().getSpriteLayer("lightning");
-		if (XORRandom(4) > 2)
-			lightning.SetAnimation("default");
-		else
-			lightning.SetAnimation("default2");
+		if (lightning !is null)
+		{
+			if (XORRandom(4) > 2)
+				lightning.SetAnimation("default");
+			else
+				lightning.SetAnimation("default2");
+		}
 		// lightning.SetFrame(0);
 	}
 
@@ -65,43 +71,44 @@ void onTick(CBlob @ this)
 	if (!getNet().isServer())
 		return;
 
-	int num_pzombies = getRules().get_s32("num_pzombies");
-	int max_pzombies = getRules().get_s32("max_pzombies");
+	CRules @rules = getRules();
+	const int max_pzombies = rules.get_s32("max_pzombies");
 
 	if (this.get_bool("portalbreach"))
 	{
-		if ((getGameTime() % spawnRate == 0) && num_pzombies < max_pzombies)
+		if (getGameTime() % spawnRate == 0)
 		{
-			CBlob @[] blobs;
-			getMap().getBlobsInRadius(this.getPosition(), 250, @blobs);
-			if (blobs.length == 0)
+			// Read the shared count at spawn time. Updating it immediately
+			// also prevents several altars on the same tick from exceeding
+			// the portal population cap between scheduled world scans.
+			const int num_pzombies = rules.get_s32("num_pzombies");
+			if (max_pzombies <= 0 || num_pzombies >= max_pzombies)
 				return;
 
-			Vec2f sp = this.getPosition();
-
-			int r = XORRandom(7);
-			int rr = XORRandom(7);
-
-			if (r == 4 && rr == 0)		// double check
-				server_CreateBlob("pbanshee", -1, sp);
-
-			else if (r == 3 && rr == 0) // double check
-				server_CreateBlob("pgreg", -1, sp);
-
+			const int r = XORRandom(7);
+			const int rr = XORRandom(7);
+			string spawnName = "pcrawler";
+			if (r == 4 && rr == 0)
+				spawnName = "pbanshee";
+			else if (r == 3 && rr == 0)
+				spawnName = "pgreg";
 			else if (r == 2)
-				server_CreateBlob("phellknight", -1, sp);
-
+				spawnName = "phellknight";
 			else if (r == 1)
-				server_CreateBlob("pankou", -1, sp);
-
+				spawnName = "pankou";
 			else if (r == 6)
-				server_CreateBlob("zombie", -1, sp);
-
+				spawnName = "zombie";
 			else if (r >= 3)
-				server_CreateBlob("pbrute", -1, sp);
+				spawnName = "pbrute";
 
-			else
-				server_CreateBlob("pcrawler", -1, sp);
+			CBlob @spawned = server_CreateBlob(spawnName, -1, this.getPosition());
+			if (spawned !is null)
+			{
+				// The ordinary zombie variant also consumes a portal slot.
+				spawned.Tag("pzombie");
+				rules.set_s32("num_pzombies", num_pzombies + 1);
+				rules.Sync("num_pzombies", true);
+			}
 		}
 	}
 
@@ -116,12 +123,14 @@ void onTick(CBlob @ this)
 			for (uint step = 0; step < blobs.length; ++step)
 			{
 				CBlob @other = blobs[step];
-				if (other.hasTag("survivorplayer"))
+				if (other !is null && other.hasTag("survivorplayer") &&
+					!other.hasTag("dead"))
 				{
 					this.set_bool("portalbreach", true);
 					this.set_bool("portalplaybreach", true);
 					this.Sync("portalplaybreach", true);
 					this.Sync("portalbreach", true);
+					break;
 				}
 			}
 		}
@@ -130,6 +139,9 @@ void onTick(CBlob @ this)
 
 void onDie(CBlob @ this)
 {
+	if (!isServer())
+		return;
+
 	server_DropCoins(this.getPosition() + Vec2f(0, -32.0f), 1000);
 	server_CreateBlob("chest", this.getTeamNum(), this.getPosition());
 }
