@@ -4,7 +4,7 @@ const f32 probability = 0.25f; // between 0 and 1
 
 void dropArm(CBlob @ this)
 {
-	if (!getNet().isServer())
+	if (!getNet().isServer() || this.hasTag("zg_horde_retired"))
 		return;
 
 	if (!this.hasTag("dropped arm")) // double check
@@ -26,6 +26,11 @@ void dropArm(CBlob @ this)
 
 void onDie(CBlob @ this)
 {
+	// Quiet horde replacement is not a player kill and must not
+	// become a farmable source of zombie arms.
+	if (this.hasTag("zg_horde_retired"))
+		return;
+
 	if (this.get_u32("death time") + VANISH_BODY_SECS * getTicksASecond() > getGameTime()) // we want hands dropping only if the body is killed, not when it revives naturally
 	{
 		dropArm(this);
