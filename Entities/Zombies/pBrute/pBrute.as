@@ -34,20 +34,20 @@ void onTick(CBlob @ this)
 		this.getSprite().PlaySound("/BruteGroan");
 	}
 
-	if (getNet().isServer() && getGameTime() % 10 == 0)
+	if (isServer() && getGameTime() % 10 == 0)
 	{
-		CBlob @target = this.getBrain().getTarget();
-
-		if (target !is null && this.getDistanceTo(target) < 72.0f)
+		CBrain @brain = this.getBrain();
+		CBlob @target = brain is null ? null : brain.getTarget();
+		const bool chomping = target !is null && !target.hasTag("dead") &&
+			this.getDistanceTo(target) < 72.0f;
+		if (this.hasTag(chomp_tag) != chomping)
 		{
-			this.Tag(chomp_tag);
+			if (chomping)
+				this.Tag(chomp_tag);
+			else
+				this.Untag(chomp_tag);
+			this.Sync(chomp_tag, true);
 		}
-		else
-		{
-			this.Untag(chomp_tag);
-		}
-
-		this.Sync(chomp_tag, true);
 	}
 }
 
