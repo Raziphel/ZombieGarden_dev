@@ -60,12 +60,10 @@ f32 onHit(CBlob @ this, Vec2f worldPoint, Vec2f velocity, f32 damage, CBlob @hit
 
 void GetButtonsFor(CBlob @ this, CBlob @caller)
 {
-	if (canChangeClass(this, caller) && caller.getTeamNum() == this.getTeamNum())
-	{
-		CBitStream params;
-		params.write_u16(caller.getNetworkID());
-		caller.CreateGenericButton("$change_class$", Vec2f(0, 0), this, buildSpawnMenu, getTranslatedString("Swap Class"));
-	}
+	if (caller !is null && caller.getTeamNum() == this.getTeamNum() &&
+		canChangeClass(this, caller))
+		caller.CreateGenericButton("$change_class$", Vec2f(0, 0),
+			this, buildSpawnMenu, getTranslatedString("Swap Class"));
 }
 
 void onCommand(CBlob @ this, u8 cmd, CBitStream @params)
@@ -75,36 +73,43 @@ void onCommand(CBlob @ this, u8 cmd, CBitStream @params)
 
 void onDie(CBlob @ this)
 {
+	// Changing round rules and creating undead portals must be authoritative.
+	if (!isServer())
+		return;
+
 	CRules @rules = getRules();
+	if (rules is null || rules.get_bool("ruins_portal_active"))
+		return;
 
-	// Count remaining torches (the dying one is already gone from the list here)
-	CBlob @[] ruinstorch;
-	getBlobsByName("ruinstorch", @ruinstorch);
-	const int remaining = ruinstorch.length;
-
-	// Trigger once when 3 or fewer remain
-	if (!rules.get_bool("ruins_portal_active") && remaining <= 3)
+	// Dying torches can still appear in a world query. Count only living
+	// survivors, excluding the torch whose onDie hook is running.
+	CBlob @[] torches;
+	getBlobsByName("ruinstorch", @torches);
+	int remaining = 0;
+	for (uint i = 0; i < torches.length; ++i)
 	{
-		rules.set_bool("ruins_portal_active", true);
-		rules.Sync("ruins_portal_active", true);
+		CBlob @torch = torches[i];
+		if (torch !is null && torch !is this && !torch.hasTag("dead"))
+			remaining++;
+	}
 
-		if (getNet().isServer())
-		{
-			// Spawn portals at each remaining ruins
-			CBlob @[] ruins;
-			getBlobsByName("zombieruins", @ruins);
+	if (remaining > 3)
+		return;
 
-			for (uint i = 0; i < ruins.length; i++)
-			{
-				CBlob @ruin = ruins[i];
-				if (ruin is null)
-					continue;
+	rules.set_bool("ruins_portal_active", true);
+	rules.Sync("ruins_portal_active", true);
 
-				Vec2f pos = ruin.getPosition();
-				pos.x += 1.0f;
-				pos.y += 16.0f;
-				server_CreateBlob("zombieportal", -1, pos);
-			}
-		}
+	CBlob @[] ruins;
+	getBlobsByName("zombieruins", @ruins);
+	for (uint i = 0; i < ruins.length; ++i)
+	{
+		CBlob @ruin = ruins[i];
+		if (ruin is null || ruin.hasTag("dead"))
+			continue;
+
+		Vec2f pos = ruin.getPosition();
+		pos.x += 1.0f;
+		pos.y += 16.0f;
+		server_CreateBlob("zombieportal", -1, pos);
 	}
 }
