@@ -7,19 +7,34 @@ f32 SCREECH_DISTANCE = 256.0f;
 
 void Screech(CBlob @ this)
 {
-	CBlob @[] nearBlobs;
-	this.getMap().getBlobsInRadius(this.getPosition(), SCREECH_DISTANCE, @nearBlobs);
+	if (this is null)
+		return;
 
-	// play annoying sound at three times the volume
-	this.getSprite().PlaySound("/BansheeScreech", 3.0f);
-
-	for (int step = 0; step < nearBlobs.length; ++step)
+	// The sound is local; the knockback is authoritative. Applying the
+	// stun in every client's simulation caused unnecessary duplicate work.
+	if (isClient())
 	{
-		CBlob @recipent = nearBlobs[step]; // :)
-		if (recipent !is null && !recipent.hasTag("dead") && recipent.hasTag("survivorplayer"))
+		CSprite @sprite = this.getSprite();
+		if (sprite !is null)
+			sprite.PlaySound("/BansheeScreech", 3.0f);
+	}
+
+	if (!isServer())
+		return;
+
+	CMap @map = this.getMap();
+	if (map is null)
+		return;
+
+	CBlob @[] nearby;
+	map.getBlobsInRadius(this.getPosition(), SCREECH_DISTANCE, @nearby);
+	for (uint i = 0; i < nearby.length; ++i)
+	{
+		CBlob @survivor = nearby[i];
+		if (survivor !is null && !survivor.hasTag("dead") &&
+			survivor.hasTag("survivorplayer"))
 		{
-			// that was loud!
-			setKnocked(recipent, 15 + XORRandom(30));
+			setKnocked(survivor, 15 + XORRandom(30));
 		}
 	}
 }
