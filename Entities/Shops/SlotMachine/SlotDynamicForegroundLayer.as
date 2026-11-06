@@ -44,6 +44,11 @@ void translateReel(CSprite @ this, s8 reelNum)
 
 void onTick(CSprite @ this)
 {
+	// Reel animation is client-only. The server's separate CBlob tick
+	// owns the spin timer and pays the result exactly once.
+	if (!isClient())
+		return;
+
 	CSpriteLayer @front = this.getSpriteLayer("front layer");
 	CBlob @blob = this.getBlob();
 	if (blob is null || front is null)
