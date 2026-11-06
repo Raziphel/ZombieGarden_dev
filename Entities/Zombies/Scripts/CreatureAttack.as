@@ -19,6 +19,10 @@ void onInit(CBlob @ this)
 	if (!this.exists("attack sound"))
 		this.set_string("attack sound", "ZombieBite");
 
+	// The obstruction detector uses this to distinguish attacking a wall
+	// from simply having no route to the target.
+	this.set_u32("last_hit_time", getGameTime());
+
 	this.getCurrentScript().removeIfTag = "dead";
 }
 
@@ -73,9 +77,13 @@ void onTick(CBlob @ this)
 
 void HitTarget(CBlob @ this, CBlob @target)
 {
+	if (!isServer() || this is null || target is null || target.hasTag("dead"))
+		return;
+
 	Vec2f hitvel = Vec2f(this.isFacingLeft() ? -1.0 : 1.0, 0.0f);
 
 	this.server_Hit(target, target.getPosition(), hitvel, this.get_f32("attack damage"), this.get_u8("attack hitter"), true);
+	this.set_u32("last_hit_time", getGameTime());
 	this.set_u32("next_attack", getGameTime() + this.get_u8("attack frequency"));
 }
 
