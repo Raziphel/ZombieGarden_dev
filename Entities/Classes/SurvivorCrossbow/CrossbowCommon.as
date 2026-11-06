@@ -93,7 +93,10 @@ bool hasArrows(CBlob @ this)
 
 bool hasArrows(CBlob @ this, u8 arrowType)
 {
-	return this.getBlobCount(arrowTypeNames[arrowType]) > 0;
+	// A malformed client command must never index beyond the available
+	// ammunition variants.
+	return this !is null && arrowType < arrowTypeNames.length &&
+		this.getBlobCount(arrowTypeNames[arrowType]) > 0;
 }
 
 void SetArrowType(CBlob @ this, const u8 type)
