@@ -154,6 +154,16 @@ void onCommand(CBlob @ this, u8 cmd, CBitStream @params)
 	if (inv is null || storageInv is null)
 		return;
 
+	// The builder's temporary placement preview must never enter storage.
+	// Preserve this anti-duplication cleanup, but only after verifying the
+	// actual command sender owns the nearby character.
+	if (caller.getConfig() == "builder")
+	{
+		CBlob @carried = caller.getCarriedBlob();
+		if (carried !is null && carried.hasTag("temp blob"))
+			carried.server_Die();
+	}
+
 	// A single request may only process the items present when it began,
 	// preventing infinite loops if a transfer cannot complete.
 	const int initialCount = inv.getItemsCount();
