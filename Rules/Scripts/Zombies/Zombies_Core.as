@@ -287,6 +287,10 @@ class ZombiesCore : RulesCore
 				if (!rules.hasTag("night"))
 				{
 					rules.Tag("night");
+					// Save the day associated with this particular night; map
+					// phases need not align perfectly with the core's clock.
+					rules.set_s32("night_started_day",
+						rules.isMatchRunning() ? dayNumber : 0);
 					transition = 1; // allow boss trigger when night begins
 					rules.set_s32("transition", transition);
 				}
@@ -297,11 +301,12 @@ class ZombiesCore : RulesCore
 				// than midnight (where the numeric day advances but danger remains).
 				// Record the processed night even if no defender qualifies so
 				// respawning after sunrise cannot grant an unearned payout.
-				if (rules.hasTag("night") && dayNumber > 1 &&
-					rules.get_s32("last_dawn_respite_day") != dayNumber - 1)
+				const int finishedNight = rules.get_s32("night_started_day");
+				if (rules.hasTag("night") && finishedNight > 0 &&
+					rules.get_s32("last_dawn_respite_day") != finishedNight)
 				{
-					rules.set_s32("last_dawn_respite_day", dayNumber - 1);
-					AwardDawnRespite(dayNumber - 1);
+					rules.set_s32("last_dawn_respite_day", finishedNight);
+					AwardDawnRespite(finishedNight);
 				}
 				rules.Untag("night");
 			}
