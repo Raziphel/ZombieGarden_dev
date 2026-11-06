@@ -151,6 +151,9 @@ void onSetPlayer(CRules @ this, CBlob @blob, CPlayer @player)
 // give a guy a break :)
 void onPlayerDie(CRules @ this, CPlayer @victim, CPlayer @attacker, u8 customData)
 {
+	if (!isServer())
+		return;
+
 	if (victim !is null)
 	{
 		RulesCore @core;
@@ -287,7 +290,7 @@ void onInit(CRules @ this)
 
 void onTick(CRules @ this)
 {
-	if (!getNet().isServer())
+	if (!isServer() || getPlayersCount() == 0)
 		return;
 
 	s32 gametime = getGameTime();
@@ -334,33 +337,5 @@ void onTick(CRules @ this)
 	}
 }
 
-// render gui for the player
-void onRender(CRules @ this)
-{
-	CPlayer @p = getLocalPlayer();
-	if (p is null || !p.isMyPlayer())
-	{
-		return;
-	}
-
-	string propname = getSpawnTimerPropertyName(p);
-	CBlob @b = p.getBlob();
-	if (b !is null && this.exists(propname))
-	{
-		s32 next_items = this.get_s32(propname);
-		if (getGameTime() < next_items - materials_wait * getTicksASecond() * 2)
-		{
-			this.set_s32(propname, 0); // clear residue
-		}
-		else if (next_items > getGameTime())
-		{
-			f32 offset = 140.0f;
-			string verb = (b.getName() == "builder" ? "Build" : "Fight");
-			if (this.isWarmup())
-			{
-				verb = "Prepare for Battle";
-				offset = 175.0f;
-			}
-		}
-	}
-}
+// The old onRender callback only read values and assigned local strings;
+// it never drew a HUD element. Remove that per-frame work entirely.
