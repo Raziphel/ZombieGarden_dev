@@ -15,7 +15,8 @@ class ZombiesCore : RulesCore
 	ZombiesSpawns @Zombies_spawns;
 	// Fallback ground positions are map-dependent, not horde-dependent.
 	Vec2f[] fallbackSpawnPlaces;
-	bool fallbackSpawnPlacesReady = false;
+	bool fallbackSpawnPlacesReady;
+	u32 fallbackSpawnRefreshTick;
 
 	ZombiesCore()
 	{}
@@ -30,6 +31,7 @@ class ZombiesCore : RulesCore
 		@Zombies_spawns = cast<ZombiesSpawns @>(_respawns);
 		fallbackSpawnPlaces.clear();
 		fallbackSpawnPlacesReady = false;
+		fallbackSpawnRefreshTick = 0;
 
 		server_CreateBlob("music", 0, Vec2f(0, 0));
 
@@ -341,7 +343,8 @@ class ZombiesCore : RulesCore
 					// With no portals, the old code performed 16 terrain
 					// raycasts on every spawn attempt. Cache the ground
 					// positions for this map and reset them at Setup().
-					if (!fallbackSpawnPlacesReady)
+					if (!fallbackSpawnPlacesReady ||
+						getGameTime() >= fallbackSpawnRefreshTick)
 					{
 						fallbackSpawnPlaces.clear();
 						for (int zp = 8; zp < 16; ++zp)
@@ -361,8 +364,10 @@ class ZombiesCore : RulesCore
 								fallbackSpawnPlaces.push_back(col);
 							}
 						}
-						// If terrain isn't loaded yet, try again next spawn.
+						// The map is destructible. Recheck periodically so
+						// tunnels and rebuilt ground are reflected in spawns.
 						fallbackSpawnPlacesReady = fallbackSpawnPlaces.length > 0;
+						fallbackSpawnRefreshTick = getGameTime() + 30 * getTicksASecond();
 					}
 					for (uint i = 0; i < fallbackSpawnPlaces.length; ++i)
 						zombiePlaces.push_back(fallbackSpawnPlaces[i]);
