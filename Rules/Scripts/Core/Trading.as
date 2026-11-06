@@ -37,6 +37,9 @@ string[] names;
 
 void GiveRestartCoins(CPlayer @p)
 {
+	if (p is null)
+		return;
+
 	if (keepCoinsOnRestart)
 		p.server_setCoins(p.getCoins() + coinsOnRestartAdd);
 	else
@@ -70,6 +73,8 @@ void Reset(CRules @ this)
 	for (uint p_step = 0; p_step < count; ++p_step)
 	{
 		CPlayer @p = getPlayer(p_step);
+		if (p is null)
+			continue;
 		GiveRestartCoins(p);
 		names.push_back(p.getUsername());
 	}
@@ -124,7 +129,12 @@ void onPlayerDie(CRules @ this, CPlayer @victim, CPlayer @killer, u8 customData)
 		{
 			if (killer !is victim && killer.getTeamNum() != victim.getTeamNum())
 			{
-				killer.server_setCoins(killer.getCoins() + ((giveBuilderBonus ? coinsOnKillAddBuilder : coinsOnKillAdd) * Maths::Pow(killstreakFactor, killer.get_u8("killstreak"))));
+				// Bound exponential rewards so very long rounds cannot
+				// overflow the coin count or flood the economy.
+				const int streak = Maths::Min(10, int(killer.get_u8("killstreak")));
+				const int reward = int((giveBuilderBonus ? coinsOnKillAddBuilder : coinsOnKillAdd) *
+					Maths::Pow(killstreakFactor, streak));
+				killer.server_setCoins(killer.getCoins() + reward);
 			}
 
 			CPlayer @helper = getAssistPlayer(victim, killer);
@@ -135,14 +145,18 @@ void onPlayerDie(CRules @ this, CPlayer @victim, CPlayer @killer, u8 customData)
 		}
 		if (!this.isWarmup()) // only reduce coins if the round is on.
 		{
-			s32 lost = victim.getCoins() * (coinsOnDeathLosePercent * 0.01f);
+			const s32 lost = s32(victim.getCoins() * (coinsOnDeathLosePercent * 0.01f));
+			if (lost > 0)
+			{
+				victim.server_setCoins(victim.getCoins() - lost);
 
-			victim.server_setCoins(victim.getCoins() - lost);
-
-			// drop coins
-			CBlob @blob = victim.getBlob();
-			if (blob !is null)
-				server_DropCoins(blob.getPosition(), lost * 0.75f + XORRandom(lost * 0.25f));
+				CBlob @blob = victim.getBlob();
+				if (blob !is null)
+				{
+					const int variance = Maths::Max(1, int(lost * 0.25f));
+					server_DropCoins(blob.getPosition(), int(lost * 0.75f) + XORRandom(variance));
+				}
+			}
 		}
 	}
 }
@@ -156,7 +170,8 @@ f32 onPlayerTakeDamage(CRules @ this, CPlayer @victim, CPlayer @attacker, f32 Da
 
 	bool giveBuilderBonus = false;
 
-	if (attacker !is null && attacker !is victim && attacker.getTeamNum() != victim.getTeamNum())
+	if (victim !is null && attacker !is null && attacker !is victim &&
+		attacker.getTeamNum() != victim.getTeamNum() && DamageScale > 0.0f)
 	{
 		if (attacker.lastBlobConfig == "builder")
 		{
@@ -167,9 +182,11 @@ f32 onPlayerTakeDamage(CRules @ this, CPlayer @victim, CPlayer @attacker, f32 Da
 		if (v !is null)
 			health = v.getHealth();
 		f32 dmg = DamageScale;
-		dmg = Maths::Min(health, dmg);
-
-		attacker.server_setCoins(attacker.getCoins() + dmg * (giveBuilderBonus ? coinsOnDamageAddBuilder : coinsOnDamageAdd) / this.attackdamage_modifier);
+		dmg = Maths::Max(0.0f, Maths::Min(health, dmg));
+		if (dmg > 0.0f)
+			attacker.server_setCoins(attacker.getCoins() +
+				dmg * (giveBuilderBonus ? coinsOnDamageAddBuilder : coinsOnDamageAdd) /
+				Maths::Max(0.1f, this.attackdamage_modifier));
 	}
 
 	return DamageScale;
@@ -246,7 +263,7 @@ void awardCoins(CBitStream @params)
 		if (!params.saferead_f32(damage))
 			return;
 
-		coins = coinsOnHitSiege * damage;
+		coins = u32(coinsOnHitSiege * Maths::Clamp(damage, 0.0f, 100.0f));
 	}
 	else if (event_id == CGameplayEvent_IDs::KillVehicle)
 	{
