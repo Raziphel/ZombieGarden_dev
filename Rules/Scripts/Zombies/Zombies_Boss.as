@@ -405,20 +405,34 @@ array<BossEntry @> BuildCataclysmTable(const int dayNumber)
 	return t;
 }
 
-// Weighted pick helper
-uint PickWeightedIndex(const array<BossEntry @> @tbl)
+// Keep the original weighted odds, but don't pick the exact same
+// composition two milestone waves in a row. Other kinds have their
+// own history, so mini-bosses never suppress regular bosses.
+uint PickWeightedIndex(const array<BossEntry @> @tbl, const int previous)
 {
+	const bool skipPrevious =
+		tbl.length > 1 && previous >= 0 && previous < int(tbl.length);
 	int total = 0;
-	for (uint i = 0; i < tbl.length; i++)
-		total += Maths::Max(1, tbl[i].weight);
-	int pick = XORRandom(Maths::Max(1, total));
-	for (uint i = 0; i < tbl.length; i++)
+	for (uint i = 0; i < tbl.length; ++i)
 	{
+		if (!skipPrevious || int(i) != previous)
+			total += Maths::Max(1, tbl[i].weight);
+	}
+	int pick = XORRandom(Maths::Max(1, total));
+	for (uint i = 0; i < tbl.length; ++i)
+	{
+		if (skipPrevious && int(i) == previous)
+			continue;
 		pick -= Maths::Max(1, tbl[i].weight);
 		if (pick < 0)
 			return i;
 	}
-	return tbl.length - 1;
+	for (uint i = 0; i < tbl.length; ++i)
+	{
+		if (!skipPrevious || int(i) != previous)
+			return i;
+	}
+	return 0;
 }
 
 // ---------------------------------------------------------------------
@@ -463,7 +477,11 @@ int RunBossWave(const int dayNumber, const float difficulty,
 	if (table.length == 0)
 		return transition;
 
-	const uint idx = PickWeightedIndex(@table);
+	const string encounterKey = kind == WAVE_MINI ? "zg_last_mini_encounter" :
+		(kind == WAVE_BOSS ? "zg_last_boss_encounter" : "zg_last_cataclysm_encounter");
+	const int previousEncounter = rules.exists(encounterKey) ?
+		rules.get_s32(encounterKey) : -1;
+	const uint idx = PickWeightedIndex(@table, previousEncounter);
 	BossEntry @e = table[idx];
 	if (e is null || e.names.length == 0)
 		return transition;
@@ -486,6 +504,7 @@ int RunBossWave(const int dayNumber, const float difficulty,
 		rules.Sync("boss_wave_sound", true);
 		rules.set_s32("boss_spawned_day", dayNumber);
 		rules.Sync("boss_spawned_day", true);
+		rules.set_s32(encounterKey, int(idx));
 	}
 
 	return transition;
