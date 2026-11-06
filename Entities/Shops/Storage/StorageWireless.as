@@ -12,50 +12,64 @@ void onInit(CBlob @ this)
 
 void onCommand(CBlob @ this, u8 cmd, CBitStream @params)
 {
-	bool isServer = getNet().isServer();
-
 	if (cmd == this.getCommandID("storage out"))
 	{
-		CBlob @caller = getBlobByNetworkID(params.read_netid());
-		CBlob @item = getBlobByNetworkID(params.read_netid());
-		if (caller !is null && item !is null)
-		{
-			if (canAccessStorage(this, caller))
-			{
-				this.server_PutOutInventory(item);
-				item.setPosition(caller.getPosition()); // put in on the player so it transfers even if it doesn't fit in inv
-				if (!caller.server_PutInInventory(item))
-				{
-					caller.server_Pickup(item);			// didnt fit in put in hands
-				}
-			}
-			else
-				caller.ClearMenus();
-		}
+		if (!isServer() || params is null)
+			return;
+
+		// The client supplies a selected item, not the identity of the buyer.
+		// Resolve the authenticated sender and their current player blob.
+		CPlayer @player = getNet().getActiveCommandPlayer();
+		if (player is null)
+			return;
+		CBlob @caller = player.getBlob();
+		if (!canAccessStorage(this, caller))
+			return;
+
+		u16 claimedCaller;
+		u16 itemID;
+		if (!params.saferead_netid(claimedCaller) ||
+			!params.saferead_netid(itemID) ||
+			claimedCaller != caller.getNetworkID())
+			return;
+
+		CBlob @item = getBlobByNetworkID(itemID);
+		if (item is null || !item.isInInventory())
+			return;
+
+		// A linked menu includes items from other allied chests. Transfer
+		// from the *actual* item owner, never an unrelated terminal.
+		CBlob @source = item.getInventoryBlob();
+		if (source is null || !source.hasTag("storage") ||
+			source.getTeamNum() != this.getTeamNum() ||
+			source.getInventory() is null)
+			return;
+
+		source.server_PutOutInventory(item);
+		item.setPosition(caller.getPosition());
+		if (!caller.server_PutInInventory(item))
+			caller.server_Pickup(item);
 	}
-	else if (cmd == this.getCommandID("shipment"))
+	else if (cmd == this.getCommandID("shipment") && isClient())
 	{
 		CBlob @localBlob = getLocalPlayerBlob();
 		if (localBlob !is null && localBlob.getTeamNum() == this.getTeamNum())
-		{
 			client_AddToChat("Supplies will drop at your storage.");
-		}
 	}
 }
 
 bool canAccessStorage(CBlob @ this, CBlob @caller)
 {
-	return ((this.getPosition() - caller.getPosition()).Length() < 18.0f);
+	return this !is null && caller !is null &&
+		!caller.hasTag("dead") &&
+		caller.getTeamNum() == this.getTeamNum() &&
+		(this.getPosition() - caller.getPosition()).Length() < 18.0f;
 }
 
 void GetButtonsFor(CBlob @ this, CBlob @caller)
 {
-	CBitStream params;
-	params.write_u16(caller.getNetworkID());
 	if (canAccessStorage(this, caller))
-	{
 		BuildSharedInventory(this, caller);
-	}
 }
 
 CGridButton @addItem(CGridMenu @menu, CBlob @caller, CBlob @item, u8 cmdID)
@@ -78,11 +92,10 @@ void BuildSharedInventory(CBlob @ this, CBlob @caller, CBlob @justAddedBlob = nu
 		for (uint step = 0; step < storages.length; ++step)
 		{
 			CBlob @storage = storages[step];
-			if (storage.getTeamNum() == this.getTeamNum())
+			if (storage !is null && storage.getTeamNum() == this.getTeamNum())
 				count++;
 		}
 
-		CControls @controls = caller.getControls();
 		if (count <= 1)
 		{
 			LAST_LABEL = "Storage";
@@ -102,14 +115,18 @@ void BuildSharedInventory(CBlob @ this, CBlob @caller, CBlob @justAddedBlob = nu
 			for (uint step = 0; step < storages.length; ++step)
 			{
 				CBlob @storage = storages[step];
-				if (storage.getTeamNum() == this.getTeamNum())
+				if (storage is null || storage.getTeamNum() != this.getTeamNum())
+					continue;
+
+				CInventory @inv = storage.getInventory();
+				if (inv is null)
+					continue;
+
+				for (int i = 0; i < inv.getItemsCount(); ++i)
 				{
-					CInventory @inv = storage.getInventory();
-					for (int i = 0; i < inv.getItemsCount(); i++)
-					{
-						CBlob @item = inv.getItem(i);
+					CBlob @item = inv.getItem(i);
+					if (item !is null)
 						addItem(menu, caller, item, this.getCommandID("storage out"));
-					}
 				}
 			}
 
