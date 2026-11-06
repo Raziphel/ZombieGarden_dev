@@ -75,7 +75,12 @@ void onTick(CBlob @ this)
 				DoAttack(this, 0.5f, 0.0f, 45.0f, Hitters::fire, 1);
 			else DoAttack(this, 0.5f, 180.0f, 45.0f, Hitters::fire, 1);
 			this.set_s16("stab_cooldown", 24);
-			this.getSprite().PlaySound("/SwordSlash.ogg");
+			if (isClient())
+			{
+				CSprite @sprite = this.getSprite();
+				if (sprite !is null)
+					sprite.PlaySound("/SwordSlash.ogg");
+			}
 		}
 	}
 
@@ -104,10 +109,15 @@ void DoAttack(CBlob @ this, f32 damage, f32 aimangle, f32 arcdegrees, u8 type, i
 	Vec2f pos = blobPos - thinghy * 6.0f + vel + Vec2f(0, -2);
 	vel.Normalize();
 
-	f32 attack_distance = Maths::Min(8 + Maths::Max(0.0f, 1.75f * this.getShape().vellen * (vel * thinghy)), 8) * 2;
+	CShape @shape = this.getShape();
+	if (shape is null)
+		return;
+	f32 attack_distance = Maths::Min(8 + Maths::Max(0.0f, 1.75f * shape.vellen * (vel * thinghy)), 8) * 2;
 
 	f32 radius = this.getRadius();
 	CMap @map = this.getMap();
+	if (map is null)
+		return;
 	bool dontHitMore = false;
 	bool dontHitMoreMap = false;
 	const bool jab = true;
@@ -120,6 +130,8 @@ void DoAttack(CBlob @ this, f32 damage, f32 aimangle, f32 arcdegrees, u8 type, i
 		for (uint i = 0; i < hitInfos.length; i++)
 		{
 			HitInfo @hi = hitInfos[i];
+			if (hi is null)
+				continue;
 			CBlob @b = hi.blob;
 			if (b !is null && !dontHitMore)
 			{
@@ -142,12 +154,12 @@ void DoAttack(CBlob @ this, f32 damage, f32 aimangle, f32 arcdegrees, u8 type, i
 					if (b.isFacingLeft() == this.isFacingLeft())
 					{
 						this.server_Hit(b, hi.hitpos, velocity, 1.0, type, true);
-						this.getSprite().PlaySound("/KnifeStab.ogg");
+						// Client slash sound is already played in onTick.
 					}
 					else
 					{
 						this.server_Hit(b, hi.hitpos, velocity, 0.25, type, true);
-						this.getSprite().PlaySound("/KnifeStab.ogg");
+						// Client slash sound is already played in onTick.
 					}
 					if (large)
 					{
