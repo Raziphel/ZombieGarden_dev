@@ -44,28 +44,52 @@ void onTick(CBlob @ this)
 		return;
 	}
 
-	// Don't blindly dig unless there's something worth chasing below
+	// Only dig while pursuing a living target. Downward digging preserves
+	// the existing burrowing behaviour; forward digging is allowed only if
+	// solid ground immediately blocks progress toward that target.
 	CBrain @brain = this.getBrain();
 	CBlob @target = brain is null ? null : brain.getTarget();
-	if (target is null || target.hasTag("dead") ||
-		target.getPosition().y <= pos.y)
+	if (target is null || target.hasTag("dead"))
 	{
 		SetZombieDigging(this, false);
 		return;
 	}
 
-	// Only target tiles below the blob's feet to bias "digging down"
-	// Nudge start a half-tile down so we don't chew our own headspace
-	const f32 start_y = pos.y + step * 0.5f;
+	const Vec2f goal = target.getPosition();
+	const bool targetBelow = goal.y > pos.y + step;
+	const bool toRight = goal.x > pos.x + step;
+	const bool toLeft = goal.x < pos.x - step;
+	bool wallAhead = false;
+	if (!targetBelow && (toRight || toLeft))
+	{
+		const f32 direction = toRight ? 1.0f : -1.0f;
+		Vec2f hit;
+		wallAhead = map.rayCastSolid(pos,
+			pos + Vec2f(direction * (radius_px + step), 0.0f), hit);
+	}
 
-	// Convert radius to tile units for iteration bounds
+	if (!targetBelow && !wallAhead)
+	{
+		SetZombieDigging(this, false);
+		return;
+	}
+
+	const f32 start_y = targetBelow ? pos.y + step * 0.5f : pos.y;
 	const int r_tiles = Maths::Ceil(radius_px / step);
 
 	bool did_dig = false;
 
 	for (int tx = -r_tiles; tx <= r_tiles; ++tx)
 	{
-		for (int ty = 0; ty <= r_tiles; ++ty) // only below (0..r_tiles)
+		// When blocked horizontally, mine only the narrow front face of
+		// the wall, not an entire circular area around the zombie.
+		if (!targetBelow && (tx == 0 || (toRight && tx < 0) ||
+			(toLeft && tx > 0)))
+			continue;
+
+		const int minY = targetBelow ? 0 : -1;
+		const int maxY = targetBelow ? r_tiles : 1;
+		for (int ty = minY; ty <= maxY; ++ty)
 		{
 			Vec2f tpos = Vec2f(pos.x + tx * step, start_y + ty * step);
 
