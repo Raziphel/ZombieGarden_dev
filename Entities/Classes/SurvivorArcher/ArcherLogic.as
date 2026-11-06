@@ -790,10 +790,25 @@ CBlob @CreateArrow(CBlob @ this, Vec2f arrowPos, Vec2f arrowVel, u8 arrowType)
 	return arrow;
 }
 
+bool CanFireArcherCommand(CBlob @blob)
+{
+	if (blob is null || blob.hasTag("dead"))
+		return false;
+	if (!isServer())
+		return true;
+	CPlayer @owner = blob.getPlayer();
+	CPlayer @sender = getNet().getActiveCommandPlayer();
+	if (owner is null || owner.isBot())
+		return sender is null;
+	return sender !is null && sender is owner;
+}
+
 void onCommand(CBlob @ this, u8 cmd, CBitStream @params)
 {
 	if (cmd == this.getCommandID("shoot arrow"))
 	{
+		if (params is null || !CanFireArcherCommand(this))
+			return;
 		Vec2f arrowPos;
 		if (!params.saferead_Vec2f(arrowPos))
 			return;
@@ -809,6 +824,19 @@ void onCommand(CBlob @ this, u8 cmd, CBitStream @params)
 
 		if (arrowType >= arrowTypeNames.length)
 			return;
+
+		if (arrowType >= arrowTypeNames.length)
+			return;
+
+		if (isServer())
+		{
+			const f32 speed = arrowVel.Length();
+			if ((arrowPos - this.getPosition()).Length() > 96.0f ||
+				speed < 0.1f || speed > ArcherParams::shoot_max_vel * 1.1f ||
+				getGameTime() < this.get_u32("zg_next_archer_shot"))
+				return;
+			this.set_u32("zg_next_archer_shot", getGameTime() + 3);
+		}
 
 		ArcherInfo @archer;
 		if (!this.get("archerInfo", @archer))
@@ -852,7 +880,12 @@ void onCommand(CBlob @ this, u8 cmd, CBitStream @params)
 					arrowVel *= 0.9f;
 				}
 			}
-			this.getSprite().PlaySound("Entities/Classes/Archer/BowFire.ogg");
+			if (isClient())
+			{
+				CSprite @sprite = this.getSprite();
+				if (sprite !is null)
+					sprite.PlaySound("Entities/Classes/Archer/BowFire.ogg");
+			}
 		}
 		else
 		{
@@ -861,7 +894,12 @@ void onCommand(CBlob @ this, u8 cmd, CBitStream @params)
 				CreateArrow(this, arrowPos, arrowVel, arrowType);
 			}
 
-			this.getSprite().PlaySound("Entities/Classes/Archer/BowFire.ogg");
+			if (isClient())
+			{
+				CSprite @sprite = this.getSprite();
+				if (sprite !is null)
+					sprite.PlaySound("Entities/Classes/Archer/BowFire.ogg");
+			}
 			this.TakeBlob(arrowTypeNames[arrowType], 1);
 		}
 
@@ -869,6 +907,8 @@ void onCommand(CBlob @ this, u8 cmd, CBitStream @params)
 	}
 	else if (cmd == this.getCommandID("pickup arrow"))
 	{
+		if (!CanFireArcherCommand(this))
+			return;
 		CBlob @arrow = getPickupArrow(this);
 		bool spriteArrow = canPickSpriteArrow(this, false); // unnecessary
 
