@@ -1046,8 +1046,10 @@ void onCommand(CBlob @ this, u8 cmd, CBitStream @params)
 		if (isServer())
 		{
 			const f32 speed = arrowVel.Length();
-			if ((arrowPos - this.getPosition()).Length() > 96.0f ||
-				speed < 0.1f || speed > ArcherParams::shoot_max_vel * 1.1f ||
+			const f32 originDistance = (arrowPos - this.getPosition()).Length();
+			// Inverted comparisons also reject malformed NaN coordinates.
+			if (!(originDistance <= 96.0f && speed >= 0.1f &&
+				speed <= ArcherParams::shoot_max_vel * 1.1f) ||
 				getGameTime() < this.get_u32("zg_next_archer_shot"))
 				return;
 			this.set_u32("zg_next_archer_shot", getGameTime() + 3);
