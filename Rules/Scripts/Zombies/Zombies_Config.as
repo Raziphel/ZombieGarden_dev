@@ -80,6 +80,7 @@ void Config(ZombiesCore @ this)
 	this.rules.set_bool("grave_spawn", true); // spawn graves with loot at markers
 	this.rules.set_bool("zombify", true);	  // allow players to zombify after death
 	this.rules.set_bool("dusk_warning", true); // announce the next night's threat
+	this.rules.set_bool("dawn_respite", true); // reward living defenders when a new day begins
 	this.rules.set_s32("last_dusk_warning_day", 0);
 	this.rules.Sync("grave_spawn", true);
 	this.rules.Sync("zombify", true);
