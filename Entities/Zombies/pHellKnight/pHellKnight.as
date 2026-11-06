@@ -44,7 +44,7 @@ void onTick(CBlob @ this)
 		CBrain @brain = this.getBrain();
 		CBlob @target = brain is null ? null : brain.getTarget();
 		const bool chomping = target !is null && !target.hasTag("dead") &&
-			this.getDistanceTo(target) < 512.0f;
+			this.getDistanceTo(target) < 72.0f;
 		if (this.hasTag(chomp_tag) != chomping)
 		{
 			if (chomping)
