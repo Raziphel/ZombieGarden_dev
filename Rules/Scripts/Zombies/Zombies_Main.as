@@ -31,19 +31,23 @@ void Reset(CRules @ this)
 	ZombiesCore core(this, spawns);
 	Config(core);
 
-	// spawn initial portals/graves from map markers
-	Vec2f[] zombiePlaces;
-	getMap().getMarkers("zombie alter", zombiePlaces);
-	for (int i = 0; i < zombiePlaces.length; i++)
-		spawnPortal(zombiePlaces[i]);
-
-	// Honor the round's grave-loot option when placing map markers.
-	if (this.get_bool("grave_spawn"))
+	// Rules init can occur before a map is ready during reloads.
+	// Keep startup safe when there are no map markers to read yet.
+	CMap @map = getMap();
+	if (map !is null)
 	{
-		Vec2f[] gravePlaces;
-		getMap().getMarkers("grave", gravePlaces);
-		for (int i = 0; i < gravePlaces.length; i++)
-			spawnGraves(gravePlaces[i]);
+		Vec2f[] zombiePlaces;
+		map.getMarkers("zombie alter", zombiePlaces);
+		for (uint i = 0; i < zombiePlaces.length; ++i)
+			spawnPortal(zombiePlaces[i]);
+
+		if (this.get_bool("grave_spawn"))
+		{
+			Vec2f[] gravePlaces;
+			map.getMarkers("grave", gravePlaces);
+			for (uint i = 0; i < gravePlaces.length; ++i)
+				spawnGraves(gravePlaces[i]);
+		}
 	}
 
 	// all players start as survivors with clean stats and spawn instantly
@@ -76,6 +80,7 @@ void Reset(CRules @ this)
 
 	this.set("core", @core);
 	this.set("start_gametime", getGameTime() + core.warmUpTime);
+	// Generic TimeToEnd must not terminate endless survival rounds.
 	this.set_u32("game_end_time",
-				 getGameTime() + core.gameDuration); // TimeToEnd.as
+		core.gameDuration > 0 ? getGameTime() + core.gameDuration : 0);
 }
