@@ -36,7 +36,7 @@ void Config(ZombiesCore @ this)
 	this.rules.set_s32("max_gregs", 10);
 	this.rules.set_s32("max_imol", 5);
 	this.rules.set_s32("max_digger", 5);
-	this.rules.set_s32("max_bison", 8);
+	this.rules.set_s32("max_bisons", 8);
 	this.rules.set_s32("max_banshees", 6);
 	this.rules.set_s32("max_horror", 8);
 	this.rules.set_s32("max_gasbags", 10);
@@ -48,7 +48,7 @@ void Config(ZombiesCore @ this)
 	this.rules.Sync("max_gregs", true);
 	this.rules.Sync("max_imol", true);
 	this.rules.Sync("max_digger", true);
-	this.rules.Sync("max_bison", true);
+	this.rules.Sync("max_bisons", true);
 	this.rules.Sync("max_banshees", true);
 	this.rules.Sync("max_horror", true);
 	this.rules.Sync("max_gasbags", true);
