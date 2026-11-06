@@ -20,27 +20,31 @@ bool SetMaterials(CBlob @blob, const string&in name, const int quantity)
 		return false;
 
 	CInventory @inv = blob.getInventory();
-	if (inv is null)
+	if (inv is null || inv.isInInventory(name, quantity))
 		return false;
 
-	// already got them?
-	if (inv.isInInventory(name, quantity))
-		return false;
+	// Resupply the requested amount rather than stacking a fresh batch on
+	// top of leftover free supplies from a previous class selection.
+	inv.server_RemoveItems(name, quantity);
 
-	// otherwise...
-	inv.server_RemoveItems(name, quantity); // shred any old ones
-
-	CBlob @mat = server_CreateBlob(name);
-	if (mat !is null)
+	// Resource presets can exceed a material's stack limit (for example
+	// 500 wood for Burd). Split them into valid stacks instead of creating
+	// a single oversized blob that the engine might clamp.
+	int remaining = quantity;
+	while (remaining > 0)
 	{
-		mat.Tag("do not set materials");
-		mat.server_SetQuantity(quantity);
-		if (!blob.server_PutInInventory(mat))
-		{
-			mat.setPosition(blob.getPosition());
-		}
-	}
+		CBlob @mat = server_CreateBlob(name, blob.getTeamNum(), blob.getPosition());
+		if (mat is null)
+			return false;
 
+		mat.Tag("do not set materials");
+		const int stackSize = Maths::Min(remaining, Maths::Max(1, int(mat.maxQuantity)));
+		mat.server_SetQuantity(stackSize);
+		remaining -= stackSize;
+
+		if (!blob.server_PutInInventory(mat))
+			mat.setPosition(blob.getPosition());
+	}
 	return true;
 }
 
