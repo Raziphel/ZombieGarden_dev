@@ -25,16 +25,12 @@ void onInit(CBlob @ this)
 
 void GetButtonsFor(CBlob @ this, CBlob @caller)
 {
-	u8 kek = caller.getTeamNum();
-	if (kek == 0)
-	{
-		if (caller.getTeamNum() == this.getTeamNum())
-		{
-			CBitStream params;
-			params.write_u16(caller.getNetworkID());
-			CButton @button = caller.CreateGenericButton("$change_class$", Vec2f(0, 0), this, buildSpawnMenu, "Change class");
-		}
-	}
+	if (caller is null || caller.hasTag("dead") ||
+		caller.getTeamNum() != 0 || caller.getTeamNum() != this.getTeamNum())
+		return;
+
+	caller.CreateGenericButton("$change_class$", Vec2f(0, 0), this,
+		buildSpawnMenu, "Change class");
 }
 
 void onInit(CSprite @ this)
@@ -78,9 +74,8 @@ void onDie(CBlob @ this)
 	if (!getNet().isServer())
 		return;
 
-	int r = XORRandom(1);
-	if (r == 0)
-	{
+	// XORRandom(1) always returns zero. Keep the intended chance
+	// rather than guaranteeing a lifeforce reward for each broken altar.
+	if (XORRandom(2) == 0)
 		server_CreateBlob("lifeforce", -1, this.getPosition());
-	}
 }
