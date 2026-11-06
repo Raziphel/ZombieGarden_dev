@@ -15,23 +15,29 @@ bool onServerProcessChat(CRules @ this, const string& in text_in, string& out te
 {
 	if (player is null)
 		return true;
-	bool isMe = (player.getUsername() == "TumedSm") || (player.getUsername() == "Me") || (player.getUsername() == "Eanmig") || (player.getUsername() == "Budderball") || (player.getUsername() == "Supadexter") || (player.getUsername() == "Vamist");
-	const bool canSpawn = sv_test || player.isMod() || isMe;
+	// Debug and admin commands require a live staff permission, never a username allowlist.
+	const bool isStaff = player.isMod();
+	const bool canSpawn = isStaff;
 
-	if (text_in == "!bot" && player.isMod()) // TODO: whoaaa check seclevs
+	if (text_in == "!bot" && isStaff)
 	{
-		CPlayer @bot = AddBot("[Bot]");
-		return true;
+		AddBot("[Bot]");
+		text_out = "";
+		return false;
 	}
 
 	// spawning things
 	CBlob @blob = player.getBlob();
-	if (blob is null && isMe && text_in == "!spawnme")
+	if (blob is null && isStaff && text_in == "!spawnme")
 	{
 		RulesCore @core;
 		getRules().get("core", @core);
-		CTFPlayerInfo @info = cast<CTFPlayerInfo @>(core.getInfoFromPlayer(player));
-		info.can_spawn_time = 0;
+		if (core !is null)
+		{
+			CTFPlayerInfo @info = cast<CTFPlayerInfo @>(core.getInfoFromPlayer(player));
+			if (info !is null)
+				info.can_spawn_time = 0;
+		}
 		text_out = "";
 		return false;
 	}
@@ -43,7 +49,7 @@ bool onServerProcessChat(CRules @ this, const string& in text_in, string& out te
 
 		if (tokens.length > 1)
 		{
-			if (tokens[0] == "!spawn" && isMe)
+			if (tokens[0] == "!spawn" && isStaff)
 			{
 				string user = tokens[1];
 				CPlayer @target_player = getPlayerByUsername(user);
@@ -51,13 +57,17 @@ bool onServerProcessChat(CRules @ this, const string& in text_in, string& out te
 				{
 					RulesCore @core;
 					getRules().get("core", @core);
-					CTFPlayerInfo @info = cast<CTFPlayerInfo @>(core.getInfoFromPlayer(target_player));
-					info.can_spawn_time = 0;
+					if (core !is null)
+					{
+						CTFPlayerInfo @info = cast<CTFPlayerInfo @>(core.getInfoFromPlayer(target_player));
+						if (info !is null)
+							info.can_spawn_time = 0;
+					}
 				}
 				text_out = "";
 				return false;
 			}
-			else if (tokens[0] == "!nospawn" && isMe)
+			else if (tokens[0] == "!nospawn" && isStaff)
 			{
 				string user = tokens[1];
 				CPlayer @target_player = getPlayerByUsername(user);
@@ -65,13 +75,17 @@ bool onServerProcessChat(CRules @ this, const string& in text_in, string& out te
 				{
 					RulesCore @core;
 					getRules().get("core", @core);
-					CTFPlayerInfo @info = cast<CTFPlayerInfo @>(core.getInfoFromPlayer(target_player));
-					info.can_spawn_time = 9999999999;
+					if (core !is null)
+					{
+						CTFPlayerInfo @info = cast<CTFPlayerInfo @>(core.getInfoFromPlayer(target_player));
+						if (info !is null)
+							info.can_spawn_time = getGameTime() + getTicksASecond() * 60 * 60;
+					}
 				}
 				text_out = "";
 				return false;
 			}
-			else if (tokens[0] == "!die" && isMe)
+			else if (tokens[0] == "!die" && isStaff)
 			{
 				string user = tokens[1];
 				CPlayer @target_player = getPlayerByUsername(user);
@@ -86,7 +100,7 @@ bool onServerProcessChat(CRules @ this, const string& in text_in, string& out te
 				}
 				return false;
 			}
-			else if (tokens[0] == "!ban" && isMe)
+			else if (tokens[0] == "!ban" && isStaff)
 			{
 				string user = tokens[1];
 				CPlayer @target_player = getPlayerByUsername(user);
@@ -94,24 +108,34 @@ bool onServerProcessChat(CRules @ this, const string& in text_in, string& out te
 				{
 					BanPlayer(target_player, 60);
 				}
+				text_out = "";
+				return false;
 			}
-			else if (tokens[0] == "!settime" && isMe)
+			else if (tokens[0] == "!settime" && isStaff)
 			{
-				float time = parseFloat(tokens[1]);
-				getMap().SetDayTime(time);
+				CMap @map = getMap();
+				if (map !is null)
+					map.SetDayTime(Maths::Clamp(parseFloat(tokens[1]), 0.0f, 1.0f));
+				text_out = "";
+				return false;
 			}
-			if ((tokens[0] == "!day" || tokens[0] == "!days") && isMe)
+			else if ((tokens[0] == "!day" || tokens[0] == "!days") && isStaff)
 			{
-				int time = parseInt(tokens[1]);
-				int day_cycle = getRules().daycycle_speed * 60;
-				int gamestart = getRules().get_s32("gamestart");
-				int dayNumber = ((getGameTime() - gamestart) / getTicksASecond() / day_cycle) + 1;
-int extra = (time - dayNumber) * day_cycle * getTicksASecond();
-getRules().set_s32("gamestart", gamestart - extra);
-getRules().Sync("gamestart", true);
-getMap().SetDayTime(time);
-getRules().set_bool("dayCheated", true);
-getRules().Sync("dayCheated", true);
+				// Change the visible round day without rewriting the match start
+				// timestamp or passing a day number to SetDayTime(0..1).
+				const int targetDay = parseInt(tokens[1]);
+				const int day_cycle = int(this.daycycle_speed * 60);
+				if (targetDay >= 1 && targetDay <= 10000 && day_cycle > 0)
+				{
+					const int elapsed = (getGameTime() - this.get_s32("gamestart")) / getTicksASecond();
+					const int naturalDay = elapsed / day_cycle + 1;
+					this.set_s32("days_offset", targetDay - naturalDay);
+					this.Sync("days_offset", true);
+					this.set_bool("dayCheated", true);
+					this.Sync("dayCheated", true);
+				}
+				text_out = "";
+				return false;
 			}
 		}
 	}
@@ -221,11 +245,10 @@ getRules().Sync("dayCheated", true);
 			print("[" + blob.getName() + " " + blob.getNetworkID() + "] ");
 		}
 	}
-	else if (text_in == "!nokeg" && isMe)
+	else if (text_in == "!nokeg" && isStaff)
 	{
-		CMap @map = blob.getMap();
 		CBlob @[] blobs;
-		map.getBlobsInRadius(blob.getPosition(), 99999, @blobs);
+		getBlobsByName("keg", @blobs);
 
 		for (uint i = 0; i < blobs.length; i++)
 		{
@@ -238,7 +261,7 @@ getRules().Sync("dayCheated", true);
 		}
 		return false;
 	}
-	else if (text_in == "!killruins" && isMe)
+	else if (text_in == "!killruins" && isStaff)
 	{
 		// Destroy all ruinstorch blobs to force the round to end
 		CBlob @[] torches;
@@ -287,12 +310,13 @@ getRules().Sync("dayCheated", true);
 		// try to spawn an actor with this name !actor
 		string name = text_in.substr(1, text_in.size());
 
-		if (canSpawn && server_CreateBlob(name, -1, blob.getPosition()) is null)
+		if (canSpawn)
 		{
-			client_AddToChat("blob " + text_in + " not found", SColor(255, 255, 0, 0));
-		}
-		else
+			if (server_CreateBlob(name, -1, blob.getPosition()) is null)
+				client_AddToChat("blob " + text_in + " not found", SColor(255, 255, 0, 0));
+			text_out = "";
 			return false;
+		}
 	}
 
 	return true;
