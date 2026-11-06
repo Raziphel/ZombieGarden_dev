@@ -77,16 +77,46 @@ int CountTeamPlayers(const int teamNum)
 // -------------------------------------
 // Lifecycle
 // -------------------------------------
+bool zg_boss_audio_initialized = false;
+int zg_last_heard_boss_day = 0;
+
 void onInit(CRules @ this)
 {
 	// Load default GUI assets so icons and tokens are available
 	LoadDefaultGUI();
+	zg_boss_audio_initialized = false;
 }
 
 void onRestart(CRules @ this)
 {
 	// Ensure GUI assets are reloaded on map restart
 	LoadDefaultGUI();
+	zg_boss_audio_initialized = false;
+}
+
+void onTick(CRules @ this)
+{
+	if (!isClient())
+		return;
+
+	const int latestBossDay = this.get_s32("boss_spawned_day");
+	if (!zg_boss_audio_initialized)
+	{
+		// A late-joining player should not hear an already completed wave.
+		zg_last_heard_boss_day = latestBossDay;
+		zg_boss_audio_initialized = true;
+		return;
+	}
+
+	if (latestBossDay > 0 && latestBossDay != zg_last_heard_boss_day)
+	{
+		const string stinger = this.get_string("boss_wave_sound");
+		if (stinger.length == 0)
+			return; // wait until the matching sound property arrives
+
+		zg_last_heard_boss_day = latestBossDay;
+		Sound::Play(stinger);
+	}
 }
 
 void onRender(CRules @ this)
