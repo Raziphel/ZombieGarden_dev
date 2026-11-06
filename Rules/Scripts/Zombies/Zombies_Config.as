@@ -39,6 +39,10 @@ void Config(ZombiesCore @ this)
 	// New waves will not spawn if the active count for that mob is >= its cap
 	// ----------------------------
 	this.rules.set_s32("max_zombies", 250);	  // standard zombies
+	// At the global cap, allow a higher-rank enemy to retire one remote,
+	// weaker natural spawn. Normal kills and per-species limits are unchanged.
+	this.rules.set_bool("horde_replacements", true);
+	this.rules.set_u32("zg_last_horde_replacement", 0);
 	this.rules.set_s32("max_pzombies", 25);	  // portal-spawned zombies
 	this.rules.set_s32("max_migrantbots", 4); // migrants
 	this.rules.set_s32("max_wraiths", 20);
