@@ -1,5 +1,8 @@
 void MakeMat(CBlob @ this, Vec2f worldPoint, const string& in name, int quantity)
 {
+	if (!isServer() || this is null || quantity <= 0)
+		return;
+
 	// decide whether to fly it or put directly in inv
 	bool putInInv = true;
 	int added = 0;
@@ -10,10 +13,12 @@ void MakeMat(CBlob @ this, Vec2f worldPoint, const string& in name, int quantity
 		putInInv = false;
 		if (this.isAttached()) // do we have a holder?
 		{
-			AttachmentPoint @point = this.getAttachments().getAttachmentPointByName("PICKUP");
-			CBlob @holder = point.getOccupied();
+			CAttachment @attachments = this.getAttachments();
+			AttachmentPoint @point = attachments is null ? null :
+				attachments.getAttachmentPointByName("PICKUP");
+			CBlob @holder = point is null ? null : point.getOccupied();
 
-			if (holder !is null) // we have something holding us, make the mat for it instead
+			if (holder !is null && holder !is this) // we have something holding us, make the mat for it instead
 			{
 				MakeMat(holder, worldPoint, name, quantity);
 				return;
@@ -28,12 +33,14 @@ void MakeMat(CBlob @ this, Vec2f worldPoint, const string& in name, int quantity
 		{
 			CBlob @invblob = inv.getItem(i);
 
-			if (invblob !is this && invblob.getName() == name)
+			if (invblob !is null && invblob !is this && invblob.getName() == name)
 			{
 				int spaceLeft = invblob.maxQuantity - invblob.getQuantity();
 				if (spaceLeft > 0)
 				{
-					int toAdd = Maths::Min(spaceLeft, quantity);
+					// Use the unfilled portion, not the original quantity:
+					// otherwise several partial stacks duplicate materials.
+					int toAdd = Maths::Min(spaceLeft, quantity - added);
 					invblob.server_SetQuantity(invblob.getQuantity() + toAdd);
 					added += toAdd;
 				}
@@ -50,23 +57,23 @@ void MakeMat(CBlob @ this, Vec2f worldPoint, const string& in name, int quantity
 	if (quantity <= 0) // safety
 		return;
 
-	// make a new blob mat
-
-	CBlob @mat = server_CreateBlob(name, this.getTeamNum(), worldPoint);
-
-	if (mat !is null)
+	// New stacks must also honour their max quantity. Without splitting,
+	// large resource rewards can create oversized stacks or silently lose
+	// items when the engine clamps a blob's quantity.
+	while (quantity > 0)
 	{
-		f32 dir = this.isFacingLeft() ? 1.0f : -1.0f;
-		worldPoint.x -= getMap().tilesize / 2.0f;
-		mat.server_SetQuantity(quantity);
-		Vec2f newpos = this.getPosition();
+		CBlob @mat = server_CreateBlob(name, this.getTeamNum(), worldPoint);
+		if (mat is null)
+			return;
 
-		if (putInInv)
-			putInInv = this.server_PutInInventory(mat); // it might not fit
+		const int stackSize = Maths::Min(quantity, Maths::Max(1, int(mat.maxQuantity)));
+		mat.server_SetQuantity(stackSize);
+		quantity -= stackSize;
 
-		if (!putInInv)
+		if (!putInInv || !this.server_PutInInventory(mat))
 		{
-			mat.setPosition(newpos);
+			mat.setPosition(this.getPosition());
+			const f32 dir = this.isFacingLeft() ? 1.0f : -1.0f;
 			mat.setVelocity(Vec2f(dir, -1.0f) * 0.5f);
 		}
 	}
