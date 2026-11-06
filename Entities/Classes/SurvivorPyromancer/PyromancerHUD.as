@@ -11,7 +11,9 @@ void onInit(CSprite @ this)
 {
 	this.getCurrentScript().runFlags |= Script::tick_myplayer;
 	this.getCurrentScript().removeIfTag = "dead";
-	this.getBlob().set_u8("gui_HUD_slots_width", slotsSize);
+	CBlob @blob = this.getBlob();
+	if (blob !is null)
+		blob.set_u8("gui_HUD_slots_width", slotsSize);
 }
 
 void ManageCursors(CBlob @ this)
@@ -36,6 +38,8 @@ void onRender(CSprite @ this)
 		return;
 
 	CBlob @blob = this.getBlob();
+	if (blob is null || blob.hasTag("dead"))
+		return;
 	CPlayer @player = blob.getPlayer();
 	const u32 gametime = getGameTime();
 
