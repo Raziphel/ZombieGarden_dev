@@ -3,5 +3,5 @@
 void onInit(CBlob @ this)
 {
 	this.Tag("survivorplayer");
-	this.RemoveScript("TagAsSurvivor.as");
+	this.getCurrentScript().runFlags |= Script::remove_after_this;
 }
