@@ -61,6 +61,8 @@ void onTick(CBlob @ this)
 				for (uint i = 0; i < hitInfos.length; i++)
 				{
 					HitInfo @hi = hitInfos[i];
+					if (hi is null)
+						continue;
 
 					CBlob @b = hi.blob;
 
@@ -89,8 +91,10 @@ void HitTarget(CBlob @ this, CBlob @target)
 
 void onHitBlob(CBlob @ this, Vec2f worldPoint, Vec2f velocity, f32 damage, CBlob @hitBlob, u8 customData)
 {
-	if (damage > 0.0f)
-	{
-		this.getSprite().PlayRandomSound(this.get_string("attack sound"));
-	}
+	if (!isClient() || damage <= 0.0f)
+		return;
+
+	CSprite @sprite = this.getSprite();
+	if (sprite !is null)
+		sprite.PlayRandomSound(this.get_string("attack sound"));
 }
