@@ -101,12 +101,30 @@ void onTick(CRules @ this)
 	const u16 days = getDaysSurvived(this);
 	this.set_u16("day_number", days);
 
-	// A loaded but empty or warmup server is not a survival attempt.
-	// Do not inflate persistent records just because the map is running.
-	if (!this.isMatchRunning() || getPlayersCount() == 0)
+	// A populated server is not necessarily still defending anything:
+	// spectators, dead survivors and undead-only teams must not earn new
+	// survival records while nobody is alive to protect the pillars.
+	if (!this.isMatchRunning())
 		return;
 
-	// update the stored record as soon as a new day is survived
+	bool hasLivingDefender = false;
+	for (int i = 0; i < getPlayersCount(); ++i)
+	{
+		CPlayer @player = getPlayer(i);
+		if (player is null || player.getTeamNum() != 0)
+			continue;
+		CBlob @body = player.getBlob();
+		if (body !is null && body.hasTag("survivorplayer") &&
+			!body.hasTag("dead"))
+		{
+			hasLivingDefender = true;
+			break;
+		}
+	}
+	if (!hasLivingDefender)
+		return;
+
+	// Update the record only while someone is actually surviving
 	if (!this.get_bool("dayCheated"))
 	{
 		bool newRecord = false;
