@@ -190,7 +190,9 @@ class ZombiesCore : RulesCore
 				num_undead_p++;
 		}
 		const int max_undead = (num_survivors_p / 3);
-		rules.set_s32("max_undead", max_undead);
+		if (!rules.exists("max_undead") ||
+			rules.get_s32("max_undead") != max_undead)
+			rules.set_s32("max_undead", max_undead);
 
 		// expose the current day to the HUD for snappier rendering
 		if (!rules.exists("hud_dayNumber") || rules.get_s32("hud_dayNumber") != dayNumber)
@@ -603,21 +605,21 @@ class ZombiesCore : RulesCore
 
 	void AddPlayer(CPlayer @player, u8 team, string default_config = "")
 	{
+		if (player is null)
+			return;
+
 		team = player.getTeamNum();
 		CTFPlayerInfo p(player.getUsername(), team, "builder");
 		players.push_back(p);
 		ChangeTeamPlayerCount(p.team, 1);
-		warn("sync");
 	}
 
 	void onPlayerDie(CPlayer @victim, CPlayer @killer, u8 customData)
 	{
 		RulesCore::onPlayerDie(victim, killer, customData);
 
-		if (victim !is null)
-		{
+		if (victim !is null && Zombies_spawns !is null)
 			Zombies_spawns.AddPlayerToSpawn(victim);
-		}
 
 		if (!rules.isMatchRunning())
 			return;
