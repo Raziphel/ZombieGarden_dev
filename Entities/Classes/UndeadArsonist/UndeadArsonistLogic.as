@@ -374,7 +374,6 @@ CBlob @CreateFireBolt(CBlob @ this, Vec2f arrowPos, Vec2f arrowVel, u8 arrowType
 {
 
 	CBlob @blob = server_CreateBlob("blackfirebolt", this.getTeamNum(), this.getPosition());
-	this.getSprite().PlaySound("FireBolt.ogg");
 	if (blob !is null)
 	{
 		blob.setVelocity(arrowVel);
@@ -386,7 +385,6 @@ CBlob @CreateFireBall(CBlob @ this, Vec2f arrowPos, Vec2f arrowVel, u8 arrowType
 {
 
 	CBlob @blob = server_CreateBlob("blackfireball", this.getTeamNum(), this.getPosition());
-	this.getSprite().PlaySound("FireBall.ogg");
 	if (blob !is null)
 	{
 		blob.setVelocity(arrowVel);
@@ -394,39 +392,64 @@ CBlob @CreateFireBall(CBlob @ this, Vec2f arrowPos, Vec2f arrowVel, u8 arrowType
 	return blob;
 }
 
+// Free fire spells must be requested by their actual controlling player.
+// Server-owned bots may issue local commands without an active human sender.
+bool CanFireSpellCommand(CBlob @blob)
+{
+	if (blob is null || blob.hasTag("dead"))
+		return false;
+	if (!isServer())
+		return true;
+	CPlayer @owner = blob.getPlayer();
+	CPlayer @sender = getNet().getActiveCommandPlayer();
+	if (owner is null || owner.isBot())
+		return sender is null;
+	return sender !is null && sender is owner;
+}
+
 void onCommand(CBlob @ this, u8 cmd, CBitStream @params)
 {
-	if (cmd == this.getCommandID("shoot firebolt"))
+	if (cmd != this.getCommandID("shoot firebolt") ||
+		params is null || !CanFireSpellCommand(this))
+		return;
+
+	Vec2f arrowPos;
+	Vec2f arrowVel;
+	u8 arrowType;
+	bool legolas;
+	if (!params.saferead_Vec2f(arrowPos) ||
+		!params.saferead_Vec2f(arrowVel) ||
+		!params.saferead_u8(arrowType) ||
+		!params.saferead_bool(legolas) ||
+		arrowType >= ArrowType::count)
+		return;
+
+	PyromancerInfo @pyromancer;
+	if (!this.get("pyromancerInfo", @pyromancer) || pyromancer is null)
+		return;
+
+	if (isServer())
 	{
-		Vec2f arrowPos = params.read_Vec2f();
-		Vec2f arrowVel = params.read_Vec2f();
-		u8 arrowType = params.read_u8();
-		bool legolas = params.read_bool();
-
-		PyromancerInfo @pyromancer;
-		if (!this.get("pyromancerInfo", @pyromancer))
-		{
+		const f32 speed = arrowVel.Length();
+		if ((arrowPos - this.getPosition()).Length() > 96.0f ||
+			speed < 0.1f || speed > PyromancerParams::shoot_max_vel * 1.1f ||
+			getGameTime() < this.get_u32("zg_next_firebolt"))
 			return;
-		}
 
-		pyromancer.arrow_type = arrowType;
-
+		// Limit forged repeat packets without affecting the charged fireballs.
+		this.set_u32("zg_next_firebolt", getGameTime() + 3);
 		if (legolas)
-		{
-			if (getNet().isServer())
-			{
-				CBlob @arrow = CreateFireBall(this, arrowPos, arrowVel * 1.2, arrowType);
-			}
-			this.getSprite().PlaySound("FireBolt.ogg");
-		}
+			CreateFireBall(this, this.getPosition(), arrowVel * 1.2f, arrowType);
 		else
-		{
-			if (getNet().isServer())
-			{
-				CreateFireBolt(this, arrowPos, arrowVel, arrowType);
-			}
-		}
-		this.getSprite().PlaySound("FireBolt.ogg");
+			CreateFireBolt(this, this.getPosition(), arrowVel, arrowType);
+	}
+
+	pyromancer.arrow_type = arrowType;
+	if (isClient())
+	{
+		CSprite @sprite = this.getSprite();
+		if (sprite !is null)
+			sprite.PlaySound(legolas ? "FireBall.ogg" : "FireBolt.ogg");
 	}
 }
 
