@@ -80,6 +80,9 @@ shared class CreatureMoveVars
 void RemoveTarget(CBrain @ this)
 {
 	CBlob @blob = this.getBlob();
+	if (blob is null)
+		return;
+
 	CBlob @carried = blob.getCarriedBlob();
 
 	if (carried !is null && carried is this.getTarget())
@@ -101,7 +104,8 @@ bool isTarget(CBlob @ this, CBlob @target)
 	if (target !is null)
 	{
 		TargetInfo[] @infos;
-		this.get("target infos", @infos);
+		if (!this.get("target infos", @infos) || infos is null)
+			return false;
 
 		for (uint i = 0; i < infos.length; i++)
 		{
@@ -121,7 +125,8 @@ f32 getTargetPriority(CBlob @ this, CBlob @target)
 	if (target !is null)
 	{
 		TargetInfo[] @infos;
-		this.get("target infos", @infos);
+		if (!this.get("target infos", @infos) || infos is null)
+			return 0.0f;
 
 		for (uint i = 0; i < infos.length; i++)
 		{
@@ -141,7 +146,8 @@ bool seeTargetThroughWalls(CBlob @ this, CBlob @target)
 	if (target !is null)
 	{
 		TargetInfo[] @infos;
-		this.get("target infos", @infos);
+		if (!this.get("target infos", @infos) || infos is null)
+			return false;
 
 		for (uint i = 0; i < infos.length; i++)
 		{
@@ -158,12 +164,18 @@ bool seeTargetThroughWalls(CBlob @ this, CBlob @target)
 
 bool isTargetVisible(CBlob @ this, CBlob @target)
 {
-	Vec2f col;
+	if (this is null || target is null)
+		return false;
 
-	if (getMap().rayCastSolid(this.getPosition(), target.getPosition(), col))
+	CMap @map = this.getMap();
+	if (map is null)
+		return false;
+
+	Vec2f col;
+	if (map.rayCastSolid(this.getPosition(), target.getPosition(), col))
 	{
 		// fix for doors not being considered visible
-		CBlob @obstruction = getMap().getBlobAtPosition(col);
+		CBlob @obstruction = map.getBlobAtPosition(col);
 
 		if (obstruction is null || obstruction !is target)
 			return false;
