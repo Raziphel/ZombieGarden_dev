@@ -82,6 +82,7 @@ void Config(ZombiesCore @ this)
 	this.rules.set_bool("dusk_warning", true); // announce the next night's threat
 	this.rules.set_bool("dawn_respite", true); // reward living defenders at actual sunrise
 	this.rules.set_s32("last_dawn_respite_day", 0);
+	this.rules.set_s32("night_started_day", 0);
 	this.rules.set_s32("last_dusk_warning_day", 0);
 	this.rules.Sync("grave_spawn", true);
 	this.rules.Sync("zombify", true);
