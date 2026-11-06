@@ -16,7 +16,7 @@ const string VAR_RNG_COUNT = "rng_path_count";	 // u16 counter
 const string VAR_LAST_POS = "last_known_pos";
 
 // NEW: wide awareness ping timer
-const string VAR_LONGSCAN_TIME = "30";
+const string VAR_LONGSCAN_TIME = "zg_longscan_time";
 
 const u32 FIND_COOLDOWN_TICKS = 10;	  // small throttle for target scans
 const u32 PATH_COOLDOWN_TICKS = 60;	  // debounce path requests
@@ -25,7 +25,7 @@ const u16 STUCK_PUNISH_LIMIT = 50;	  // how many rng steps before damage
 
 // NEW: awareness tuning (can be overridden per-blob if you want)
 const f32 DEFAULT_AWARENESS_MULT = 2.5f; // how far “scent” reaches vs normal
-const u32 LONGSCAN_COOLDOWN_TICKS = 45;	 // ~1.5s at 30 tps
+const u32 LONGSCAN_COOLDOWN_TICKS = 90;	 // ~3s at 30 tps; fewer expensive wide scans
 
 void onInit(CBrain @ this)
 {
@@ -45,11 +45,13 @@ void onInit(CBrain @ this)
 	this.getCurrentScript().runFlags |= Script::tick_not_attached;
 
 	blob.set_Vec2f("destination_property", blob.getPosition());
-	blob.set_u32(VAR_SEARCH_TIME, getGameTime());
+	// Spread scans from freshly spawned hordes across server ticks.
+	blob.set_u32(VAR_SEARCH_TIME, getGameTime() + XORRandom(FIND_COOLDOWN_TICKS));
 	blob.set_Vec2f(VAR_LAST_POS, Vec2f_zero);
 	blob.set_u16(VAR_RNG_COUNT, 0);
 	blob.set_u32(VAR_RNG_SEARCH, getGameTime());	// initialize timer
-	blob.set_u32(VAR_LONGSCAN_TIME, getGameTime()); // initialize timer
+	blob.set_u32(VAR_LONGSCAN_TIME,
+		getGameTime() + XORRandom(LONGSCAN_COOLDOWN_TICKS));
 
 	this.failtime_end = 99999;
 }
@@ -206,7 +208,10 @@ void FollowEnginePath(CBrain @brain)
 
 void WalkTowards(CBlob @blob, Vec2f pos)
 {
-	if (blob is null || pos == Vec2f_zero)
+	if (blob is null)
+		return;
+
+	if (pos == Vec2f_zero)
 	{
 		PressOldKeys(blob);
 		return;
@@ -228,10 +233,19 @@ bool goToLastKnownPos(CBrain @brain, CBlob @blob)
 	Vec2f lastKnownPos = blob.get_Vec2f(VAR_LAST_POS);
 	const int pSize = brain.getPathSize();
 
-	if (lastKnownPos == Vec2f_zero && pSize == 0)
+	if (lastKnownPos == Vec2f_zero)
+	{
+		// Follow any already scheduled path without requesting a bogus
+		// path to world coordinate (0, 0).
+		if (pSize > 0)
+		{
+			FollowEnginePath(brain);
+			return false;
+		}
 		return true;
+	}
 
-	if (lastKnownPos != Vec2f_zero && (blob.getPosition() - lastKnownPos).Length() <= LASTPOS_REACH_DIST)
+	if ((blob.getPosition() - lastKnownPos).Length() <= LASTPOS_REACH_DIST)
 	{
 		blob.set_Vec2f(VAR_LAST_POS, Vec2f_zero);
 		return true;
