@@ -26,6 +26,10 @@ void onInit(CBlob @ this)
 
 	this.set_f32("gib health", 0.0f);
 	this.Tag("flesh");
+	// The old TagAsZombie/TagAsEnemy scripts are no longer shipped.
+	// Keep the same world-counting and hostile-faction tags here.
+	this.Tag("zombie");
+	this.Tag("enemy");
 	this.Tag("ignore_obstructions");
 	this.Tag("target_until_dead");
 	this.Tag("enraged");
