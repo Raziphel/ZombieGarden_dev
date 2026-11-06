@@ -26,8 +26,9 @@ void main()
 	vec2 uv = gl_FragCoord.xy / vec2(screen_width, screen_height);
 	vec2 offset = vec2(0.0);
 
-	for (int i = 0; i < 10 && i < count; i++)
+	for (int i = 0; i < 10; i++)
 	{
+		if (float(i) >= count) break;
 		vec2 center = vec2(shockwaves[i].x, shockwaves[i].y);
 		vec2 dir = uv - center;
 		float dist = length(dir);
