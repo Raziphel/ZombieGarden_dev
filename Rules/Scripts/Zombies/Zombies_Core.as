@@ -220,8 +220,8 @@ class ZombiesCore : RulesCore
 		// === periodic maintenance: curse logic (throttled) ===
 		if (getGameTime() % 150 == 0)
 		{
-			if (map !is null && dayNumber >= curse_day &&
-				rules.get_s32("num_undead") < max_undead)
+			if (map !is null && rules.get_bool("zombify") &&
+				dayNumber >= curse_day && num_undead_p < max_undead)
 			{
 				const u8 pCount = getPlayersCount();
 				if (pCount > 0)
@@ -482,6 +482,22 @@ class ZombiesCore : RulesCore
 							   10 * getTicksASecond());
 
 			rules.SetTeamWon(1);
+			rules.SetCurrentState(GAME_OVER);
+			return;
+		}
+
+		// Optional finite survival mode: win after completing the configured
+		// number of full days. An unset/non-positive limit remains endless.
+		const int survivalDays = rules.get_s32("days_to_survive");
+		if (survivalDays > 0 && dayNumber + days_offset > survivalDays)
+		{
+			Server_GlobalPopup(rules,
+							   "Victory!\\nThe Survivors held the Pillars for " +
+								   survivalDays + " days.",
+							   SColor(255, 140, 255, 140),
+							   10 * getTicksASecond());
+
+			rules.SetTeamWon(0);
 			rules.SetCurrentState(GAME_OVER);
 			return;
 		}
