@@ -492,7 +492,7 @@ class ZombiesCore : RulesCore
 		if (survivalDays > 0 && dayNumber + days_offset > survivalDays)
 		{
 			Server_GlobalPopup(rules,
-							   "Victory!\\nThe Survivors held the Pillars for " +
+							   "Victory!\nThe Survivors held the Pillars for " +
 								   survivalDays + " days.",
 							   SColor(255, 140, 255, 140),
 							   10 * getTicksASecond());
