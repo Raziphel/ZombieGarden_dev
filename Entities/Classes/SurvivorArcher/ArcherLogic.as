@@ -735,13 +735,18 @@ void ShootArrow(CBlob @ this, Vec2f arrowPos, Vec2f aimpos, f32 arrowspeed, cons
 
 CBlob @getPickupArrow(CBlob @ this)
 {
+	CMap @map = this.getMap();
+	if (map is null)
+		return null;
+
 	CBlob @[] blobsInRadius;
-	if (this.getMap().getBlobsInRadius(this.getPosition(), this.getRadius() * 1.5f, @blobsInRadius))
+	if (map.getBlobsInRadius(this.getPosition(), this.getRadius() * 1.5f, @blobsInRadius))
 	{
 		for (uint i = 0; i < blobsInRadius.length; i++)
 		{
 			CBlob @b = blobsInRadius[i];
-			if (b.getName() == "arrow")
+			if (b !is null && !b.hasTag("dead") &&
+				b.getName() == "arrow")
 			{
 				return b;
 			}
@@ -752,15 +757,20 @@ CBlob @getPickupArrow(CBlob @ this)
 
 bool canPickSpriteArrow(CBlob @ this, bool takeout)
 {
+	CMap @map = this.getMap();
+	if (map is null)
+		return false;
+
 	CBlob @[] blobsInRadius;
-	if (this.getMap().getBlobsInRadius(this.getPosition(), this.getRadius() * 1.5f, @blobsInRadius))
+	if (map.getBlobsInRadius(this.getPosition(), this.getRadius() * 1.5f, @blobsInRadius))
 	{
 		for (uint i = 0; i < blobsInRadius.length; i++)
 		{
 			CBlob @b = blobsInRadius[i];
+			if (b !is null)
 			{
 				CSprite @sprite = b.getSprite();
-				if (sprite.getSpriteLayer("arrow") !is null)
+				if (sprite !is null && sprite.getSpriteLayer("arrow") !is null)
 				{
 					if (takeout)
 						sprite.RemoveSpriteLayer("arrow");
@@ -820,9 +830,6 @@ void onCommand(CBlob @ this, u8 cmd, CBitStream @params)
 			return;
 		bool legolas;
 		if (!params.saferead_bool(legolas))
-			return;
-
-		if (arrowType >= arrowTypeNames.length)
 			return;
 
 		if (arrowType >= arrowTypeNames.length)
