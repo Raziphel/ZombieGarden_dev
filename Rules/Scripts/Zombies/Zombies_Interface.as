@@ -167,9 +167,9 @@ bool SafeGetSpawnSeconds(CRules @rules, const string&in propname,
 
 	u16 candidate = rules.get_u16(propname);
 
-	// Filter sentinels/garbage commonly used by scripts
-	// 255 is a common "not set" sentinel when stored as u8.
-	if (candidate == 255 || candidate == 65535)
+	// This timer is always u16. Only 65535 is reserved for "ready";
+	// 255 is a valid remaining-second value and should still be displayed.
+	if (candidate == 65535)
 		return false;
 
 	// Guard against nonsense (negative via wrap or way too large)
