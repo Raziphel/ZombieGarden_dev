@@ -101,6 +101,11 @@ void onTick(CRules @ this)
 	const u16 days = getDaysSurvived(this);
 	this.set_u16("day_number", days);
 
+	// A loaded but empty or warmup server is not a survival attempt.
+	// Do not inflate persistent records just because the map is running.
+	if (!this.isMatchRunning() || getPlayersCount() == 0)
+		return;
+
 	// update the stored record as soon as a new day is survived
 	if (!this.get_bool("dayCheated"))
 	{
