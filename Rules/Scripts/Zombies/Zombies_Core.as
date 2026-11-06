@@ -47,6 +47,9 @@ class ZombiesCore : RulesCore
 		rules.set_s32("last_boss_day", 0);
 		rules.set_s32("boss_spawned_day", 0);
 		rules.Sync("boss_spawned_day", true);
+		rules.set_s32("zg_last_mini_encounter", -1);
+		rules.set_s32("zg_last_boss_encounter", -1);
+		rules.set_s32("zg_last_cataclysm_encounter", -1);
 		rules.set_string("boss_wave_sound", "");
 		rules.Sync("boss_wave_sound", true);
 
