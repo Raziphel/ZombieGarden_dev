@@ -16,7 +16,12 @@ string base_name()
 
 bool SetMaterials(CBlob @blob, const string&in name, const int quantity)
 {
+	if (!isServer() || blob is null || quantity <= 0)
+		return false;
+
 	CInventory @inv = blob.getInventory();
+	if (inv is null)
+		return false;
 
 	// already got them?
 	if (inv.isInInventory(name, quantity))
@@ -159,10 +164,16 @@ void onPlayerDie(CRules @ this, CPlayer @victim, CPlayer @attacker, u8 customDat
 
 bool canGetSpawnmats(CRules @ this, CPlayer @p, RulesCore @core)
 {
-	s32 next_items = getSpawnTimer(this, p);
-	s32 gametime = getGameTime();
+	if (p is null || core is null)
+		return false;
 
 	CTFPlayerInfo @info = cast<CTFPlayerInfo @>(core.getInfoFromPlayer(p));
+	CBlob @b = p.getBlob();
+	if (info is null || b is null || b.hasTag("dead"))
+		return false;
+
+	const s32 next_items = getSpawnTimer(this, p);
+	const s32 gametime = getGameTime();
 
 	if (gametime > next_items ||										// timer expired
 		gametime < next_items - materials_wait * getTicksASecond() * 4) // residual prop
@@ -175,27 +186,26 @@ bool canGetSpawnmats(CRules @ this, CPlayer @p, RulesCore @core)
 		u32 items = info.items_collected;
 		u32 flag = 0;
 
-		CBlob @b = p.getBlob();
-		string name = b.getName();
+		const string name = b.getName();
 		if (name == "builder")
 			flag = ItemFlag::Builder;
-		else if (name == "archer")
+		else if (name == "archer" || name == "crossbow" || name == "undeadarcher")
 			flag = ItemFlag::Archer;
 		else if (name == "knight")
 			flag = ItemFlag::Knight;
-		else if (name == "wizard")
+		else if (name == "priest" || name == "undeadmystic")
 			flag = ItemFlag::Wiz;
 		else if (name == "undeadbuilder")
 			flag = ItemFlag::Nec;
 		else if (name == "burd")
 			flag = ItemFlag::Burd;
-		else if (name == "slayer")
+		else if (name == "assassin" || name == "dragoon")
 			flag = ItemFlag::Fighter;
 
-		if (info.items_collected & flag == 0)
-		{
+		// Check the requested class flag, not an implicit comparison
+		// against zero. Unrecognized classes have no free supply grant.
+		if (flag != 0 && (info.items_collected & flag) == 0)
 			return true;
-		}
 	}
 
 	return false;
@@ -226,11 +236,16 @@ void SetSpawnTimer(CRules @ this, CPlayer @p, s32 time)
 // prevents dying over and over, and allows getting more mats throughout the game
 void doGiveSpawnMats(CRules @ this, CPlayer @p, CBlob @b, RulesCore @core)
 {
+	if (!isServer() || p is null || b is null || core is null)
+		return;
+
 	if (canGetSpawnmats(this, p, core))
 	{
 		s32 gametime = getGameTime();
 
 		CTFPlayerInfo @info = cast<CTFPlayerInfo @>(core.getInfoFromPlayer(p));
+		if (info is null)
+			return;
 
 		bool gotmats = GiveSpawnResources(this, b, p, info);
 		if (gotmats)
@@ -244,9 +259,16 @@ void doGiveSpawnMats(CRules @ this, CPlayer @p, CBlob @b, RulesCore @core)
 
 void Reset(CRules @ this)
 {
+	if (!isServer())
+		return;
+
 	// restart everyone's timers
 	for (uint i = 0; i < getPlayersCount(); ++i)
-		SetSpawnTimer(this, getPlayer(i), materials_wait_warmup); // this used to be set to 0, but now its not
+	{
+		CPlayer @player = getPlayer(i);
+		if (player !is null)
+			SetSpawnTimer(this, player, materials_wait_warmup);
+	}
 }
 
 void onRestart(CRules @ this)
