@@ -8,20 +8,36 @@ Vec2f getActorHUDStartPosition(CBlob @blob, const u8 bar_width_in_slots)
 
 void DrawInventoryOnHUD(CBlob @ this, Vec2f tl, Vec2f hudPos = Vec2f(0, 0))
 {
+	if (this is null)
+		return;
+
 	SColor col;
 	CInventory @inv = this.getInventory();
+	if (inv is null)
+		return;
+
+	// Inventory slots were formerly one infinite vertical strip. Wrap them
+	// into columns before they run below the current window height.
+	const int rows = Maths::Max(1, (getScreenHeight() - 64) / 46);
 	for (int i = 0; i < inv.getItemsCount(); i++)
 	{
 		CBlob @item = inv.getItem(i);
+		if (item is null)
+			continue;
+
+		const int row = i % rows;
+		const int column = i / rows;
+		Vec2f slotOffset(column * 46.0f, row * 46.0f);
 		string itemname = item.getInventoryName();
 		string jitem = "GUI/jitem.png";
 		Vec2f jdim = Vec2f(16, 16);
 		Vec2f adjust = Vec2f(0, 2);
 		const int quantity = item.getQuantity();
 
-		// vertical belt
-		Vec2f itempos = Vec2f(10, 54 + i * 46) + hudPos;
-		GUI::DrawIcon("GUI/jslot.png", 0, Vec2f(32, 32), Vec2f(2, 46 + i * 46) + hudPos);
+		// Place a compact column alongside the previous one if needed.
+		Vec2f itempos = Vec2f(10, 54) + slotOffset + hudPos;
+		GUI::DrawIcon("GUI/jslot.png", 0, Vec2f(32, 32),
+			Vec2f(2, 46) + slotOffset + hudPos);
 
 		if (itemname == "Gold")
 		{
@@ -128,7 +144,7 @@ void DrawInventoryOnHUD(CBlob @ this, Vec2f tl, Vec2f hudPos = Vec2f(0, 0))
 			GUI::DrawIcon(item.inventoryIconName, item.inventoryIconFrame, item.inventoryFrameDimension, itempos, 1.0f);
 		}
 
-		f32 ratio = float(quantity) / float(item.maxQuantity);
+		f32 ratio = float(quantity) / float(Maths::Max(1, int(item.maxQuantity)));
 		col = ratio > 0.4f ? SColor(255, 255, 255, 255) :
 			  ratio > 0.2f ? SColor(255, 255, 255, 128) :
 			  ratio > 0.1f ? SColor(255, 255, 128, 0) :
