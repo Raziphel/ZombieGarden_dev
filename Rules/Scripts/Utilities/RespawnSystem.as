@@ -43,6 +43,9 @@ shared class RespawnSystem
 		if (player !is null)
 		{
 			CBlob @newBlob = server_CreateBlob(p_info.blob_name, p_info.team, at);
+			if (newBlob is null)
+				return null;
+
 			newBlob.server_SetPlayer(player);
 			u8 refix = player.getTeamNum(); // hacky solution for player spawning
 
