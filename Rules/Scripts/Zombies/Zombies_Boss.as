@@ -117,15 +117,14 @@ void ProcessBossSpawnQueue()
 		zg_boss_pending_names.length > 0; ++i)
 	{
 		CBlob @weak;
-		if (livingZombies >= bossPopulationLimit)
+		if (livingZombies >= Maths::Max(0, rules.get_s32("max_zombies")))
 		{
-			// When a milestone fills even its reserved slots, retire a
-			// weaker off-screen natural zombie rather than dropping the
-			// stronger reinforcement or growing the population again.
-			if (!ZGCanReplaceHordeMob(rules, true))
-				break;
-			@weak = ZGFindWeakHordeMob(zg_boss_pending_names[0]);
-			if (weak is null)
+			// Prefer a genuine weak-to-strong replacement at the normal cap.
+			// The old 24 extra milestone slots are a fallback when no safe
+			// distant victim exists, not an excuse to inflate every horde.
+			if (ZGCanReplaceHordeMob(rules, true))
+				@weak = ZGFindWeakHordeMob(zg_boss_pending_names[0]);
+			if (weak is null && livingZombies >= bossPopulationLimit)
 				break;
 		}
 
