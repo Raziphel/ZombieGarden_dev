@@ -32,11 +32,18 @@ class ZombiesSpawns : RespawnSystem
 		{
 			CTFTeamInfo @team = cast<CTFTeamInfo @>(Zombies_core.teams[team_num]);
 
-			for (uint i = 0; i < team.spawns.length; i++)
+			// DoSpawnPlayer can remove the current queue entry. Walk backwards
+			// so that another player's respawn is not skipped after an erase.
+			for (int i = int(team.spawns.length) - 1; i >= 0; --i)
 			{
 				CTFPlayerInfo @info = cast<CTFPlayerInfo @>(team.spawns[i]);
+				if (info is null)
+				{
+					team.spawns.erase(i);
+					continue;
+				}
 
-				UpdateSpawnTime(info, i);
+				UpdateSpawnTime(info);
 				if (info !is null)
 				{
 					if (info.can_spawn_time > 0)
@@ -54,7 +61,7 @@ class ZombiesSpawns : RespawnSystem
 		}
 	}
 
-	void UpdateSpawnTime(CTFPlayerInfo @info, int i)
+	void UpdateSpawnTime(CTFPlayerInfo @info)
 	{
 		if (info !is null)
 		{
@@ -65,7 +72,7 @@ class ZombiesSpawns : RespawnSystem
 			if (info.can_spawn_time > getGameTime())
 			{
 				const s32 diff = info.can_spawn_time - getGameTime();
-				spawn_property = u16(diff / getTicksASecond()); // no cap
+				spawn_property = u16(Maths::Clamp(diff / getTicksASecond(), 0, 65534));
 			}
 			else if (info.can_spawn_time > 0)
 			{
@@ -321,8 +328,9 @@ class ZombiesSpawns : RespawnSystem
 		}
 
 		Zombies_core.rules.set_u16(propname, 65535);
-		Zombies_core.rules.SyncToPlayer(propname,
-										getPlayerByUsername(info.username));
+		CPlayer @owner = getPlayerByUsername(info.username);
+		if (owner !is null)
+			Zombies_core.rules.SyncToPlayer(propname, owner);
 
 		info.can_spawn_time = 0;
 	}
@@ -341,7 +349,7 @@ class ZombiesSpawns : RespawnSystem
 
 		// calculate day cycle and current time within it
 		int gamestart = getRules().get_s32("gamestart");
-		int day_cycle = getRules().daycycle_speed * 60; // seconds in a full KAG day
+		int day_cycle = Maths::Max(1, int(getRules().daycycle_speed * 60)); // avoid a zero divisor
 		int timeElapsed = ((getGameTime() - gamestart) / getTicksASecond()) % day_cycle;
 		int half_day = day_cycle / 2;
 
