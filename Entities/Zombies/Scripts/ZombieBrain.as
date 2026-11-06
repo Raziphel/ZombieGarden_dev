@@ -166,11 +166,13 @@ void PathFindToTarget(CBrain @brain, CBlob @blob, CBlob @target)
 	const u32 now = getGameTime();
 	const Vec2f goal = target.getPosition();
 	const Vec2f previousGoal = blob.get_Vec2f(VAR_LAST_PATH_GOAL);
+	const Vec2f pathDelta = goal - previousGoal;
+	const f32 pathDeltaSq = pathDelta.x * pathDelta.x + pathDelta.y * pathDelta.y;
 
 	// A blocked doorway can otherwise cause a full path request on every
 	// single tick. Retry periodically, unless the target actually moved.
 	if (now < blob.get_u32(VAR_PATH_RETRY_TIME) &&
-		(goal - previousGoal).LengthSquared() < 32.0f * 32.0f)
+		pathDeltaSq < 32.0f * 32.0f)
 		return;
 
 	brain.SetPathTo(goal, false);
@@ -322,8 +324,9 @@ void doLongRangeAwarenessScan(CBrain @brain, CBlob @blob)
 	// Do not request the same expensive path again while the previous
 	// hint is still being followed. Keep scanning as the horde moves.
 	const Vec2f hint = distant.getPosition();
-	if ((blob.get_Vec2f(VAR_LAST_POS) - hint).LengthSquared() < 48.0f * 48.0f &&
-		brain.getPathSize() > 0)
+	const Vec2f hintDelta = blob.get_Vec2f(VAR_LAST_POS) - hint;
+	const f32 hintDeltaSq = hintDelta.x * hintDelta.x + hintDelta.y * hintDelta.y;
+	if (hintDeltaSq < 48.0f * 48.0f && brain.getPathSize() > 0)
 		return;
 
 	blob.set_Vec2f(VAR_LAST_POS, hint);
@@ -358,7 +361,7 @@ void WalkAnywhereAndEverywhere(CBrain @brain, CBlob @blob)
 		if (hint != Vec2f_zero)
 		{
 			Vec2f bias = (hint - pos);
-			if (bias.LengthSquared() > 1.0f)
+			if (bias.x * bias.x + bias.y * bias.y > 1.0f)
 			{
 				bias.Normalize();
 				// Mix: 70% random, 30% bias for a gentle pull
