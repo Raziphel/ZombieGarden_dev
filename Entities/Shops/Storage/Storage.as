@@ -92,12 +92,17 @@ void onTick(CBlob @ this)
 
 void PickupOverlap(CBlob @ this)
 {
-	if (getNet().isServer())
+	if (isServer())
 	{
+		CShape @shape = this.getShape();
+		CMap @map = this.getMap();
+		if (shape is null || map is null)
+			return;
+
 		Vec2f tl, br;
-		this.getShape().getBoundingRect(tl, br);
+		shape.getBoundingRect(tl, br);
 		CBlob @[] blobs;
-		this.getMap().getBlobsInBox(tl, br, @blobs);
+		map.getBlobsInBox(tl, br, @blobs);
 		for (uint i = 0; i < blobs.length; i++)
 		{
 			CBlob @blob = blobs[i];
@@ -198,6 +203,9 @@ void onRemoveFromInventory(CBlob @ this, CBlob @blob)
 
 void updateLayers(CBlob @ this, CBlob @blob)
 {
+	if (this is null || blob is null)
+		return;
+
 	const string blobName = blob.getName();
 	if (!checkName(blobName))
 	{
@@ -205,10 +213,17 @@ void updateLayers(CBlob @ this, CBlob @blob)
 	}
 	CSprite @sprite = this.getSprite();
 	CInventory @inv = this.getInventory();
+	if (inv is null)
+		return;
+	if (sprite is null && blobName != "lantern" && blobName != "bluelantern")
+		return;
+
 	int blobCount = inv.getCount(blobName);
 	if (blobName == "mat_stone")
 	{
 		CSpriteLayer @stone = sprite.getSpriteLayer("mat_stone");
+		if (stone is null)
+			return;
 		if (blobCount > 0)
 		{
 			if (blobCount >= 200)
@@ -233,6 +248,8 @@ void updateLayers(CBlob @ this, CBlob @blob)
 	else if (blobName == "mat_wood")
 	{
 		CSpriteLayer @wood = sprite.getSpriteLayer("mat_wood");
+		if (wood is null)
+			return;
 		if (blobCount > 0)
 		{
 			if (blobCount >= 200)
@@ -257,6 +274,8 @@ void updateLayers(CBlob @ this, CBlob @blob)
 	else if (blobName == "mat_gold")
 	{
 		CSpriteLayer @gold = sprite.getSpriteLayer("mat_gold");
+		if (gold is null)
+			return;
 		if (blobCount > 0)
 		{
 			if (blobCount >= 200)
@@ -281,6 +300,8 @@ void updateLayers(CBlob @ this, CBlob @blob)
 	else if (blobName == "mat_bombs")
 	{
 		CSpriteLayer @bombs = sprite.getSpriteLayer("mat_bombs");
+		if (bombs is null)
+			return;
 		if (blobCount > 0)
 		{
 			if (blobCount >= 2)
@@ -302,8 +323,10 @@ void updateLayers(CBlob @ this, CBlob @blob)
 	{
 		if (blobCount > 0)
 		{
-			AttachmentPoint @point = this.getAttachments().getAttachmentPointByName("LANTERN");
-			if (getNet().isServer() && point.getOccupied() is null)
+			CAttachment @attachments = this.getAttachments();
+			AttachmentPoint @point = attachments is null ? null :
+				attachments.getAttachmentPointByName("LANTERN");
+			if (isServer() && point !is null && point.getOccupied() is null)
 			{
 				CBlob @lantern = server_CreateBlob("lantern");
 				if (lantern !is null)
@@ -311,20 +334,19 @@ void updateLayers(CBlob @ this, CBlob @blob)
 					lantern.server_setTeamNum(this.getTeamNum());
 					lantern.getShape().getConsts().collidable = false;
 					this.server_AttachTo(lantern, "LANTERN");
-					blob.set_u16("lantern id", lantern.getNetworkID());
+					this.set_u16("lantern id", lantern.getNetworkID());
 					Sound::Play("SparkleShort.ogg", lantern.getPosition());
 				}
 			}
 		}
 		else
 		{
-			if (blob.exists("lantern id"))
+			if (isServer() && this.get_u16("lantern id") != 0)
 			{
-				CBlob @lantern = getBlobByNetworkID(blob.get_u16("lantern id"));
+				CBlob @lantern = getBlobByNetworkID(this.get_u16("lantern id"));
 				if (lantern !is null)
-				{
 					lantern.server_Die();
-				}
+				this.set_u16("lantern id", 0);
 			}
 		}
 	}
@@ -332,8 +354,10 @@ void updateLayers(CBlob @ this, CBlob @blob)
 	{
 		if (blobCount > 0)
 		{
-			AttachmentPoint @point = this.getAttachments().getAttachmentPointByName("LANTERN");
-			if (getNet().isServer() && point.getOccupied() is null)
+			CAttachment @attachments = this.getAttachments();
+			AttachmentPoint @point = attachments is null ? null :
+				attachments.getAttachmentPointByName("LANTERN");
+			if (isServer() && point !is null && point.getOccupied() is null)
 			{
 				CBlob @lantern = server_CreateBlob("bluelantern");
 				if (lantern !is null)
@@ -341,20 +365,19 @@ void updateLayers(CBlob @ this, CBlob @blob)
 					lantern.server_setTeamNum(this.getTeamNum());
 					lantern.getShape().getConsts().collidable = false;
 					this.server_AttachTo(lantern, "LANTERN");
-					blob.set_u16("lantern id2", lantern.getNetworkID());
+					this.set_u16("lantern id2", lantern.getNetworkID());
 					Sound::Play("SparkleShort.ogg", lantern.getPosition());
 				}
 			}
 		}
 		else
 		{
-			if (blob.exists("lantern id2"))
+			if (isServer() && this.get_u16("lantern id2") != 0)
 			{
-				CBlob @lantern = getBlobByNetworkID(blob.get_u16("lantern id2"));
+				CBlob @lantern = getBlobByNetworkID(this.get_u16("lantern id2"));
 				if (lantern !is null)
-				{
 					lantern.server_Die();
-				}
+				this.set_u16("lantern id2", 0);
 			}
 		}
 	}
@@ -362,21 +385,24 @@ void updateLayers(CBlob @ this, CBlob @blob)
 
 void onDie(CBlob @ this)
 {
-	if (this.exists("lantern id"))
+	if (!isServer())
+		return;
+
+	// Attached lights belong to this chest, not the item that first
+	// created them. Clear both even if the chest is destroyed while full.
+	const u16 lanternID = this.get_u16("lantern id");
+	const u16 blueID = this.get_u16("lantern id2");
+	if (lanternID != 0)
 	{
-		CBlob @lantern = getBlobByNetworkID(this.get_u16("lantern id"));
+		CBlob @lantern = getBlobByNetworkID(lanternID);
 		if (lantern !is null)
-		{
 			lantern.server_Die();
-		}
 	}
-	if (this.exists("lantern id2"))
+	if (blueID != 0 && blueID != lanternID)
 	{
-		CBlob @lantern = getBlobByNetworkID(this.get_u16("lantern id2"));
+		CBlob @lantern = getBlobByNetworkID(blueID);
 		if (lantern !is null)
-		{
 			lantern.server_Die();
-		}
 	}
 }
 
