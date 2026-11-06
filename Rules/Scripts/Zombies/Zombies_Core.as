@@ -37,6 +37,7 @@ class ZombiesCore : RulesCore
 		rules.set_s32("transition", 1);
 		rules.set_s32("last_boss_day", 0);
 		rules.set_s32("boss_spawned_day", 0);
+		rules.Sync("boss_spawned_day", true);
 
 		// reset kill counter for new record tracking
 		rules.set_u32("undead_kills", 0);
@@ -447,8 +448,13 @@ class ZombiesCore : RulesCore
 
 	void Zombify(CPlayer @player)
 	{
+		if (player is null || player.getTeamNum() != 0)
+			return;
+
 		PlayerInfo @pInfo = getInfoFromName(player.getUsername());
-		print(":::ZOMBIFYING: " + pInfo.username);
+		if (pInfo is null)
+			return;
+
 		ChangePlayerTeam(player, 1);
 		Server_GlobalPopup(
 			rules,
