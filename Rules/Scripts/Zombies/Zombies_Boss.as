@@ -143,8 +143,8 @@ BuildMiniTable()
 	{
 		BossEntry b;
 		b.weight = 3;
-		b.names = {"horror"};
-		b.counts = {2};
+		b.names.push_back("horror");
+		b.counts.push_back(2);
 		b.popup = "MINI-WAVE\n\n2x Horrors\n16 Hearts • Spawns 3 zombies on death";
 		b.color = SColor(255, 255, 200, 0);
 		b.popupTicks = 10 * getTicksASecond();
@@ -154,8 +154,8 @@ BuildMiniTable()
 	{
 		BossEntry b;
 		b.weight = 3;
-		b.names = {"pbanshee"};
-		b.counts = {3};
+		b.names.push_back("pbanshee");
+		b.counts.push_back(3);
 		b.popup = "MINI-WAVE\n\n3x Banshee\nExplosive + Stunning Scream";
 		b.color = SColor(255, 255, 200, 0);
 		b.popupTicks = 10 * getTicksASecond();
@@ -165,8 +165,8 @@ BuildMiniTable()
 	{
 		BossEntry b;
 		b.weight = 2;
-		b.names = {"writher"};
-		b.counts = {1};
+		b.names.push_back("writher");
+		b.counts.push_back(1);
 		b.popup = "MINI-WAVE\n\n1x Writher\nExploding Rot Clouds • Spawns 3x Wraiths on death";
 		b.color = SColor(255, 255, 200, 0);
 		b.popupTicks = 10 * getTicksASecond();
@@ -176,8 +176,10 @@ BuildMiniTable()
 	{
 		BossEntry b;
 		b.weight = 2;
-		b.names = {"zbison", "zbison2"};
-		b.counts = {4, 4};
+		b.names.push_back("zbison");
+		b.names.push_back("zbison2");
+		b.counts.push_back(4);
+		b.counts.push_back(4);
 		b.popup = "MINI-WAVE\n\n8x Bisons\nTough and charges";
 		b.color = SColor(255, 255, 200, 0);
 		b.popupTicks = 10 * getTicksASecond();
@@ -187,8 +189,8 @@ BuildMiniTable()
 	{
 		BossEntry b;
 		b.weight = 2;
-		b.names = {"immolator"};
-		b.counts = {8};
+		b.names.push_back("immolator");
+		b.counts.push_back(8);
 		b.popup = "MINI-WAVE\n\n8x Immolator\nCharging explosion\nSpawns Rot clouds on death";
 		b.color = SColor(255, 255, 200, 0);
 		b.popupTicks = 10 * getTicksASecond();
@@ -207,8 +209,8 @@ array<BossEntry @> BuildBossTable()
 	{
 		BossEntry b;
 		b.weight = 3;
-		b.names = {"abomination"};
-		b.counts = {1};
+		b.names.push_back("abomination");
+		b.counts.push_back(1);
 		b.popup = "BOSS WAVE\n\n1x Abominations\n60 Hearts • 4 DMG";
 		b.color = SColor(255, 255, 0, 0);
 		b.popupTicks = 10 * getTicksASecond();
@@ -218,8 +220,8 @@ array<BossEntry @> BuildBossTable()
 	{
 		BossEntry b;
 		b.weight = 2;
-		b.names = {"horror"};
-		b.counts = {5};
+		b.names.push_back("horror");
+		b.counts.push_back(5);
 		b.popup = "BOSS WAVE\n\n5x Horror\n16 Hearts • Spawns 3 zombies on death";
 		b.color = SColor(255, 255, 80, 40);
 		b.popupTicks = 12 * getTicksASecond();
@@ -229,8 +231,8 @@ array<BossEntry @> BuildBossTable()
 	{
 		BossEntry b;
 		b.weight = 2;
-		b.names = {"writher"};
-		b.counts = {2};
+		b.names.push_back("writher");
+		b.counts.push_back(2);
 		b.popup = "BOSS WAVE\n\n2x Writhers\nExploding Rot Clouds • Spawns 3x Wraiths on death";
 		b.color = SColor(255, 255, 0, 0);
 		b.popupTicks = 10 * getTicksASecond();
@@ -240,8 +242,8 @@ array<BossEntry @> BuildBossTable()
 	{
 		BossEntry b;
 		b.weight = 2;
-		b.names = {"immolator"};
-		b.counts = {16};
+		b.names.push_back("immolator");
+		b.counts.push_back(16);
 		b.popup = "BOSS WAVE\n\n16x Immolator\nCharging explosion\nSpawns Rot clouds on death";
 		b.color = SColor(255, 255, 0, 0);
 		b.popupTicks = 10 * getTicksASecond();
@@ -251,8 +253,10 @@ array<BossEntry @> BuildBossTable()
 	{
 		BossEntry b;
 		b.weight = 1;
-		b.names = {"greg", "greg2"};
-		b.counts = {8, 8};
+		b.names.push_back("greg");
+		b.names.push_back("greg2");
+		b.counts.push_back(8);
+		b.counts.push_back(8);
 		b.popup = "BOSS WAVE\n\n16x Gregs\nGrabs players and drops them from the sky\nCan carry zombies to your base";
 		b.color = SColor(255, 255, 0, 0);
 		b.popupTicks = 10 * getTicksASecond();
@@ -262,8 +266,8 @@ array<BossEntry @> BuildBossTable()
 	{
 		BossEntry b;
 		b.weight = 1;
-		b.names = {"digger"};
-		b.counts = {3};
+		b.names.push_back("digger");
+		b.counts.push_back(3);
 		b.popup = "BOSS WAVE\n\n3x Diggers\nFlying blades that rip through walls";
 		b.color = SColor(255, 255, 0, 0);
 		b.popupTicks = 10 * getTicksASecond();
@@ -290,8 +294,8 @@ array<BossEntry @> BuildCataclysmTable(const int dayNumber)
 	{
 		BossEntry b;
 		b.weight = 3;
-		b.names = {"abomination"};
-		b.counts = {3};
+		b.names.push_back("abomination");
+		b.counts.push_back(3);
 		b.popup = banner + "3x Abomination\n60 Hearts • 4 DMG";
 		b.color = SColor(255, 255, 80, 40);
 		b.popupTicks = 12 * getTicksASecond();
@@ -301,8 +305,8 @@ array<BossEntry @> BuildCataclysmTable(const int dayNumber)
 	{
 		BossEntry b;
 		b.weight = 3;
-		b.names = {"writher"};
-		b.counts = {5};
+		b.names.push_back("writher");
+		b.counts.push_back(5);
 		b.popup = banner + "5x Writher\nExploding Rot Clouds • Spawns 3x Wraiths on death";
 		b.color = SColor(255, 255, 80, 40);
 		b.popupTicks = 12 * getTicksASecond();
@@ -312,8 +316,8 @@ array<BossEntry @> BuildCataclysmTable(const int dayNumber)
 	{
 		BossEntry b;
 		b.weight = 2;
-		b.names = {"immolator"};
-		b.counts = {32};
+		b.names.push_back("immolator");
+		b.counts.push_back(32);
 		b.popup = banner + "32x Immolator\nCharging explosion\nSpawns Rot clouds on death";
 		b.color = SColor(255, 255, 80, 40);
 		b.popupTicks = 12 * getTicksASecond();
@@ -323,8 +327,8 @@ array<BossEntry @> BuildCataclysmTable(const int dayNumber)
 	{
 		BossEntry b;
 		b.weight = 2;
-		b.names = {"horror"};
-		b.counts = {6};
+		b.names.push_back("horror");
+		b.counts.push_back(6);
 		b.popup = banner + "6x Horror\n16 Hearts • Spawns 3 zombies on death";
 		b.color = SColor(255, 255, 80, 40);
 		b.popupTicks = 12 * getTicksASecond();
@@ -334,8 +338,8 @@ array<BossEntry @> BuildCataclysmTable(const int dayNumber)
 	{
 		BossEntry b;
 		b.weight = 1;
-		b.names = {"digger"};
-		b.counts = {7};
+		b.names.push_back("digger");
+		b.counts.push_back(7);
 		b.popup = banner + "7x Diggers\nFlying blades that rip through walls";
 		b.color = SColor(255, 255, 80, 40);
 		b.popupTicks = 12 * getTicksASecond();
