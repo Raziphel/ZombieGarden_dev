@@ -37,10 +37,14 @@ void Reset(CRules @ this)
 	for (int i = 0; i < zombiePlaces.length; i++)
 		spawnPortal(zombiePlaces[i]);
 
-	Vec2f[] gravePlaces;
-	getMap().getMarkers("grave", gravePlaces);
-	for (int i = 0; i < gravePlaces.length; i++)
-		spawnGraves(gravePlaces[i]);
+	// Honor the round's grave-loot option when placing map markers.
+	if (this.get_bool("grave_spawn"))
+	{
+		Vec2f[] gravePlaces;
+		getMap().getMarkers("grave", gravePlaces);
+		for (int i = 0; i < gravePlaces.length; i++)
+			spawnGraves(gravePlaces[i]);
+	}
 
 	// all players start as survivors with clean stats and spawn instantly
 	for (u8 i = 0; i < getPlayerCount(); i++)
