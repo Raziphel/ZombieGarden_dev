@@ -384,7 +384,14 @@ class ZombiesCore : RulesCore
 				{
 					CBlob @[] currentZombies;
 					getBlobsByTag("zombie", @currentZombies);
-					canSpawnNow = int(currentZombies.length) < max_zombies;
+					int livingZombies = 0;
+					for (uint i = 0; i < currentZombies.length; ++i)
+					{
+						CBlob @zombie = currentZombies[i];
+						if (zombie !is null && !zombie.hasTag("dead"))
+							livingZombies++;
+					}
+					canSpawnNow = livingZombies < max_zombies;
 				}
 
 				if (canSpawnNow)
