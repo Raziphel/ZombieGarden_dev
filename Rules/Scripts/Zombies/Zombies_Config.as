@@ -150,27 +150,54 @@ void RefreshMobCountsToRules()
 			num_alters++;
 	}
 
-	rules.set_s32("num_zombies", num_zombies);
-	rules.set_s32("num_pzombies", num_pzombies);
-	rules.set_s32("num_migrantbots", num_migrantbots);
-	rules.set_s32("num_wraiths", num_wraiths);
-	rules.set_s32("num_gregs", num_gregs);
-	rules.set_s32("num_bisons", num_bisons);
-	rules.set_s32("num_ruinstorch", num_ruinstorch);
-	rules.set_s32("num_zombiePortals", num_zombiePortals);
-	rules.set_s32("num_horror", num_horror);
-	rules.set_s32("num_banshees", num_banshees);
-	rules.set_s32("num_gasbags", num_gasbags);
-	rules.set_s32("num_abom", num_abom);
-	rules.set_s32("num_immol", num_immol);
-	rules.set_s32("num_digger", num_digger);
-	rules.set_s32("num_alters", num_alters);
-	rules.set_s32("zombiealter", num_alters);
-	rules.set_s32("num_survivors", num_survivors);
-	rules.set_s32("num_undead", num_undead);
-
+	// Only publish changed counts. A full refresh previously sent 18
+	// replicated properties per scan, including every tick during startup.
 	const string[] props = {
-		"num_zombies", "num_pzombies", "num_migrantbots", "num_wraiths", "num_gregs", "num_bisons", "num_ruinstorch", "num_zombiePortals", "num_horror", "num_banshees", "num_gasbags", "num_abom", "num_immol", "num_digger", "num_alters", "zombiealter", "num_survivors", "num_undead"};
+		"num_zombies",
+		"num_pzombies",
+		"num_migrantbots",
+		"num_wraiths",
+		"num_gregs",
+		"num_bisons",
+		"num_ruinstorch",
+		"num_zombiePortals",
+		"num_horror",
+		"num_banshees",
+		"num_gasbags",
+		"num_abom",
+		"num_immol",
+		"num_digger",
+		"num_alters",
+		"zombiealter",
+		"num_survivors",
+		"num_undead"
+	};
+	const s32[] values = {
+		num_zombies,
+		num_pzombies,
+		num_migrantbots,
+		num_wraiths,
+		num_gregs,
+		num_bisons,
+		num_ruinstorch,
+		num_zombiePortals,
+		num_horror,
+		num_banshees,
+		num_gasbags,
+		num_abom,
+		num_immol,
+		num_digger,
+		num_alters,
+		num_alters,
+		num_survivors,
+		num_undead
+	};
 	for (uint i = 0; i < props.length; ++i)
-		rules.Sync(props[i], true);
+	{
+		if (!rules.exists(props[i]) || rules.get_s32(props[i]) != values[i])
+		{
+			rules.set_s32(props[i], values[i]);
+			rules.Sync(props[i], true);
+		}
+	}
 }
