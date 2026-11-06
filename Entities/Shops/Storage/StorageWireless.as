@@ -40,7 +40,7 @@ void onCommand(CBlob @ this, u8 cmd, CBitStream @params)
 		// A linked menu includes items from other allied chests. Transfer
 		// from the *actual* item owner, never an unrelated terminal.
 		CBlob @source = item.getInventoryBlob();
-		if (source is null || !source.hasTag("storage") ||
+		if (source is null || source.getName() != "storage" ||
 			source.getTeamNum() != this.getTeamNum() ||
 			source.getInventory() is null)
 			return;
@@ -87,7 +87,7 @@ void BuildSharedInventory(CBlob @ this, CBlob @caller, CBlob @justAddedBlob = nu
 		// caller.ClearMenus();
 
 		CBlob @[] storages;
-		getBlobsByTag("storage", @storages);
+		getBlobsByName("storage", @storages);
 		uint count = 0;
 		for (uint step = 0; step < storages.length; ++step)
 		{
