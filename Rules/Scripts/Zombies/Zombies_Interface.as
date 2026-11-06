@@ -41,6 +41,18 @@ int GetCurrentDay(CRules @rules)
 		1, d + (rules.exists("days_offset") ? rules.get_s32("days_offset") : 0));
 }
 
+// Keep the status widgets inside the visible game area when the window
+// changes size. KAG owns font/UI scaling; these values control our layout.
+float ZGHudMargin()
+{
+	return Maths::Clamp(f32(getScreenWidth()) * 0.015f, 12.0f, 24.0f);
+}
+
+float ZGHudPanelWidth()
+{
+	return Maths::Min(260.0f, f32(getScreenWidth()) - 2.0f * ZGHudMargin());
+}
+
 // Consistent panel with soft border
 void DrawPanel(Vec2f tl, Vec2f br)
 {
@@ -139,10 +151,23 @@ void onRender(CRules @ this)
 
 	GUI::SetFont("menu");
 
-	// Stack the three panels top-right, respecting each other's height
-	float offset = DrawRecordStatus(this);
-	offset = DrawZombiesHUDTopRight(this, offset);
-	offset = DrawModeStatus(this, offset);
+	// On narrow-height screens (e.g. 640x480 or split windows),
+	// stack ROUND + MODE on the right and put RECORD in a second
+	// column. This avoids losing the third panel below the screen.
+	Vec2f screen = getDriver().getScreenDimensions();
+	const float gap = ZGHudMargin();
+	if (screen.y < 600.0f && screen.x >= 520.0f + 3.0f * gap)
+	{
+		DrawRecordStatus(this, 260.0f + gap);
+		const float roundOffset = DrawZombiesHUDTopRight(this);
+		DrawModeStatus(this, roundOffset);
+	}
+	else
+	{
+		float offset = DrawRecordStatus(this);
+		offset = DrawZombiesHUDTopRight(this, offset);
+		DrawModeStatus(this, offset);
+	}
 
 	// Dead players: show top-center revival timer
 	DrawRevivalTimer(this, lp);
@@ -221,12 +246,12 @@ void DrawRevivalTimer(CRules @rules, CPlayer @p)
 // ------------------------------
 // HUD: Record status box (top-right)
 // ------------------------------
-float DrawRecordStatus(CRules @rules)
+float DrawRecordStatus(CRules @rules, const float rightOffset = 0.0f)
 {
 	if (g_videorecording)
 		return 0.0f;
 
-	const float margin = 24, padX = 10, padY = 8, lineH = 18, titleH = 20,
+	const float margin = ZGHudMargin(), padX = 10, padY = 8, lineH = 18, titleH = 20,
 				titleGap = 6;
 	const string title = "RECORD STATUS";
 
@@ -261,11 +286,11 @@ float DrawRecordStatus(CRules @rules)
 		cols.push_back(COL_BAD);
 	}
 
-	const float boxW = 260.0f;
+	const float boxW = ZGHudPanelWidth();
 	const float boxH = padY * 2 + titleH + titleGap + (lines.length() * lineH);
 
 	Vec2f screen = getDriver().getScreenDimensions();
-	Vec2f br(screen.x - margin, margin + boxH);
+	Vec2f br(screen.x - margin - rightOffset, margin + boxH);
 	Vec2f tl(br.x - boxW, br.y - boxH);
 
 	DrawPanel(tl, br);
@@ -290,7 +315,7 @@ float DrawZombiesHUDTopRight(CRules @rules, const float topOffset = 0.0f)
 	if (g_videorecording)
 		return 0.0f;
 
-	const float margin = 24, padX = 10, padY = 8, lineH = 18, titleH = 20,
+	const float margin = ZGHudMargin(), padX = 10, padY = 8, lineH = 18, titleH = 20,
 				titleGap = 6;
 	const string title = "ROUND STATUS";
 
@@ -314,7 +339,7 @@ float DrawZombiesHUDTopRight(CRules @rules, const float topOffset = 0.0f)
 	lines.insertLast("Portal Undead: " + num_pzombies + "/" + max_pzombies);
 	lines.insertLast("Altars Remaining: " + num_altars);
 
-	const float boxW = 260.0f;
+	const float boxW = ZGHudPanelWidth();
 	const float boxH = padY * 2 + titleH + titleGap + (lines.length() * lineH);
 
 	Vec2f screen = getDriver().getScreenDimensions();
@@ -359,7 +384,7 @@ float DrawModeStatus(CRules @rules, const float topOffset = 0.0f)
 	if (g_videorecording)
 		return 0.0f;
 
-	const float margin = 24, padX = 10, padY = 8, lineH = 18, titleH = 20,
+	const float margin = ZGHudMargin(), padX = 10, padY = 8, lineH = 18, titleH = 20,
 				titleGap = 6;
 	const string title = "MODE STATUS";
 
@@ -435,7 +460,7 @@ float DrawModeStatus(CRules @rules, const float topOffset = 0.0f)
 
 	// --- box sizing ---
 	const int numLines = 4; // hard + curse + ruins + next milestone
-	const float boxW = 260.0f;
+	const float boxW = ZGHudPanelWidth();
 	const float boxH = padY * 2 + titleH + titleGap + (numLines * lineH);
 
 	// --- corners ---
