@@ -45,28 +45,32 @@ void onTick(CBlob @ this)
 		this.getSprite().PlaySound("/GasbagIdle");
 	}
 
-	if (getNet().isServer() && getGameTime() % 10 == 0)
+	if (isServer() && getGameTime() % 10 == 0)
 	{
-		CBlob @target = this.getBrain().getTarget();
+		CBrain @brain = this.getBrain();
+		CBlob @target = brain is null ? null : brain.getTarget();
+		const bool chomping = target !is null && !target.hasTag("dead") &&
+			this.getDistanceTo(target) < 72.0f;
 
-		if (target !is null && this.getDistanceTo(target) < 72.0f)
+		// All other zombies now sync their bite intent only on transitions.
+		if (this.hasTag(chomp_tag) != chomping)
 		{
-			this.Tag(chomp_tag);
+			if (chomping)
+				this.Tag(chomp_tag);
+			else
+				this.Untag(chomp_tag);
+			this.Sync(chomp_tag, true);
 		}
-		else
-		{
-			this.Untag(chomp_tag);
-		}
-
-		this.Sync(chomp_tag, true);
 	}
 }
 
 f32 onHit(CBlob @ this, Vec2f worldPoint, Vec2f velocity, f32 damage, CBlob @hitterBlob, u8 customData)
 {
-	if (damage >= 0.0f)
+	if (isClient() && damage > 0.0f)
 	{
-		this.getSprite().PlaySound("/SkeletonHit");
+		CSprite @sprite = this.getSprite();
+		if (sprite !is null)
+			sprite.PlaySound("/SkeletonHit");
 	}
 
 	return damage;
@@ -74,5 +78,10 @@ f32 onHit(CBlob @ this, Vec2f worldPoint, Vec2f velocity, f32 damage, CBlob @hit
 
 void onDie(CBlob @ this)
 {
-	this.getSprite().PlaySound("/SkeletonBreak1");
+	if (isClient())
+	{
+		CSprite @sprite = this.getSprite();
+		if (sprite !is null)
+			sprite.PlaySound("/SkeletonBreak1");
+	}
 }
