@@ -9,13 +9,17 @@ void onInit(CMovement @ this)
 void onTick(CMovement @ this)
 {
 	CBlob @blob = this.getBlob();
+	if (blob is null || blob.hasTag("dead"))
+		return;
 
 	CreatureMoveVars @moveVars;
-	if (!blob.get("moveVars", @moveVars))
+	if (!blob.get("moveVars", @moveVars) || moveVars is null)
 		return;
 
 	CMap @map = blob.getMap();
 	CShape @shape = blob.getShape();
+	if (map is null || shape is null)
+		return;
 
 	const bool left = blob.isKeyPressed(key_left);
 	const bool right = blob.isKeyPressed(key_right);
@@ -259,13 +263,16 @@ void CleanUp(CMovement @ this, CBlob @blob, CreatureMoveVars @moveVars)
 // TODO: fix flags sync and hitting so we dont need this
 bool checkForSolidMapBlob(CMap @map, Vec2f pos)
 {
+	if (map is null)
+		return false;
+
 	CBlob @_tempBlob;
 	CShape @_tempShape;
 	@_tempBlob = map.getBlobAtPosition(pos);
 	if (_tempBlob !is null && _tempBlob.isCollidable())
 	{
 		@_tempShape = _tempBlob.getShape();
-		if (_tempShape.isStatic())
+		if (_tempShape !is null && _tempShape.isStatic())
 		{
 			return true;
 		}
