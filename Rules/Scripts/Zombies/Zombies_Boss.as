@@ -1,5 +1,6 @@
 // ===== Zombies_Boss.as — Boss/Mini/Cataclysm wave system =================
 #include "GlobalPopup.as"
+#include "Zombies_HordePriority.as"
 
 // ---------------------------------------------------------------------
 // Helpers
@@ -113,8 +114,21 @@ void ProcessBossSpawnQueue()
 		Maths::Max(0, rules.get_s32("max_zombies")) + BOSS_SPAWN_EXTRA_HEADROOM;
 
 	for (int i = 0; i < BOSS_SPAWN_BATCH_SIZE &&
-		zg_boss_pending_names.length > 0 && livingZombies < bossPopulationLimit; ++i)
+		zg_boss_pending_names.length > 0; ++i)
 	{
+		CBlob @weak;
+		if (livingZombies >= bossPopulationLimit)
+		{
+			// When a milestone fills even its reserved slots, retire a
+			// weaker off-screen natural zombie rather than dropping the
+			// stronger reinforcement or growing the population again.
+			if (!ZGCanReplaceHordeMob(rules, true))
+				break;
+			@weak = ZGFindWeakHordeMob(zg_boss_pending_names[0]);
+			if (weak is null)
+				break;
+		}
+
 		Vec2f spawnPos = zg_boss_pending_positions[0];
 		spawnPos.x += (int(XORRandom(3)) - 1) * 8.0f;
 		CBlob @spawned = server_CreateBlob(zg_boss_pending_names[0], -1, spawnPos);
@@ -131,7 +145,13 @@ void ProcessBossSpawnQueue()
 		else
 		{
 			zg_boss_failed_attempts = 0;
-			livingZombies++;
+			// A naturally weak class may also appear in a themed wave.
+			// Never make that milestone unit a retirement candidate.
+			spawned.Tag("zg_boss_spawn");
+			if (weak !is null)
+				ZGRetireHordeMob(rules, weak);
+			else
+				livingZombies++;
 		}
 
 		zg_boss_pending_counts[0]--;
