@@ -35,6 +35,8 @@ void onTick(CBlob @ this)
 		f32 attack_distance = radius + this.get_f32("attack distance");
 
 		CMap @map = this.getMap();
+		if (map is null)
+			return;
 
 		f32 aimangle = (this.getAimPos() - pos).Angle();
 
@@ -47,6 +49,9 @@ void onTick(CBlob @ this)
 				for (uint i = 0; i < hitInfos.length; i++)
 				{
 					HitInfo @hi = hitInfos[i];
+					if (hi is null)
+						continue;
+
 					CBlob @blob = hi.blob;
 					if (blob !is null && blob.getTeamNum() != this.getTeamNum())
 					{
