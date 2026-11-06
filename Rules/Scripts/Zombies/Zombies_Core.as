@@ -303,7 +303,8 @@ class ZombiesCore : RulesCore
 				getBlobsByName("zombieportal", @portals);
 				for (uint i = 0; i < portals.length; i++)
 				{
-					zombiePlaces.push_back(portals[i].getPosition());
+					if (portals[i] !is null)
+						zombiePlaces.push_back(portals[i].getPosition());
 				}
 
 				if (ruins_portal_active)
@@ -312,7 +313,8 @@ class ZombiesCore : RulesCore
 					getBlobsByName("zombieruins", @ruins);
 					for (uint i = 0; i < ruins.length; i++)
 					{
-						zombiePlaces.push_back(ruins[i].getPosition());
+						if (ruins[i] !is null)
+							zombiePlaces.push_back(ruins[i].getPosition());
 					}
 				}
 
@@ -322,17 +324,21 @@ class ZombiesCore : RulesCore
 					for (int zp = 8; zp < 16; zp++)
 					{
 						Vec2f col;
-						map.rayCastSolid(Vec2f(zp * 8, 0.0f),
+						if (map.rayCastSolid(Vec2f(zp * 8, 0.0f),
 										 Vec2f(zp * 8, map.tilemapheight * 8),
-										 col);
-						col.y -= 16.0f;
-						zombiePlaces.push_back(col);
-						map.rayCastSolid(
+										 col))
+						{
+							col.y -= 16.0f;
+							zombiePlaces.push_back(col);
+						}
+						if (map.rayCastSolid(
 							Vec2f((map.tilemapwidth - zp) * 8, 0.0f),
 							Vec2f((map.tilemapwidth - zp) * 8, map.tilemapheight * 8),
-							col);
-						col.y -= 16.0f;
-						zombiePlaces.push_back(col);
+							col))
+						{
+							col.y -= 16.0f;
+							zombiePlaces.push_back(col);
+						}
 					}
 				}
 
@@ -364,8 +370,16 @@ class ZombiesCore : RulesCore
 				const int _num_ga = rules.get_s32("num_gasbags");
 				const int _max_ga = rules.get_s32("max_gasbags");
 
-				const bool canSpawnNow =
-					(hardmode || isNight) && (num_zombies < max_zombies);
+				// The replicated population is updated every 150 ticks, so
+				// checking only that cached count can overshoot the hard cap.
+				// Check the live zombie set immediately before creating one.
+				bool canSpawnNow = (hardmode || isNight);
+				if (canSpawnNow)
+				{
+					CBlob @[] currentZombies;
+					getBlobsByTag("zombie", @currentZombies);
+					canSpawnNow = int(currentZombies.length) < max_zombies;
+				}
 
 				if (canSpawnNow)
 				{
