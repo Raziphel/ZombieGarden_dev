@@ -17,6 +17,8 @@ const string VAR_LAST_POS = "last_known_pos";
 
 // NEW: wide awareness ping timer
 const string VAR_LONGSCAN_TIME = "zg_longscan_time";
+const string VAR_PATH_RETRY_TIME = "zg_next_path_retry";
+const string VAR_LAST_PATH_GOAL = "zg_last_path_goal";
 
 const u32 FIND_COOLDOWN_TICKS = 10;	  // small throttle for target scans
 const u32 PATH_COOLDOWN_TICKS = 60;	  // debounce path requests
@@ -50,6 +52,8 @@ void onInit(CBrain @ this)
 	blob.set_Vec2f(VAR_LAST_POS, Vec2f_zero);
 	blob.set_u16(VAR_RNG_COUNT, 0);
 	blob.set_u32(VAR_RNG_SEARCH, getGameTime());	// initialize timer
+	blob.set_u32(VAR_PATH_RETRY_TIME, 0);
+	blob.set_Vec2f(VAR_LAST_PATH_GOAL, Vec2f_zero);
 	blob.set_u32(VAR_LONGSCAN_TIME,
 		getGameTime() + XORRandom(LONGSCAN_COOLDOWN_TICKS));
 
@@ -63,6 +67,11 @@ void onTick(CBrain @ this)
 		return;
 
 	CBlob @target = this.getTarget();
+	if (target !is null && (target.hasTag("dead") || !isTarget(blob, target)))
+	{
+		this.SetTarget(null);
+		@target = null;
+	}
 
 	// VAR_RNG_SEARCH is an absolute tick deadline, not a counter.
 	// Wander steps are already counted with VAR_RNG_COUNT when paths renew.
@@ -151,11 +160,23 @@ void ChaseTarget(CBrain @brain, CBlob @blob, CBlob @target)
 
 void PathFindToTarget(CBrain @brain, CBlob @blob, CBlob @target)
 {
-	if (target is null)
+	if (target is null || blob is null)
 		return;
 
-	brain.SetPathTo(target.getPosition(), false);
-	blob.set_u32(VAR_SEARCH_TIME, getGameTime() + PATH_COOLDOWN_TICKS);
+	const u32 now = getGameTime();
+	const Vec2f goal = target.getPosition();
+	const Vec2f previousGoal = blob.get_Vec2f(VAR_LAST_PATH_GOAL);
+
+	// A blocked doorway can otherwise cause a full path request on every
+	// single tick. Retry periodically, unless the target actually moved.
+	if (now < blob.get_u32(VAR_PATH_RETRY_TIME) &&
+		(goal - previousGoal).LengthSquared() < 32.0f * 32.0f)
+		return;
+
+	brain.SetPathTo(goal, false);
+	blob.set_Vec2f(VAR_LAST_PATH_GOAL, goal);
+	blob.set_u32(VAR_PATH_RETRY_TIME, now + PATH_COOLDOWN_TICKS);
+	blob.set_u32(VAR_SEARCH_TIME, now + PATH_COOLDOWN_TICKS);
 }
 
 bool isTargetTooFar(CBlob @blob, CBlob @target)
@@ -195,6 +216,13 @@ void FollowEnginePath(CBrain @brain)
 		{
 			PathFindToTarget(brain, blob, target);
 			direction = brain.getPathPosition();
+			if (direction == Vec2f_zero)
+			{
+				// No route yet. Keep pressing toward the obstacle while the
+				// throttled pathfinder looks for another opening.
+				WalkTowards(blob, target.getPosition());
+				return;
+			}
 		}
 	}
 
@@ -291,11 +319,15 @@ void doLongRangeAwarenessScan(CBrain @brain, CBlob @blob)
 	if (distant is null)
 		return;
 
-	// Store hint and request a short path burst in that general direction
-	blob.set_Vec2f(VAR_LAST_POS, distant.getPosition());
+	// Do not request the same expensive path again while the previous
+	// hint is still being followed. Keep scanning as the horde moves.
+	const Vec2f hint = distant.getPosition();
+	if ((blob.get_Vec2f(VAR_LAST_POS) - hint).LengthSquared() < 48.0f * 48.0f &&
+		brain.getPathSize() > 0)
+		return;
 
-	// Light path nudge (don’t spam, just a step toward the hint)
-	brain.SetPathTo(distant.getPosition(), false);
+	blob.set_Vec2f(VAR_LAST_POS, hint);
+	brain.SetPathTo(hint, false);
 }
 
 // Wander, but gently bias toward our last-known/hint when we have one.
