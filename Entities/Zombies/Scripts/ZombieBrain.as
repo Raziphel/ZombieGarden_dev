@@ -62,11 +62,8 @@ void onTick(CBrain @ this)
 
 	CBlob @target = this.getTarget();
 
-	// Only count rng search steps when brain reports "searching" and not opted out
-	if (this.getState() == 4 && !blob.hasTag(VAR_OPT_OUT_STUCK))
-	{
-		blob.add_u32(VAR_RNG_SEARCH, 1);
-	}
+	// VAR_RNG_SEARCH is an absolute tick deadline, not a counter.
+	// Wander steps are already counted with VAR_RNG_COUNT when paths renew.
 
 	// Small self-damage if stuck/idle-searching too long at night
 	if (getRules().hasTag("night") && blob.get_u16(VAR_RNG_COUNT) > STUCK_PUNISH_LIMIT)
