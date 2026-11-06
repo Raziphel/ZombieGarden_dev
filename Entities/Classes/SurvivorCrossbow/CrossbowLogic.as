@@ -511,14 +511,47 @@ CBlob @CreateArrow(CBlob @ this, Vec2f arrowPos, Vec2f arrowVel, u8 arrowType)
 	return arrow;
 }
 
+// Crossbow commands are sent by the owner, never by another player
+// selecting an arbitrary crossbow network ID.
+bool CanUseCrossbowCommand(CBlob @blob)
+{
+	if (blob is null || blob.hasTag("dead"))
+		return false;
+	if (!isServer())
+		return true;
+
+	CPlayer @owner = blob.getPlayer();
+	CPlayer @sender = getNet().getActiveCommandPlayer();
+	// Server-controlled bots have no external command sender.
+	if (owner is null || owner.isBot())
+		return sender is null;
+	return sender !is null && sender is owner;
+}
+
 void onCommand(CBlob @ this, u8 cmd, CBitStream @params)
 {
 	if (cmd == this.getCommandID("shoot arrow"))
 	{
+		if (params is null || !CanUseCrossbowCommand(this))
+			return;
+
 		Vec2f arrowPos = params.read_Vec2f();
 		Vec2f arrowVel = params.read_Vec2f();
 		u8 arrowType = params.read_u8();
 		bool legolas = params.read_bool();
+		if (arrowType >= arrowTypeNames.length)
+			return;
+
+		if (isServer())
+		{
+			// Clients control their aim, not where projectiles originate or
+			// their maximum speed. Preserve latency allowance near the actor.
+			Vec2f originDelta = arrowPos - this.getPosition();
+			const f32 speed = arrowVel.Length();
+			if (originDelta.Length() > 96.0f || speed < 0.1f ||
+				speed > CrossbowParams::shoot_max_vel * 1.1f)
+				return;
+		}
 
 		CrossbowInfo @crossbow;
 		if (!this.get("crossbowInfo", @crossbow))
@@ -562,7 +595,12 @@ void onCommand(CBlob @ this, u8 cmd, CBitStream @params)
 					arrowVel *= 0.9f;
 				}
 			}
-			this.getSprite().PlaySound("FireCrossbow.ogg");
+			if (isClient())
+			{
+				CSprite @sprite = this.getSprite();
+				if (sprite !is null)
+					sprite.PlaySound("FireCrossbow.ogg");
+			}
 		}
 		else
 		{
@@ -571,7 +609,12 @@ void onCommand(CBlob @ this, u8 cmd, CBitStream @params)
 				CreateArrow(this, arrowPos, arrowVel, arrowType);
 			}
 
-			this.getSprite().PlaySound("FireCrossbow.ogg");
+			if (isClient())
+			{
+				CSprite @sprite = this.getSprite();
+				if (sprite !is null)
+					sprite.PlaySound("FireCrossbow.ogg");
+			}
 			this.TakeBlob(arrowTypeNames[arrowType], 1);
 		}
 
