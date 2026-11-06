@@ -20,11 +20,11 @@ CBlob @GetClosestVisibleTarget(CBrain @ this, CBlob @blob, f32 radius)
 		{
 			if (isTarget(blob, candidate))
 			{
-				const bool is_visible = isTargetVisible(blob, candidate);
 				const f32 dist = getDistanceBetween(candidate.getPosition(), blob.getPosition());
-				// Keep the nearest visible target; the old ternary expression
-				// accidentally ignored distance because of operator precedence.
-				if (is_visible && dist < closest_dist)
+				// Raycasts are expensive when a horde sees many nearby blobs.
+				// A farther candidate cannot beat the current closest target,
+				// so test distance before tracing line of sight.
+				if (dist < closest_dist && isTargetVisible(blob, candidate))
 				{
 					// if(!is_visible && XORRandom(30) > 3)
 					// continue;
