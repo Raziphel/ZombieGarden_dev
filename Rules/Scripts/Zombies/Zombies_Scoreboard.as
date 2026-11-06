@@ -21,7 +21,8 @@ void rescoreOnly(CPlayer @p)
 void onBlobDie(CRules @ this, CBlob @blob)
 {
 	// Only count kills, deaths and assists when the game is running
-	if (this.isGameOver() || this.isWarmup() || blob is null)
+	if (this.isGameOver() || this.isWarmup() || blob is null ||
+		blob.hasTag("zg_horde_retired"))
 		return;
 
 	CPlayer @killer =
