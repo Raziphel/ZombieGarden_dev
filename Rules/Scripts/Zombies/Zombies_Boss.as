@@ -370,18 +370,12 @@ int RunBossWave(const int dayNumber, const float difficulty,
 			SpawnMany(e.names[k], count, sp);
 		}
 		Server_GlobalPopup(rules, e.popup, e.color, e.popupTicks);
+		// Zombies_Main.as is SERVER_ONLY. Send the selected sound to
+		// Zombies_Interface.as, which actually runs on players' clients.
+		rules.set_string("boss_wave_sound", e.sound);
+		rules.Sync("boss_wave_sound", true);
 		rules.set_s32("boss_spawned_day", dayNumber);
 		rules.Sync("boss_spawned_day", true);
-	}
-
-	// Client: play the stinger and echo to chat
-	if (isClient())
-	{
-		client_AddToChat(e.popup, e.color);
-		if (e.sound.length > 0)
-		{
-			Sound::Play(e.sound);
-		}
 	}
 
 	return transition;
