@@ -31,9 +31,9 @@ void onInit(CBlob @ this)
 	this.SetLight(true);
 	this.SetLightRadius(128.0f);
 
-	// Register render callback ABOVE world
-	int cb_id = Render::addScript(Render::layer_postworld, "RuinsTorchLogic.as", "RenderFunction", 0.0f);
-	this.set_u16("renderID", cb_id);
+	// The torch is rendered by its own sprite and light. The former
+	// Render::addScript callback referenced a nonexistent RenderFunction,
+	// producing repeated errors whenever torches were initialized.
 }
 
 f32 onHit(CBlob @ this, Vec2f worldPoint, Vec2f velocity, f32 damage, CBlob @hitterBlob, u8 customData)
