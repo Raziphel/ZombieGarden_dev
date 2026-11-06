@@ -54,11 +54,12 @@ class ZombiesSpawns : RespawnSystem
 			}
 		}
 
-		if (getRules().isMatchRunning())
-		{
-			if (everyone_dead == total_count && total_count != 0)
-				getRules().set_bool("everyones_dead", true);
-		}
+		// Keep this status transient. Previously it became permanently
+		// true after the first wipe, even after players had respawned.
+		const bool allDead = getRules().isMatchRunning() &&
+			total_count > 0 && everyone_dead == total_count;
+		if (getRules().get_bool("everyones_dead") != allDead)
+			getRules().set_bool("everyones_dead", allDead);
 	}
 
 	void UpdateSpawnTime(CTFPlayerInfo @info)
@@ -286,7 +287,12 @@ class ZombiesSpawns : RespawnSystem
 			getBlobsByName("zombieruins", @spawns1);
 			if (spawns1.length > 0)
 			{
-				return spawns1[XORRandom(spawns1.length)].getPosition();
+				for (uint attempt = 0; attempt < spawns1.length; ++attempt)
+				{
+					CBlob @ruin = spawns1[XORRandom(spawns1.length)];
+					if (ruin !is null && !ruin.hasTag("dead"))
+						return ruin.getPosition();
+				}
 			}
 		}
 
@@ -337,8 +343,11 @@ class ZombiesSpawns : RespawnSystem
 
 	void AddPlayerToSpawn(CPlayer @player)
 	{
-		getRules().Sync("gold_structures", true);
+		if (player is null)
+			return;
 
+		// gold_structures is a round setting, not a respawn event.
+		// Re-sending it for every death wasted reliable packets.
 		s32 tickspawndelay = 0;
 
 		// optional: base spawn time from rules (seconds) -> ticks
@@ -409,7 +418,7 @@ class ZombiesSpawns : RespawnSystem
 				hudSecs = u16(Maths::Clamp(s, 0, 65534));
 			}
 			getRules().set_u16(hudKey, hudSecs);
-			getRules().Sync(hudKey, true);
+			getRules().SyncToPlayer(hudKey, player);
 		}
 		else
 		{
@@ -419,7 +428,12 @@ class ZombiesSpawns : RespawnSystem
 
 	bool isSpawning(CPlayer @player)
 	{
+		if (player is null || core is null)
+			return false;
+
 		CTFPlayerInfo @info = cast<CTFPlayerInfo @>(core.getInfoFromPlayer(player));
+		if (info is null)
+			return false;
 		for (uint i = 0; i < Zombies_core.teams.length; i++)
 		{
 			CTFTeamInfo @team = cast<CTFTeamInfo @>(Zombies_core.teams[i]);
