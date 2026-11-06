@@ -23,6 +23,8 @@ void onInit(CBrain @ this)
 	InitBrain(this);
 
 	CBlob @blob = this.getBlob();
+	if (blob is null)
+		return;
 	blob.set_u8(delay_property, 5 + XORRandom(5));
 
 	if (!blob.exists(target_searchrad_property))
@@ -35,10 +37,13 @@ void onInit(CBrain @ this)
 void onTick(CBrain @ this)
 {
 	CBlob @blob = this.getBlob();
+	if (blob is null)
+		return;
 	CBlob @target = this.getTarget();
 
 	u8 delay = blob.get_u8(delay_property);
-	delay--;
+	if (delay > 0)
+		delay--;
 
 	if (delay == 0)
 	{
@@ -55,10 +60,12 @@ void onTick(CBrain @ this)
 				if (friendly)
 				{
 					// take 'em where they need to go
-					if (carriedBlob.getBrain().getTarget() !is null)
+					CBrain @passengerBrain = carriedBlob.getBrain();
+					CBlob @passengerTarget = passengerBrain is null ? null : passengerBrain.getTarget();
+					if (passengerTarget !is null)
 					{
 						Vec2f mypos = blob.getPosition();
-						Vec2f targetPos = carriedBlob.getBrain().getTarget().getPosition();
+						Vec2f targetPos = passengerTarget.getPosition();
 
 						if (getXBetween(targetPos, mypos) < 64.0f)
 						{
@@ -177,7 +184,10 @@ void FlyAround(CBrain @ this, CBlob @blob)
 void FindTarget(CBrain @ this, CBlob @blob, f32 radius, const bool taxiFriendly = false)
 {
 	CBlob @[] nearBlobs;
-	blob.getMap().getBlobsInRadius(blob.getPosition(), radius, @nearBlobs);
+	CMap @map = blob.getMap();
+	if (map is null || radius <= 0.0f)
+		return;
+	map.getBlobsInRadius(blob.getPosition(), radius, @nearBlobs);
 
 	CBlob @closest_candidate;
 	f32 closest_dist = 999999.9f;
@@ -212,7 +222,6 @@ void FindTarget(CBrain @ this, CBlob @blob, f32 radius, const bool taxiFriendly 
 			{
 				@closest_candidate = candidate;
 				closest_dist = dist;
-				break;
 			}
 		}
 	}
@@ -233,48 +242,69 @@ void FindTarget(CBrain @ this, CBlob @blob, f32 radius, const bool taxiFriendly 
 
 bool isFriendlyInNeedOfService(CBlob @friendly)
 {
-	if (friendly.getBrain().getTarget() !is null)
-		return getXBetween(friendly.getBrain().getTarget().getPosition(), friendly.getPosition()) > 256 ||
-			   getMap().rayCastSolid(friendly.getPosition(), friendly.getBrain().getTarget().getPosition());
-	else
+	if (friendly is null)
 		return false;
+	CBrain @brain = friendly.getBrain();
+	CMap @map = friendly.getMap();
+	if (brain is null || map is null)
+		return false;
+	CBlob @target = brain.getTarget();
+	if (target is null || target.hasTag("dead"))
+		return false;
+	return getXBetween(target.getPosition(), friendly.getPosition()) > 256 ||
+		map.rayCastSolid(friendly.getPosition(), target.getPosition());
 }
 
 void FlyTo(CBlob @blob, Vec2f destination)
 {
-	Vec2f mypos = blob.getPosition();
+	if (blob is null)
+		return;
 
+	const Vec2f pos = blob.getPosition();
 	const f32 radius = blob.getRadius();
+	CMap @map = blob.getMap();
 
-	if (destination.x < mypos.x)
-		blob.setKeyPressed(key_left, true);
-	else
-		blob.setKeyPressed(key_right, true);
+	// Clear the opposite direction when turning. Previously both left
+	// and right could remain pressed after the target changed sides.
+	blob.setKeyPressed(key_left, destination.x < pos.x - 4.0f);
+	blob.setKeyPressed(key_right, destination.x > pos.x + 4.0f);
 
-	if (destination.y < mypos.y)
-		blob.setKeyPressed(key_up, true);
-	else if ((blob.isKeyPressed(key_right) && (getMap().isTileSolid(mypos + Vec2f(1.3f * radius, radius) * 1.0f) || blob.getShape().vellen < 0.1f)) ||
-			 (blob.isKeyPressed(key_left) && (getMap().isTileSolid(mypos + Vec2f(-1.3f * radius, radius) * 1.0f) || blob.getShape().vellen < 0.1f)))
-		blob.setKeyPressed(key_up, true);
+	bool rise = destination.y < pos.y - 8.0f;
+	if (map !is null && (blob.isKeyPressed(key_right) ||
+		blob.isKeyPressed(key_left)))
+	{
+		const f32 side = blob.isKeyPressed(key_right) ? 1.0f : -1.0f;
+		rise = rise || map.isTileSolid(pos + Vec2f(side * 1.3f * radius, radius));
+	}
+	blob.setKeyPressed(key_up, rise);
 }
 
 void DetectForwardObstructions(CBlob @blob)
 {
-	Vec2f mypos;
+	if (blob is null)
+		return;
+	CMap @map = blob.getMap();
+	if (map is null)
+		return;
 
-	bool obstructed = getMap().rayCastSolid(mypos, Vec2f(blob.isKeyPressed(key_right) ? mypos.x + 512.0f : mypos.x - 512.0f, mypos.y));
-	if (obstructed)
-	{
+	const Vec2f pos = blob.getPosition();
+	const bool right = blob.isKeyPressed(key_right);
+	const bool left = blob.isKeyPressed(key_left);
+	if (!right && !left)
+		return;
+
+	const f32 direction = right ? 1.0f : -1.0f;
+	// Trace from the actual creature, not the default world origin.
+	if (map.rayCastSolid(pos, pos + Vec2f(direction * 96.0f, 0.0f)))
 		blob.setKeyPressed(key_up, true);
-	}
 }
 
 void StayAboveGroundLevel(CBlob @blob)
 {
+	if (blob is null)
+		return;
 	if (getFlyHeight(blob.getPosition().x) < blob.getPosition().y)
-	{
 		blob.setKeyPressed(key_up, true);
-	}
 }
 
 void NewDestination(CBlob @blob)
