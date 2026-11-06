@@ -101,7 +101,7 @@ void PickupOverlap(CBlob @ this)
 		for (uint i = 0; i < blobs.length; i++)
 		{
 			CBlob @blob = blobs[i];
-			if (!blob.isAttached() && blob.isOnGround() && blob.hasTag("material") && blob.getName() != "mat_arrows")
+			if (blob !is null && !blob.isAttached() && blob.isOnGround() && blob.hasTag("material") && blob.getName() != "mat_arrows")
 			{
 				this.server_PutInInventory(blob);
 			}
@@ -111,6 +111,9 @@ void PickupOverlap(CBlob @ this)
 
 void GetButtonsFor(CBlob @ this, CBlob @caller)
 {
+	if (caller is null)
+		return;
+
 	u8 kek = caller.getTeamNum();
 	if (kek == 0)
 	{
@@ -132,36 +135,43 @@ void GetButtonsFor(CBlob @ this, CBlob @caller)
 
 void onCommand(CBlob @ this, u8 cmd, CBitStream @params)
 {
-	if (getNet().isServer())
+	if (!isServer() || cmd != this.getCommandID("store inventory"))
+		return;
+
+	// Command payloads are client-controlled. Resolve the authenticated
+	// sender on the server, and verify actual proximity and team access.
+	CPlayer @player = getNet().getActiveCommandPlayer();
+	if (player is null || this.getHealth() <= 0.0f)
+		return;
+
+	CBlob @caller = player.getBlob();
+	if (caller is null || caller.hasTag("dead") ||
+		caller.getTeamNum() != this.getTeamNum() || !caller.isOverlapping(this))
+		return;
+
+	CInventory @inv = caller.getInventory();
+	CInventory @storageInv = this.getInventory();
+	if (inv is null || storageInv is null)
+		return;
+
+	// A single request may only process the items present when it began,
+	// preventing infinite loops if a transfer cannot complete.
+	const int initialCount = inv.getItemsCount();
+	for (int i = 0; i < initialCount && inv.getItemsCount() > 0; ++i)
 	{
-		if (cmd == this.getCommandID("store inventory"))
+		CBlob @item = inv.getItem(0);
+		if (item is null)
+			break;
+
+		// Never destroy a carried building preview as a side effect of
+		// storing unrelated materials.
+		caller.server_PutOutInventory(item);
+		if (!this.server_PutInInventory(item))
 		{
-			CBlob @caller = getBlobByNetworkID(params.read_u16());
-			if (caller !is null)
-			{
-				CInventory @inv = caller.getInventory();
-				if (caller.getConfig() == "builder")
-				{
-					CBlob @carried = caller.getCarriedBlob();
-					if (carried !is null)
-					{
-						// TODO: find a better way to check and clear blocks + blob blocks || fix the fundamental problem, blob blocks not double checking requirement prior to placement.
-						if (carried.hasTag("temp blob"))
-						{
-							carried.server_Die();
-						}
-					}
-				}
-				if (inv !is null)
-				{
-					while (inv.getItemsCount() > 0)
-					{
-						CBlob @item = inv.getItem(0);
-						caller.server_PutOutInventory(item);
-						this.server_PutInInventory(item);
-					}
-				}
-			}
+			// Full storage: put the item back. Do not silently eat it.
+			if (!caller.server_PutInInventory(item))
+				item.setPosition(caller.getPosition());
+			break;
 		}
 	}
 }
@@ -367,5 +377,6 @@ bool checkName(string blobName)
 
 bool isInventoryAccessible(CBlob @ this, CBlob @forBlob)
 {
-	return (forBlob.getTeamNum() == this.getTeamNum() && forBlob.isOverlapping(this));
+	return (forBlob !is null && forBlob.getTeamNum() == this.getTeamNum() &&
+		!forBlob.hasTag("dead") && forBlob.isOverlapping(this));
 }
