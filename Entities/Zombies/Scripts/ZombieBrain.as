@@ -164,9 +164,9 @@ void PathFindToTarget(CBrain @brain, CBlob @blob, CBlob @target)
 		return;
 
 	const u32 now = getGameTime();
-	const Vec2f goal = target.getPosition();
-	const Vec2f previousGoal = blob.get_Vec2f(VAR_LAST_PATH_GOAL);
-	const Vec2f pathDelta = goal - previousGoal;
+	Vec2f goal = target.getPosition();
+	Vec2f previousGoal = blob.get_Vec2f(VAR_LAST_PATH_GOAL);
+	Vec2f pathDelta = goal - previousGoal;
 	const f32 pathDeltaSq = pathDelta.x * pathDelta.x + pathDelta.y * pathDelta.y;
 
 	// A blocked doorway can otherwise cause a full path request on every
@@ -323,8 +323,8 @@ void doLongRangeAwarenessScan(CBrain @brain, CBlob @blob)
 
 	// Do not request the same expensive path again while the previous
 	// hint is still being followed. Keep scanning as the horde moves.
-	const Vec2f hint = distant.getPosition();
-	const Vec2f hintDelta = blob.get_Vec2f(VAR_LAST_POS) - hint;
+	Vec2f hint = distant.getPosition();
+	Vec2f hintDelta = blob.get_Vec2f(VAR_LAST_POS) - hint;
 	const f32 hintDeltaSq = hintDelta.x * hintDelta.x + hintDelta.y * hintDelta.y;
 	if (hintDeltaSq < 48.0f * 48.0f && brain.getPathSize() > 0)
 		return;
