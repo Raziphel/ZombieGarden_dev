@@ -1,6 +1,5 @@
-//guassian blur shader
-//gingerbeard got this from chatgpt LOL
-
+// Compact 3x3 Gaussian blur compatible with GLSL 1.10.
+// Nine samples instead of 25 reduce fullscreen shader work.
 uniform sampler2D baseMap;
 uniform float blur_strength;
 uniform float screen_width;
@@ -8,23 +7,25 @@ uniform float screen_height;
 
 void main()
 {
-    vec2 tex_size = vec2(1.0f / screen_width, 1.0f / screen_height);
-    vec2 tex_offset = blur_strength * tex_size;
+    vec2 texel = vec2(1.0 / max(screen_width, 1.0),
+                      1.0 / max(screen_height, 1.0));
+    vec2 offset = texel * max(blur_strength, 0.0);
     vec2 uv = gl_TexCoord[0].xy;
     vec3 color = vec3(0.0);
-    float weight_sum = 0.0;
+    float totalWeight = 0.0;
 
-    for (int x = -2; x <= 2; x++)
+    for (int x = -1; x <= 1; x++)
     {
-        for (int y = -2; y <= 2; y++)
+        for (int y = -1; y <= 1; y++)
         {
-            float weight = exp(-(x * x + y * y) / (2.0 * blur_strength * blur_strength));
-            vec2 offset = vec2(float(x), float(y)) * tex_offset;
-            color += texture2D(baseMap, uv + offset).rgb * weight;
-            weight_sum += weight;
+            float wx = (x == 0) ? 2.0 : 1.0;
+            float wy = (y == 0) ? 2.0 : 1.0;
+            float weight = wx * wy;
+            vec2 sampleUV = uv + vec2(float(x), float(y)) * offset;
+            color += texture2D(baseMap, sampleUV).rgb * weight;
+            totalWeight += weight;
         }
     }
 
-    color /= weight_sum;
-    gl_FragColor = vec4(color, 1.0);
+    gl_FragColor = vec4(color / totalWeight, 1.0);
 }
