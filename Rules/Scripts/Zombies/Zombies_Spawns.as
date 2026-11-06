@@ -77,9 +77,16 @@ class ZombiesSpawns : RespawnSystem
 			// scripts expecting a different type for "Zombies spawn time".
 			string propname = "zg spawn time " + info.username;
 
-			Zombies_core.rules.set_u16(propname, spawn_property);
-			Zombies_core.rules.SyncToPlayer(propname,
-											getPlayerByUsername(info.username));
+			// HUD displays whole seconds. Only sync when that value changes,
+			// rather than sending the same countdown on every server tick.
+			if (!Zombies_core.rules.exists(propname) ||
+				Zombies_core.rules.get_u16(propname) != spawn_property)
+			{
+				Zombies_core.rules.set_u16(propname, spawn_property);
+				CPlayer @owner = getPlayerByUsername(info.username);
+				if (owner !is null)
+					Zombies_core.rules.SyncToPlayer(propname, owner);
+			}
 		}
 	}
 
