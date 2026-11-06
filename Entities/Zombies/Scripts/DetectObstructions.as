@@ -107,7 +107,7 @@ void DetectObstructions(CBrain @brain, CBlob @blob)
 		return;
 
 	u16 threshold = blob.get_u16(obstruction_threshold);
-	const Vec2f pos = blob.getPosition();
+	Vec2f pos = blob.getPosition();
 	const f32 radius = blob.getRadius();
 
 	const bool left = blob.isKeyPressed(key_left);
