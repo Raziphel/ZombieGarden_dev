@@ -24,12 +24,24 @@ void onInit(CBlob @ this)
 
 void onTick(CBlob @ this)
 {
-	CBlob @target = this.getBrain().getTarget();
-	if (target !is null)
+	// Server alone performs hit detection and damage. Duplicating arc
+	// searches on clients wastes work for every member of a large horde.
+	if (!isServer())
+		return;
+
+	CBrain @brain = this.getBrain();
+	if (brain is null)
+		return;
+
+	CBlob @target = brain.getTarget();
+	if (target !is null && !target.hasTag("dead"))
 	{
 		if (getGameTime() >= this.get_u32("next_attack"))
 		{
 			CMap @map = this.getMap();
+			if (map is null)
+				return;
+
 			Vec2f pos = this.getPosition();
 
 			const f32 radius = this.getRadius();
@@ -48,7 +60,7 @@ void onTick(CBlob @ this)
 
 					CBlob @b = hi.blob;
 
-					if (b !is null && b is target)
+					if (b !is null && b is target && !b.hasTag("dead"))
 					{
 						HitTarget(this, b);
 						break;
