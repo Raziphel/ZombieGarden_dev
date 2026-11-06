@@ -260,7 +260,7 @@ void FlyTo(CBlob @blob, Vec2f destination)
 	if (blob is null)
 		return;
 
-	const Vec2f pos = blob.getPosition();
+	Vec2f pos = blob.getPosition();
 	const f32 radius = blob.getRadius();
 	CMap @map = blob.getMap();
 
@@ -287,7 +287,7 @@ void DetectForwardObstructions(CBlob @blob)
 	if (map is null)
 		return;
 
-	const Vec2f pos = blob.getPosition();
+	Vec2f pos = blob.getPosition();
 	const bool right = blob.isKeyPressed(key_right);
 	const bool left = blob.isKeyPressed(key_left);
 	if (!right && !left)
