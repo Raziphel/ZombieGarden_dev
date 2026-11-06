@@ -32,6 +32,7 @@ class ZombiesCore : RulesCore
 		rules.set_s32("gamestart", gamestart);
 		rules.Sync("gamestart", true);
 		rules.SetCurrentState(WARMUP);
+		ResetBossSpawnQueue();
 
 		// Arm the boss transition for the first cycle
 		rules.set_s32("transition", 1);
@@ -56,7 +57,12 @@ class ZombiesCore : RulesCore
 	void Update()
 	{
 		if (rules.isGameOver())
+		{
+			ResetBossSpawnQueue();
 			return;
+		}
+
+		ProcessBossSpawnQueue();
 
 		// Refresh counts early so difficulty sees newly spawned altars
 		if (getGameTime() < 30 || getGameTime() % 150 == 0)
