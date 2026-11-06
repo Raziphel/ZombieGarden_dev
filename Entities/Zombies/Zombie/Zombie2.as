@@ -36,18 +36,21 @@ void onTick(CBlob @ this)
 
 	if (getNet().isServer() && getGameTime() % 10 == 0)
 	{
-		CBlob @target = this.getBrain().getTarget();
+		CBrain @brain = this.getBrain();
+		CBlob @target = brain is null ? null : brain.getTarget();
+		const bool chomping = target !is null && !target.hasTag("dead") &&
+			this.getDistanceTo(target) < 72.0f;
 
-		if (target !is null && this.getDistanceTo(target) < 72.0f)
+		// Sending the same chomp tag every ten ticks for every zombie was
+		// costly at large horde sizes. Replicate only state transitions.
+		if (this.hasTag(chomp_tag) != chomping)
 		{
-			this.Tag(chomp_tag);
+			if (chomping)
+				this.Tag(chomp_tag);
+			else
+				this.Untag(chomp_tag);
+			this.Sync(chomp_tag, true);
 		}
-		else
-		{
-			this.Untag(chomp_tag);
-		}
-
-		this.Sync(chomp_tag, true);
 	}
 }
 
