@@ -114,6 +114,11 @@ void RefreshMobCountsToRules()
 	for (uint i = 0; i < all.length; ++i)
 	{
 		CBlob @b = all[i];
+		// Corpses retain class tags until they disappear. They must not
+		// occupy live zombie, portal, or survivor population slots.
+		if (b is null || b.hasTag("dead"))
+			continue;
+
 		const string name = b.getName();
 
 		if (b.hasTag("zombie"))
