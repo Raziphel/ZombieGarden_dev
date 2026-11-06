@@ -64,7 +64,7 @@ class ZombiesCore : RulesCore
 			RefreshMobCountsToRules(); // <— single source of truth
 		}
 
-		const int day_cycle = getRules().daycycle_speed * 60;
+		const int day_cycle = Maths::Max(1, int(rules.daycycle_speed * 60));
 		int transition = rules.get_s32("transition");
 		const int gamestart = rules.get_s32("gamestart");
 
@@ -103,6 +103,7 @@ class ZombiesCore : RulesCore
 
 		// quick player team pass (used for max_undead)
 		int num_survivors_p = 0;
+		int num_living_survivors_p = 0;
 		int num_undead_p = 0;
 		for (int i = 0; i < getPlayersCount(); i++)
 		{
@@ -110,7 +111,13 @@ class ZombiesCore : RulesCore
 			if (pl is null)
 				continue;
 			if (pl.getTeamNum() == 0)
+			{
 				num_survivors_p++;
+				CBlob @character = pl.getBlob();
+				if (character !is null && character.hasTag("survivorplayer") &&
+					!character.hasTag("dead"))
+					num_living_survivors_p++;
+			}
 			else if (pl.getTeamNum() == 1)
 				num_undead_p++;
 		}
@@ -147,24 +154,26 @@ class ZombiesCore : RulesCore
 			(timeElapsed > (getTicksASecond() * 45)); // small post-GAME grace
 		const bool allowWipeCheck = isLive && pastGrace && (dayNumber > 1);
 
-		// Wipe bonus: if all survivors are dead, add +1 once per day
-		if (allowWipeCheck)
+		// A wipe is a transition from at least one living player to none.
+		// Never penalize empty servers, spectators, or an unattended round
+		// repeatedly on subsequent days.
+		const bool hadLivingSurvivor = rules.get_bool("had_live_survivor");
+		if (num_living_survivors_p > 0)
 		{
-			const int live_survivors = rules.get_s32("num_survivors");
-			const int num_hands = rules.get_s32("num_ruinstorch");
-			const int last_wipe_day =
-				rules.exists("last_wipe_day") ? rules.get_s32("last_wipe_day") : -1;
+			if (!hadLivingSurvivor)
+				rules.set_bool("had_live_survivor", true);
+		}
+		else if (hadLivingSurvivor)
+		{
+			rules.set_bool("had_live_survivor", false);
 
-			// Only once per dayNumber, only when truly wiped
-			if ((live_survivors - num_hands) <= 0 && last_wipe_day != dayNumber)
+			const int last_wipe_day = rules.get_s32("last_wipe_day");
+			if (allowWipeCheck && last_wipe_day != dayNumber)
 			{
 				wipeBonus += 0.5f;
 				rules.set_f32("difficulty_bonus", wipeBonus);
 				rules.Sync("difficulty_bonus", true);
 				rules.set_s32("last_wipe_day", dayNumber);
-
-				const float previewDifficulty = Maths::Min(
-					20.0f, dayNumber * 0.5f + pillars * 0.2f - altars * 0.2f + survivors * 0.05f - undead * 0.2f + days_offset * 0.1f + wipeBonus);
 
 				Server_GlobalPopup(
 					rules,
@@ -471,7 +480,7 @@ class ZombiesCore : RulesCore
 			return;
 
 		const int gamestart = rules.get_s32("gamestart");
-		const int day_cycle = getRules().daycycle_speed * 60;
+		const int day_cycle = Maths::Max(1, int(rules.daycycle_speed * 60));
 		const int dayNumber =
 			((getGameTime() - gamestart) / getTicksASecond() / day_cycle) + 1;
 		const int days_offset = rules.get_s32("days_offset");
