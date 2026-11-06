@@ -229,6 +229,31 @@ class ZombiesCore : RulesCore
 			}
 		}
 
+		// A short, once-per-day warning gives builders time to prepare
+		// before the night wave. Use the same day-based boss table as the
+		// actual encounter director so the warning cannot name the wrong wave.
+		if (map !is null && rules.isMatchRunning() &&
+			rules.get_bool("dusk_warning") && getPlayersCount() > 0)
+		{
+			const f32 daylight = map.getDayTime();
+			if (daylight >= 0.70f && daylight < 0.80f &&
+				rules.get_s32("last_dusk_warning_day") != dayNumber)
+			{
+				rules.set_s32("last_dusk_warning_day", dayNumber);
+				string warning = "Dusk approaches. The undead are gathering!";
+				const WaveKind wave = GetWaveKindForDay(dayNumber);
+				if (wave == WAVE_MINI)
+					warning = "Dusk approaches. A mini-boss wave is coming!";
+				else if (wave == WAVE_BOSS)
+					warning = "Dusk approaches. A boss wave is coming!";
+				else if (wave == WAVE_CATACLYSM)
+					warning = "Dusk approaches. A CATACLYSM is coming!";
+
+				Server_GlobalPopup(rules, warning,
+					SColor(255, 255, 190, 95), 5 * getTicksASecond());
+			}
+		}
+
 		// === periodic maintenance: curse logic (throttled) ===
 		if (getGameTime() % 150 == 0)
 		{
