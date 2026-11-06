@@ -39,6 +39,10 @@ void Config(ZombiesCore @ this)
 	// New waves will not spawn if the active count for that mob is >= its cap
 	// ----------------------------
 	this.rules.set_s32("max_zombies", 250);	  // standard zombies
+	// Zombies still get their signature return-from-the-dead moment, but
+	// an individual zombie may revive at most twice. Prevents infinite
+	// corpse loops and keeps the live horde cap meaningful.
+	this.rules.set_s32("max_zombie_revivals", 2);
 	// At the global cap, allow a higher-rank enemy to retire one remote,
 	// weaker natural spawn. Normal kills and per-species limits are unchanged.
 	this.rules.set_bool("horde_replacements", true);
