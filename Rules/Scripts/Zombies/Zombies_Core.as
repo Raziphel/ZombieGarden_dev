@@ -478,6 +478,7 @@ class ZombiesCore : RulesCore
 				// checking only that cached count can overshoot the hard cap.
 				// Check the live zombie set immediately before creating one.
 				bool canSpawnNow = (hardmode || isNight);
+				bool hordeAtCap = false;
 				if (canSpawnNow)
 				{
 					CBlob @[] currentZombies;
@@ -509,68 +510,69 @@ class ZombiesCore : RulesCore
 						else if (name == "gasbag")
 							_num_ga++;
 					}
-					canSpawnNow = livingZombies < max_zombies;
+					hordeAtCap = livingZombies >= max_zombies;
 				}
 
 				if (canSpawnNow)
 				{
-					float rmin =
-						difficulty * 0.1f; // difficulty directly biases the minimum roll
-					const float r =
-						rmin +
+					const float rmin = difficulty * 0.1f;
+					const float r = rmin +
 						XORRandom(Maths::Max(1, int((difficulty - rmin) * 10))) / 10.0f;
 
+					// Choose the threat BEFORE checking the global cap. The old
+					// ordering blocked powerful monsters along with weak ones.
+					string nextEnemy = "";
 					if (r >= 47.0f && _num_di < _max_di)
-						server_CreateBlob("digger", -1, sp);
+						nextEnemy = "digger";
 					else if (r >= 40.0f && _num_wr < _max_wr)
-						server_CreateBlob("writher", -1, sp);
+						nextEnemy = "writher";
 					else if (r >= 35.5f && _num_ho < _max_ho)
-						server_CreateBlob("horror", -1, sp);
+						nextEnemy = "horror";
 					else if (r >= 25.0f && _num_ba < _max_ba)
-						server_CreateBlob("pbanshee", -1, sp);
+						nextEnemy = "pbanshee";
 					else if (r >= 20.0f && _num_bi < _max_bi)
-					{
-						const u8 v = XORRandom(2);
-						server_CreateBlob((v == 0 ? "zbison" : "zbison2"), -1, sp);
-					}
+						nextEnemy = XORRandom(2) == 0 ? "zbison" : "zbison2";
 					else if (r >= 17.0f && _num_wr < _max_wr)
-					{
-						const u8 v = XORRandom(2);
-						server_CreateBlob((v == 0 ? "wraith" : "wraith2"), -1, sp);
-					}
+						nextEnemy = XORRandom(2) == 0 ? "wraith" : "wraith2";
 					else if (r >= 15.0f && _num_gr < _max_gr)
-					{
-						const u8 v = XORRandom(2);
-						server_CreateBlob((v == 0 ? "greg" : "greg2"), -1, sp);
-					}
+						nextEnemy = XORRandom(2) == 0 ? "greg" : "greg2";
 					else if (r >= 12.5f && _num_im < _max_im)
-						server_CreateBlob("immolator", -1, sp);
+						nextEnemy = "immolator";
 					else if (r >= 7.0f && _num_ga < _max_ga)
-						server_CreateBlob("gasbag", -1, sp);
+						nextEnemy = "gasbag";
 					else if (r >= 5.5f)
-						server_CreateBlob("zombieknight", -1, sp);
+						nextEnemy = "zombieknight";
 					else if (r >= 2.5f)
 					{
-						const u8 v = XORRandom(3);
-						server_CreateBlob(v == 0 ? "evilzombie" : (v == 1 ? "bloodzombie" : "plantzombie"), -1, sp);
+						const u8 variant = XORRandom(3);
+						nextEnemy = variant == 0 ? "evilzombie" :
+							(variant == 1 ? "bloodzombie" : "plantzombie");
 					}
 					else if (r >= 1.0f)
-					{
-						const u8 v = XORRandom(2);
-						server_CreateBlob((v == 0 ? "zombie" : "zombie2"), -1, sp);
-					}
+						nextEnemy = XORRandom(2) == 0 ? "zombie" : "zombie2";
 					else if (r >= 0.5f)
-					{
-						const u8 v = XORRandom(2);
-						server_CreateBlob((v == 0 ? "skeleton" : "skeleton2"), -1, sp);
-					}
+						nextEnemy = XORRandom(2) == 0 ? "skeleton" : "skeleton2";
 					else if (r >= 0.2f)
-						server_CreateBlob("catto", -1, sp);
+						nextEnemy = "catto";
 					else
-					{
-						server_CreateBlob("zchicken", -1, sp);
-					}
+						nextEnemy = "zchicken";
 
+					if (!hordeAtCap)
+					{
+						server_CreateBlob(nextEnemy, -1, sp);
+					}
+					else if (ZGCanReplaceHordeMob(rules, false))
+					{
+						CBlob @weak = ZGFindWeakHordeMob(nextEnemy);
+						if (weak !is null)
+						{
+							// Create first. If KAG cannot load the stronger unit,
+							// don't throw away an existing member of the horde.
+							CBlob @replacement = server_CreateBlob(nextEnemy, -1, sp);
+							if (replacement !is null)
+								ZGRetireHordeMob(rules, weak);
+						}
+					}
 				}
 
 				// Boss waves are milestones, not ordinary spawns. They must still
