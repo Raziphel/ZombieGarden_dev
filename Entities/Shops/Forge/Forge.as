@@ -12,6 +12,11 @@ Random traderRandom(Time());
 
 void onInit(CBlob @ this)
 {
+	// Base Shop.as invokes this callback only after it has checked the
+	// player's distance and charged the recipe requirements on the server.
+	ShopMadeItem @onMadeItem = @onShopMadeItem;
+	this.set("onShopMadeItem handle", @onMadeItem);
+
 	this.set_TileType("background tile", CMap::tile_castle_back);
 
 	this.getSprite().SetZ(-50); // background
@@ -65,10 +70,8 @@ void onInit(CBlob @ this)
 
 void GetButtonsFor(CBlob @ this, CBlob @caller)
 {
-
 	this.set_Vec2f("shop offset", Vec2f(2, 0));
-
-	this.set_bool("shop available", this.isOverlapping(caller));
+	this.set_bool("shop available", caller !is null && this.isOverlapping(caller));
 }
 
 void onTick(CBlob @ this)
@@ -82,50 +85,59 @@ void onTick(CBlob @ this)
 		}
 }
 
+// The base shop's "shop buy" command pays for recipes and calls this
+// registered callback. Never mint resources from a client-sent command.
+void onShopMadeItem(CBitStream @params)
+{
+	if (!isServer() || params is null)
+		return;
+
+	u16 shopID, callerID, itemID;
+	string recipe;
+	if (!params.saferead_u16(shopID) ||
+		!params.saferead_u16(callerID) ||
+		!params.saferead_u16(itemID) ||
+		!params.saferead_string(recipe))
+		return;
+
+	CBlob @shop = getBlobByNetworkID(shopID);
+	CBlob @caller = getBlobByNetworkID(callerID);
+	CPlayer @activeBuyer = getNet().getActiveCommandPlayer();
+	if (shop is null || shop.getName() != "forge" || caller is null ||
+		activeBuyer is null || activeBuyer.getBlob() !is caller)
+		return;
+
+	// Keep the output strictly aligned with the four paid forge recipes.
+	string output = "";
+	if (recipe == "mat_copperingot-10")
+		output = "mat_copperingot";
+	else if (recipe == "mat_ironingot-10")
+		output = "mat_ironingot";
+	else if (recipe == "mat_steelingot-10")
+		output = "mat_steelingot";
+	else if (recipe == "mat_coal-10")
+		output = "mat_coal";
+	else
+		return;
+
+	MakeMat(caller, shop.getPosition(), output, 10);
+}
+
 void onCommand(CBlob @ this, u8 cmd, CBitStream @params)
 {
-	if (cmd == this.getCommandID("shop made item"))
+	// This command is emitted by Shop.as after a successful server purchase.
+	// It is for presentation only, never resource creation.
+	if (cmd == this.getCommandID("shop made item client") && isClient())
 	{
-		if (isClient())
-		{
-			this.getSprite().PlaySound("ProduceSound.ogg");
-			this.getSprite().PlaySound("BombMake.ogg");
+		CSprite @sprite = this.getSprite();
+		if (sprite is null)
+			return;
 
-			this.getSprite().SetAnimation("active");
-			this.getSprite().SetEmitSoundPaused(false);
-			this.getCurrentScript().tickFrequency = 1;
-			this.set_u32("time_used", getGameTime());
-		}
-
-		if (isServer())
-		{
-			u16 caller, item;
-			if (!params.saferead_netid(caller) || !params.saferead_netid(item))
-				return;
-
-			// Only produce recipes the Forge actually offers. Parsing an
-			// untrusted "mat_<name>-<quantity>" string allowed arbitrary
-			// materials and quantities to reach MakeMat.
-			const string recipe = params.read_string();
-			string output = "";
-			if (recipe == "mat_copperingot-10")
-				output = "mat_copperingot";
-			else if (recipe == "mat_ironingot-10")
-				output = "mat_ironingot";
-			else if (recipe == "mat_steelingot-10")
-				output = "mat_steelingot";
-			else if (recipe == "mat_coal-10")
-				output = "mat_coal";
-			else
-				return;
-
-			CBlob @callerBlob = getBlobByNetworkID(caller);
-			if (callerBlob is null || callerBlob.getPlayer() is null ||
-				!this.isOverlapping(callerBlob))
-				return;
-
-			// The shop handles the recipe's actual item requirements.
-			MakeMat(callerBlob, this.getPosition(), output, 10);
-		}
+		sprite.PlaySound("ProduceSound.ogg");
+		sprite.PlaySound("BombMake.ogg");
+		sprite.SetAnimation("active");
+		sprite.SetEmitSoundPaused(false);
+		this.getCurrentScript().tickFrequency = 1;
+		this.set_u32("time_used", getGameTime());
 	}
 }
