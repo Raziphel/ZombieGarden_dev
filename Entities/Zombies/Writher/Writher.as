@@ -54,7 +54,7 @@ void onTick(CBlob @ this)
 {
 	if (this.hasTag("enraged"))
 	{
-		if (!this.exists("exploding"))
+		if (!this.hasTag("exploding"))
 		{
 			this.Tag("exploding");
 			this.set_s32("explosion_timer", getGameTime() + TIME_TO_EXPLODE);
@@ -94,6 +94,10 @@ void onTick(CBlob @ this)
 
 void onDie(CBlob @ this)
 {
+	// Wraiths are created by the authoritative server only.
+	if (!isServer())
+		return;
+
 	server_CreateBlob("wraith", -1, this.getPosition());
 	server_CreateBlob("wraith", -1, this.getPosition());
 	server_CreateBlob("wraith", -1, this.getPosition());
