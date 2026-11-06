@@ -371,6 +371,7 @@ int RunBossWave(const int dayNumber, const float difficulty,
 		}
 		Server_GlobalPopup(rules, e.popup, e.color, e.popupTicks);
 		rules.set_s32("boss_spawned_day", dayNumber);
+		rules.Sync("boss_spawned_day", true);
 	}
 
 	// Client: play the stinger and echo to chat
