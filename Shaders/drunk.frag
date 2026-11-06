@@ -22,9 +22,9 @@ void main()
     vec2 blueOffset = uv + vec2(0.0, -aberration);
 
     // Sample the texture with offsets
-    vec3 red = texture(baseMap, redOffset).rgb;
-    vec3 green = texture(baseMap, greenOffset).rgb;
-    vec3 blue = texture(baseMap, blueOffset).rgb;
+    vec3 red = texture2D(baseMap, redOffset).rgb;
+    vec3 green = texture2D(baseMap, greenOffset).rgb;
+    vec3 blue = texture2D(baseMap, blueOffset).rgb;
 
     // Combine the channels
     vec3 color = vec3(red.r, green.g, blue.b);
